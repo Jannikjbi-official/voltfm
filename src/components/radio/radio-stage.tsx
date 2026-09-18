@@ -39,7 +39,7 @@ export function RadioStage() {
         <div className={styles.titles}>
           <p className={styles.label}>Läuft gerade</p>
           <h2 className={styles.track}>{track?.title ?? "VoltFM Livestream"}</h2>
-          <p className={styles.artist}>{track?.artist ?? "24/7 Musik aus Oldenburg"}</p>
+          <p className={styles.artist}>{track?.artist ?? "24/7 Musik aus Hamburg"}</p>
           {track?.album && (
             <p className={styles.album}>
               {track.album}

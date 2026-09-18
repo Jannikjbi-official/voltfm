@@ -38,19 +38,28 @@ const SLUG_MIGRATIONS: Record<string, string> = {
 };
 
 /**
- * Werte aus der ersten Fassung, die nachgezogen werden duerfen.
+ * Werte, die dieses Skript frueher selbst geschrieben hat.
  *
- * Steht in der Datenbank noch exakt einer dieser Werte, stammt er aus dem
- * alten Seed und wird durch die Fassung unten ersetzt. Weicht er ab, hat ihn
- * jemand im Admin bearbeitet — dann bleibt er, wie er ist.
+ * Steht in der Datenbank noch exakt einer davon, stammt er nicht von einem
+ * Menschen und darf auf die Fassung unten aktualisiert werden. Weicht der Wert
+ * ab, hat ihn jemand im Admin bearbeitet — dann bleibt er, wie er ist.
  */
-const REPLACEABLE = new Set([
+const MACHINE_WRITTEN = [
   "Jannik",
   "Mochiko",
   "Founder & Programmchef",
   "Co-Founderin & EDM",
   "Jannik hat VoltFM 2021 in seinem Jugendzimmer in Hamburg gestartet — mit einem geliehenen Mikrofon und der festen Überzeugung, dass Radio mehr sein kann als eine Playlist. Heute verantwortet er das Programm, kümmert sich um die Technik hinter dem Stream und steht dreimal pro Woche selbst am Mikrofon. Seine Sendungen leben von langen Musikstrecken und ehrlichen Zwischentönen.",
-]);
+];
+
+/**
+ * Deckt zusaetzlich einen Zwischenstand ab, in dem versehentlich der Wohnort
+ * des Betreibers (Oldenburg) statt des Senderstandorts (Hamburg) im Text stand.
+ * Abgeleitet statt abgetippt, damit beide Fassungen nie auseinanderlaufen.
+ */
+function isMachineWritten(value: string, target: string): boolean {
+  return MACHINE_WRITTEN.includes(value) || value === target.replace(/Hamburg/g, "Oldenburg");
+}
 
 const HOSTS = [
   {
@@ -60,7 +69,7 @@ const HOSTS = [
     accentHue: 251,
     role: "Gründer & Programmchef",
     discordUserId: null,
-    bio: "Jannik hat VoltFM 2021 in seinem Jugendzimmer in Oldenburg gestartet — mit einem geliehenen Mikrofon und der festen Überzeugung, dass Radio mehr sein kann als eine Playlist. Von ihm stammt auch die laut.fm-Station, über die VoltFM heute sendet: Sie läuft seit den ersten Tagen unter seinem Handle. Heute verantwortet er das Programm, kümmert sich um die Technik hinter dem Stream und steht regelmäßig selbst am Mikrofon. Seine Sendungen leben von langen Musikstrecken und ehrlichen Zwischentönen.",
+    bio: "Jannik hat VoltFM 2021 in seinem Jugendzimmer in Hamburg gestartet — mit einem geliehenen Mikrofon und der festen Überzeugung, dass Radio mehr sein kann als eine Playlist. Von ihm stammt auch die laut.fm-Station, über die VoltFM heute sendet: Sie läuft seit den ersten Tagen unter seinem Handle. Heute verantwortet er das Programm, kümmert sich um die Technik hinter dem Stream und steht regelmäßig selbst am Mikrofon. Seine Sendungen leben von langen Musikstrecken und ehrlichen Zwischentönen.",
     showSlugs: ["volt-am-morgen", "volt-nacht"],
     socials: [{ label: "Discord", url: "https://discord.gg/voltfm" }],
     order: 1,
@@ -178,7 +187,7 @@ try {
     const patch: Record<string, unknown> = {};
     for (const field of ["name", "role", "bio"] as const) {
       const current = existing[field];
-      if (typeof current === "string" && REPLACEABLE.has(current) && current !== rest[field]) {
+      if (typeof current === "string" && current !== rest[field] && isMachineWritten(current, rest[field])) {
         patch[field] = rest[field];
       }
     }

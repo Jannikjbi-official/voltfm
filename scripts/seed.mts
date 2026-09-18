@@ -63,7 +63,7 @@ const hosts = [
     accentHue: 251,
     role: "Gründer & Programmchef",
     discordUserId: null,
-    bio: "Jannik hat VoltFM 2021 in seinem Jugendzimmer in Oldenburg gestartet — mit einem geliehenen Mikrofon und der festen Überzeugung, dass Radio mehr sein kann als eine Playlist. Heute verantwortet er das Programm, kümmert sich um die Technik hinter dem Stream und steht dreimal pro Woche selbst am Mikrofon. Seine Sendungen leben von langen Musikstrecken und ehrlichen Zwischentönen.",
+    bio: "Jannik hat VoltFM 2021 in seinem Jugendzimmer in Hamburg gestartet — mit einem geliehenen Mikrofon und der festen Überzeugung, dass Radio mehr sein kann als eine Playlist. Heute verantwortet er das Programm, kümmert sich um die Technik hinter dem Stream und steht dreimal pro Woche selbst am Mikrofon. Seine Sendungen leben von langen Musikstrecken und ehrlichen Zwischentönen.",
     showSlugs: ["volt-am-morgen", "volt-nacht"],
     socials: [
       { label: "Discord", url: "https://discord.gg/voltfm" },
@@ -115,7 +115,7 @@ const hosts = [
 /* --- Sendungen ----------------------------------------------------------- */
 
 const shows = [
-  { slug: "volt-am-morgen", title: "Volt am Morgen", description: "Wach werden mit Musik, die nicht schreit. Nachrichten aus der Community, Wetter für Oldenburg und die drei Songs, die den Tag tragen.", hostSlugs: ["jannikjbi"], weekday: 1, startTime: "07:00", endTime: "10:00" },
+  { slug: "volt-am-morgen", title: "Volt am Morgen", description: "Wach werden mit Musik, die nicht schreit. Nachrichten aus der Community, Wetter für Hamburg und die drei Songs, die den Tag tragen.", hostSlugs: ["jannikjbi"], weekday: 1, startTime: "07:00", endTime: "10:00" },
   { slug: "volt-selection", title: "Volt Selection", description: "Mochiko öffnet die Musikredaktion: Neuerscheinungen, Wiederentdeckungen und die Songs, die es fast nicht in die Rotation geschafft hätten.", hostSlugs: ["mochikotv"], weekday: 3, startTime: "19:00", endTime: "21:00" },
   { slug: "community-hour", title: "Community Hour", description: "Eure Wünsche, eure Grüße, eure Playlist. Mira liest live aus dem Discord vor und spielt, was ihr schickt.", hostSlugs: ["mira"], weekday: 4, startTime: "18:00", endTime: "19:30" },
   { slug: "pixel-und-pegel", title: "Pixel & Pegel", description: "Game-Soundtracks, Elektronik und ein Blick auf die Technik dahinter. Tobi erklärt, was im Studio passiert.", hostSlugs: ["tobi"], weekday: 2, startTime: "20:00", endTime: "22:00" },
@@ -168,17 +168,17 @@ const articles = [
   },
   {
     slug: "voltfm-zieht-nach-oldenburg",
-    title: "VoltFM sendet jetzt aus Oldenburg",
+    title: "VoltFM sendet jetzt aus Hamburg",
     excerpt:
       "Neues Studio, neue Stadt, gleicher Sender: Warum wir umgezogen sind und was sich für euch ändert — nämlich fast nichts.",
     categorySlug: "voltfm",
-    tags: ["Oldenburg", "Studio", "In eigener Sache"],
+    tags: ["Hamburg", "Studio", "In eigener Sache"],
     authorName: "jannikjbi",
     featured: false,
     publishedAt: daysAgo(8),
-    content: `<p>Es gibt Nachrichten, die klingen größer, als sie sind. Diese hier ist eine davon: VoltFM sendet ab sofort aus Oldenburg.</p>
+    content: `<p>Es gibt Nachrichten, die klingen größer, als sie sind. Diese hier ist eine davon: VoltFM sendet ab sofort aus Hamburg.</p>
 <h2>Warum</h2>
-<p>Der Umzug hatte wenig mit dem Sender und viel mit dem Leben zu tun. Als klar war, dass ich nach Oldenburg gehe, war die einzige ernsthafte Frage, wie wir das Studio mitnehmen. Die Antwort: in vier Kisten und einem Kofferraum.</p>
+<p>Der Umzug hatte wenig mit dem Sender und viel mit dem Leben zu tun. Als klar war, dass ich nach Hamburg gehe, war die einzige ernsthafte Frage, wie wir das Studio mitnehmen. Die Antwort: in vier Kisten und einem Kofferraum.</p>
 <h2>Was sich ändert</h2>
 <p>Für euch: praktisch nichts. Der Stream läuft unter derselben Adresse, der Sendeplan bleibt, die Stimmen bleiben. Was sich ändert, ist die Akustik — der neue Raum ist kleiner und deutlich trockener, was dem Sound guttut.</p>
 <h2>Was wir mitgenommen haben</h2>
@@ -421,11 +421,11 @@ const events = [
   {
     slug: "sommerfest-2026",
     title: "VoltFM Sommerfest",
-    description: "Das erste Treffen außerhalb des Internets: Community-Abend in Oldenburg mit Live-Sendung vor Ort.",
-    content: "<p>Rund vierzig Leute aus dem Discord kamen tatsächlich nach Oldenburg. Die Sendung lief drei Stunden live vom Gelände.</p>",
+    description: "Das erste Treffen außerhalb des Internets: Community-Abend in Hamburg mit Live-Sendung vor Ort.",
+    content: "<p>Rund vierzig Leute aus dem Discord kamen tatsächlich nach Hamburg. Die Sendung lief drei Stunden live vom Gelände.</p>",
     startsAt: daysAgo(64),
     endsAt: daysAgo(64),
-    location: "Oldenburg",
+    location: "Hamburg",
     category: "Community",
     status: "past",
   },

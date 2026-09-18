@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
@@ -132,13 +133,9 @@ export function VolumeControl() {
 export function PlayerStatusLine() {
   const { status, error, embedAllowed, consent } = useRadioPlayer();
 
-  if (!embedAllowed) {
-    return (
-      <p className={styles.statusLine}>
-        Wiedergabe läuft auf {radio.providerName} — der Link öffnet ein neues Fenster.
-      </p>
-    );
-  }
+  /* Ohne eingebetteten Player gibt es keinen Wiedergabestatus zu melden — und
+     <StreamNotice> darunter sagt ohnehin schon, wo abgespielt wird. */
+  if (!embedAllowed) return null;
 
   const text =
     status === "connecting"
@@ -172,17 +169,14 @@ export function StreamNotice() {
   if (!embedAllowed) {
     return (
       <p className={styles.notice}>
-        VoltFM sendet über {radio.providerName}. Deren{" "}
-        <a href={radio.providerTermsUrl} target="_blank" rel="noreferrer noopener">
-          Nutzungsbedingungen
-        </a>{" "}
-        (§ 6 Abs. 9) erlauben es nicht, den Stream auf fremden Seiten einzubetten —
-        verlinken dagegen schon. Deshalb läuft die Wiedergabe auf{" "}
+        VoltFM sendet über{" "}
         <a href={externalUrl} target="_blank" rel="noreferrer noopener">
           {radio.providerName}
           <Icon icon={ExternalLinkIcon} />
-        </a>{" "}
-        und nicht hier. Ohne Klick wird nichts dorthin übertragen.
+        </a>
+        . Der Play-Button öffnet dort ein neues Fenster — vorher wird nichts
+        dorthin übertragen. Details im{" "}
+        <Link href="/datenschutz">Datenschutz</Link>.
       </p>
     );
   }

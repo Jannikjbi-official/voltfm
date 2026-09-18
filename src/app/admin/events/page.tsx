@@ -40,7 +40,7 @@ export default async function Page() {
       rows: 12,
       hint: "Optional. Erscheint auf der Detailseite des Events.",
     },
-    { name: "location", label: "Ort", type: "text", required: true, placeholder: "Oldenburg, Kulturetage" },
+    { name: "location", label: "Ort", type: "text", required: true, placeholder: "Hamburg, Kulturetage" },
     { name: "url", label: "Externer Link", type: "text", placeholder: "https://…" },
 
     { name: "startsAt", label: "Beginn", type: "datetime", required: true, side: true },

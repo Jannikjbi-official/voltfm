@@ -38,7 +38,7 @@ export function RadioHero() {
             </h1>
 
             <p className={styles.lead}>
-              VoltFM sendet rund um die Uhr aus Oldenburg — mit festen Sendungen,
+              VoltFM sendet rund um die Uhr aus Hamburg — mit festen Sendungen,
               echten Moderatorinnen und Moderatoren und einer Community, die das
               Programm mitgestaltet.
             </p>

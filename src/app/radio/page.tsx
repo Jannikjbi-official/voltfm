@@ -89,7 +89,7 @@ export default async function RadioPage() {
                 </div>
                 <div className={styles.infoRow}>
                   <dt>Standort</dt>
-                  <dd>Oldenburg (Oldb)</dd>
+                  <dd>Hamburg</dd>
                 </div>
                 <div className={styles.infoRow}>
                   <dt>Verfügbarkeit</dt>

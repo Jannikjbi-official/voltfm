@@ -47,15 +47,26 @@ export default function DatenschutzPage() {
             </p>
           )}
 
-          <h2>Hosting und Server-Logfiles</h2>
+          <h2>Hosting (Vercel)</h2>
           <p>
-            Diese Website wird bei einem Hosting-Dienstleister betrieben. Beim
-            Aufruf verarbeitet dieser technisch notwendige Server-Logfiles:
-            IP-Adresse, Datum und Uhrzeit, abgerufene Seite, übertragene
-            Datenmenge, Referrer und Browserkennung. Rechtsgrundlage ist Art. 6
-            Abs. 1 lit. f DSGVO — unser berechtigtes Interesse am sicheren und
-            störungsfreien Betrieb. Die Daten werden nicht mit anderen Quellen
-            zusammengeführt.
+            Diese Website wird von der <strong>Vercel Inc.</strong>, 440 N Barranca
+            Ave #4133, Covina, CA 91723, USA gehostet. Beim Aufruf verarbeitet
+            Vercel technisch notwendige Server-Logfiles: IP-Adresse, Datum und
+            Uhrzeit, abgerufene Seite, übertragene Datenmenge, Referrer und
+            Browserkennung. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO —
+            unser berechtigtes Interesse am sicheren und störungsfreien Betrieb.
+            Die Daten werden nicht mit anderen Quellen zusammengeführt.
+          </p>
+          <p>
+            Vercel ist ein US-Unternehmen, es kann also zu einer Übermittlung in
+            die USA kommen. Vercel ist unter dem EU–US Data Privacy Framework
+            zertifiziert und schließt ergänzend die Standardvertragsklauseln der
+            EU-Kommission ab. Wir haben mit Vercel einen Vertrag zur
+            Auftragsverarbeitung nach Art. 28 DSGVO geschlossen. Es gilt die{" "}
+            <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noreferrer noopener">
+              Datenschutzerklärung von Vercel
+            </a>
+            .
           </p>
 
           <h2>Livestream und Sendedaten (laut.fm)</h2>
@@ -132,8 +143,9 @@ export default function DatenschutzPage() {
             Wenn du ein Konto erstellst, speichern wir Benutzername,
             Anzeigename, E-Mail-Adresse und einen Passwort-Hash (Klartext-Passwörter
             werden nie gespeichert). Rechtsgrundlage ist Art. 6 Abs. 1 lit. b
-            DSGVO. Die Daten liegen in einer MongoDB-Atlas-Datenbank innerhalb der
-            EU.
+            DSGVO. Gespeichert werden sie in einer von der MongoDB, Inc.
+            betriebenen Atlas-Datenbank, mit der ebenfalls ein Vertrag zur
+            Auftragsverarbeitung besteht.
           </p>
           <p>
             <strong>Anmeldung über Discord:</strong> Meldest du dich über Discord
@@ -161,13 +173,52 @@ export default function DatenschutzPage() {
             keine gesetzlichen Aufbewahrungspflichten entgegenstehen.
           </p>
 
-          <h2>Bilder und Uploads</h2>
+          <h2>Bilder und Uploads (UploadThing)</h2>
           <p>
-            Titel-, Cover- und Profilbilder werden über UploadThing ausgeliefert.
-            Beim Laden eines solchen Bildes wird deine IP-Adresse an diesen Dienst
-            übertragen. Hochladen können ausschließlich angemeldete Personen mit
-            Redaktionsrechten.
+            Titel-, Cover- und Profilbilder liegen bei <strong>UploadThing</strong>
+            (Ping Labs, Inc., USA) und werden von dort ausgeliefert. Beim Laden
+            eines solchen Bildes wird deine IP-Adresse an diesen Dienst
+            übertragen; Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Hochladen
+            können ausschließlich angemeldete Personen mit Redaktionsrechten.
           </p>
+
+          <h2>Eingesetzte Dienste auf einen Blick</h2>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Dienst</th>
+                <th>Wofür</th>
+                <th>Sitz</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Vercel Inc.</td>
+                <td>Hosting der Website</td>
+                <td>USA</td>
+              </tr>
+              <tr>
+                <td>MongoDB, Inc. (Atlas)</td>
+                <td>Datenbank für Konten und Inhalte</td>
+                <td>USA / EU</td>
+              </tr>
+              <tr>
+                <td>Ping Labs, Inc. (UploadThing)</td>
+                <td>Speichern und Ausliefern von Bildern</td>
+                <td>USA</td>
+              </tr>
+              <tr>
+                <td>Discord Netherlands B.V.</td>
+                <td>Anmeldung mit Discord, Profilbilder</td>
+                <td>Niederlande</td>
+              </tr>
+              <tr>
+                <td>laut.fm GmbH</td>
+                <td>Ausstrahlung des Programms</td>
+                <td>Deutschland</td>
+              </tr>
+            </tbody>
+          </table>
 
           <h2>Keine automatisierte Entscheidungsfindung</h2>
           <p>
