@@ -132,6 +132,7 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
     items: [
       { href: "/news", label: "News" },
       { href: "/events", label: "Events" },
+      { href: "/radioaid", label: "RadioAid" },
       { href: "/suche", label: "Suche" },
     ],
   },

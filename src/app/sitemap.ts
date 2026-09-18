@@ -19,6 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/news", priority: 0.8, changeFrequency: "daily" as const },
     { path: "/moderatoren", priority: 0.7, changeFrequency: "weekly" as const },
     { path: "/events", priority: 0.7, changeFrequency: "weekly" as const },
+    { path: "/radioaid", priority: 0.7, changeFrequency: "weekly" as const },
     { path: "/community", priority: 0.6, changeFrequency: "monthly" as const },
     { path: "/ueber-uns", priority: 0.6, changeFrequency: "monthly" as const },
     { path: "/kontakt", priority: 0.5, changeFrequency: "yearly" as const },
