@@ -39,6 +39,13 @@ export default function DatenschutzPage() {
             <br />
             E-Mail: <a href={`mailto:${operator.email}`}>{operator.email}</a>
           </address>
+          {site.mailOutage && (
+            <p className={styles.note}>
+              Bitte nutze für Datenschutzanliegen genau diese Adresse. Unsere
+              Adressen auf voltfm.xyz und jannikjbi.de sind wegen eines
+              Serverausfalls derzeit nicht erreichbar.
+            </p>
+          )}
 
           <h2>Hosting und Server-Logfiles</h2>
           <p>
@@ -155,7 +162,8 @@ export default function DatenschutzPage() {
             Datenübertragbarkeit (Art. 20) und Widerspruch (Art. 21). Erteilte
             Einwilligungen kannst du jederzeit mit Wirkung für die Zukunft
             widerrufen. Melde dich dafür unter{" "}
-            <a href={`mailto:${operator.email}`}>{operator.email}</a>.
+            <a href={`mailto:${operator.email}`}>{operator.email}</a> oder
+            postalisch an die oben genannte Anschrift.
           </p>
           <p>
             Außerdem steht dir ein Beschwerderecht bei einer Aufsichtsbehörde zu,

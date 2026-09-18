@@ -43,7 +43,19 @@ export default function ImpressumPage() {
             E-Mail: <a href={`mailto:${operator.email}`}>{operator.email}</a>
             <br />
             Web: <a href={site.canonicalUrl}>voltfm.xyz</a>
+            <br />
+            Discord: <a href={site.discordUrl}>{site.discordUrl}</a>
           </p>
+          {site.mailOutage && (
+            <p className={styles.note}>
+              <strong>Hinweis zur Erreichbarkeit:</strong> Unser Mailserver für die
+              Adressen auf den Domains voltfm.xyz und jannikjbi.de ist derzeit
+              ausgefallen. Nachrichten an {site.stationEmail} oder{" "}
+              {site.legacyEmail} kommen nicht an. Die oben genannte Adresse{" "}
+              {operator.email} funktioniert und ist der verbindliche Weg für
+              rechtliche Anliegen.
+            </p>
+          )}
 
           <h2>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
           <address className={styles.address}>

@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import type { ArticleDTO } from "@/services/content";
+import { getCategoryNames, type ArticleDTO } from "@/services/content";
 import { formatDate, formatReadingTime } from "@/lib/format";
 import { ImagePlaceholder } from "@/components/common/image-placeholder";
 import styles from "./article-card.module.css";
@@ -18,7 +18,7 @@ import styles from "./article-card.module.css";
  *   wide    — a split layout for the lead item of a list
  *   compact — text-only row for sidebars and "read next"
  */
-export function ArticleCard({
+export async function ArticleCard({
   article,
   variant = "default",
   priority = false,
@@ -28,6 +28,10 @@ export function ArticleCard({
   priority?: boolean;
 }) {
   const published = article.publishedAt ? formatDate(article.publishedAt) : "";
+  /* Der Artikel speichert nur den Slug. Fuer das Badge braucht es den Namen —
+     "in-eigener-sache" ist keine Beschriftung. Faellt eine Kategorie weg,
+     bleibt der Slug als ehrlicher Rest stehen. */
+  const categoryName = (await getCategoryNames())[article.categorySlug] ?? article.categorySlug;
 
   return (
     <article className={styles.card} data-variant={variant}>
@@ -53,7 +57,7 @@ export function ArticleCard({
       <div className={styles.body}>
         <div className={styles.meta}>
           <Badge mode="lighter" size="sm" render={<Link href={`/news?kategorie=${article.categorySlug}`} />}>
-            {article.categorySlug}
+            {categoryName}
           </Badge>
           <time dateTime={article.publishedAt ?? undefined}>{published}</time>
         </div>

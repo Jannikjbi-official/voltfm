@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { ObjectId } from "mongodb";
 import { categories, events, hosts, shows } from "@/db/collections";
 import type { Category, Host, Show, VoltEvent } from "@/types/content";
@@ -27,6 +28,17 @@ export async function listCategories(): Promise<CategoryDTO[]> {
   return safe(async () => serializeAll(await categories().find().sort({ order: 1 }).toArray()), []);
 }
 
+/**
+ * Slug -> Anzeigename, fuer alles, was nur den Slug eines Artikels kennt.
+ *
+ * `cache` dedupliziert den Aufruf innerhalb eines Renderdurchlaufs: eine Liste
+ * mit zwanzig Artikelkarten stellt trotzdem genau eine Abfrage.
+ */
+export const getCategoryNames = cache(async (): Promise<Record<string, string>> => {
+  const list = await listCategories();
+  return Object.fromEntries(list.map((category) => [category.slug, category.name]));
+});
+
 export async function getCategoryBySlug(slug: string): Promise<CategoryDTO | null> {
   return safe(async () => {
     const doc = await categories().findOne({ slug });
@@ -49,9 +61,17 @@ export async function listHosts(includeInactive = false): Promise<HostDTO[]> {
   );
 }
 
+/**
+ * Public profile lookup.
+ *
+ * Only active hosts resolve: a profile that has been switched off in the admin
+ * disappears from the roster, so its URL has to 404 as well — otherwise the
+ * page stays reachable for anyone who kept the link. The admin reads through
+ * `adminGetHost` instead, which ignores the flag.
+ */
 export async function getHostBySlug(slug: string): Promise<HostDTO | null> {
   return safe(async () => {
-    const doc = await hosts().findOne({ slug });
+    const doc = await hosts().findOne({ slug, active: true });
     return doc ? serialize(doc) : null;
   }, null);
 }

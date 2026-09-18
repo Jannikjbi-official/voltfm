@@ -57,13 +57,13 @@ const categories = [
 
 const hosts = [
   {
-    slug: "jannik",
-    name: "Jannik",
+    slug: "jannikjbi",
+    name: "jannikjbi",
     profileLayout: "spotlight",
     accentHue: 251,
-    role: "Founder & Programmchef",
+    role: "Gründer & Programmchef",
     discordUserId: null,
-    bio: "Jannik hat VoltFM 2021 in seinem Jugendzimmer in Hamburg gestartet — mit einem geliehenen Mikrofon und der festen Überzeugung, dass Radio mehr sein kann als eine Playlist. Heute verantwortet er das Programm, kümmert sich um die Technik hinter dem Stream und steht dreimal pro Woche selbst am Mikrofon. Seine Sendungen leben von langen Musikstrecken und ehrlichen Zwischentönen.",
+    bio: "Jannik hat VoltFM 2021 in seinem Jugendzimmer in Oldenburg gestartet — mit einem geliehenen Mikrofon und der festen Überzeugung, dass Radio mehr sein kann als eine Playlist. Heute verantwortet er das Programm, kümmert sich um die Technik hinter dem Stream und steht dreimal pro Woche selbst am Mikrofon. Seine Sendungen leben von langen Musikstrecken und ehrlichen Zwischentönen.",
     showSlugs: ["volt-am-morgen", "volt-nacht"],
     socials: [
       { label: "Discord", url: "https://discord.gg/voltfm" },
@@ -72,11 +72,11 @@ const hosts = [
     active: true,
   },
   {
-    slug: "mochiko",
-    name: "Mochiko",
+    slug: "mochikotv",
+    name: "mochikotv",
     profileLayout: "stage",
     accentHue: 320,
-    role: "Co-Founderin & EDM",
+    role: "Co-Gründerin & EDM",
     discordUserId: "513032712240627733",
     bio: "Mochiko ist die zweite Hälfte von VoltFM. Sie war von Anfang an dabei, als der Sender noch aus einem Laptop und zu viel Koffein bestand, und verantwortet heute alles, was in Richtung EDM geht: Playlists, Sets, Specials. Ihr Anspruch an einen Track ist unbestechlich einfach — er muss um drei Uhr nachts das Potenzial haben, dass die Polizei wegen Ruhestörung klingelt. Wer ihre Sendung kennt, weiß: das ist keine Übertreibung.",
     showSlugs: ["volt-selection", "wochenendstart"],
@@ -115,12 +115,12 @@ const hosts = [
 /* --- Sendungen ----------------------------------------------------------- */
 
 const shows = [
-  { slug: "volt-am-morgen", title: "Volt am Morgen", description: "Wach werden mit Musik, die nicht schreit. Nachrichten aus der Community, Wetter für Hamburg und die drei Songs, die den Tag tragen.", hostSlugs: ["jannik"], weekday: 1, startTime: "07:00", endTime: "10:00" },
-  { slug: "volt-selection", title: "Volt Selection", description: "Mochiko öffnet die Musikredaktion: Neuerscheinungen, Wiederentdeckungen und die Songs, die es fast nicht in die Rotation geschafft hätten.", hostSlugs: ["mochiko"], weekday: 3, startTime: "19:00", endTime: "21:00" },
+  { slug: "volt-am-morgen", title: "Volt am Morgen", description: "Wach werden mit Musik, die nicht schreit. Nachrichten aus der Community, Wetter für Oldenburg und die drei Songs, die den Tag tragen.", hostSlugs: ["jannikjbi"], weekday: 1, startTime: "07:00", endTime: "10:00" },
+  { slug: "volt-selection", title: "Volt Selection", description: "Mochiko öffnet die Musikredaktion: Neuerscheinungen, Wiederentdeckungen und die Songs, die es fast nicht in die Rotation geschafft hätten.", hostSlugs: ["mochikotv"], weekday: 3, startTime: "19:00", endTime: "21:00" },
   { slug: "community-hour", title: "Community Hour", description: "Eure Wünsche, eure Grüße, eure Playlist. Mira liest live aus dem Discord vor und spielt, was ihr schickt.", hostSlugs: ["mira"], weekday: 4, startTime: "18:00", endTime: "19:30" },
   { slug: "pixel-und-pegel", title: "Pixel & Pegel", description: "Game-Soundtracks, Elektronik und ein Blick auf die Technik dahinter. Tobi erklärt, was im Studio passiert.", hostSlugs: ["tobi"], weekday: 2, startTime: "20:00", endTime: "22:00" },
-  { slug: "wochenendstart", title: "Wochenendstart", description: "Freitagabend, Lautstärke hoch. Zwei Stunden Musik zum Aufdrehen — und die Ansage, was am Wochenende bei VoltFM läuft.", hostSlugs: ["mochiko"], weekday: 5, startTime: "20:00", endTime: "23:00" },
-  { slug: "volt-nacht", title: "Volt Nacht", description: "Leise Musik für lange Nächte. Ambient, Slowcore und ruhige Elektronik ohne Werbeunterbrechung.", hostSlugs: ["jannik"], weekday: 6, startTime: "23:00", endTime: "02:00" },
+  { slug: "wochenendstart", title: "Wochenendstart", description: "Freitagabend, Lautstärke hoch. Zwei Stunden Musik zum Aufdrehen — und die Ansage, was am Wochenende bei VoltFM läuft.", hostSlugs: ["mochikotv"], weekday: 5, startTime: "20:00", endTime: "23:00" },
+  { slug: "volt-nacht", title: "Volt Nacht", description: "Leise Musik für lange Nächte. Ambient, Slowcore und ruhige Elektronik ohne Werbeunterbrechung.", hostSlugs: ["jannikjbi"], weekday: 6, startTime: "23:00", endTime: "02:00" },
 ];
 
 /* --- Artikel ------------------------------------------------------------- */
@@ -133,7 +133,7 @@ const articles = [
       "Zwei neue Sendungen, ein verschobener Klassiker und mehr Platz für die Community — wir haben das Programm für den Herbst umgebaut.",
     categorySlug: "voltfm",
     tags: ["Sendeplan", "Programm", "Herbst"],
-    authorName: "Jannik",
+    authorName: "jannikjbi",
     featured: true,
     publishedAt: daysAgo(2),
     content: `<p>Seit dem Sommer haben wir in der Redaktion über einer Frage gebrütet: Wie bekommen wir mehr Community in ein Programm, das ohnehin schon 24 Stunden am Tag läuft? Die Antwort ist ein Sendeplan, der ab dem 1. Oktober an einigen Stellen deutlich anders aussieht.</p>
@@ -168,17 +168,17 @@ const articles = [
   },
   {
     slug: "voltfm-zieht-nach-hamburg",
-    title: "VoltFM sendet jetzt aus Hamburg",
+    title: "VoltFM sendet jetzt aus Oldenburg",
     excerpt:
       "Neues Studio, neue Stadt, gleicher Sender: Warum wir umgezogen sind und was sich für euch ändert — nämlich fast nichts.",
     categorySlug: "voltfm",
-    tags: ["Hamburg", "Studio", "In eigener Sache"],
-    authorName: "Jannik",
+    tags: ["Oldenburg", "Studio", "In eigener Sache"],
+    authorName: "jannikjbi",
     featured: false,
     publishedAt: daysAgo(8),
-    content: `<p>Es gibt Nachrichten, die klingen größer, als sie sind. Diese hier ist eine davon: VoltFM sendet ab sofort aus Hamburg.</p>
+    content: `<p>Es gibt Nachrichten, die klingen größer, als sie sind. Diese hier ist eine davon: VoltFM sendet ab sofort aus Oldenburg.</p>
 <h2>Warum</h2>
-<p>Der Umzug hatte wenig mit dem Sender und viel mit dem Leben zu tun. Als klar war, dass ich nach Hamburg gehe, war die einzige ernsthafte Frage, wie wir das Studio mitnehmen. Die Antwort: in vier Kisten und einem Kofferraum.</p>
+<p>Der Umzug hatte wenig mit dem Sender und viel mit dem Leben zu tun. Als klar war, dass ich nach Oldenburg gehe, war die einzige ernsthafte Frage, wie wir das Studio mitnehmen. Die Antwort: in vier Kisten und einem Kofferraum.</p>
 <h2>Was sich ändert</h2>
 <p>Für euch: praktisch nichts. Der Stream läuft unter derselben Adresse, der Sendeplan bleibt, die Stimmen bleiben. Was sich ändert, ist die Akustik — der neue Raum ist kleiner und deutlich trockener, was dem Sound guttut.</p>
 <h2>Was wir mitgenommen haben</h2>
@@ -211,7 +211,7 @@ const articles = [
       "Ambient, Slowcore und ruhige Elektronik: die Auswahl, die gerade regelmäßig durch die Volt Nacht läuft.",
     categorySlug: "musik",
     tags: ["Playlist", "Volt Nacht", "Ambient"],
-    authorName: "Jannik",
+    authorName: "jannikjbi",
     featured: false,
     publishedAt: daysAgo(21),
     content: `<p>Die Volt Nacht hat eine einfache Regel: nichts, was weckt. Was bleibt, ist ein überraschend großes Feld — hier zehn Stücke, die gerade besonders oft laufen.</p>
@@ -315,7 +315,7 @@ const articles = [
       "Playlists kennen euren Geschmack besser als wir. Trotzdem schalten jeden Tag Menschen ein. Ein Text darüber, was Radio kann, was Algorithmen nicht können.",
     categorySlug: "radio",
     tags: ["Meinung", "Radio", "Community"],
-    authorName: "Jannik",
+    authorName: "jannikjbi",
     featured: false,
     publishedAt: daysAgo(18),
     content: `<p>Es gibt ein Argument gegen Radio, das schwer zu widerlegen ist: Ein Algorithmus kennt euren Geschmack besser als jede Redaktion. Er weiß, welchen Song ihr übersprungen habt und welchen ihr dreimal hintereinander gehört habt.</p>
@@ -331,7 +331,7 @@ const articles = [
       "Ein Blick auf die Roadmap: Favoriten, Benachrichtigungen zum Sendungsstart und ein Archiv zum Nachhören.",
     categorySlug: "voltfm",
     tags: ["Roadmap", "Entwicklung"],
-    authorName: "Jannik",
+    authorName: "jannikjbi",
     featured: false,
     publishedAt: daysAgo(25),
     content: `<p>Die neue Website ist erst der Anfang. Drei Dinge stehen als Nächstes an, und alle drei kommen aus eurem Feedback.</p>
@@ -421,11 +421,11 @@ const events = [
   {
     slug: "sommerfest-2026",
     title: "VoltFM Sommerfest",
-    description: "Das erste Treffen außerhalb des Internets: Community-Abend in Hamburg mit Live-Sendung vor Ort.",
-    content: "<p>Rund vierzig Leute aus dem Discord kamen tatsächlich nach Hamburg. Die Sendung lief drei Stunden live vom Gelände.</p>",
+    description: "Das erste Treffen außerhalb des Internets: Community-Abend in Oldenburg mit Live-Sendung vor Ort.",
+    content: "<p>Rund vierzig Leute aus dem Discord kamen tatsächlich nach Oldenburg. Die Sendung lief drei Stunden live vom Gelände.</p>",
     startsAt: daysAgo(64),
     endsAt: daysAgo(64),
-    location: "Hamburg",
+    location: "Oldenburg",
     category: "Community",
     status: "past",
   },

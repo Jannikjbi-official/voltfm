@@ -3,6 +3,12 @@
  * CMS and not secret lives here so pages never hardcode strings.
  */
 
+/**
+ * Die eine Adresse, die erreichbar ist. Bewusst ausserhalb der eigenen Domain,
+ * weil deren Mailserver ausgefallen ist.
+ */
+const operatorEmail = "Jannikjbi@proton.me";
+
 export const site = {
   name: "VoltFM",
   tagline: "Dein Sound. Deine Community. Dein Radio.",
@@ -22,15 +28,36 @@ export const site = {
   discordUrl: process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/voltfm",
   streamUrl:
     process.env.NEXT_PUBLIC_RADIO_STREAM_URL ?? "https://stream.laut.fm/jannikjbi",
-  /** Reachable contact address. Used in the Impressum, where it is required. */
-  contactEmail: "admin@jannikjbi.de",
   /**
-   * The station address. The mailbox behind it is currently unreachable — the
-   * mail server is down and a replacement is being set up — so every place
-   * that shows it also has to show `mailOutage` below.
+   * Die erreichbare Kontaktadresse. § 5 DDG verlangt die Angabe einer
+   * E-Mail-Adresse, und sie muss tatsaechlich funktionieren — deshalb steht
+   * hier die Proton-Adresse und nicht eine auf der eigenen Domain.
+   */
+  contactEmail: operatorEmail,
+  /**
+   * Die Adressen auf der eigenen Domain. Der Mailserver dahinter ist komplett
+   * ausgefallen, keine davon empfaengt derzeit Nachrichten.
    */
   stationEmail: "Kontakt@voltfm.xyz",
+  legacyEmail: "admin@jannikjbi.de",
+  /**
+   * Solange das true ist, darf keine Stelle im UI eine @voltfm.xyz- oder
+   * @jannikjbi.de-Adresse als funktionierenden Weg anbieten. Erreichbar sind
+   * `contactEmail` und der Discord.
+   */
   mailOutage: true,
+  /**
+   * Ist das Kontaktformular aktiv?
+   *
+   * Nein: Anfragen laufen ueber ein Ticket im Discord. Dort sieht sie das
+   * ganze Team, es kann direkt jemand antworten, und es geht nichts unter,
+   * weil niemand in die Datenbank schaut. Die Server Action lehnt Einsendungen
+   * ebenfalls ab, solange das hier false ist — ein ausgeblendetes Formular
+   * haelt einen direkten POST nicht auf.
+   */
+  contactFormEnabled: false,
+  /** Wo im Discord das Ticket aufgemacht wird. */
+  supportChannelHint: "Kanal #ticket-erstellen",
   /** laut.fm station slug — drives every metadata endpoint. */
   station: process.env.NEXT_PUBLIC_RADIO_STATION ?? "jannikjbi",
 } as const;
@@ -70,7 +97,7 @@ export const operator = {
   postalCode: "26127",
   city: "Oldenburg (Oldb)",
   country: "Deutschland",
-  email: "admin@jannikjbi.de",
+  email: operatorEmail,
 } as const;
 
 export type NavItem = {

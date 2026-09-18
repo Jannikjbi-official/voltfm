@@ -165,3 +165,63 @@
   text-underline-offset: 3px;
   overflow-wrap: anywhere;
 }
+
+/* --- Ticket-Hinweis (Formular deaktiviert) -------------------------------- */
+
+.ticket {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-16);
+  padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-container-low);
+}
+
+.ticketIcon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-circled);
+  background: var(--color-surface-container-high);
+  color: var(--color-primary);
+  font-size: 1.25rem;
+}
+
+.ticketTitle {
+  font: var(--type-h3);
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.ticketText {
+  font: var(--type-body);
+  color: var(--color-text-secondary);
+  max-width: 58ch;
+}
+
+.ticketSteps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+  padding-left: var(--spacing-20);
+  margin: 0;
+  font: var(--type-small);
+  color: var(--color-text-secondary);
+  max-width: 58ch;
+}
+
+.ticketSteps li::marker {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.ticketFallback {
+  font: var(--type-caption);
+  color: var(--color-text-muted);
+  padding-top: var(--spacing-12);
+  border-top: 1px solid var(--color-border);
+  width: 100%;
+}

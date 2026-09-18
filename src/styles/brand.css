@@ -23,6 +23,17 @@
   --base-chroma: 0.0749;
   --base-hue: 251.33;
 
+  /* --- Fehlende Schritte der Abstandsskala ---------------------------------
+     OlyxUI definiert 0, 2, 4, 6, 8, 10, 12, 14, 16, 24, 32, 48, 64 — zwischen
+     16 und 24 klafft also eine Lücke. Ein `var(--spacing-20)` ohne Definition
+     macht die ganze Kurzschreibweise ungültig, und `padding` fällt
+     kommentarlos auf 0 zurück. Deshalb hier einmal ergänzt statt überall
+     einen Fallback mitzuschleppen. */
+  --spacing-18: 18px;
+  --spacing-20: 20px;
+  --spacing-28: 28px;
+  --spacing-40: 40px;
+
   /* Analogous harmony keeps secondary/tertiary inside the VoltFM blue family
      rather than swinging to a clashing complementary hue. */
   --secondary-offset: 26;

@@ -5,6 +5,7 @@ import { ButtonLink } from "@/components/common/button-link";
 import { Icon, DiscordIcon } from "@/lib/icons";
 import { operator, site } from "@/lib/site";
 import { ContactForm } from "./contact-form";
+import { TicketPanel } from "./ticket-panel";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -20,7 +21,7 @@ export default function KontaktPage() {
       <PageHeader
         eyebrow="Kontakt"
         title="Schreib uns"
-        description="Feedback, Songvorschläge, Kooperationen oder eine Presseanfrage — hier landet alles direkt bei der Redaktion."
+        description="Feedback, Songwünsche, Kooperationen oder eine Presseanfrage — am schnellsten geht es über ein Ticket in unserem Discord."
         breadcrumbs={[
           { href: "/", label: "Start" },
           { href: "/kontakt", label: "Kontakt" },
@@ -32,26 +33,28 @@ export default function KontaktPage() {
           <div className={styles.notice} role="status">
             <h2 className={styles.noticeTitle}>Unsere E-Mail ist gerade nicht erreichbar</h2>
             <p className={styles.noticeText}>
-              Der Mailserver hinter <strong>{site.stationEmail}</strong> ist
-              ausgefallen, und wir suchen gerade nach einem neuen Anbieter.
-              Nachrichten an diese Adresse kommen aktuell <strong>nicht</strong> bei
-              uns an. Nutze so lange das Formular hier — das landet direkt in
-              unserer Datenbank — oder schreib uns im Discord.
+              Unser Mailserver ist ausgefallen: Nachrichten an{" "}
+              <strong>{site.stationEmail}</strong> und{" "}
+              <strong>{site.legacyEmail}</strong> kommen derzeit{" "}
+              <strong>nicht</strong> bei uns an. Wir richten gerade einen neuen
+              Anbieter ein. Nimm für alles Alltägliche den Discord — dort geht
+              nichts verloren.
             </p>
           </div>
         )}
 
         <div className={styles.layout}>
           <div className={styles.formColumn}>
-            <ContactForm />
+            {site.contactFormEnabled ? <ContactForm /> : <TicketPanel />}
           </div>
 
           <aside className={styles.side}>
             <div className={styles.sideBlock}>
-              <h2 className={styles.sideTitle}>Schneller geht es im Discord</h2>
+              <h2 className={styles.sideTitle}>Warum über Discord?</h2>
               <p className={styles.sideText}>
-                Für Songwünsche und alles Kurzfristige ist der Discord der
-                direktere Weg — dort ist meistens jemand von uns online.
+                Wir sind ein kleines Team und kein Callcenter. Im Discord sieht
+                eine Anfrage jeder von uns, statt in einem Postfach zu liegen, in
+                das gerade niemand schaut.
               </p>
               <ButtonLink
                 href={site.discordUrl}
@@ -76,21 +79,21 @@ export default function KontaktPage() {
             <div className={styles.sideBlock}>
               <h2 className={styles.sideTitle}>E-Mail</h2>
               <p className={styles.sideText}>
-                Rechtliches und alles, was schriftlich sein muss, erreicht uns
-                unter{" "}
+                Für Rechtliches, Datenschutz und alles, was schriftlich sein muss,
+                erreichst du uns unter{" "}
                 <a href={`mailto:${operator.email}`} className={styles.sideLink}>
                   {operator.email}
                 </a>
-                . Diese Adresse funktioniert, auch während der Mailserver für{" "}
-                {site.stationEmail} ausfällt.
+                . Diese Adresse funktioniert, auch während unser eigener
+                Mailserver ausfällt.
               </p>
             </div>
 
             <div className={styles.sideBlock}>
               <h2 className={styles.sideTitle}>Presse</h2>
               <p className={styles.sideText}>
-                Für Interviews und Pressematerial schreib uns über das Formular
-                mit dem Betreff &bdquo;Presse&ldquo;. Wir melden uns mit allem, was du
+                Für Interviews und Pressematerial öffne bitte ein Ticket mit dem
+                Stichwort &bdquo;Presse&ldquo;. Wir melden uns dort mit allem, was du
                 brauchst.
               </p>
             </div>

@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import { contactMessages } from "@/db/collections";
 import { clientKey, rateLimit } from "@/lib/rate-limit";
+import { site } from "@/lib/site";
 
 /**
  * Contact form submission.
@@ -38,6 +39,17 @@ export async function submitContact(
   _prev: ContactState,
   formData: FormData,
 ): Promise<ContactState> {
+  /* Das Formular ist abgeschaltet, Anfragen laufen ueber Discord. Die Pruefung
+     steht hier und nicht nur in der Oberflaeche: eine Server Action ist ein
+     POST, den man auch ohne unser Formular abschicken kann. */
+  if (!site.contactFormEnabled) {
+    return {
+      status: "error",
+      message:
+        "Das Kontaktformular ist derzeit deaktiviert. Bitte oeffne ein Ticket in unserem Discord.",
+    };
+  }
+
   const parsed = contactSchema.safeParse({
     name: formData.get("name"),
     email: formData.get("email"),
