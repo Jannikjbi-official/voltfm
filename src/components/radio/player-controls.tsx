@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
@@ -12,7 +11,6 @@ import {
   VolumeLowIcon,
   VolumeMuteIcon,
   LoadingIcon,
-  ExternalLinkIcon,
 } from "@/lib/icons";
 import { radio } from "@/lib/site";
 import { useRadioPlayer } from "./player-provider";
@@ -25,7 +23,8 @@ import styles from "./player.module.css";
  * than a transport control — laut.fm's terms allow linking, not embedding.
  */
 export function PlayButton({ size = "md" }: { size?: "md" | "lg" }) {
-  const { status, isPlaying, toggle, retry, embedAllowed, externalUrl } = useRadioPlayer();
+  const { status, isPlaying, toggle, retry, embedAllowed, externalUrl, openStream } =
+    useRadioPlayer();
 
   if (!embedAllowed) {
     const label = `Auf ${radio.providerName} hören (öffnet ein neues Fenster)`;
@@ -33,6 +32,9 @@ export function PlayButton({ size = "md" }: { size?: "md" | "lg" }) {
       <Tooltip>
         <TooltipTrigger
           render={
+            /* Bleibt ein echter Link: Mittelklick, Strg-Klick und "Adresse
+               kopieren" sollen weiter funktionieren. Nur der normale Klick wird
+               abgefangen, damit vorher der Hinweis erscheint. */
             <a
               href={externalUrl}
               target="_blank"
@@ -40,6 +42,13 @@ export function PlayButton({ size = "md" }: { size?: "md" | "lg" }) {
               aria-label={label}
               data-player-size={size}
               className={styles.externalPlay}
+              onClick={(event) => {
+                if (event.defaultPrevented) return;
+                if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                if (event.button !== 0) return;
+                event.preventDefault();
+                openStream();
+              }}
             >
               <Icon icon={PlayIcon} />
             </a>
@@ -164,19 +173,15 @@ export function PlayerStatusLine() {
  * bar only gets the button.
  */
 export function StreamNotice() {
-  const { embedAllowed, externalUrl, consent, revokeConsent } = useRadioPlayer();
+  const { embedAllowed, consent, revokeConsent } = useRadioPlayer();
 
+  /* Alles zur Weiterleitung steht im Hinweis, der vor dem Verlassen der Seite
+     erscheint — hier reicht die Ansage, was einen erwartet. */
   if (!embedAllowed) {
     return (
       <p className={styles.notice}>
-        VoltFM sendet über{" "}
-        <a href={externalUrl} target="_blank" rel="noreferrer noopener">
-          {radio.providerName}
-          <Icon icon={ExternalLinkIcon} />
-        </a>
-        . Der Play-Button öffnet dort ein neues Fenster — vorher wird nichts
-        dorthin übertragen. Details im{" "}
-        <Link href="/datenschutz">Datenschutz</Link>.
+        Rund um die Uhr auf Sendung, ohne Werbeunterbrechung — moderiert von
+        Menschen, die selbst zuhören.
       </p>
     );
   }

@@ -83,3 +83,20 @@
     width: 100%;
   }
 }
+
+.remember {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  font: var(--type-small);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.remember input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}

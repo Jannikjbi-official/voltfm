@@ -17,6 +17,9 @@ config({ path: ".env" });
 const uri = process.env.MONGODB_URI ?? "mongodb://127.0.0.1:27017/voltfm";
 const dbName = process.env.MONGODB_DB ?? "voltfm";
 
+/** Einladungslink zum Discord. Wird in der Produktion per Env gesetzt. */
+const DISCORD_URL = process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/6JzSsUTWuh";
+
 const client = new MongoClient(uri);
 await client.connect();
 const db = client.db(dbName);
@@ -62,11 +65,11 @@ const hosts = [
     profileLayout: "spotlight",
     accentHue: 251,
     role: "Gründer & Programmchef",
-    discordUserId: null,
+    discordUserId: "810459620035657769",
     bio: "Jannik hat VoltFM 2021 in seinem Jugendzimmer in Hamburg gestartet — mit einem geliehenen Mikrofon und der festen Überzeugung, dass Radio mehr sein kann als eine Playlist. Heute verantwortet er das Programm, kümmert sich um die Technik hinter dem Stream und steht dreimal pro Woche selbst am Mikrofon. Seine Sendungen leben von langen Musikstrecken und ehrlichen Zwischentönen.",
     showSlugs: ["volt-am-morgen", "volt-nacht"],
     socials: [
-      { label: "Discord", url: "https://discord.gg/voltfm" },
+      { label: "Discord", url: DISCORD_URL },
     ],
     order: 1,
     active: true,
@@ -80,7 +83,7 @@ const hosts = [
     discordUserId: "513032712240627733",
     bio: "Mochiko ist die zweite Hälfte von VoltFM. Sie war von Anfang an dabei, als der Sender noch aus einem Laptop und zu viel Koffein bestand, und verantwortet heute alles, was in Richtung EDM geht: Playlists, Sets, Specials. Ihr Anspruch an einen Track ist unbestechlich einfach — er muss um drei Uhr nachts das Potenzial haben, dass die Polizei wegen Ruhestörung klingelt. Wer ihre Sendung kennt, weiß: das ist keine Übertreibung.",
     showSlugs: ["volt-selection", "wochenendstart"],
-    socials: [{ label: "Discord", url: "https://discord.gg/voltfm" }],
+    socials: [{ label: "Discord", url: DISCORD_URL }],
     order: 2,
     active: true,
   },
@@ -93,7 +96,7 @@ const hosts = [
     discordUserId: null,
     bio: "Mira moderiert die Community-Sendung und organisiert die VoltFM-Events. Sie sorgt dafür, dass aus Hörerinnen und Hörern Mitwirkende werden: Songwünsche, Grußbotschaften und die monatlichen Community-Abende laufen über ihren Tisch.",
     showSlugs: ["community-hour"],
-    socials: [{ label: "Discord", url: "https://discord.gg/voltfm" }],
+    socials: [{ label: "Discord", url: DISCORD_URL }],
     order: 3,
     active: true,
   },
@@ -106,7 +109,7 @@ const hosts = [
     discordUserId: null,
     bio: "Tobi verbindet zwei Leidenschaften: Spiele-Soundtracks und Studiotechnik. In seiner Sendung laufen Kompositionen aus Games neben Elektronik und Ambient, dazwischen erklärt er, warum ein Stream eigentlich klingt, wie er klingt.",
     showSlugs: ["pixel-und-pegel"],
-    socials: [{ label: "Discord", url: "https://discord.gg/voltfm" }],
+    socials: [{ label: "Discord", url: DISCORD_URL }],
     order: 4,
     active: true,
   },
@@ -394,7 +397,7 @@ const events = [
     location: "VoltFM Discord",
     category: "Community",
     status: "upcoming",
-    url: "https://discord.gg/voltfm",
+    url: DISCORD_URL,
   },
   {
     slug: "volt-nacht-special",
@@ -485,7 +488,7 @@ await db.collection("settings").updateOne(
     $set: {
       key: "site",
       streamUrl: process.env.NEXT_PUBLIC_RADIO_STREAM_URL ?? "https://stream.laut.fm/jannikjbi",
-      discordUrl: process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/voltfm",
+      discordUrl: DISCORD_URL,
       updatedAt: now,
     },
   },

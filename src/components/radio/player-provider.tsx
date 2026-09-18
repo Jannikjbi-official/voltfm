@@ -31,6 +31,8 @@ import { StreamConsentDialog } from "./stream-consent";
 const VOLUME_KEY = "voltfm-volume";
 const MUTED_KEY = "voltfm-muted";
 const CONSENT_KEY = "voltfm-stream-consent";
+/** Merkt sich, dass der Hinweis vor der Weiterleitung nicht mehr noetig ist. */
+const REDIRECT_ACK_KEY = "voltfm-stream-redirect-ack";
 /** How often to re-poll laut.fm for track/show metadata. */
 const METADATA_INTERVAL_MS = 20_000;
 
@@ -49,6 +51,8 @@ interface PlayerContextValue {
   consent: boolean | null;
   grantConsent: () => void;
   revokeConsent: () => void;
+  /** Oeffnet den Hinweis vor der Weiterleitung (bzw. geht direkt, wenn abbestellt). */
+  openStream: () => void;
   play: () => void;
   pause: () => void;
   toggle: () => void;
@@ -76,6 +80,8 @@ export function RadioPlayerProvider({
   const [snapshot, setSnapshot] = useState<RadioSnapshot | null>(initialSnapshot);
   const [consent, setConsent] = useState<boolean | null>(null);
   const [asking, setAsking] = useState(false);
+  const [leaving, setLeaving] = useState(false);
+  const [rememberLeave, setRememberLeave] = useState(false);
   /* Set when the listener pressed play before consenting, so accepting starts
      playback instead of making them press play a second time. */
   const playAfterConsent = useRef(false);
@@ -95,6 +101,7 @@ export function RadioPlayerProvider({
       }
       if (storedMuted !== null) setMuted(storedMuted === "true");
       setConsent(localStorage.getItem(CONSENT_KEY) === "granted");
+      setRememberLeave(localStorage.getItem(REDIRECT_ACK_KEY) === "1");
     } catch {
       // Storage unavailable — defaults are fine, and no stored consent means
       // we ask again, which is the safe direction.
@@ -145,9 +152,21 @@ export function RadioPlayerProvider({
     window.open(radio.externalUrl, "_blank", "noopener,noreferrer");
   }, []);
 
+  /**
+   * Der Weg nach draussen. Beim ersten Mal kommt der Hinweis, danach nur noch,
+   * wenn der Haken nicht gesetzt wurde.
+   */
+  const openStream = useCallback(() => {
+    if (rememberLeave) {
+      openExternal();
+      return;
+    }
+    setLeaving(true);
+  }, [openExternal, rememberLeave]);
+
   const play = useCallback(() => {
     if (!radio.embedAllowed) {
-      openExternal();
+      openStream();
       return;
     }
     if (consent !== true) {
@@ -156,7 +175,7 @@ export function RadioPlayerProvider({
       return;
     }
     connect();
-  }, [connect, consent, openExternal]);
+  }, [connect, consent, openStream]);
 
   const pause = useCallback(() => stop(), [stop]);
 
@@ -272,6 +291,7 @@ export function RadioPlayerProvider({
       consent,
       grantConsent,
       revokeConsent,
+      openStream,
       play,
       pause,
       toggle,
@@ -289,6 +309,7 @@ export function RadioPlayerProvider({
       consent,
       grantConsent,
       revokeConsent,
+      openStream,
       play,
       pause,
       toggle,
@@ -324,13 +345,36 @@ export function RadioPlayerProvider({
         </audio>
       )}
 
+      {/* Einwilligung vor dem Verbinden — nur relevant, wenn eingebettet wird. */}
       <StreamConsentDialog
         open={asking}
+        mode="embed"
         onAccept={grantConsent}
         onDecline={() => {
           playAfterConsent.current = false;
           setAsking(false);
         }}
+      />
+
+      {/* Hinweis vor der Weiterleitung zum Anbieter. */}
+      <StreamConsentDialog
+        open={leaving}
+        mode="redirect"
+        remember={rememberLeave}
+        onRememberChange={(next) => {
+          setRememberLeave(next);
+          try {
+            if (next) localStorage.setItem(REDIRECT_ACK_KEY, "1");
+            else localStorage.removeItem(REDIRECT_ACK_KEY);
+          } catch {
+            /* ignore — gilt dann nur fuer diesen Seitenaufruf */
+          }
+        }}
+        onAccept={() => {
+          setLeaving(false);
+          openExternal();
+        }}
+        onDecline={() => setLeaving(false)}
       />
 
       {children}

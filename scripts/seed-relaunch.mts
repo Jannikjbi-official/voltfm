@@ -27,6 +27,9 @@ config({ path: ".env" });
 const uri = process.env.MONGODB_URI ?? "mongodb://127.0.0.1:27017/voltfm";
 const dbName = process.env.MONGODB_DB ?? "voltfm";
 
+/** Einladungslink zum Discord. Wird in der Produktion per Env gesetzt. */
+const DISCORD_URL = process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/6JzSsUTWuh";
+
 const now = new Date();
 
 /* --- Gruenderprofile ------------------------------------------------------ */
@@ -68,10 +71,10 @@ const HOSTS = [
     profileLayout: "spotlight",
     accentHue: 251,
     role: "Gründer & Programmchef",
-    discordUserId: null,
+    discordUserId: "810459620035657769",
     bio: "Jannik hat VoltFM 2021 in seinem Jugendzimmer in Hamburg gestartet — mit einem geliehenen Mikrofon und der festen Überzeugung, dass Radio mehr sein kann als eine Playlist. Von ihm stammt auch die laut.fm-Station, über die VoltFM heute sendet: Sie läuft seit den ersten Tagen unter seinem Handle. Heute verantwortet er das Programm, kümmert sich um die Technik hinter dem Stream und steht regelmäßig selbst am Mikrofon. Seine Sendungen leben von langen Musikstrecken und ehrlichen Zwischentönen.",
     showSlugs: ["volt-am-morgen", "volt-nacht"],
-    socials: [{ label: "Discord", url: "https://discord.gg/voltfm" }],
+    socials: [{ label: "Discord", url: DISCORD_URL }],
     order: 1,
     active: true,
     image: null,
@@ -85,7 +88,7 @@ const HOSTS = [
     discordUserId: "513032712240627733",
     bio: "Mochiko ist die zweite Hälfte von VoltFM. Sie war von Anfang an dabei, als der Sender noch aus einem Laptop und zu viel Koffein bestand, und verantwortet heute alles, was in Richtung EDM geht: Playlists, Sets, Specials. Ihr Anspruch an einen Track ist unbestechlich einfach — er muss um drei Uhr nachts das Potenzial haben, dass die Polizei wegen Ruhestörung klingelt. Wer ihre Sendung kennt, weiß: das ist keine Übertreibung.",
     showSlugs: ["volt-selection", "wochenendstart"],
-    socials: [{ label: "Discord", url: "https://discord.gg/voltfm" }],
+    socials: [{ label: "Discord", url: DISCORD_URL }],
     order: 2,
     active: true,
     image: null,
@@ -190,6 +193,13 @@ try {
       if (typeof current === "string" && current !== rest[field] && isMachineWritten(current, rest[field])) {
         patch[field] = rest[field];
       }
+    }
+
+    /* Die Discord-ID gab es in der ersten Fassung noch nicht. Ein leeres Feld
+       zu fuellen nimmt niemandem etwas weg; eine bereits eingetragene ID
+       bleibt unangetastet. */
+    if (rest.discordUserId && !existing.discordUserId) {
+      patch.discordUserId = rest.discordUserId;
     }
 
     if (Object.keys(patch).length > 0) {

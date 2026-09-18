@@ -52,8 +52,11 @@ export async function fetchDiscordAvatar(
   try {
     const res = await fetch(`${DISCORD_API}/users/${userId}`, {
       headers: { Authorization: `Bot ${token}` },
-      // Avatars change rarely; a day of caching keeps us well inside the
-      // Discord rate limit.
+      /* Avatars change rarely; a day of caching keeps us well inside the
+         Discord rate limit. Achtung: gecacht wird die Antwort, auch eine
+         fehlgeschlagene. Fehlt der Token, merkt sich der Cache die 401 und das
+         Profilbild bleibt bis zu einen Tag lang leer — nach dem Nachtragen des
+         Tokens also einmal neu deployen. */
       next: { revalidate: 86_400 },
       signal: AbortSignal.timeout(5000),
     });

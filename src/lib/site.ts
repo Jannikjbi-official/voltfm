@@ -25,7 +25,7 @@ export const site = {
    * actual online offering, so it uses this instead.
    */
   canonicalUrl: "https://voltfm.xyz",
-  discordUrl: process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/voltfm",
+  discordUrl: process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/6JzSsUTWuh",
   streamUrl:
     process.env.NEXT_PUBLIC_RADIO_STREAM_URL ?? "https://stream.laut.fm/jannikjbi",
   /**
