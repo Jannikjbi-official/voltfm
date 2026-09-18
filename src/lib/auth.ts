@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { admin, username } from "better-auth/plugins";
 import { passkey } from "@better-auth/passkey";
+import { dash } from "@better-auth/infra";
 import { nextCookies } from "better-auth/next-js";
 import { getDb, getMongoClient } from "@/db/client";
 import { serverEnv, isProduction } from "@/lib/env";
@@ -120,6 +121,12 @@ export const auth = betterAuth({
       rpName: site.name,
       origin: serverEnv.authUrl,
     }),
+
+    /* Better Auth Dash — Dashboard und Analytics.
+       Liest den Schlüssel aus BETTER_AUTH_API_KEY. Das Dashboard verifiziert
+       darüber die Eigentümerschaft an dieser Instanz, deshalb muss der
+       Schlüssel auch in der Deployment-Umgebung gesetzt sein, nicht nur lokal. */
+    dash(),
 
     // Must stay last: lets server actions set auth cookies.
     nextCookies(),

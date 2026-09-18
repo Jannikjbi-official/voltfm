@@ -26,8 +26,25 @@ export const serverEnv = {
   get authSecret() {
     return required("BETTER_AUTH_SECRET");
   },
+  /**
+   * The public base URL Better Auth signs callbacks and cookies against.
+   *
+   * Order matters: an explicit BETTER_AUTH_URL always wins. On Vercel we fall
+   * back to the project's own domain, because defaulting to localhost in a
+   * deployment would break OAuth callbacks, passkey rpID and cookie scope.
+   */
   get authUrl() {
-    return process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
+    if (process.env.BETTER_AUTH_URL) return process.env.BETTER_AUTH_URL;
+
+    const vercelHost =
+      process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL;
+    if (vercelHost) return `https://${vercelHost}`;
+
+    return "http://localhost:3000";
+  },
+  /** Better Auth Dash (@better-auth/infra) reads this for dashboard access. */
+  get authApiKey() {
+    return process.env.BETTER_AUTH_API_KEY ?? "";
   },
   get discordClientId() {
     return process.env.DISCORD_CLIENT_ID ?? "";
