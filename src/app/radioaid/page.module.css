@@ -330,14 +330,16 @@
   min-width: 0;
 }
 
-.entryOrg {
+.entryTitle {
   font: var(--type-body);
-  color: var(--color-text-secondary);
+  font-weight: 700;
+  color: var(--color-text);
 }
 
-.entryOrg strong {
-  color: var(--color-text);
-  font-weight: 700;
+/* Der Empfaenger ist Einordnung, nicht die Aussage des Eintrags. */
+.entryOrg {
+  font: var(--type-caption);
+  color: var(--color-text-muted);
 }
 
 .entryNote {

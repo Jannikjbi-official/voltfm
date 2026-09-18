@@ -27,23 +27,34 @@ const BROADCAST = {
 } as const;
 
 /**
- * Die Ausgaben, bei denen VoltFM dabei war — RadioAid selbst laeuft schon
- * laenger. Empfaenger uebernommen aus dem RadioAid-Blog; aendert sich dort
- * etwas, muss es hier nachgezogen werden.
+ * Unser eigener Weg mit RadioAid — nicht die Chronik des Projekts.
+ *
+ * `org` nennt nur den Empfaenger des jeweiligen Jahres als Einordnung; die
+ * Ueberschrift jedes Eintrags beschreibt, was bei uns passiert ist. Was wir in
+ * einem Jahr konkret beigetragen haben, gehoert in `text` — steht dort nichts,
+ * ist es schlicht noch nicht aufgeschrieben.
  */
 const EDITIONS = [
   {
-    year: "2022",
-    org: "Tafeln Deutschland",
-    note: "Das erste Mal. Die Station heißt damals noch nicht VoltFM.",
+    year: "Jan 2021",
+    title: "Die Station geht an den Start",
+    text: "Jannik legt seine laut.fm-Station an — damals noch als jannikjbiFM. RadioAid ist zu dem Zeitpunkt noch kein Thema.",
+    org: null,
   },
-  { year: "2023", org: "Deutsche Depressionshilfe", note: null },
-  { year: "2024", org: "Ambulantes Kinderhospiz München", note: null },
-  { year: "2025", org: "Hamburger Kinderwünsche e. V.", note: null },
+  {
+    year: "2022",
+    title: "Zum ersten Mal dabei",
+    text: "Wir übernehmen die 24-Stunden-Sendung erstmals in unser Programm. Die Station heißt zu der Zeit noch nicht VoltFM.",
+    org: "Tafeln Deutschland",
+  },
+  { year: "2023", title: "Wieder mit an Bord", text: null, org: "Deutsche Depressionshilfe" },
+  { year: "2024", title: "Wieder mit an Bord", text: null, org: "Ambulantes Kinderhospiz München" },
+  { year: "2025", title: "Wieder mit an Bord", text: null, org: "Hamburger Kinderwünsche e. V." },
   {
     year: "2026",
+    title: "Erstmals als VoltFM mit eigener Seite",
+    text: "Fünfte Teilnahme — und die erste, bei der wir eine richtige Website haben, um vorher darauf hinzuweisen.",
     org: "Seelenpflaster e. V.",
-    note: "Am 6. November, 24 Stunden lang — unsere fünfte Ausgabe.",
     upcoming: true,
   },
 ] as const;
@@ -172,7 +183,7 @@ export default function RadioAidPage() {
               .
             </p>
 
-            <h2>Unsere Ausgaben seit 2022</h2>
+            <h2>Unser Weg mit RadioAid</h2>
             <ol className={styles.timeline}>
               {EDITIONS.map((edition) => (
                 <li
@@ -182,16 +193,17 @@ export default function RadioAidPage() {
                 >
                   <span className={styles.entryYear}>{edition.year}</span>
                   <div className={styles.entryBody}>
-                    <p className={styles.entryOrg}>
-                      Zugunsten von <strong>{edition.org}</strong>
-                    </p>
-                    {edition.note && <p className={styles.entryNote}>{edition.note}</p>}
+                    <p className={styles.entryTitle}>{edition.title}</p>
+                    {edition.text && <p className={styles.entryNote}>{edition.text}</p>}
+                    {edition.org && (
+                      <p className={styles.entryOrg}>Gesammelt wurde für {edition.org}</p>
+                    )}
                   </div>
                 </li>
               ))}
             </ol>
             <p className={styles.timelineSource}>
-              RadioAid gibt es schon länger — die vollständige Geschichte steht im{" "}
+RadioAid selbst gibt es schon länger als uns — die Chronik des Projekts steht im{" "}
               <a href="https://radioaid.de/blog/" target="_blank" rel="noreferrer noopener">
                 RadioAid-Blog
               </a>
