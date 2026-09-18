@@ -58,27 +58,47 @@ export default function DatenschutzPage() {
             zusammengeführt.
           </p>
 
-          <h2>Livestream über laut.fm</h2>
+          <h2>Livestream und Sendedaten (laut.fm)</h2>
           <p>
-            Das Programm von VoltFM wird von laut.fm ausgestrahlt (laut.fm GmbH).
-            Auf dieser Website wird der Stream <strong>nicht eingebettet</strong>;
-            wir verlinken auf laut.fm, und die Wiedergabe findet dort statt.
-            Sobald du dem Verbindungsaufbau zustimmst bzw. dem Link folgst, stellt
-            dein Browser eine direkte Verbindung zu laut.fm her und überträgt dabei
-            deine IP-Adresse und Browserkennung dorthin — technisch ist eine
-            Verbindung ohne diese Daten nicht möglich.
+            Das Programm von VoltFM wird von der laut.fm GmbH ausgestrahlt. Auf
+            dieser Website ist der Stream <strong>nicht eingebettet</strong> — wir
+            verlinken auf laut.fm, und die Wiedergabe findet dort statt. Für den
+            Datenschutz sind dabei zwei Vorgänge zu unterscheiden:
           </p>
+
+          <h3>1. Titel- und Sendungsinformationen (Server-zu-Server)</h3>
           <p>
-            Vorher werden keine Daten an laut.fm übertragen: Titel- und
-            Sendungsinformationen holt unser Server, nicht dein Browser.
-            Rechtsgrundlage für die Übertragung ist deine Einwilligung nach Art. 6
-            Abs. 1 lit. a DSGVO. Du kannst sie jederzeit widerrufen, indem du im
-            Player &bdquo;Verbindung trennen&ldquo; wählst oder die lokale Speicherung deines
-            Browsers für diese Seite löschst. Es gilt die{" "}
+            Was gerade läuft, welche Sendung on air ist und die Titelhistorie
+            holen wir über die öffentliche Schnittstelle von laut.fm ab. Diese
+            Abfrage stellt <strong>unser Server</strong>, nicht dein Browser.
+            laut.fm erfährt dabei nur, dass unser Server anfragt — nicht, dass
+            du gerade auf unserer Seite bist. Es werden also{" "}
+            <strong>keine personenbezogenen Daten von dir</strong> an laut.fm
+            übermittelt, und es wird dabei nichts auf deinem Gerät gespeichert.
+          </p>
+
+          <h3>2. Der Klick auf &bdquo;hören&ldquo; (Weiterleitung)</h3>
+          <p>
+            Klickst du auf den Play-Button, verlässt du unsere Website und
+            landest bei laut.fm. Erst dort baut dein Browser eine Verbindung auf
+            und überträgt dabei deine IP-Adresse und Browserkennung an laut.fm —
+            technisch geht das nicht ohne. Das passiert ausschließlich, weil du
+            den Link bewusst anklickst; ohne diesen Klick wird nichts übertragen.
+            Wir setzen den Link mit <code>rel=&quot;noreferrer&quot;</code>, laut.fm
+            erfährt also nicht, von welcher Seite du kommst. Ab dem Klick gilt
+            die{" "}
             <a href="https://laut.fm/pages/privacy" target="_blank" rel="noreferrer noopener">
               Datenschutzerklärung von laut.fm
             </a>
-            .
+            , auf deren Inhalt wir keinen Einfluss haben.
+          </p>
+          <p>
+            Sollte die Wiedergabe künftig direkt auf dieser Seite stattfinden,
+            würde dein Browser die Verbindung schon beim Abspielen aufbauen. Dafür
+            ist in der Website bereits ein Einwilligungsdialog vorgesehen: Ohne
+            deine ausdrückliche Zustimmung (Art. 6 Abs. 1 lit. a DSGVO) wird keine
+            Verbindung hergestellt, und du kannst sie im Player jederzeit wieder
+            zurücknehmen.
           </p>
 
           <h2>Cookies und lokale Speicherung</h2>

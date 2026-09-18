@@ -18,6 +18,21 @@
   margin-top: 2em;
 }
 
+.prose h3 {
+  font: var(--type-h5, var(--type-body));
+  font-weight: 700;
+  color: var(--color-text);
+  margin-top: 1.6em;
+}
+
+.prose code {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 0.875em;
+  padding: 0.15em 0.4em;
+  border-radius: var(--radius-xs);
+  background: var(--color-surface-container);
+}
+
 .prose a {
   color: var(--color-primary);
   text-decoration: underline;

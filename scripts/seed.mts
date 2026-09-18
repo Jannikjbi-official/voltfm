@@ -167,7 +167,7 @@ const articles = [
 <p>Hört rein — <em>Volt Selection</em> mittwochs ab 19 Uhr, <em>Wochenendstart</em> freitags ab 20 Uhr.</p>`,
   },
   {
-    slug: "voltfm-zieht-nach-hamburg",
+    slug: "voltfm-zieht-nach-oldenburg",
     title: "VoltFM sendet jetzt aus Oldenburg",
     excerpt:
       "Neues Studio, neue Stadt, gleicher Sender: Warum wir umgezogen sind und was sich für euch ändert — nämlich fast nichts.",
