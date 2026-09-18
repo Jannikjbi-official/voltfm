@@ -182,6 +182,16 @@
   margin-top: 0;
 }
 
+.prose a {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose a:hover {
+  color: var(--color-accent);
+}
+
 .prose strong {
   color: var(--color-text);
   font-weight: 700;

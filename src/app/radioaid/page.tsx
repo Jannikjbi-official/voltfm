@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { PageHeader } from "@/components/common/page-header";
 import { ButtonLink } from "@/components/common/button-link";
@@ -126,6 +127,26 @@ export default function RadioAidPage() {
               Wir übernehmen die Sendung in voller Länge in unser Programm. Wer am{" "}
               {formatDate(start, "short")} bei uns einschaltet, hört RadioAid — und
               erfährt zwischendurch, wie gespendet werden kann.
+            </p>
+
+            <h2>Wir sind seit Jahren dabei</h2>
+            <p>
+              Jannik überträgt RadioAid, praktisch seit es seine laut.fm-Station
+              gibt — das sind inzwischen mehrere Jahre. Nur hieß die Station in
+              dieser Zeit nicht durchgehend VoltFM.
+            </p>
+            <p>
+              Angefangen hat sie als <strong>jannikjbiFM</strong>, danach kamen
+              etliche weitere Namen, die ausprobiert und wieder verworfen wurden —
+              aus Langeweile und weil damals schlicht nicht klar war, was bei den
+              Hörern ankommt. Geblieben sind am Ende zwei Dinge: der Sendername{" "}
+              <strong>VoltFM</strong> und die laut.fm-Station{" "}
+              <strong>{site.station}</strong>, die noch aus der allerersten Zeit
+              stammt. Warum wir sie behalten haben, steht{" "}
+              <Link href="/news/voltfm-geht-weiter-neue-webseite">
+                in diesem Beitrag
+              </Link>
+              .
             </p>
           </article>
 
