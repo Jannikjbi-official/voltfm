@@ -202,6 +202,15 @@ try {
       patch.discordUserId = rest.discordUserId;
     }
 
+    /* Fehlt das Feld ganz, ist der Datensatz aelter als das Flag — dann ist
+       "unsichtbar" keine Entscheidung, sondern eine Luecke. Ein bewusst auf
+       false gesetztes Profil bleibt versteckt. */
+    if (existing.active === undefined || existing.active === null) {
+      patch.active = true;
+    } else if (existing.active === false) {
+      console.log(`  Hinweis: ${slug} ist im Admin auf "versteckt" gesetzt und bleibt es.`);
+    }
+
     if (Object.keys(patch).length > 0) {
       await db.collection("hosts").updateOne({ slug }, { $set: { ...patch, updatedAt: now } });
       console.log(`  ${slug}: ${Object.keys(patch).join(", ")} aktualisiert.`);

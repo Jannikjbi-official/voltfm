@@ -11,6 +11,7 @@
     "seed": "tsx scripts/seed.mts",
     "seed:categories": "tsx scripts/seed-categories.mts",
     "seed:relaunch": "tsx scripts/seed-relaunch.mts",
+    "hosts:status": "tsx scripts/hosts-status.mts",
     "typecheck": "tsc --noEmit",
     "make-admin": "tsx scripts/make-admin.mts"
   },

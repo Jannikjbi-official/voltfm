@@ -43,26 +43,79 @@
   display: flex;
   flex-direction: column;
   list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
+/*
+ * Zweispaltig: links die Jahresangabe, dazwischen die durchgehende Schiene,
+ * rechts der Text. Die Schiene liegt in der Luecke, nicht unter der Jahreszahl.
+ */
 .entry {
+  --rail: clamp(5.5rem, 4rem + 4vw, 8rem);
+
   position: relative;
   display: grid;
-  grid-template-columns: 96px minmax(0, 1fr);
-  gap: clamp(1rem, 0.75rem + 1.5vw, 2rem);
-  padding-block: var(--spacing-24);
-  border-top: 1px solid var(--color-border);
+  grid-template-columns: var(--rail) minmax(0, 1fr);
+  column-gap: clamp(1.5rem, 1rem + 2vw, 2.75rem);
+  padding-block: clamp(1.5rem, 1rem + 2vw, 2.5rem);
 }
 
-.entry:first-child {
-  border-top: none;
+.entry::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--rail) + clamp(1.5rem, 1rem + 2vw, 2.75rem) / 2);
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-border);
+}
+
+.entry:first-child::before {
+  top: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+}
+
+.entry:last-child::before {
+  bottom: calc(100% - clamp(1.5rem, 1rem + 2vw, 2.5rem) - 0.8em);
+}
+
+/* Der Punkt auf der Schiene, auf Hoehe der ersten Textzeile. */
+.entry::after {
+  content: "";
+  position: absolute;
+  left: calc(var(--rail) + clamp(1.5rem, 1rem + 2vw, 2.75rem) / 2 - 6px);
+  top: calc(clamp(1.5rem, 1rem + 2vw, 2.5rem) + 0.35em);
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-circled);
+  background: var(--color-surface-container-low);
+  border: 2px solid var(--color-border-strong);
+  transition: border-color var(--transition-standard-fast-effects);
+}
+
+.entry[data-current]::after {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--color-accent) 18%, transparent);
 }
 
 .entryYear {
-  font: 700 clamp(1.25rem, 1rem + 1vw, 1.75rem) / 1 var(--font-display);
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 0.1em;
+}
+
+.entryYearValue {
+  font: 700 clamp(1.1rem, 0.95rem + 0.7vw, 1.6rem) / 1.2 var(--font-display);
   font-variant-numeric: tabular-nums;
-  color: var(--color-accent);
+  color: var(--color-text-muted);
   letter-spacing: -0.02em;
+  text-align: right;
+  text-wrap: balance;
+}
+
+.entry[data-current] .entryYearValue {
+  color: var(--color-accent);
 }
 
 .entryBody {
@@ -72,21 +125,66 @@
   min-width: 0;
 }
 
+.entryKicker {
+  font: var(--type-caption);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
 .entryTitle {
   font: var(--type-h4);
   color: var(--color-text);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
 }
 
 .entryText {
   font: var(--type-body);
   color: var(--color-text-secondary);
-  max-width: 70ch;
+  max-width: 62ch;
 }
 
-@media (max-width: 560px) {
+.entryLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-6);
+  margin-top: var(--spacing-4);
+  font: var(--type-small);
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.entryLink:hover {
+  color: var(--color-accent);
+  gap: var(--spacing-10);
+}
+
+/* Auf schmalen Schirmen kippt die Zeitleiste einspaltig: die Schiene wandert
+   ganz nach links, das Jahr wird zur Zeile ueber dem Text. */
+@media (max-width: 640px) {
   .entry {
     grid-template-columns: 1fr;
-    gap: var(--spacing-8);
+    row-gap: var(--spacing-4);
+    padding-left: var(--spacing-24);
+  }
+
+  .entry::before {
+    left: 3px;
+  }
+
+  .entry::after {
+    left: -3px;
+    top: calc(clamp(1.5rem, 1rem + 2vw, 2.5rem) + 0.25em);
+  }
+
+  .entryYear {
+    justify-content: flex-start;
+  }
+
+  .entryYearValue {
+    text-align: left;
   }
 }
 
