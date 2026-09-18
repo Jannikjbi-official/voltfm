@@ -109,3 +109,53 @@
   color: var(--color-text-muted);
   font-style: italic;
 }
+
+/* --- Connected accounts -------------------------------------------------- */
+
+.provider {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-16);
+  width: 100%;
+  padding: var(--spacing-12) var(--spacing-14);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-container-low);
+  border: 1px solid var(--color-border);
+}
+
+.providerName {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.providerLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  font: var(--type-body);
+  font-weight: 650;
+  color: var(--color-text);
+}
+
+.providerMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-6);
+  font: var(--type-caption);
+  color: var(--color-text-muted);
+}
+
+.connectedIcon {
+  color: var(--color-success);
+}
+
+.hint {
+  font: var(--type-caption);
+  color: var(--color-text-secondary);
+  padding: var(--spacing-10) var(--spacing-12);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-container);
+}

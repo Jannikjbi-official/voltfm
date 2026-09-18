@@ -2,6 +2,7 @@ import "server-only";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth, type SessionUser } from "@/lib/auth";
+import { ADMIN_ROLES } from "@/lib/permissions";
 
 /**
  * Server-side authorization helpers.
@@ -20,12 +21,28 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
   return session?.user ?? null;
 }
 
-import { ADMIN_ROLES } from "@/lib/permissions";
-
 const ADMIN_ROLE_SET = new Set<string>(ADMIN_ROLES);
+
+/**
+ * IDs from ADMIN_USER_IDS, the same list handed to the Better Auth admin
+ * plugin. It exists to bootstrap the first admin, before any UI can grant a
+ * role — so this guard has to honour it too. Checking only `role` would let
+ * Better Auth's own endpoints accept the user while /admin bounced them.
+ */
+function bootstrapAdminIds(): Set<string> {
+  return new Set(
+    (process.env.ADMIN_USER_IDS ?? "")
+      .split(",")
+      .map((id) => id.trim())
+      .filter(Boolean),
+  );
+}
 
 export function isAdminUser(user: SessionUser | null | undefined): boolean {
   if (!user) return false;
+
+  if (bootstrapAdminIds().has(user.id)) return true;
+
   // `role` may hold a comma-separated list when a user has several roles.
   const roles = String((user as { role?: string }).role ?? "")
     .split(",")
@@ -44,7 +61,7 @@ export async function requireUser(returnTo = "/"): Promise<SessionUser> {
 export async function requireAdmin(returnTo = "/admin"): Promise<SessionUser> {
   const user = await getCurrentUser();
   if (!user) redirect(`/login?redirect=${encodeURIComponent(returnTo)}`);
-  if (!isAdminUser(user)) redirect("/");
+  if (!isAdminUser(user)) redirect("/?fehler=keine-berechtigung");
   return user;
 }
 

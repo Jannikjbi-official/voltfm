@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/common/page-header";
 import { requireUser } from "@/lib/session";
+import { serverEnv } from "@/lib/env";
 import { PasskeyManager } from "./passkey-manager";
+import { ConnectedAccounts } from "./connected-accounts";
 import { SignOutButton } from "./sign-out-button";
 import styles from "./page.module.css";
 
@@ -52,6 +54,17 @@ export default async function KontoPage() {
                 <dd>{profile.role || "user"}</dd>
               </div>
             </dl>
+          </section>
+
+          <section className={styles.block} aria-labelledby="accounts-title">
+            <h2 id="accounts-title" className={styles.blockTitle}>
+              Verknüpfte Konten
+            </h2>
+            <p className={styles.blockText}>
+              Verknüpfe Discord, um dich künftig mit einem Klick anzumelden —
+              ohne Username und Passwort.
+            </p>
+            <ConnectedAccounts discordEnabled={serverEnv.discordEnabled} />
           </section>
 
           <section className={styles.block} aria-labelledby="passkeys-title">
