@@ -26,6 +26,28 @@ const BROADCAST = {
   website: "https://radioaid.de/",
 } as const;
 
+/**
+ * Die Ausgaben, bei denen VoltFM dabei war — RadioAid selbst laeuft schon
+ * laenger. Empfaenger uebernommen aus dem RadioAid-Blog; aendert sich dort
+ * etwas, muss es hier nachgezogen werden.
+ */
+const EDITIONS = [
+  {
+    year: "2022",
+    org: "Tafeln Deutschland",
+    note: "Das erste Mal. Die Station heißt damals noch nicht VoltFM.",
+  },
+  { year: "2023", org: "Deutsche Depressionshilfe", note: null },
+  { year: "2024", org: "Ambulantes Kinderhospiz München", note: null },
+  { year: "2025", org: "Hamburger Kinderwünsche e. V.", note: null },
+  {
+    year: "2026",
+    org: "Seelenpflaster e. V.",
+    note: "Am 6. November, 24 Stunden lang — unsere fünfte Ausgabe.",
+    upcoming: true,
+  },
+] as const;
+
 const FACTS = [
   { value: "8", label: "Jahre RadioAid" },
   { value: "24 h", label: "Livesendung am Stück" },
@@ -147,6 +169,32 @@ export default function RadioAidPage() {
               <Link href="/news/voltfm-geht-weiter-neue-webseite">
                 in diesem Beitrag
               </Link>
+              .
+            </p>
+
+            <h2>Unsere Ausgaben seit 2022</h2>
+            <ol className={styles.timeline}>
+              {EDITIONS.map((edition) => (
+                <li
+                  key={edition.year}
+                  className={styles.entry}
+                  data-upcoming={"upcoming" in edition ? true : undefined}
+                >
+                  <span className={styles.entryYear}>{edition.year}</span>
+                  <div className={styles.entryBody}>
+                    <p className={styles.entryOrg}>
+                      Zugunsten von <strong>{edition.org}</strong>
+                    </p>
+                    {edition.note && <p className={styles.entryNote}>{edition.note}</p>}
+                  </div>
+                </li>
+              ))}
+            </ol>
+            <p className={styles.timelineSource}>
+              RadioAid gibt es schon länger — die vollständige Geschichte steht im{" "}
+              <a href="https://radioaid.de/blog/" target="_blank" rel="noreferrer noopener">
+                RadioAid-Blog
+              </a>
               .
             </p>
           </article>

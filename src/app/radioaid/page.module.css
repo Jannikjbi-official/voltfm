@@ -249,3 +249,106 @@
   font: var(--type-caption);
   color: var(--color-text-muted);
 }
+
+/* --- Zeitleiste der Ausgaben ---------------------------------------------- */
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.entry {
+  position: relative;
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  /* Die Luecke traegt die Linie, der Text bekommt rechts davon Abstand. */
+  column-gap: var(--spacing-24);
+  padding-block: var(--spacing-16);
+  align-items: start;
+}
+
+/* Die durchgehende Linie liegt in der Luecke zwischen Jahr und Text — nicht
+   mitten in der Jahresspalte, sonst laeuft sie durch die Zahlen. */
+.entry::before {
+  content: "";
+  position: absolute;
+  left: calc(4.5rem + var(--spacing-8));
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--color-border);
+}
+
+.entry:first-child::before {
+  top: 50%;
+}
+
+.entry:last-child::before {
+  bottom: 50%;
+}
+
+/* Der Punkt auf der Linie. */
+.entry::after {
+  content: "";
+  position: absolute;
+  left: calc(4.5rem + var(--spacing-8) - 4px);
+  top: calc(var(--spacing-16) + 0.4em);
+  width: 9px;
+  height: 9px;
+  border-radius: var(--radius-circled);
+  background: var(--color-surface);
+  border: 2px solid var(--color-border-strong);
+}
+
+.entry[data-upcoming]::after {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.entryYear {
+  grid-column: 1;
+  /* Rechtsbuendig, damit alle Jahreszahlen an der Linie stehen. */
+  text-align: right;
+  font: 700 1.05rem / 1.4 var(--font-display);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.entry[data-upcoming] .entryYear {
+  color: var(--color-accent);
+}
+
+.entryBody {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  min-width: 0;
+}
+
+.entryOrg {
+  font: var(--type-body);
+  color: var(--color-text-secondary);
+}
+
+.entryOrg strong {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.entryNote {
+  font: var(--type-small);
+  color: var(--color-text-muted);
+}
+
+.timelineSource {
+  font: var(--type-caption);
+  color: var(--color-text-muted);
+  margin-top: var(--spacing-12);
+  padding-top: var(--spacing-12);
+  border-top: 1px solid var(--color-border);
+}
