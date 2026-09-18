@@ -1,0 +1,149 @@
+/* ==========================================================================
+   VoltFM Brand Layer
+   --------------------------------------------------------------------------
+   Sits on top of the OlyxUI base layer (styles/_base/colors.css + tokens.css).
+   OlyxUI derives its entire palette from three seed variables, so branding
+   the whole component library is a matter of reseeding them with VoltFM blue.
+
+     Primary  #456990  ->  oklch(0.5106 0.0749 251.33)
+     Accent   #C1121F  ->  oklch(0.5161 0.2019  25.94)
+
+   The accent hue (25.94) lands almost exactly on OlyxUI's built-in error hue
+   (25), so destructive UI and the VoltFM accent read as one family instead of
+   fighting each other.
+   ========================================================================== */
+
+:root,
+[data-custom-theme] {
+  /* --- Seed: reseeds every OlyxUI role colour with VoltFM blue -------------
+     base-lightness is 0.5481 (not 0.5106) on purpose: OlyxUI computes
+     --primary-l-max as `base-lightness - primary-c * 0.5`, so seeding 0.5481
+     lands --color-primary on exactly 0.5106 = #456990. */
+  --base-lightness: 0.5481;
+  --base-chroma: 0.0749;
+  --base-hue: 251.33;
+
+  /* Analogous harmony keeps secondary/tertiary inside the VoltFM blue family
+     rather than swinging to a clashing complementary hue. */
+  --secondary-offset: 26;
+  --tertiary-offset: -24;
+
+  /* --- VoltFM accent ---------------------------------------------------- */
+  --volt-accent-l: 0.5161;
+  --volt-accent-c: 0.2019;
+  --volt-accent-h: 25.94;
+  --volt-accent-ch: var(--volt-accent-c) var(--volt-accent-h);
+
+  --color-accent: oklch(var(--volt-accent-l) var(--volt-accent-ch));
+  --color-accent-hover: oklch(calc(var(--volt-accent-l) - 0.05) var(--volt-accent-ch));
+  --color-accent-active: oklch(calc(var(--volt-accent-l) - 0.09) var(--volt-accent-ch));
+  --color-on-accent: oklch(0.99 0 0);
+  --color-accent-soft: oklch(0.94 calc(var(--volt-accent-c) * 0.28) var(--volt-accent-h));
+  --color-on-accent-soft: oklch(0.32 var(--volt-accent-ch));
+
+  /* Primary interaction states, derived so they track the seed. */
+  --color-primary-hover: oklch(calc(var(--primary-l-max) - 0.05) var(--primary-ch));
+  --color-primary-active: oklch(calc(var(--primary-l-max) - 0.09) var(--primary-ch));
+  --color-primary-soft: var(--color-primary-container);
+  --color-on-primary-soft: var(--color-on-primary-container);
+
+  /* --- Semantic aliases used across VoltFM components -------------------
+     Greys are kept genuinely neutral (chroma 0). A blue tint in the greys
+     reads as muddy next to the brand blue rather than as part of it — the
+     colour belongs on the accents, not on every surface. */
+  --neutral-c: 0;
+  --color-border: oklch(0.91 0 0);
+  --color-border-strong: oklch(0.82 0 0);
+  --color-text: oklch(0.22 0 0);
+  --color-text-secondary: oklch(0.44 0 0);
+  --color-text-muted: oklch(0.58 0 0);
+
+  /* The live indicator always uses the accent, in both themes. */
+  --color-live: var(--color-accent);
+
+  /* --- Typography -------------------------------------------------------
+     Three families, each with a job:
+       display -> Bricolage Grotesque, editorial headlines with real character
+       sans    -> Public Sans, UI chrome and metadata
+       serif   -> Source Serif 4, long-form article body copy
+     OlyxUI reads --font-family for its component type scale. */
+  --font-family: var(--font-sans-voltfm), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-voltfm), Georgia, serif;
+  --font-serif: var(--font-serif-voltfm), Georgia, serif;
+
+  /* Editorial display scale — fluid, clamped, deliberately larger than the
+     OlyxUI defaults so hero and article headlines carry the page. */
+  --type-display-xl: 700 clamp(2.75rem, 1.6rem + 5.6vw, 6rem) / 0.95 var(--font-display);
+  --type-display-lg: 700 clamp(2.25rem, 1.5rem + 3.6vw, 4.25rem) / 1.0 var(--font-display);
+  --type-display-md: 700 clamp(1.875rem, 1.35rem + 2.4vw, 3rem) / 1.05 var(--font-display);
+  --type-h1: 700 clamp(1.75rem, 1.3rem + 2vw, 2.75rem) / 1.12 var(--font-display);
+  --type-h2: 700 clamp(1.5rem, 1.2rem + 1.4vw, 2.125rem) / 1.18 var(--font-display);
+  --type-h3: 600 clamp(1.25rem, 1.1rem + 0.7vw, 1.5rem) / 1.25 var(--font-display);
+  --type-h4: 600 1.125rem / 1.35 var(--font-display);
+  --type-body-lg: 400 1.0625rem / 1.7 var(--font-family);
+  --type-body: 400 0.9375rem / 1.65 var(--font-family);
+  --type-small: 400 0.875rem / 1.5 var(--font-family);
+  --type-caption: 400 0.8125rem / 1.45 var(--font-family);
+  --type-label: 600 0.6875rem / 1.2 var(--font-family);
+
+  /* Article body copy uses the serif at a comfortable reading size. */
+  --type-prose: 400 1.125rem / 1.75 var(--font-serif);
+
+  /* --- Layout ----------------------------------------------------------- */
+  --shell-max: 1240px;
+  --shell-wide: 1440px;
+  --shell-pad: clamp(1rem, 0.5rem + 2vw, 2.5rem);
+  --section-gap: clamp(3.5rem, 2rem + 6vw, 7rem);
+  --player-height: 84px;
+  --player-height-mobile: 68px;
+  --header-height: 68px;
+
+  /* Elevation that reads correctly on a light background. */
+  --volt-shadow-soft: 0 1px 2px oklch(0.2 0.02 251 / 6%), 0 8px 24px -12px oklch(0.2 0.02 251 / 18%);
+  --volt-shadow-lift: 0 2px 4px oklch(0.2 0.02 251 / 8%), 0 18px 44px -18px oklch(0.2 0.02 251 / 26%);
+}
+
+[data-theme="dark"],
+[data-theme="dark"] [data-custom-theme] {
+  /* True black base. The surface ladder above it is neutral grey, so panels
+     still separate from the page without any colour cast. */
+  --neutral-c: 0;
+
+  --color-surface: oklch(0 0 0);
+  --color-surface-container-lowest: oklch(0.06 0 0);
+  --color-surface-container-low: oklch(0.09 0 0);
+  --color-surface-container: oklch(0.13 0 0);
+  --color-surface-container-high: oklch(0.18 0 0);
+  --color-surface-container-highest: oklch(0.23 0 0);
+  --color-surface-variant: oklch(0.2 0 0);
+  --color-on-surface: oklch(0.96 0 0);
+  --color-on-surface-variant: oklch(0.76 0 0);
+
+  /* OlyxUI derives the dark primary by clamping lightness to 0.88, which lands
+     on a washed-out pastel. VoltFM sets it explicitly: light enough to pass
+     contrast on black, saturated enough to still read as #456990. */
+  --color-primary: oklch(0.72 0.11 var(--base-hue));
+  --color-on-primary: oklch(0.12 0.02 var(--base-hue));
+  --color-primary-container: oklch(0.26 0.06 var(--base-hue));
+  --color-on-primary-container: oklch(0.93 0.03 var(--base-hue));
+
+  --color-accent: oklch(0.7 0.19 var(--volt-accent-h));
+  --color-accent-hover: oklch(0.77 0.18 var(--volt-accent-h));
+  --color-accent-active: oklch(0.63 0.19 var(--volt-accent-h));
+  --color-on-accent: oklch(0.12 0.03 var(--volt-accent-h));
+  --color-accent-soft: oklch(0.24 0.08 var(--volt-accent-h));
+  --color-on-accent-soft: oklch(0.92 0.06 var(--volt-accent-h));
+
+  --color-primary-hover: oklch(0.79 0.10 var(--base-hue));
+  --color-primary-active: oklch(0.66 0.11 var(--base-hue));
+
+  --color-border: oklch(0.24 0 0);
+  --color-border-strong: oklch(0.36 0 0);
+  --color-text: oklch(0.96 0 0);
+  --color-text-secondary: oklch(0.74 0 0);
+  --color-text-muted: oklch(0.58 0 0);
+
+  /* On true black, a shadow is invisible; separation comes from the border. */
+  --volt-shadow-soft: 0 1px 2px oklch(0 0 0 / 60%), 0 8px 24px -12px oklch(0 0 0 / 80%);
+  --volt-shadow-lift: 0 2px 4px oklch(0 0 0 / 65%), 0 18px 44px -18px oklch(0 0 0 / 90%);
+}

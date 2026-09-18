@@ -1,0 +1,137 @@
+.layout {
+  display: grid;
+  gap: clamp(2rem, 1.5rem + 3vw, 4rem);
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .layout {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  }
+}
+
+/* --- Form ---------------------------------------------------------------- */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-24);
+}
+
+.row {
+  display: grid;
+  gap: var(--spacing-16);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 600px) {
+  .row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+}
+
+.consent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+}
+
+.consentLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-12);
+  font: var(--type-small);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.consentLabel a {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Off-screen rather than display:none — some bots skip hidden inputs. */
+.honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* --- Success ------------------------------------------------------------- */
+
+.success {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-12);
+  padding: clamp(2rem, 1.5rem + 2vw, 3rem);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-container-low);
+  border: 1px solid var(--color-primary);
+}
+
+.successIcon {
+  font-size: 1.75rem;
+  color: var(--color-primary);
+}
+
+.successTitle {
+  font: var(--type-h3);
+  color: var(--color-text);
+}
+
+.successText {
+  font: var(--type-body);
+  color: var(--color-text-secondary);
+}
+
+/* --- Side ---------------------------------------------------------------- */
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-24);
+}
+
+.sideBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-8);
+  padding-bottom: var(--spacing-24);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sideBlock:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.sideTitle {
+  font: var(--type-h4);
+  color: var(--color-text);
+}
+
+.sideText {
+  font: var(--type-small);
+  color: var(--color-text-secondary);
+}
+
+/* Server-side validation messages. Base UI's FieldError only renders from the
+   browser's own constraint validity, which the server cannot drive. */
+.error {
+  font: var(--type-caption);
+  color: var(--color-error);
+  font-weight: 600;
+}

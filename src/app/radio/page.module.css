@@ -1,0 +1,125 @@
+.lower {
+  padding-block: var(--section-gap);
+  background: var(--color-surface-container-low);
+  border-top: 1px solid var(--color-border);
+}
+
+.grid {
+  display: grid;
+  gap: clamp(2rem, 1.5rem + 3vw, 4rem);
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+@media (min-width: 960px) {
+  .grid {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  }
+}
+
+/* --- Track history ------------------------------------------------------- */
+
+.history {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+
+.historyItem {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: var(--spacing-16);
+  align-items: baseline;
+  padding-block: var(--spacing-12);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.historyItem:last-child {
+  border-bottom: none;
+}
+
+.historyTime {
+  font: var(--type-caption);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
+
+.historyText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.historyTitle {
+  font: var(--type-body);
+  font-weight: 650;
+  color: var(--color-text);
+}
+
+.historyArtist {
+  font: var(--type-caption);
+  color: var(--color-text-secondary);
+}
+
+/* --- Stream info --------------------------------------------------------- */
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+  padding: clamp(1.5rem, 1.25rem + 1vw, 2rem);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-border);
+}
+
+.infoTitle {
+  font: var(--type-h4);
+  color: var(--color-text);
+}
+
+.infoList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-10);
+}
+
+.infoRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--spacing-16);
+  padding-bottom: var(--spacing-10);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.infoRow:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.infoRow dt {
+  font: var(--type-caption);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.infoRow dd {
+  font: var(--type-small);
+  font-weight: 600;
+  color: var(--color-text);
+  text-align: right;
+}
+
+.infoNote {
+  font: var(--type-caption);
+  color: var(--color-text-secondary);
+  padding-top: var(--spacing-4);
+}
+
+.infoActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-8);
+}

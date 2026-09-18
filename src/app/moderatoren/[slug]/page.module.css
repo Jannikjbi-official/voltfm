@@ -1,0 +1,314 @@
+/* Per-host accent, set inline from the host record; falls back to the VoltFM
+   accent so a host without one still looks intentional. */
+.page {
+  --host-accent: var(--color-accent);
+}
+
+/* --- Shared pieces -------------------------------------------------------- */
+
+.portrait {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-container);
+}
+
+.portraitImage {
+  object-fit: cover;
+}
+
+.portraitAvatar {
+  width: 96px;
+  height: 96px;
+  font: var(--type-h3);
+}
+
+.bio {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+  font: var(--type-prose);
+  color: var(--color-text);
+  max-width: 68ch;
+}
+
+.socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-8);
+}
+
+.sectionTitle {
+  font: var(--type-h3);
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-16);
+  padding-bottom: var(--spacing-10);
+  border-bottom: 2px solid var(--host-accent);
+}
+
+.shows {
+  margin-top: clamp(2rem, 1.5rem + 2vw, 3rem);
+}
+
+.showList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+  list-style: none;
+}
+
+.show {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+  padding: var(--spacing-16);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-container-low);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--host-accent);
+}
+
+.showHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--spacing-10);
+}
+
+.showTitle {
+  font: var(--type-h4);
+  color: var(--color-text);
+}
+
+.showTime {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-6);
+  font: var(--type-caption);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.showDescription {
+  font: var(--type-small);
+  color: var(--color-text-secondary);
+}
+
+/* ===== Layout 1 — Spotlight ============================================== */
+
+.spotlight {
+  display: grid;
+  gap: clamp(2rem, 1.5rem + 3vw, 4rem);
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .spotlight {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 320px);
+  }
+}
+
+.spotlightMain {
+  min-width: 0;
+}
+
+.spotlightSide {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--spacing-16);
+}
+
+@media (min-width: 900px) {
+  .spotlightSide {
+    position: sticky;
+    top: calc(var(--header-height) + var(--spacing-24));
+  }
+}
+
+/* ===== Layout 2 — Editorial ============================================== */
+
+.editorial {
+  max-width: 80ch;
+  margin-inline: auto;
+}
+
+/* Oversized opening sentence, set in the display face. */
+.editorialLead {
+  font: var(--type-display-md);
+  letter-spacing: -0.03em;
+  color: var(--host-accent);
+  text-wrap: balance;
+  margin-bottom: clamp(2rem, 1.5rem + 2vw, 3rem);
+}
+
+.editorialBody {
+  display: grid;
+  gap: clamp(1.5rem, 1.25rem + 2vw, 2.5rem);
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+@media (min-width: 760px) {
+  .editorialBody {
+    /* Portrait floats left at a smaller size — a magazine column, not a hero. */
+    grid-template-columns: 240px minmax(0, 1fr);
+  }
+}
+
+.editorialPortrait {
+  aspect-ratio: 1;
+  border-radius: var(--radius-circled);
+}
+
+.editorialText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+  font: var(--type-prose);
+  color: var(--color-text);
+}
+
+/* ===== Layout 3 — Stage ================================================== */
+
+.stageHero {
+  position: relative;
+  overflow: hidden;
+  padding-block: clamp(2.5rem, 2rem + 4vw, 5rem);
+  background: var(--color-surface-container-low);
+  border-top: 3px solid var(--host-accent);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.stageInner {
+  display: grid;
+  gap: clamp(1.5rem, 1.25rem + 3vw, 3rem);
+  grid-template-columns: 1fr;
+  align-items: center;
+}
+
+@media (min-width: 820px) {
+  .stageInner {
+    grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+  }
+}
+
+.stagePortrait {
+  aspect-ratio: 1;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--volt-shadow-lift);
+}
+
+.stageText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-12);
+}
+
+.stageName {
+  font: var(--type-display-lg);
+  letter-spacing: -0.04em;
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.stageTagline {
+  font: var(--type-body-lg);
+  font-style: italic;
+  color: var(--host-accent);
+  max-width: 34ch;
+}
+
+/* The badge picks up the host accent instead of the global primary. */
+.stageText :global([data-ui="badge"]) {
+  background: var(--host-accent);
+  color: oklch(0.99 0 0);
+}
+
+.stageBody {
+  max-width: 72ch;
+}
+
+.stageBio {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+  font: var(--type-prose);
+  color: var(--color-text);
+}
+
+/* ===== Layout 4 — Zine =================================================== */
+
+.zine {
+  padding-block: clamp(2rem, 1.5rem + 3vw, 3.5rem) var(--section-gap);
+}
+
+.zineHead {
+  margin-bottom: clamp(1.5rem, 1.25rem + 2vw, 2.5rem);
+  border-bottom: 3px solid var(--host-accent);
+  padding-bottom: var(--spacing-12);
+}
+
+/* Oversized, tightly tracked name — the page's whole hierarchy in one line. */
+.zineName {
+  font: 800 clamp(2.75rem, 1.5rem + 7vw, 7rem) / 0.9 var(--font-display);
+  letter-spacing: -0.05em;
+  color: var(--color-text);
+  text-transform: uppercase;
+}
+
+.zineRole {
+  font: var(--type-label);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--host-accent);
+  margin-top: var(--spacing-10);
+}
+
+.zineGrid {
+  display: grid;
+  gap: clamp(1.5rem, 1.25rem + 2vw, 2.5rem);
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+@media (min-width: 820px) {
+  .zineGrid {
+    /* Deliberately off-centre: copy first, portrait as a narrow outer column. */
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  }
+}
+
+.zinePortrait {
+  aspect-ratio: 3 / 4;
+  border-radius: var(--radius-sm);
+}
+
+.zineText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+  order: -1;
+}
+
+@media (min-width: 820px) {
+  .zineText {
+    order: 0;
+  }
+}
+
+/* Placeholder fills the portrait frame rather than sitting inside it. */
+.portraitFallback {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  border-bottom: none;
+}

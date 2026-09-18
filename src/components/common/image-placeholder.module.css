@@ -1,0 +1,28 @@
+.placeholder {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  background: var(--color-surface-container-high);
+  border-bottom: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+.bolt {
+  width: 15%;
+  min-width: 26px;
+  max-width: 56px;
+  height: auto;
+  color: var(--color-primary);
+  opacity: 0.55;
+}
+
+/* Oversized initial sitting behind the bolt, very low contrast. */
+.initial {
+  position: absolute;
+  font: 800 clamp(3rem, 18vw, 7rem) / 1 var(--font-display);
+  color: var(--color-text);
+  opacity: 0.1;
+  user-select: none;
+  letter-spacing: -0.04em;
+}

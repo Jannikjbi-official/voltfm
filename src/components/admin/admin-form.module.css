@@ -1,0 +1,145 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-24);
+}
+
+.grid {
+  display: grid;
+  gap: clamp(1.5rem, 1.25rem + 2vw, 2.5rem);
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+@media (min-width: 1000px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 320px);
+  }
+}
+
+.main,
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+  min-width: 0;
+}
+
+.side {
+  padding: var(--spacing-16);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-container-low);
+  border: 1px solid var(--color-border);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+}
+
+.label {
+  font: var(--type-small);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.select {
+  min-height: 44px;
+  padding-inline: var(--spacing-12);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface-container-lowest);
+  color: var(--color-text);
+}
+
+.contentHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-10);
+}
+
+.contentTools {
+  display: flex;
+  gap: var(--spacing-8);
+}
+
+/* Monospace so HTML structure is readable while editing. */
+.contentArea {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-10);
+  font: var(--type-small);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.seo {
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--spacing-12);
+}
+
+.seo summary {
+  font: var(--type-small);
+  font-weight: 600;
+  color: var(--color-text);
+  cursor: pointer;
+  margin-bottom: var(--spacing-12);
+}
+
+/* --- Image upload -------------------------------------------------------- */
+
+.upload {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--spacing-8);
+}
+
+.preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+}
+
+.previewImage {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+}
+
+.dropzone {
+  display: grid;
+  place-items: center;
+  gap: var(--spacing-6);
+  padding: var(--spacing-24);
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--color-border-strong);
+  background: var(--color-surface-container);
+}
+
+.dropIcon {
+  font-size: 1.25rem;
+  color: var(--color-text-muted);
+}
+
+.dropText {
+  font: var(--type-caption);
+  color: var(--color-text-muted);
+}
+
+.error {
+  font: var(--type-caption);
+  color: var(--color-error);
+  font-weight: 600;
+}

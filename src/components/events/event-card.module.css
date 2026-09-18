@@ -1,0 +1,111 @@
+.card {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--spacing-20, 20px);
+  align-items: start;
+  padding: var(--spacing-24);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-border);
+  transition:
+    border-color var(--transition-standard-fast-effects),
+    box-shadow var(--transition-standard-fast-effects);
+}
+
+.card:hover {
+  border-color: var(--color-accent);
+  box-shadow: var(--volt-shadow-soft);
+}
+
+.card[data-past="true"] {
+  opacity: 0.72;
+}
+
+/* Tear-off calendar date block. */
+.date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 68px;
+  padding: var(--spacing-10) var(--spacing-8);
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  text-align: center;
+}
+
+.day {
+  font: 700 1.5rem / 1 var(--font-display);
+}
+
+.month {
+  font: var(--type-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+  min-width: 0;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-10);
+  font: var(--type-caption);
+  color: var(--color-text-muted);
+}
+
+.title {
+  font: var(--type-h4);
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.card:hover .title {
+  color: var(--color-primary);
+}
+
+.description {
+  font: var(--type-small);
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 520px) {
+  .card {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-14);
+  }
+
+  .date {
+    flex-direction: row;
+    gap: var(--spacing-8);
+    min-width: 0;
+    width: fit-content;
+    align-items: baseline;
+  }
+}
+
+.metaItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.metaItem svg {
+  font-size: 0.85em;
+  color: var(--color-text-muted);
+}

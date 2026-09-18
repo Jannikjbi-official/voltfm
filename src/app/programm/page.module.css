@@ -1,0 +1,167 @@
+.week {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 1.5rem + 2vw, 3.25rem);
+}
+
+.day {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+}
+
+.dayHead {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding-bottom: var(--spacing-10);
+  border-bottom: 2px solid var(--color-border);
+}
+
+/* Today's rail is brand-coloured so the current day is findable at a glance. */
+.day[data-today="true"] .dayHead {
+  border-bottom-color: var(--color-accent);
+}
+
+.dayTitle {
+  font: var(--type-h3);
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.day[data-today="true"] .dayTitle {
+  color: var(--color-accent);
+}
+
+.dayEmpty {
+  font: var(--type-small);
+  color: var(--color-text-muted);
+  font-style: italic;
+  padding-block: var(--spacing-8);
+}
+
+.slots {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  list-style: none;
+}
+
+.slot {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: var(--spacing-24);
+  padding: var(--spacing-16);
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  transition:
+    background var(--transition-standard-fast-effects),
+    border-color var(--transition-standard-fast-effects);
+}
+
+.slot:hover {
+  background: var(--color-surface-container-low);
+}
+
+.slot[data-onair="true"] {
+  background: var(--color-surface-container-low);
+  border-color: var(--color-accent);
+}
+
+.slotTime {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.slotStart {
+  font: var(--type-body-lg);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+}
+
+.slotEnd {
+  font: var(--type-caption);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
+
+.slotBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+  min-width: 0;
+}
+
+.slotTitleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-12);
+}
+
+.slotTitle {
+  font: var(--type-h4);
+  color: var(--color-text);
+}
+
+.onAir {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-6);
+  font: var(--type-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.onAirDot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-circled);
+  background: currentColor;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .onAirDot {
+    animation: none;
+  }
+}
+
+.slotDescription {
+  font: var(--type-small);
+  color: var(--color-text-secondary);
+  max-width: 70ch;
+}
+
+.slotHosts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-6);
+  margin-top: var(--spacing-4);
+}
+
+@media (max-width: 620px) {
+  .slot {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-8);
+  }
+
+  .slotTime {
+    flex-direction: row;
+    align-items: baseline;
+    gap: var(--spacing-8);
+  }
+}

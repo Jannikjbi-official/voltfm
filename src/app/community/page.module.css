@@ -1,0 +1,115 @@
+/* --- Discord band -------------------------------------------------------- */
+
+.hero {
+  padding-block: clamp(3rem, 2rem + 5vw, 5.5rem);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.heroInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-16);
+  text-align: center;
+  max-width: 62ch;
+  margin-inline: auto;
+}
+
+.heroIcon {
+  font-size: 2.75rem;
+  opacity: 0.95;
+}
+
+.heroTitle {
+  font: var(--type-display-md);
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.heroText {
+  font: var(--type-body-lg);
+  opacity: 0.94;
+  text-wrap: pretty;
+}
+
+/* The filled button needs inverting on the brand gradient. */
+.heroInner :global([data-ui="button"][data-variant="primary"][data-mode="filled"]) {
+  background: var(--color-surface-container-lowest);
+  color: var(--color-primary);
+  margin-top: var(--spacing-8);
+}
+
+/* --- Ways ---------------------------------------------------------------- */
+
+.ways {
+  display: grid;
+  gap: clamp(1.25rem, 1rem + 1.5vw, 2rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+}
+
+.way {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-10);
+  padding: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-border);
+}
+
+.wayIcon {
+  font-size: 1.5rem;
+  color: var(--color-accent);
+}
+
+.wayTitle {
+  font: var(--type-h4);
+  color: var(--color-text);
+}
+
+.wayText {
+  font: var(--type-small);
+  color: var(--color-text-secondary);
+}
+
+/* --- Events -------------------------------------------------------------- */
+
+.eventsSection {
+  padding-block: var(--section-gap);
+  background: var(--color-surface-container-low);
+  border-block: 1px solid var(--color-border);
+}
+
+.eventList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+}
+
+/* --- Contact ------------------------------------------------------------- */
+
+.contact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-24);
+  padding: clamp(1.75rem, 1.5rem + 1.5vw, 2.5rem);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-container-lowest);
+}
+
+.contactTitle {
+  font: var(--type-h3);
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-6);
+}
+
+.contactText {
+  font: var(--type-small);
+  color: var(--color-text-secondary);
+  max-width: 56ch;
+}

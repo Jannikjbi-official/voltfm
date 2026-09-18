@@ -5,13 +5,16 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-  // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored OlyxUI component sources. These are installed verbatim from the
+    // OlyxUI registry and deliberately left unmodified, so linting them would
+    // only produce warnings we must not "fix".
+    "src/components/ui/**",
   ]),
 ]);
 

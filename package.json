@@ -6,19 +6,47 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db": "tsx scripts/dev-db.mts",
+    "seed": "tsx scripts/seed.mts",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@base-ui/react": "^1.8.0",
+    "@better-auth/mongo-adapter": "^1.7.5",
+    "@better-auth/passkey": "^1.7.5",
+    "@fortawesome/fontawesome-svg-core": "^7.3.1",
+    "@fortawesome/free-brands-svg-icons": "^7.3.1",
+    "@fortawesome/free-regular-svg-icons": "^7.3.1",
+    "@fortawesome/free-solid-svg-icons": "^7.3.1",
+    "@fortawesome/react-fontawesome": "^3.5.0",
+    "@hugeicons/core-free-icons": "^4.3.3",
+    "@hugeicons/react": "^1.1.10",
+    "@uploadthing/react": "^7.3.3",
+    "better-auth": "^1.7.5",
+    "mongodb": "^7.6.0",
     "next": "16.3.5",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "sanitize-html": "^2.17.7",
+    "server-only": "^0.0.1",
+    "uploadthing": "^7.7.4",
+    "vaul-base": "^1.0.0",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/sanitize-html": "^2.16.1",
+    "dotenv": "^18.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.5",
+    "mongodb-memory-server": "^11.2.0",
+    "tsx": "^4.23.13",
     "typescript": "^5"
+  },
+  "overrides": {
+    "effect": "^3.20.0"
   }
 }

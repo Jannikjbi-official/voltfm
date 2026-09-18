@@ -1,0 +1,165 @@
+/* --- Shared player bits -------------------------------------------------- */
+
+.playButton {
+  flex-shrink: 0;
+}
+
+.playButton[data-player-size="lg"] {
+  width: 68px;
+  height: 68px;
+  border-radius: var(--radius-circled);
+}
+
+.playButton[data-player-size="lg"] svg {
+  width: 28px;
+  height: 28px;
+}
+
+.spin {
+  animation: spin 900ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.volume {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  min-width: 168px;
+}
+
+.volumeSlider {
+  flex: 1;
+}
+
+.statusLine {
+  font: var(--type-caption);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* --- Sticky bar ---------------------------------------------------------- */
+
+.bar {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 90;
+  background: var(--color-surface-container-low);
+  border-top: 1px solid var(--color-border);
+  /* Sits above the iOS home indicator. */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-shadow: var(--volt-shadow-lift);
+}
+
+.barInner {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--spacing-16);
+  height: var(--player-height);
+  max-width: var(--shell-wide);
+  margin-inline: auto;
+  padding-inline: var(--shell-pad);
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  min-width: 0;
+}
+
+.cover {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  background: var(--color-surface-container-high);
+  flex-shrink: 0;
+}
+
+.coverFallback {
+  display: grid;
+  place-items: center;
+  color: var(--color-primary);
+  font: var(--type-label);
+  letter-spacing: 0.08em;
+}
+
+.text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Long track titles truncate rather than pushing the controls off-screen. */
+.title {
+  font: var(--type-small);
+  font-weight: 600;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.artist {
+  font: var(--type-caption);
+  color: var(--color-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-16);
+}
+
+.show {
+  display: none;
+  font: var(--type-caption);
+  color: var(--color-text-secondary);
+  text-align: right;
+  max-width: 220px;
+}
+
+.showName {
+  display: block;
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+@media (min-width: 1024px) {
+  .show {
+    display: block;
+  }
+}
+
+@media (max-width: 767px) {
+  .barInner {
+    height: var(--player-height-mobile);
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: var(--spacing-10);
+  }
+
+  .cover {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* The slider is unusable at thumb size on a phone; the mute toggle stays. */
+  .volume {
+    min-width: 0;
+  }
+
+  .volumeSlider {
+    display: none;
+  }
+}

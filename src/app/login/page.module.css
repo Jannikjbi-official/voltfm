@@ -1,0 +1,83 @@
+.page {
+  display: grid;
+  place-items: center;
+  min-height: calc(100vh - var(--header-height) - var(--player-height));
+  padding-block: clamp(2rem, 1.5rem + 3vw, 4rem);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-24);
+  width: 100%;
+  max-width: 440px;
+  margin-inline: auto;
+  padding: clamp(1.75rem, 1.5rem + 2vw, 2.75rem);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--volt-shadow-soft);
+}
+
+.title {
+  font: var(--type-h2);
+  letter-spacing: -0.03em;
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.subtitle {
+  font: var(--type-small);
+  color: var(--color-text-secondary);
+  margin-top: calc(var(--spacing-16) * -1);
+}
+
+.methods {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-10);
+}
+
+/* Buttons in the auth card stretch to the card width. */
+.methods :global([data-ui="button"]),
+.form :global([data-ui="button"]) {
+  width: 100%;
+}
+
+.divider {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--spacing-12);
+  font: var(--type-caption);
+  color: var(--color-text-muted);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+}
+
+.footer {
+  font: var(--type-small);
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.footer a {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.footer a:hover {
+  color: var(--color-accent);
+}

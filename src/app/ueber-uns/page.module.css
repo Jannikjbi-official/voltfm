@@ -1,0 +1,138 @@
+/* --- Mission ------------------------------------------------------------- */
+
+.mission {
+  display: grid;
+  gap: clamp(1.75rem, 1.25rem + 3vw, 3.5rem);
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .mission {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  }
+}
+
+.missionQuote {
+  font: var(--type-display-md);
+  letter-spacing: -0.035em;
+  color: var(--color-primary);
+  text-wrap: balance;
+  /* Optically aligns the large quote with the body text next to it. */
+  margin-top: -0.12em;
+}
+
+.missionText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+  font: var(--type-prose);
+  color: var(--color-text);
+  max-width: 66ch;
+}
+
+/* --- Timeline ------------------------------------------------------------ */
+
+.historySection {
+  padding-block: var(--section-gap);
+  background: var(--color-surface-container-low);
+  border-block: 1px solid var(--color-border);
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+
+.entry {
+  position: relative;
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: clamp(1rem, 0.75rem + 1.5vw, 2rem);
+  padding-block: var(--spacing-24);
+  border-top: 1px solid var(--color-border);
+}
+
+.entry:first-child {
+  border-top: none;
+}
+
+.entryYear {
+  font: 700 clamp(1.25rem, 1rem + 1vw, 1.75rem) / 1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-accent);
+  letter-spacing: -0.02em;
+}
+
+.entryBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+  min-width: 0;
+}
+
+.entryTitle {
+  font: var(--type-h4);
+  color: var(--color-text);
+}
+
+.entryText {
+  font: var(--type-body);
+  color: var(--color-text-secondary);
+  max-width: 70ch;
+}
+
+@media (max-width: 560px) {
+  .entry {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-8);
+  }
+}
+
+/* --- Team ---------------------------------------------------------------- */
+
+.team {
+  display: grid;
+  gap: clamp(1.25rem, 1rem + 1.5vw, 2rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr));
+}
+
+/* --- Outlook ------------------------------------------------------------- */
+
+.outlook {
+  padding-block: var(--section-gap);
+  background: var(--color-surface-container-low);
+  border-top: 1px solid var(--color-border);
+}
+
+.outlookInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-16);
+  text-align: center;
+  max-width: 62ch;
+  margin-inline: auto;
+}
+
+.outlookTitle {
+  font: var(--type-h2);
+  letter-spacing: -0.03em;
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.outlookText {
+  font: var(--type-body-lg);
+  color: var(--color-text-secondary);
+  text-wrap: pretty;
+}
+
+.outlookActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-10);
+  margin-top: var(--spacing-8);
+}

@@ -19,7 +19,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@olyx/react": ["./src/components/ui/index.ts"],
+      "@olyx/react/*": ["./src/components/ui/*"]
     }
   },
   "include": [
