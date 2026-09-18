@@ -56,7 +56,7 @@ export default async function HomePage() {
             </div>
             <div className={styles.factsItem}>
               <dt>Zuhause in</dt>
-              <dd>Hamburg</dd>
+              <dd>Oldenburg (Oldb)</dd>
             </div>
             <div className={styles.factsItem}>
               <dt>Feste Sendungen</dt>
@@ -227,7 +227,7 @@ export default async function HomePage() {
               {station?.format || "VoltFM – Dein Klang. Deine Welt."}
             </p>
             <p className={styles.aboutText}>
-              Was 2021 als Experiment in einem Jugendzimmer in Hamburg begann,
+              Was 2021 als Experiment in einem Jugendzimmer in Oldenburg begann,
               ist heute ein Sender mit festem Programm, eigener Redaktion und
               einer Community, die ihn trägt.
             </p>

@@ -3,7 +3,7 @@
 import { ButtonLink } from "@/components/common/button-link";
 import { Badge } from "@/components/ui/badge";
 import { useRadioPlayer } from "./player-provider";
-import { PlayButton, VolumeControl, PlayerStatusLine } from "./player-controls";
+import { PlayButton, VolumeControl, PlayerStatusLine, StreamNotice } from "./player-controls";
 import { CoverArt } from "./cover-art";
 import { LiveIndicator } from "./live-indicator";
 import { formatTime } from "@/lib/format";
@@ -38,7 +38,7 @@ export function RadioHero() {
             </h1>
 
             <p className={styles.lead}>
-              VoltFM sendet rund um die Uhr aus Hamburg — mit festen Sendungen,
+              VoltFM sendet rund um die Uhr aus Oldenburg — mit festen Sendungen,
               echten Moderatorinnen und Moderatoren und einer Community, die das
               Programm mitgestaltet.
             </p>
@@ -86,6 +86,8 @@ export function RadioHero() {
             <div className={styles.volumeRow}>
               <VolumeControl />
             </div>
+
+            <StreamNotice />
 
             <dl className={styles.facts}>
               {current && (

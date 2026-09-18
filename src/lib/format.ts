@@ -77,3 +77,64 @@ export function slugify(input: string): string {
     .replace(/^-+|-+$/g, "")
     .slice(0, 96);
 }
+
+/* --- `datetime-local` <-> stored UTC ------------------------------------- */
+
+/**
+ * How far Berlin's clock runs ahead of UTC at a given instant, in ms.
+ * Read from Intl rather than hard-coded, so summer time is handled.
+ */
+function berlinOffsetMs(date: Date): number {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: TZ,
+      hour12: false,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    })
+      .formatToParts(date)
+      .map((part) => [part.type, part.value]),
+  ) as Record<string, string>;
+
+  const asUtc = Date.UTC(
+    Number(parts.year),
+    Number(parts.month) - 1,
+    Number(parts.day),
+    Number(parts.hour) % 24,
+    Number(parts.minute),
+    Number(parts.second),
+  );
+  return asUtc - date.getTime();
+}
+
+/**
+ * Reads a `<input type="datetime-local">` value as Berlin station time.
+ *
+ * `new Date("2025-06-01T20:00")` would use the *server's* timezone, and on
+ * Vercel that is UTC — an event entered for 20:00 would be stored as 22:00
+ * Berlin. Editors type station time, so that is what we parse.
+ */
+export function parseStationTime(value: string): Date {
+  const match = /^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/.exec(value.trim());
+  if (!match) return new Date(Number.NaN);
+
+  const naive = Date.UTC(+match[1], +match[2] - 1, +match[3], +match[4], +match[5]);
+  // Two passes: the first offset is looked up at the wrong instant when the
+  // date sits right at a DST switch, the second lands on the correct side.
+  const first = naive - berlinOffsetMs(new Date(naive));
+  return new Date(naive - berlinOffsetMs(new Date(first)));
+}
+
+/** The inverse: a stored date as a `datetime-local` value in station time. */
+export function toStationTimeInput(value: string | Date | null | undefined): string {
+  if (!value) return "";
+  const date = typeof value === "string" ? new Date(value) : value;
+  if (Number.isNaN(date.getTime())) return "";
+
+  const shifted = new Date(date.getTime() + berlinOffsetMs(date));
+  return shifted.toISOString().slice(0, 16);
+}

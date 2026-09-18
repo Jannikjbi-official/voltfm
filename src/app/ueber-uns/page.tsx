@@ -12,7 +12,7 @@ import styles from "./page.module.css";
 export const metadata: Metadata = {
   title: "Über VoltFM",
   description:
-    "Wie aus einem Jugendzimmer in Hamburg ein Webradio mit eigener Redaktion und Community wurde.",
+    "Wie aus einem Jugendzimmer in Oldenburg ein Webradio mit eigener Redaktion und Community wurde.",
   alternates: { canonical: "/ueber-uns" },
 };
 
@@ -22,7 +22,7 @@ const TIMELINE = [
   {
     year: "2021",
     title: "Ein geliehenes Mikrofon",
-    text: "Jannik startet VoltFM in seinem Jugendzimmer in Hamburg. Die erste Sendung hört, nach eigener Zählung, seine Schwester. Der Sound ist schlecht, die Idee steht.",
+    text: "Jannik startet VoltFM in seinem Jugendzimmer in Oldenburg. Die erste Sendung hört, nach eigener Zählung, seine Schwester. Der Sound ist schlecht, die Idee steht.",
   },
   {
     year: "2022",
@@ -59,7 +59,7 @@ export default async function UeberUnsPage() {
       <PageHeader
         eyebrow="Über uns"
         title="Radio, dem man anhört, dass jemand da ist."
-        description="VoltFM ist ein unabhängiges Webradio aus Hamburg. Kein Sender einer Kette, keine Werbeblöcke, keine automatisierte Dauerschleife."
+        description="VoltFM ist ein unabhängiges Webradio aus Oldenburg. Kein Sender einer Kette, keine Werbeblöcke, keine automatisierte Dauerschleife."
         breadcrumbs={[
           { href: "/", label: "Start" },
           { href: "/ueber-uns", label: "Über VoltFM" },

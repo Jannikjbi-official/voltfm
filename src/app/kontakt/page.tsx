@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/common/page-header";
 import { ButtonLink } from "@/components/common/button-link";
 import { Icon, DiscordIcon } from "@/lib/icons";
-import { site } from "@/lib/site";
+import { operator, site } from "@/lib/site";
 import { ContactForm } from "./contact-form";
 import styles from "./page.module.css";
 
@@ -28,6 +28,19 @@ export default function KontaktPage() {
       />
 
       <section className="section shell">
+        {site.mailOutage && (
+          <div className={styles.notice} role="status">
+            <h2 className={styles.noticeTitle}>Unsere E-Mail ist gerade nicht erreichbar</h2>
+            <p className={styles.noticeText}>
+              Der Mailserver hinter <strong>{site.stationEmail}</strong> ist
+              ausgefallen, und wir suchen gerade nach einem neuen Anbieter.
+              Nachrichten an diese Adresse kommen aktuell <strong>nicht</strong> bei
+              uns an. Nutze so lange das Formular hier — das landet direkt in
+              unserer Datenbank — oder schreib uns im Discord.
+            </p>
+          </div>
+        )}
+
         <div className={styles.layout}>
           <div className={styles.formColumn}>
             <ContactForm />
@@ -57,6 +70,19 @@ export default function KontaktPage() {
               <p className={styles.sideText}>
                 Wir sind ein kleines Team und machen VoltFM neben Schule, Studium
                 und Job. Rechne mit ein paar Tagen — aber wir antworten wirklich.
+              </p>
+            </div>
+
+            <div className={styles.sideBlock}>
+              <h2 className={styles.sideTitle}>E-Mail</h2>
+              <p className={styles.sideText}>
+                Rechtliches und alles, was schriftlich sein muss, erreicht uns
+                unter{" "}
+                <a href={`mailto:${operator.email}`} className={styles.sideLink}>
+                  {operator.email}
+                </a>
+                . Diese Adresse funktioniert, auch während der Mailserver für{" "}
+                {site.stationEmail} ausfällt.
               </p>
             </div>
 

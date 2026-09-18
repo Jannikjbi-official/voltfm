@@ -1,0 +1,85 @@
+/**
+ * The dialog base already puts a 24px gap between the popup's children, so
+ * nothing in here adds its own outer margins — doing both is what made the
+ * blocks drift apart.
+ */
+.popup {
+  width: min(34rem, calc(100vw - 2rem));
+  gap: var(--spacing-16);
+  padding: var(--spacing-24);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-circled, 999px);
+  background: var(--color-surface-container-high);
+  color: var(--color-primary);
+}
+
+/* A plain block list: `list-style` markers are not rendered on flex items, so
+   the flex version silently lost its bullets. */
+.facts {
+  margin: 0;
+  padding: var(--spacing-12) var(--spacing-16) var(--spacing-12) var(--spacing-28);
+  border-radius: var(--radius-md, 12px);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-container-low);
+  list-style: disc;
+  font: var(--type-small);
+  color: var(--color-text-secondary);
+}
+
+.facts li + li {
+  margin-top: var(--spacing-6);
+}
+
+.facts li::marker {
+  color: var(--color-primary);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-4) var(--spacing-10);
+  font: var(--type-caption);
+  color: var(--color-text-muted);
+}
+
+.links a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--spacing-10);
+  padding-top: var(--spacing-16);
+  border-top: 1px solid var(--color-border);
+}
+
+/* On a phone the two buttons stack and each takes the full width. */
+@media (max-width: 520px) {
+  .actions {
+    flex-direction: column-reverse;
+  }
+
+  .actions > * {
+    width: 100%;
+  }
+}

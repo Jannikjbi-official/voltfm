@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { useRadioPlayer } from "./player-provider";
-import { PlayButton, VolumeControl, PlayerStatusLine } from "./player-controls";
+import { PlayButton, VolumeControl, PlayerStatusLine, StreamNotice } from "./player-controls";
 import { CoverArt } from "./cover-art";
 import { LiveIndicator } from "./live-indicator";
 import { formatTime } from "@/lib/format";
@@ -39,7 +39,7 @@ export function RadioStage() {
         <div className={styles.titles}>
           <p className={styles.label}>Läuft gerade</p>
           <h2 className={styles.track}>{track?.title ?? "VoltFM Livestream"}</h2>
-          <p className={styles.artist}>{track?.artist ?? "24/7 Musik aus Hamburg"}</p>
+          <p className={styles.artist}>{track?.artist ?? "24/7 Musik aus Oldenburg"}</p>
           {track?.album && (
             <p className={styles.album}>
               {track.album}
@@ -54,6 +54,7 @@ export function RadioStage() {
         </div>
 
         <PlayerStatusLine />
+        <StreamNotice />
 
         <dl className={styles.schedule}>
           {current && (

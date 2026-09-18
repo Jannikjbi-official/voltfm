@@ -135,3 +135,33 @@
   color: var(--color-error);
   font-weight: 600;
 }
+
+/* --- Mail outage notice --------------------------------------------------- */
+
+.notice {
+  margin-bottom: var(--spacing-24);
+  padding: var(--spacing-16) var(--spacing-20);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-warning, var(--color-border-strong));
+  background: var(--color-surface-container-low);
+}
+
+.noticeTitle {
+  font: var(--type-h5, var(--type-body));
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-6);
+}
+
+.noticeText {
+  font: var(--type-small);
+  color: var(--color-text-secondary);
+  max-width: 70ch;
+}
+
+.sideLink {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}

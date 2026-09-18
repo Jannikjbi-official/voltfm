@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/common/page-header";
-import { site } from "@/lib/site";
+import { operator, site } from "@/lib/site";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -24,25 +24,35 @@ export default function ImpressumPage() {
         <div className={styles.prose}>
           <h2>Angaben gemäß § 5 DDG</h2>
           <p>
-            VoltFM ist ein nicht-kommerzielles Webradio-Projekt.
+            VoltFM ist ein nicht-kommerzielles, privates Webradio-Projekt.
             <br />
-            Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV.
+            Es wird betrieben von:
           </p>
+          <address className={styles.address}>
+            {operator.name}
+            <br />
+            {operator.street}
+            <br />
+            {operator.postalCode} {operator.city}
+            <br />
+            {operator.country}
+          </address>
 
           <h2>Kontakt</h2>
           <p>
-            E-Mail: <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>
+            E-Mail: <a href={`mailto:${operator.email}`}>{operator.email}</a>
             <br />
-            Web: <a href={site.url}>{site.url}</a>
+            Web: <a href={site.canonicalUrl}>voltfm.xyz</a>
           </p>
 
-          <h2>Hinweis</h2>
-          <p>
-            Die vollständige Anbieterkennzeichnung (Name und ladungsfähige
-            Anschrift der verantwortlichen Person) ist gesetzlich
-            vorgeschrieben und muss hier vor dem öffentlichen Start ergänzt
-            werden.
-          </p>
+          <h2>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
+          <address className={styles.address}>
+            {operator.name}
+            <br />
+            {operator.street}
+            <br />
+            {operator.postalCode} {operator.city}
+          </address>
 
           <h2>Haftung für Inhalte</h2>
           <p>
@@ -59,10 +69,26 @@ export default function ImpressumPage() {
             Seiten ist stets der jeweilige Anbieter verantwortlich.
           </p>
 
-          <h2>Musikrechte</h2>
+          <h2>Musik und Livestream</h2>
           <p>
-            Die Ausstrahlung der Musik erfolgt über unsere Sendeplattform, die
-            die erforderlichen Lizenzen mit den Verwertungsgesellschaften hält.
+            Das Programm von VoltFM wird über laut.fm ausgestrahlt. laut.fm hält
+            die erforderlichen Lizenzen mit GEMA und GVL und trägt die
+            Streamingkosten. Die Wiedergabe findet deshalb auf laut.fm statt und
+            wird auf dieser Website nicht eingebettet, sondern verlinkt.
+          </p>
+
+          <h2>Urheberrecht</h2>
+          <p>
+            Die auf dieser Website erstellten Inhalte und Werke unterliegen dem
+            deutschen Urheberrecht. Beiträge Dritter sind als solche
+            gekennzeichnet.
+          </p>
+
+          <h2>Streitschlichtung</h2>
+          <p>
+            Wir sind nicht bereit und nicht verpflichtet, an
+            Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle
+            teilzunehmen.
           </p>
         </div>
       </section>

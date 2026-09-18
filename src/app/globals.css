@@ -5,6 +5,8 @@
 @import "../styles/brand.css";
 /* VoltFM overrides for OlyxUI component styling (sizing, spacing). */
 @import "../styles/olyx-overrides.css";
+/* Layout classes the article editor may emit into stored HTML. */
+@import "../styles/editor-content.css";
 
 *,
 *::before,

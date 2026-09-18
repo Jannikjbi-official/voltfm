@@ -10,6 +10,8 @@ import {
   useState,
 } from "react";
 import type { PlayerStatus, RadioSnapshot } from "@/services/radio/types";
+import { radio } from "@/lib/site";
+import { StreamConsentDialog } from "./stream-consent";
 
 /**
  * Owns the one and only <audio> element in the app.
@@ -17,10 +19,18 @@ import type { PlayerStatus, RadioSnapshot } from "@/services/radio/types";
  * It is mounted in the root layout, so client-side navigation never unmounts it
  * and playback continues uninterrupted between pages. Every player surface
  * (sticky bar, /radio hero, mobile sheet) is a view over this single state.
+ *
+ * Two things gate playback:
+ *
+ * 1. `radio.embedAllowed` — laut.fm's terms forbid embedding their stream, so
+ *    while it is false nothing is ever connected and "play" becomes a link-out.
+ * 2. The listener's consent — connecting sends their IP address to a third
+ *    party, so the first play asks first and remembers the answer.
  */
 
 const VOLUME_KEY = "voltfm-volume";
 const MUTED_KEY = "voltfm-muted";
+const CONSENT_KEY = "voltfm-stream-consent";
 /** How often to re-poll laut.fm for track/show metadata. */
 const METADATA_INTERVAL_MS = 20_000;
 
@@ -31,6 +41,14 @@ interface PlayerContextValue {
   muted: boolean;
   snapshot: RadioSnapshot | null;
   error: string | null;
+  /** False while laut.fm's terms forbid on-site playback. */
+  embedAllowed: boolean;
+  /** Where to send listeners instead, while embedding is off. */
+  externalUrl: string;
+  /** null until the stored answer has been read on the client. */
+  consent: boolean | null;
+  grantConsent: () => void;
+  revokeConsent: () => void;
   play: () => void;
   pause: () => void;
   toggle: () => void;
@@ -56,8 +74,13 @@ export function RadioPlayerProvider({
   const [muted, setMuted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [snapshot, setSnapshot] = useState<RadioSnapshot | null>(initialSnapshot);
+  const [consent, setConsent] = useState<boolean | null>(null);
+  const [asking, setAsking] = useState(false);
+  /* Set when the listener pressed play before consenting, so accepting starts
+     playback instead of making them press play a second time. */
+  const playAfterConsent = useRef(false);
 
-  /* Restore the listener's volume preference from localStorage.
+  /* Restore the listener's preferences from localStorage.
      This is a one-shot read of a browser-only store on mount: it cannot run
      during SSR, and seeding it into initial state instead would change the
      server-rendered markup and break hydration. */
@@ -71,8 +94,11 @@ export function RadioPlayerProvider({
         if (Number.isFinite(parsed)) setVolumeState(Math.min(1, Math.max(0, parsed)));
       }
       if (storedMuted !== null) setMuted(storedMuted === "true");
+      setConsent(localStorage.getItem(CONSENT_KEY) === "granted");
     } catch {
-      // Storage unavailable — defaults are fine.
+      // Storage unavailable — defaults are fine, and no stored consent means
+      // we ask again, which is the safe direction.
+      setConsent(false);
     }
   }, []);
   /* eslint-enable react-hooks/set-state-in-effect */
@@ -103,9 +129,7 @@ export function RadioPlayerProvider({
     });
   }, [streamUrl]);
 
-  const play = useCallback(() => connect(), [connect]);
-
-  const pause = useCallback(() => {
+  const stop = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
     audio.pause();
@@ -116,12 +140,60 @@ export function RadioPlayerProvider({
     setStatus("paused");
   }, []);
 
+  const openExternal = useCallback(() => {
+    // Opening in a separate window is exactly what laut.fm's terms permit.
+    window.open(radio.externalUrl, "_blank", "noopener,noreferrer");
+  }, []);
+
+  const play = useCallback(() => {
+    if (!radio.embedAllowed) {
+      openExternal();
+      return;
+    }
+    if (consent !== true) {
+      playAfterConsent.current = true;
+      setAsking(true);
+      return;
+    }
+    connect();
+  }, [connect, consent, openExternal]);
+
+  const pause = useCallback(() => stop(), [stop]);
+
   const isPlaying = status === "playing" || status === "connecting";
 
   const toggle = useCallback(() => {
     if (isPlaying) pause();
     else play();
   }, [isPlaying, pause, play]);
+
+  const grantConsent = useCallback(() => {
+    setConsent(true);
+    setAsking(false);
+    try {
+      localStorage.setItem(CONSENT_KEY, "granted");
+    } catch {
+      /* ignore — consent then lasts for this page view only */
+    }
+    if (playAfterConsent.current) {
+      playAfterConsent.current = false;
+      connect();
+    }
+  }, [connect]);
+
+  /** Withdrawing consent must also cut the connection that consent allowed. */
+  const revokeConsent = useCallback(() => {
+    setConsent(false);
+    setAsking(false);
+    playAfterConsent.current = false;
+    try {
+      localStorage.removeItem(CONSENT_KEY);
+    } catch {
+      /* ignore */
+    }
+    stop();
+    setStatus("idle");
+  }, [stop]);
 
   const setVolume = useCallback((value: number) => {
     const clamped = Math.min(1, Math.max(0, value));
@@ -148,8 +220,10 @@ export function RadioPlayerProvider({
     });
   }, []);
 
-  // Poll metadata. Runs regardless of playback so the site always shows what is
-  // on air, and never surfaces an error — the stream matters, metadata does not.
+  /* Poll metadata. This goes to our own /api/radio/now, which talks to laut.fm
+     server-side — the listener's browser never contacts laut.fm for it, so it
+     needs no consent. It never surfaces an error: the stream matters, the
+     metadata does not. */
   useEffect(() => {
     let cancelled = false;
 
@@ -193,6 +267,11 @@ export function RadioPlayerProvider({
       muted,
       snapshot,
       error,
+      embedAllowed: radio.embedAllowed,
+      externalUrl: radio.externalUrl,
+      consent,
+      grantConsent,
+      revokeConsent,
       play,
       pause,
       toggle,
@@ -200,30 +279,60 @@ export function RadioPlayerProvider({
       setVolume,
       toggleMute,
     }),
-    [status, isPlaying, volume, muted, snapshot, error, play, pause, toggle, connect, setVolume, toggleMute],
+    [
+      status,
+      isPlaying,
+      volume,
+      muted,
+      snapshot,
+      error,
+      consent,
+      grantConsent,
+      revokeConsent,
+      play,
+      pause,
+      toggle,
+      connect,
+      setVolume,
+      toggleMute,
+    ],
   );
 
   return (
     <PlayerContext.Provider value={value}>
-      <audio
-        ref={audioRef}
-        preload="none"
-        // No autoPlay: the listener must press play, per browser policy and
-        // basic courtesy.
-        onPlaying={() => setStatus("playing")}
-        onWaiting={() => setStatus("connecting")}
-        onPause={() => setStatus((s) => (s === "error" ? s : "paused"))}
-        onStalled={() => setStatus("connecting")}
-        onError={() => {
-          // Clearing src during pause() fires a synthetic error; ignore it.
-          const audio = audioRef.current;
-          if (!audio?.getAttribute("src")) return;
-          setStatus("error");
-          setError("Stream nicht erreichbar. Bitte erneut versuchen.");
+      {/* No audio element at all while embedding is switched off: nothing can
+          then accidentally open a connection to the stream provider. */}
+      {radio.embedAllowed && (
+        <audio
+          ref={audioRef}
+          preload="none"
+          // No autoPlay: the listener must press play, per browser policy,
+          // basic courtesy, and the consent gate above.
+          onPlaying={() => setStatus("playing")}
+          onWaiting={() => setStatus("connecting")}
+          onPause={() => setStatus((s) => (s === "error" ? s : "paused"))}
+          onStalled={() => setStatus("connecting")}
+          onError={() => {
+            // Clearing src during pause() fires a synthetic error; ignore it.
+            const audio = audioRef.current;
+            if (!audio?.getAttribute("src")) return;
+            setStatus("error");
+            setError("Stream nicht erreichbar. Bitte erneut versuchen.");
+          }}
+        >
+          <track kind="captions" />
+        </audio>
+      )}
+
+      <StreamConsentDialog
+        open={asking}
+        onAccept={grantConsent}
+        onDecline={() => {
+          playAfterConsent.current = false;
+          setAsking(false);
         }}
-      >
-        <track kind="captions" />
-      </audio>
+      />
+
       {children}
     </PlayerContext.Provider>
   );

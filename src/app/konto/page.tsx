@@ -13,9 +13,18 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function KontoPage() {
+export default async function KontoPage(props: PageProps<"/konto">) {
   // Server-side gate. There is no client check standing in for this.
-  const user = await requireUser("/konto");
+  const [user, params] = await Promise.all([requireUser("/konto"), props.searchParams]);
+
+  /* Better Auth sends the browser back here after the Discord round-trip, with
+     the outcome in the query string. */
+  const linkNotice =
+    params.verknuepft === "discord"
+      ? ("linked" as const)
+      : params.fehler === "discord"
+        ? ("failed" as const)
+        : null;
 
   const profile = user as typeof user & { username?: string | null; role?: string | null };
 
@@ -64,7 +73,7 @@ export default async function KontoPage() {
               Verknüpfe Discord, um dich künftig mit einem Klick anzumelden —
               ohne Username und Passwort.
             </p>
-            <ConnectedAccounts discordEnabled={serverEnv.discordEnabled} />
+            <ConnectedAccounts discordEnabled={serverEnv.discordEnabled} notice={linkNotice} />
           </section>
 
           <section className={styles.block} aria-labelledby="passkeys-title">

@@ -1,15 +1,15 @@
 "use client";
 
-import { useActionState, useRef, useState } from "react";
+import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Field, FieldLabel, FieldDescription } from "@/components/ui/field";
 import { CheckBox } from "@/components/ui/checkbox";
 import { Alert, AlertContent, AlertDescription } from "@/components/ui/alert";
-import { Icon, ImageIcon, LoadingIcon, CheckIcon } from "@/lib/icons";
+import { Icon, LoadingIcon, CheckIcon } from "@/lib/icons";
 import { ImageUpload } from "./image-upload";
-import { useUploadThing } from "@/lib/uploadthing";
+import { RichTextEditor } from "./rich-text-editor";
 import { saveArticle, type ArticleFormState } from "@/app/admin/news/actions";
 import type { ArticleDTO, CategoryDTO } from "@/services/content";
 import styles from "./admin-form.module.css";
@@ -19,9 +19,9 @@ const initial: ArticleFormState = { status: "idle" };
 /**
  * The article editor.
  *
- * The body is authored as HTML in a textarea with an image-insert helper. The
- * server sanitises whatever arrives against a strict allow-list, so the editor
- * can be permissive without the render path becoming an XSS surface.
+ * The body is authored as HTML through <RichTextEditor>. The server sanitises
+ * whatever arrives against a strict allow-list, so the editor can be permissive
+ * without the render path becoming an XSS surface.
  */
 export function ArticleForm({
   article,
@@ -33,33 +33,6 @@ export function ArticleForm({
   authorName: string;
 }) {
   const [state, formAction, pending] = useActionState(saveArticle, initial);
-  const contentRef = useRef<HTMLTextAreaElement>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
-  const [inserted, setInserted] = useState(false);
-
-  const { startUpload, isUploading } = useUploadThing("articleImage", {
-    onClientUploadComplete: (res) => {
-      const url = res?.[0]?.serverData?.url ?? res?.[0]?.ufsUrl;
-      if (url) insertImage(url);
-    },
-  });
-
-  /** Inserts a <figure> at the caret, so images land where the author is typing. */
-  function insertImage(url: string) {
-    const textarea = contentRef.current;
-    if (!textarea) return;
-
-    const snippet = `\n<figure>\n  <img src="${url}" alt="" />\n  <figcaption></figcaption>\n</figure>\n`;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-
-    textarea.value = textarea.value.slice(0, start) + snippet + textarea.value.slice(end);
-    textarea.focus();
-    textarea.selectionStart = textarea.selectionEnd = start + snippet.length;
-
-    setInserted(true);
-    window.setTimeout(() => setInserted(false), 2000);
-  }
 
   return (
     <form action={formAction} className={styles.form}>
@@ -92,47 +65,18 @@ export function ArticleForm({
           </Field>
 
           <Field name="content" className={styles.field}>
-            <div className={styles.contentHead}>
-              <FieldLabel>Inhalt (HTML)</FieldLabel>
-              <div className={styles.contentTools}>
-                <input
-                  ref={fileRef}
-                  type="file"
-                  accept="image/*"
-                  hidden
-                  onChange={(event) => {
-                    const file = event.target.files?.[0];
-                    if (file) void startUpload([file]);
-                  }}
-                />
-                <Button
-                  type="button"
-                  variant="neutral"
-                  mode="stroke"
-                  size="sm"
-                  disabled={isUploading}
-                  onClick={() => fileRef.current?.click()}
-                >
-                  <Icon
-                    icon={isUploading ? LoadingIcon : inserted ? CheckIcon : ImageIcon}
-                    spin={isUploading}
-                  />
-                  {isUploading ? "Lädt …" : inserted ? "Eingefügt" : "Bild einfügen"}
-                </Button>
-              </div>
-            </div>
-            <Textarea
-              ref={contentRef}
+            <FieldLabel>Inhalt (HTML)</FieldLabel>
+            <RichTextEditor
               name="content"
               required
               rows={22}
               defaultValue={article?.content}
-              className={styles.contentArea}
               placeholder="<p>Dein Text …</p>"
             />
             <FieldDescription>
-              Erlaubt: Überschriften (h2–h4), Absätze, Fett/Kursiv, Listen, Zitate,
-              Links, Bilder, Code. Alles andere wird beim Speichern entfernt.
+              Erlaubt: Überschriften (h2–h4), Absätze, Fett/Kursiv/Unterstrichen,
+              Markierungen, Listen, Zitate, Tabellen, Infoboxen, Links, Bilder und
+              Code. Alles andere wird beim Speichern entfernt.
             </FieldDescription>
           </Field>
         </div>

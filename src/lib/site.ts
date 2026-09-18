@@ -11,12 +11,66 @@ export const site = {
   locale: "de_DE",
   lang: "de",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  /**
+   * The public domain, independent of the environment.
+   *
+   * `url` above points at whatever host the app currently runs on — localhost
+   * in development, a preview host on Vercel. The Impressum has to name the
+   * actual online offering, so it uses this instead.
+   */
+  canonicalUrl: "https://voltfm.xyz",
   discordUrl: process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/voltfm",
   streamUrl:
     process.env.NEXT_PUBLIC_RADIO_STREAM_URL ?? "https://stream.laut.fm/jannikjbi",
-  contactEmail: "Kontakt@voltfm.xyz",
+  /** Reachable contact address. Used in the Impressum, where it is required. */
+  contactEmail: "admin@jannikjbi.de",
+  /**
+   * The station address. The mailbox behind it is currently unreachable — the
+   * mail server is down and a replacement is being set up — so every place
+   * that shows it also has to show `mailOutage` below.
+   */
+  stationEmail: "Kontakt@voltfm.xyz",
+  mailOutage: true,
   /** laut.fm station slug — drives every metadata endpoint. */
   station: process.env.NEXT_PUBLIC_RADIO_STATION ?? "jannikjbi",
+} as const;
+
+const station = process.env.NEXT_PUBLIC_RADIO_STATION ?? "jannikjbi";
+
+/**
+ * How VoltFM is allowed to play its own stream.
+ *
+ * laut.fm's Nutzungsbedingungen § 6 Abs. 9 forbid embedding their audio streams
+ * on third-party sites and explicitly allow linking, provided the click leads
+ * away to laut.fm or opens it in a separate window. So on-site playback stays
+ * OFF and the play button is a link-out.
+ *
+ * The embedded player is not deleted, it is switched off: as soon as VoltFM
+ * streams from a provider whose licence covers on-site playback, set
+ * NEXT_PUBLIC_RADIO_EMBED=true and NEXT_PUBLIC_RADIO_STREAM_URL, and the full
+ * player (including the consent gate) comes back.
+ */
+export const radio = {
+  embedAllowed: process.env.NEXT_PUBLIC_RADIO_EMBED === "true",
+  /** Where "hören" sends listeners while embedding is off. */
+  externalUrl: `https://laut.fm/${station}`,
+  providerName: "laut.fm",
+  providerTermsUrl: "https://laut.fm/pages/terms_and_conditions",
+  providerPrivacyUrl: "https://laut.fm/pages/privacy",
+} as const;
+
+/**
+ * Anbieterkennzeichnung. § 5 DDG requires a name and a deliverable postal
+ * address, and § 18 Abs. 2 MStV a person responsible for editorial content —
+ * so this is legally required data, not decoration.
+ */
+export const operator = {
+  name: "Jannik Bolting",
+  street: "Burenkamp 16",
+  postalCode: "26127",
+  city: "Oldenburg (Oldb)",
+  country: "Deutschland",
+  email: "admin@jannikjbi.de",
 } as const;
 
 export type NavItem = {

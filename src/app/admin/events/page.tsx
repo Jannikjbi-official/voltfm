@@ -1,13 +1,88 @@
 import type { Metadata } from "next";
-import { listEvents } from "@/services/content";
-import { formatDateTime } from "@/lib/format";
+import { listEvents, listCategories } from "@/services/content";
+import { formatDateTime, toStationTimeInput } from "@/lib/format";
+import { EntityManager } from "@/components/admin/entity-manager";
+import type { EntityRow, FieldDef } from "@/components/admin/entity-types";
+import { saveEvent, deleteEvent } from "./actions";
 import styles from "../page.module.css";
 
 export const metadata: Metadata = { title: "Events · Admin", robots: { index: false } };
 export const dynamic = "force-dynamic";
 
+const STATUS_LABELS: Record<string, string> = {
+  upcoming: "Geplant",
+  live: "Läuft",
+  past: "Vorbei",
+  cancelled: "Abgesagt",
+};
+
 export default async function Page() {
-  const items = await listEvents("all");
+  const [items, cats] = await Promise.all([listEvents("all"), listCategories()]);
+
+  /* The category is a free-text field on the event, but offering the existing
+     categories keeps the spelling consistent across the list. */
+  const categoryOptions = cats.map((cat) => ({ value: cat.name, label: cat.name }));
+
+  const fields: FieldDef[] = [
+    { name: "title", label: "Titel", type: "text", required: true, placeholder: "VoltFM Sommerfest" },
+    {
+      name: "description",
+      label: "Kurzbeschreibung",
+      type: "textarea",
+      required: true,
+      rows: 3,
+      hint: "Steht in der Event-Liste und in der Vorschau beim Teilen.",
+    },
+    {
+      name: "content",
+      label: "Ausführlicher Text",
+      type: "rich",
+      rows: 12,
+      hint: "Optional. Erscheint auf der Detailseite des Events.",
+    },
+    { name: "location", label: "Ort", type: "text", required: true, placeholder: "Oldenburg, Kulturetage" },
+    { name: "url", label: "Externer Link", type: "text", placeholder: "https://…" },
+
+    { name: "startsAt", label: "Beginn", type: "datetime", required: true, side: true },
+    { name: "endsAt", label: "Ende", type: "datetime", side: true, hint: "Optional." },
+    categoryOptions.length > 0
+      ? { name: "category", label: "Kategorie", type: "select", required: true, side: true, options: categoryOptions }
+      : { name: "category", label: "Kategorie", type: "text", required: true, side: true, placeholder: "Party" },
+    {
+      name: "status",
+      label: "Status",
+      type: "select",
+      side: true,
+      options: [
+        { value: "upcoming", label: "Geplant" },
+        { value: "live", label: "Läuft gerade" },
+        { value: "past", label: "Vorbei" },
+        { value: "cancelled", label: "Abgesagt" },
+      ],
+    },
+    { name: "image", label: "Titelbild", type: "image", side: true },
+    { name: "slug", label: "Slug", type: "text", side: true, hint: "Leer lassen für automatisch." },
+  ];
+
+  const rows: EntityRow[] = items.map((item) => ({
+    id: item.id,
+    title: item.title,
+    meta: `${formatDateTime(item.startsAt)} · ${item.location}`,
+    badge: STATUS_LABELS[item.status] ?? item.status,
+    values: {
+      title: item.title,
+      slug: item.slug,
+      description: item.description,
+      content: item.content ?? "",
+      startsAt: toStationTimeInput(item.startsAt),
+      endsAt: toStationTimeInput(item.endsAt),
+      location: item.location,
+      category: item.category,
+      status: item.status,
+      image: item.image ?? "",
+      url: item.url ?? "",
+    },
+  }));
 
   return (
     <>
@@ -18,25 +93,15 @@ export default async function Page() {
         </div>
       </header>
 
-      {items.length === 0 ? (
-        <p className={styles.empty}>Noch nichts angelegt.</p>
-      ) : (
-        <ul className={styles.recent} role="list">
-          {items.map((item) => (
-            <li key={item.id}>
-              <span className={styles.recentLink}>
-                <span className={styles.recentTitle}>{item.title}</span>
-                <span className={styles.recentMeta}>
-                  <span className={styles.status} data-status={item.status}>
-                    {item.status}
-                  </span>
-                  {formatDateTime(item.startsAt)}
-                </span>
-              </span>
-            </li>
-          ))}
-        </ul>
-      )}
+      <EntityManager
+        rows={rows}
+        fields={fields}
+        saveAction={saveEvent}
+        deleteAction={deleteEvent}
+        singular="Event"
+        addLabel="Event anlegen"
+        emptyText="Noch kein Event angelegt."
+      />
     </>
   );
 }

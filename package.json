@@ -9,6 +9,7 @@
     "lint": "eslint",
     "db": "tsx scripts/dev-db.mts",
     "seed": "tsx scripts/seed.mts",
+    "seed:categories": "tsx scripts/seed-categories.mts",
     "typecheck": "tsc --noEmit",
     "make-admin": "tsx scripts/make-admin.mts"
   },

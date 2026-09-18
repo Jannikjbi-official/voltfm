@@ -49,6 +49,15 @@ export const auth = betterAuth({
     accountLinking: {
       enabled: true,
       trustedProviders: ["discord"],
+      /**
+       * Hardly anyone uses the same address on Discord as on VoltFM, and
+       * without this Better Auth aborts the link with
+       * `?error=email_does_not_match`. It only affects the *explicit* link flow
+       * from /konto, where the user is already signed in and is deliberately
+       * connecting their own Discord account. Automatic linking at sign-in
+       * still requires a matching, verified email.
+       */
+      allowDifferentEmails: true,
     },
   },
 

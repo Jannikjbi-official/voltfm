@@ -28,7 +28,7 @@ export default async function RadioPage() {
       <PageHeader
         eyebrow="Livestream"
         title="VoltFM hören"
-        description="Ein Klick, kein Konto, keine Werbeunterbrechung. Der Stream läuft rund um die Uhr."
+        description="Ein Klick, kein Konto, keine Werbeunterbrechung — gesendet wird rund um die Uhr über laut.fm."
         breadcrumbs={[
           { href: "/", label: "Start" },
           { href: "/radio", label: "Radio" },
@@ -89,7 +89,7 @@ export default async function RadioPage() {
                 </div>
                 <div className={styles.infoRow}>
                   <dt>Standort</dt>
-                  <dd>Hamburg</dd>
+                  <dd>Oldenburg (Oldb)</dd>
                 </div>
                 <div className={styles.infoRow}>
                   <dt>Verfügbarkeit</dt>

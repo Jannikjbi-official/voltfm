@@ -44,15 +44,37 @@ const schema = z.object({
  */
 const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
   allowedTags: [
-    "p", "br", "strong", "em", "u", "s", "blockquote",
+    "p", "br", "strong", "em", "u", "s", "mark", "small", "sup", "sub", "blockquote",
     "h2", "h3", "h4",
     "ul", "ol", "li",
     "a", "img", "figure", "figcaption",
+    "table", "thead", "tbody", "tfoot", "tr", "th", "td", "caption",
+    "aside", "div",
     "code", "pre", "hr",
   ],
   allowedAttributes: {
     a: ["href", "title", "target", "rel"],
     img: ["src", "alt", "title", "width", "height", "loading"],
+    th: ["scope", "colspan", "rowspan"],
+    td: ["colspan", "rowspan"],
+    // `class` is allowed only on these, and only with the names below.
+    figure: ["class"],
+    aside: ["class"],
+    div: ["class"],
+    table: ["class"],
+    p: ["class"],
+  },
+  /**
+   * The layout vocabulary the editor toolbar can emit, styled globally in
+   * styles/editor-content.css. Restricting it here means an editor cannot
+   * smuggle in arbitrary class names and hang unexpected styling off them.
+   */
+  allowedClasses: {
+    figure: ["vfm-figure", "vfm-figure--wide", "vfm-figure--left", "vfm-figure--right"],
+    aside: ["vfm-callout", "vfm-callout--warning", "vfm-callout--success"],
+    div: ["vfm-columns", "vfm-clear"],
+    table: ["vfm-table"],
+    p: ["vfm-lead"],
   },
   allowedSchemes: ["https", "mailto"],
   // Images may only come from hosts we actually serve, which keeps the editor

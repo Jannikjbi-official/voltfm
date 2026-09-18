@@ -25,15 +25,89 @@
   }
 }
 
+/* Link-out play button, used while embedding the provider stream is not
+   permitted. Styled like the filled play button it replaces. */
+.externalPlay {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-circled);
+  background: var(--color-primary);
+  color: var(--color-on-primary, #fff);
+  transition: background 150ms ease, transform 150ms ease;
+}
+
+.externalPlay:hover {
+  background: var(--color-primary-dark, var(--color-accent));
+}
+
+.externalPlay:active {
+  transform: scale(0.96);
+}
+
+.externalPlay[data-player-size="lg"] {
+  width: 68px;
+  height: 68px;
+}
+
+.externalPlay[data-player-size="lg"] svg {
+  width: 28px;
+  height: 28px;
+}
+
 .volume {
   display: flex;
   align-items: center;
   gap: var(--spacing-8);
-  min-width: 168px;
+  /* The slider is the part that may shrink; the mute button must not. */
+  flex: 0 1 168px;
+  min-width: 0;
 }
 
+.volumeButton {
+  flex-shrink: 0;
+}
+
+/* The slider primitive sizes itself from its own height, so it needs an
+   explicit one — without it the track collapses to nothing inside a flex row
+   whose height is driven by its taller siblings. */
 .volumeSlider {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 72px;
+  height: var(--spacing-14, 14px);
+  align-self: center;
+}
+
+.notice {
+  font: var(--type-caption);
+  color: var(--color-text-secondary);
+  max-width: 62ch;
+  line-height: 1.6;
+}
+
+.notice a {
+  display: inline;
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.notice a svg {
+  margin-left: 0.25em;
+  vertical-align: -0.1em;
+}
+
+.linkButton {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
 }
 
 .statusLine {
@@ -154,12 +228,15 @@
     height: 40px;
   }
 
-  /* The slider is unusable at thumb size on a phone; the mute toggle stays. */
-  .volume {
-    min-width: 0;
+  /* Only inside the sticky bar: there is no room for a usable track next to
+     the track metadata, so the mute toggle stays and the slider goes. Scoping
+     matters — an unscoped rule also stripped the slider off the /radio player,
+     where the screen is not the constraint. */
+  .bar .volume {
+    flex: 0 0 auto;
   }
 
-  .volumeSlider {
+  .bar .volumeSlider {
     display: none;
   }
 }

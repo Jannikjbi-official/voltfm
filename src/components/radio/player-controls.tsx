@@ -11,22 +11,47 @@ import {
   VolumeLowIcon,
   VolumeMuteIcon,
   LoadingIcon,
+  ExternalLinkIcon,
 } from "@/lib/icons";
+import { radio } from "@/lib/site";
 import { useRadioPlayer } from "./player-provider";
 import styles from "./player.module.css";
 
-/** Play / pause / retry, sized for either the sticky bar or the radio hero. */
+/**
+ * Play / pause / retry, sized for either the sticky bar or the radio hero.
+ *
+ * While `radio.embedAllowed` is false this is a link to the provider rather
+ * than a transport control — laut.fm's terms allow linking, not embedding.
+ */
 export function PlayButton({ size = "md" }: { size?: "md" | "lg" }) {
-  const { status, isPlaying, toggle, retry } = useRadioPlayer();
+  const { status, isPlaying, toggle, retry, embedAllowed, externalUrl } = useRadioPlayer();
+
+  if (!embedAllowed) {
+    const label = `Auf ${radio.providerName} hören (öffnet ein neues Fenster)`;
+    return (
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <a
+              href={externalUrl}
+              target="_blank"
+              rel="noreferrer noopener"
+              aria-label={label}
+              data-player-size={size}
+              className={styles.externalPlay}
+            >
+              <Icon icon={PlayIcon} />
+            </a>
+          }
+        />
+        <TooltipContent>{label}</TooltipContent>
+      </Tooltip>
+    );
+  }
 
   if (status === "error" || status === "offline") {
     return (
-      <Button
-        variant="error"
-        mode="filled"
-        size={size === "lg" ? "lg" : "md"}
-        onClick={retry}
-      >
+      <Button variant="error" mode="filled" size={size === "lg" ? "lg" : "md"} onClick={retry}>
         Erneut versuchen
       </Button>
     );
@@ -52,7 +77,6 @@ export function PlayButton({ size = "md" }: { size?: "md" | "lg" }) {
             <Icon
               icon={connecting ? LoadingIcon : isPlaying ? PauseIcon : PlayIcon}
               className={connecting ? styles.spin : undefined}
-             
             />
           </Button>
         }
@@ -62,9 +86,17 @@ export function PlayButton({ size = "md" }: { size?: "md" | "lg" }) {
   );
 }
 
-/** Mute toggle plus volume slider. Hidden on small screens by the parent. */
+/**
+ * Mute toggle plus volume slider.
+ *
+ * Renders nothing while playback happens on the provider's site — there is no
+ * audio here whose volume could be changed.
+ */
 export function VolumeControl() {
-  const { volume, muted, setVolume, toggleMute } = useRadioPlayer();
+  const { volume, muted, setVolume, toggleMute, embedAllowed } = useRadioPlayer();
+
+  if (!embedAllowed) return null;
+
   const effective = muted ? 0 : volume;
   const icon =
     effective === 0 ? VolumeMuteIcon : effective < 0.5 ? VolumeLowIcon : VolumeHighIcon;
@@ -79,6 +111,7 @@ export function VolumeControl() {
         onClick={toggleMute}
         aria-label={muted ? "Ton einschalten" : "Stummschalten"}
         aria-pressed={muted}
+        className={styles.volumeButton}
       >
         <Icon icon={icon} />
       </Button>
@@ -97,7 +130,15 @@ export function VolumeControl() {
 
 /** Human-readable playback state for screen readers and the error surface. */
 export function PlayerStatusLine() {
-  const { status, error } = useRadioPlayer();
+  const { status, error, embedAllowed, consent } = useRadioPlayer();
+
+  if (!embedAllowed) {
+    return (
+      <p className={styles.statusLine}>
+        Wiedergabe läuft auf {radio.providerName} — der Link öffnet ein neues Fenster.
+      </p>
+    );
+  }
 
   const text =
     status === "connecting"
@@ -108,11 +149,52 @@ export function PlayerStatusLine() {
           ? "Wiedergabe pausiert"
           : status === "offline"
             ? "Keine Internetverbindung"
-            : error ?? "";
+            : consent === false
+              ? `Der Stream wird erst nach deiner Zustimmung von ${radio.providerName} geladen.`
+              : (error ?? "");
 
   return (
     <p className={styles.statusLine} role="status" aria-live="polite">
       {text}
+    </p>
+  );
+}
+
+/**
+ * Why there is no player here, plus the way to withdraw a given consent.
+ *
+ * Shown on /radio and in the hero, where there is room to explain — the sticky
+ * bar only gets the button.
+ */
+export function StreamNotice() {
+  const { embedAllowed, externalUrl, consent, revokeConsent } = useRadioPlayer();
+
+  if (!embedAllowed) {
+    return (
+      <p className={styles.notice}>
+        VoltFM sendet über {radio.providerName}. Deren{" "}
+        <a href={radio.providerTermsUrl} target="_blank" rel="noreferrer noopener">
+          Nutzungsbedingungen
+        </a>{" "}
+        (§ 6 Abs. 9) erlauben es nicht, den Stream auf fremden Seiten einzubetten —
+        verlinken dagegen schon. Deshalb läuft die Wiedergabe auf{" "}
+        <a href={externalUrl} target="_blank" rel="noreferrer noopener">
+          {radio.providerName}
+          <Icon icon={ExternalLinkIcon} />
+        </a>{" "}
+        und nicht hier. Ohne Klick wird nichts dorthin übertragen.
+      </p>
+    );
+  }
+
+  if (consent !== true) return null;
+
+  return (
+    <p className={styles.notice}>
+      Du hast der Verbindung zu {radio.providerName} zugestimmt.{" "}
+      <button type="button" className={styles.linkButton} onClick={revokeConsent}>
+        Verbindung trennen
+      </button>
     </p>
   );
 }

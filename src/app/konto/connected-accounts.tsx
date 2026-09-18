@@ -22,7 +22,14 @@ interface LinkedAccount {
  * the normal OAuth flow and attaches the result to the *existing* account
  * rather than creating a second one.
  */
-export function ConnectedAccounts({ discordEnabled }: { discordEnabled: boolean }) {
+export function ConnectedAccounts({
+  discordEnabled,
+  notice = null,
+}: {
+  discordEnabled: boolean;
+  /** Outcome of the OAuth round-trip, read from the query string on the server. */
+  notice?: "linked" | "failed" | null;
+}) {
   const [accounts, setAccounts] = useState<LinkedAccount[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -51,7 +58,10 @@ export function ConnectedAccounts({ discordEnabled }: { discordEnabled: boolean 
     setBusy(true);
     const { error: linkError } = await authClient.linkSocial({
       provider: "discord",
-      callbackURL: "/konto",
+      callbackURL: "/konto?verknuepft=discord",
+      // Without this an aborted link drops the user on the start page with a
+      // bare `?error=...` in the URL and no explanation.
+      errorCallbackURL: "/konto?fehler=discord",
     });
     if (linkError) {
       setError("Discord konnte nicht verknüpft werden. Bitte versuch es erneut.");
@@ -87,6 +97,26 @@ export function ConnectedAccounts({ discordEnabled }: { discordEnabled: boolean 
 
   return (
     <>
+      {notice === "linked" && !error && (
+        <Alert variant="lighter" status="success" role="status">
+          <AlertContent>
+            <AlertDescription>Discord ist jetzt mit deinem Konto verknüpft.</AlertDescription>
+          </AlertContent>
+        </Alert>
+      )}
+
+      {notice === "failed" && !error && (
+        <Alert variant="lighter" status="error" role="alert">
+          <AlertContent>
+            <AlertDescription>
+              Die Verknüpfung mit Discord wurde abgebrochen. Falls du sie selbst
+              abgebrochen hast, ist alles in Ordnung — sonst versuch es einfach
+              noch einmal.
+            </AlertDescription>
+          </AlertContent>
+        </Alert>
+      )}
+
       {error && (
         <Alert variant="lighter" status="error" role="alert">
           <AlertContent>

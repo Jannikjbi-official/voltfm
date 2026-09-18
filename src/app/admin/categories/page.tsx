@@ -1,12 +1,56 @@
 import type { Metadata } from "next";
 import { listCategories } from "@/services/content";
+import { EntityManager } from "@/components/admin/entity-manager";
+import type { EntityRow, FieldDef } from "@/components/admin/entity-types";
+import { saveCategory, deleteCategory } from "./actions";
 import styles from "../page.module.css";
 
 export const metadata: Metadata = { title: "Kategorien · Admin", robots: { index: false } };
 export const dynamic = "force-dynamic";
 
+const FIELDS: FieldDef[] = [
+  { name: "name", label: "Name", type: "text", required: true, placeholder: "Musik" },
+  {
+    name: "description",
+    label: "Beschreibung",
+    type: "textarea",
+    rows: 3,
+    hint: "Erscheint als Untertitel auf der Kategorieseite.",
+  },
+  {
+    name: "slug",
+    label: "Slug",
+    type: "text",
+    side: true,
+    hint: "Leer lassen, dann wird er aus dem Namen gebildet.",
+  },
+  {
+    name: "order",
+    label: "Reihenfolge",
+    type: "number",
+    side: true,
+    min: 0,
+    max: 999,
+    defaultValue: 99,
+    hint: "Kleinere Zahlen stehen weiter vorn.",
+  },
+];
+
 export default async function Page() {
   const items = await listCategories();
+
+  const rows: EntityRow[] = items.map((item) => ({
+    id: item.id,
+    title: item.name,
+    meta: `/${item.slug}`,
+    badge: String(item.order),
+    values: {
+      name: item.name,
+      slug: item.slug,
+      description: item.description ?? "",
+      order: item.order,
+    },
+  }));
 
   return (
     <>
@@ -17,20 +61,15 @@ export default async function Page() {
         </div>
       </header>
 
-      {items.length === 0 ? (
-        <p className={styles.empty}>Noch nichts angelegt.</p>
-      ) : (
-        <ul className={styles.recent} role="list">
-          {items.map((item) => (
-            <li key={item.id}>
-              <span className={styles.recentLink}>
-                <span className={styles.recentTitle}>{item.name}</span>
-                <span className={styles.recentMeta}>/{item.slug}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
-      )}
+      <EntityManager
+        rows={rows}
+        fields={FIELDS}
+        saveAction={saveCategory}
+        deleteAction={deleteCategory}
+        singular="Kategorie"
+        addLabel="Kategorie anlegen"
+        emptyText="Noch keine Kategorie angelegt."
+      />
     </>
   );
 }

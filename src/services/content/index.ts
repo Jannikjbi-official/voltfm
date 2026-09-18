@@ -74,6 +74,14 @@ export async function listShows(): Promise<ShowDTO[]> {
   );
 }
 
+/** Admin listing: includes shows that are hidden from the public schedule. */
+export async function adminListShows(): Promise<ShowDTO[]> {
+  return safe(
+    async () => serializeAll(await shows().find().sort({ weekday: 1, startTime: 1 }).toArray()),
+    [],
+  );
+}
+
 export async function getShowsBySlugs(slugs: string[]): Promise<ShowDTO[]> {
   if (slugs.length === 0) return [];
   return safe(
