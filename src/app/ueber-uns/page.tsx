@@ -20,14 +20,14 @@ export const revalidate = 3600;
 
 const TIMELINE = [
   {
-    year: "2021",
-    title: "Ein geliehenes Mikrofon",
-    text: "Jannik startet VoltFM in seinem Jugendzimmer in Hamburg. Die erste Sendung hört, nach eigener Zählung, seine Schwester. Der Sound ist schlecht, die Idee steht.",
+    year: "Januar 2021",
+    title: "Die Station geht auf Sendung",
+    text: "Jannik legt seine laut.fm-Station an — damals noch als jannikjbiFM, aus dem Jugendzimmer in Hamburg. Der Sound ist schlecht, die Idee steht. Es folgen etliche Namenswechsel, bis VoltFM übrig bleibt.",
   },
   {
     year: "2022",
-    title: "Der Discord entsteht",
-    text: "Aus einzelnen Hörerinnen und Hörern wird eine Community. Songwünsche laufen zum ersten Mal nicht mehr per Direktnachricht, sondern in einem eigenen Kanal.",
+    title: "Zum ersten Mal RadioAid",
+    text: "Die Station macht erstmals bei RadioAid mit, der 24-stündigen Charity-Sendung aus der laut.fm-Community. Seitdem gehört sie zu den Sendern, die das Projekt mittragen.",
   },
   {
     year: "2023",
