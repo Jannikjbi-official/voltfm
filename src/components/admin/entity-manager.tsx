@@ -50,6 +50,10 @@ export function EntityManager({
   const [saveState, save, saving] = useActionState(saveAction, initial);
   const [deleteState, remove, deleting] = useActionState(deleteAction, initial);
   const [editing, setEditing] = useState<EntityRow | null>(null);
+  /* Das Formular ist lang. Stuende es immer offen, waere die Liste der
+     vorhandenen Eintraege bei jedem Aufruf nach unten geschoben — dabei
+     schaut man meistens genau dort nach. */
+  const [creating, setCreating] = useState(false);
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -61,6 +65,7 @@ export function EntityManager({
     if (saveState.status === "success" && token !== lastHandled.current) {
       lastHandled.current = token;
       setEditing(null);
+      setCreating(false);
       formRef.current?.reset();
     }
   }, [saveState]);
@@ -87,6 +92,14 @@ export function EntityManager({
   const mainFields = fields.filter((field) => !field.side);
   const sideFields = fields.filter((field) => field.side);
 
+  const formOpen = creating || editing !== null;
+
+  /** Schliesst das Formular, egal ob angelegt oder bearbeitet wurde. */
+  function closeForm() {
+    setEditing(null);
+    setCreating(false);
+  }
+
   return (
     <div className={styles.wrap}>
       {message && (
@@ -101,14 +114,27 @@ export function EntityManager({
         </Alert>
       )}
 
-      {/* Ohne Anlegerecht taucht das Formular erst auf, wenn ein vorhandener
-          Eintrag bearbeitet wird — ein leeres Formular, das beim Absenden
-          abgelehnt wird, waere eine Einladung ins Leere. */}
-      {!canCreate && !editing && createBlockedText && (
-        <p className={styles.blocked}>{createBlockedText}</p>
-      )}
+      {/* Geschlossen steht hier nur der Knopf — oder die Erklaerung, warum
+          gerade nichts angelegt werden kann. */}
+      {!formOpen &&
+        (canCreate ? (
+          <div className={styles.addRow}>
+            <Button
+              type="button"
+              variant="primary"
+              mode="filled"
+              size="md"
+              onClick={() => setCreating(true)}
+            >
+              <Icon icon={PlusIcon} />
+              {addLabel}
+            </Button>
+          </div>
+        ) : (
+          createBlockedText && <p className={styles.blocked}>{createBlockedText}</p>
+        ))}
 
-      {(canCreate || editing) && (
+      {formOpen && (
       <form ref={formRef} action={save} className={formStyles.form} key={editing?.id ?? "new"}>
         {editing && <input type="hidden" name="id" value={editing.id} />}
 
@@ -116,18 +142,10 @@ export function EntityManager({
           <h2 className={styles.formTitle}>
             {editing ? `${singular} bearbeiten` : addLabel}
           </h2>
-          {editing && (
-            <Button
-              type="button"
-              variant="neutral"
-              mode="ghost"
-              size="sm"
-              onClick={() => setEditing(null)}
-            >
-              <Icon icon={CloseIcon} />
-              Abbrechen
-            </Button>
-          )}
+          <Button type="button" variant="neutral" mode="ghost" size="sm" onClick={closeForm}>
+            <Icon icon={CloseIcon} />
+            Abbrechen
+          </Button>
         </div>
 
         <div className={formStyles.grid}>
@@ -177,6 +195,7 @@ export function EntityManager({
                     size="sm"
                     onClick={() => {
                       setEditing(row);
+                      setCreating(false);
                       setConfirmId(null);
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
