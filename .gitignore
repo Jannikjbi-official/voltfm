@@ -41,3 +41,5 @@ yarn-error.log*
 next-env.d.ts
 .env*.local
 .mongo-data/
+# Auch beiseitegelegte Kopien (z. B. .mongo-data.kaputt-…) gehoeren nie ins Repo.
+.mongo-data*
