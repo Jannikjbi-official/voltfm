@@ -13,6 +13,7 @@ import {
   listCategories,
   getFeaturedArticle,
   countArticlesByCategory,
+  getAuthorProfiles,
 } from "@/services/content";
 import styles from "./page.module.css";
 
@@ -54,6 +55,8 @@ export default async function NewsPage({
   const activeCategory = categories.find((c) => c.slug === kategorie);
   const gridItems = featured ? items.filter((a) => a.slug !== featured.slug) : items;
   const categoryNames = Object.fromEntries(categories.map((c) => [c.slug, c.name]));
+  const authors = await getAuthorProfiles();
+  const featuredAuthor = featured ? authors[featured.authorName] : undefined;
 
   /* Leere Kategorien gehören nicht in die Filterleiste: Ein Filter, der
      garantiert nichts findet, ist eine Sackgasse. Die gerade aktive bleibt
@@ -174,6 +177,22 @@ export default async function NewsPage({
                   </h2>
 
                   <p className={styles.heroExcerpt}>{featured.excerpt}</p>
+
+                  {/* Muss ueber der Titelflaeche liegen: `.heroLink::after`
+                      deckt den ganzen Aufmacher ab. */}
+                  <p className={styles.heroAuthor}>
+                    von{" "}
+                    {featuredAuthor ? (
+                      <Link
+                        href={`/moderatoren/${featuredAuthor.slug}`}
+                        className={styles.heroAuthorLink}
+                      >
+                        {featured.authorName}
+                      </Link>
+                    ) : (
+                      <span>{featured.authorName}</span>
+                    )}
+                  </p>
 
                   <span className={styles.heroCta}>
                     Weiterlesen

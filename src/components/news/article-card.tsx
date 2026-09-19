@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getCategoryNames, getAuthorAvatars, type ArticleDTO } from "@/services/content";
+import { getCategoryNames, getAuthorProfiles, type ArticleDTO } from "@/services/content";
 import { formatDate, formatReadingTime } from "@/lib/format";
 import { ImagePlaceholder } from "@/components/common/image-placeholder";
 import styles from "./article-card.module.css";
@@ -33,8 +33,9 @@ export async function ArticleCard({
      bleibt der Slug als ehrlicher Rest stehen. */
   const categoryName = (await getCategoryNames())[article.categorySlug] ?? article.categorySlug;
   /* Beitraege speichern nur den Autorennamen. Gibt es dazu ein
-     Moderatorenprofil, steht dort das Bild — sonst bleiben die Initialen. */
-  const authorImage = (await getAuthorAvatars())[article.authorName];
+     Moderatorenprofil, liefert es Bild und Verweis — sonst bleiben die
+     Initialen und der Name ohne Verlinkung. */
+  const author = (await getAuthorProfiles())[article.authorName];
 
   return (
     <article className={styles.card} data-variant={variant}>
@@ -77,10 +78,18 @@ export async function ArticleCard({
 
         <footer className={styles.footer}>
           <Avatar style={{ width: 22, height: 22 }}>
-            {authorImage && <AvatarImage src={authorImage} alt="" />}
+            {author?.image && <AvatarImage src={author.image} alt="" />}
             <AvatarFallback>{article.authorName.slice(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
-          <span className={styles.author}>{article.authorName}</span>
+          {/* Muss ueber der Titelflaeche liegen: `.link::after` deckt die
+              ganze Karte ab, sonst waere dieser Verweis nicht anklickbar. */}
+          {author ? (
+            <Link href={`/moderatoren/${author.slug}`} className={styles.authorLink}>
+              {article.authorName}
+            </Link>
+          ) : (
+            <span className={styles.author}>{article.authorName}</span>
+          )}
           <span className={styles.dot} aria-hidden="true">
             ·
           </span>

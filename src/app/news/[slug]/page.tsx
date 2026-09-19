@@ -12,7 +12,7 @@ import {
   getAllPublishedSlugs,
   getArticleBySlug,
   getRelatedArticles,
-  getAuthorAvatars,
+  getAuthorProfiles,
 } from "@/services/content";
 import { formatDate, formatReadingTime } from "@/lib/format";
 import { site } from "@/lib/site";
@@ -67,7 +67,7 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
   const article = await getArticleBySlug(slug);
   if (!article) notFound();
 
-  const authorImage = (await getAuthorAvatars())[article.authorName];
+  const author = (await getAuthorProfiles())[article.authorName];
 
   const related = await getRelatedArticles(article);
   const url = `${site.url}/news/${article.slug}`;
@@ -114,13 +114,21 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
           <div className={styles.main}>
             <div className={styles.byline}>
               <Avatar style={{ width: 40, height: 40 }}>
-                {authorImage && <AvatarImage src={authorImage} alt="" />}
+                {author?.image && <AvatarImage src={author.image} alt="" />}
                 <AvatarFallback>
                   {article.authorName.slice(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div className={styles.bylineText}>
-                <span className={styles.author}>{article.authorName}</span>
+                {/* Nur verlinken, wenn es das Profil oeffentlich gibt — sonst
+                    fuehrt der Verweis auf eine 404-Seite. */}
+                {author ? (
+                  <Link href={`/moderatoren/${author.slug}`} className={styles.authorLink}>
+                    {article.authorName}
+                  </Link>
+                ) : (
+                  <span className={styles.author}>{article.authorName}</span>
+                )}
                 <span className={styles.meta}>
                   {article.publishedAt && (
                     <time dateTime={article.publishedAt}>

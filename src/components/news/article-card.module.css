@@ -182,3 +182,26 @@
   -webkit-line-clamp: 2;
   line-clamp: 2;
 }
+
+/*
+ * Der Titel-Link deckt über ::after die ganze Karte ab, damit sie überall
+ * klickbar ist. Der Autorenverweis muss deshalb darüber liegen — sonst fängt
+ * die Titelfläche den Klick ab und man landet im Beitrag statt im Profil.
+ */
+.authorLink {
+  position: relative;
+  z-index: 1;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-decoration-line: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  transition:
+    color var(--transition-standard-fast-effects),
+    text-decoration-color var(--transition-standard-fast-effects);
+}
+
+.authorLink:hover {
+  color: var(--color-primary);
+  text-decoration-color: currentColor;
+}

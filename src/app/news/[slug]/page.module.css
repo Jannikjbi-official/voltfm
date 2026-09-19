@@ -170,3 +170,20 @@
   gap: clamp(1.25rem, 1rem + 1.5vw, 2rem);
   grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
 }
+
+.authorLink {
+  font: var(--type-body);
+  font-weight: 650;
+  color: var(--color-text);
+  text-decoration-line: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  transition:
+    color var(--transition-standard-fast-effects),
+    text-decoration-color var(--transition-standard-fast-effects);
+}
+
+.authorLink:hover {
+  color: var(--color-primary);
+  text-decoration-color: currentColor;
+}

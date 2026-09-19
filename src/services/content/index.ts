@@ -88,21 +88,27 @@ export async function listHosts(includeInactive = false): Promise<HostDTO[]> {
  * page stays reachable for anyone who kept the link. The admin reads through
  * `adminGetHost` instead, which ignores the flag.
  */
+export interface AuthorProfile {
+  slug: string;
+  image: string | null;
+}
+
 /**
- * Autorenname -> Profilbild.
+ * Autorenname -> Moderatorenprofil.
  *
- * Beitraege speichern nur den Namen. Das Bild liegt beim Moderatorenprofil,
- * teils als Upload, teils bei Discord. `cache` dedupliziert den Aufbau: eine
- * Liste mit zwanzig Beitragskarten loest die Bilder trotzdem nur einmal auf.
+ * Beitraege speichern nur den Namen. Slug und Bild liegen beim Profil, das
+ * Bild teils als Upload, teils bei Discord. `cache` dedupliziert den Aufbau:
+ * eine Liste mit zwanzig Beitragskarten loest das trotzdem nur einmal auf.
+ *
+ * Bewusst nur aktive Profile: Ein verstecktes Profil liefert oeffentlich 404,
+ * ein Verweis darauf ginge also ins Leere.
  */
-export const getAuthorAvatars = cache(async (): Promise<Record<string, string>> => {
-  const list = await listHosts(true);
+export const getAuthorProfiles = cache(async (): Promise<Record<string, AuthorProfile>> => {
+  const list = await listHosts();
   const entries = await Promise.all(
-    list.map(async (host) => [host.name, await resolveHostImage(host)] as const),
+    list.map(async (host) => [host.name, { slug: host.slug, image: await resolveHostImage(host) }] as const),
   );
-  return Object.fromEntries(
-    entries.filter((entry): entry is [string, string] => Boolean(entry[1])),
-  );
+  return Object.fromEntries(entries);
 });
 
 export async function getHostBySlug(slug: string): Promise<HostDTO | null> {
