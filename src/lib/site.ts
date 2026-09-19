@@ -79,6 +79,21 @@ const station = process.env.NEXT_PUBLIC_RADIO_STATION ?? "jannikjbi";
  * NEXT_PUBLIC_RADIO_EMBED=true and NEXT_PUBLIC_RADIO_STREAM_URL, and the full
  * player (including the consent gate) comes back.
  */
+/**
+ * Funktionen, die bewusst abgeschaltet sind.
+ *
+ * Der Sendeplan liegt still, bis VoltFM einen eigenen Sendeserver hat. Erst
+ * dann lassen sich Sendeplaetze verlaesslich zusagen und Dinge wie Songwuensche
+ * anbieten — solange das Programm bei laut.fm als eine durchlaufende Playlist
+ * liegt, waere ein Sendeplan ein Versprechen, das der Sender nicht halten kann.
+ *
+ * Zum Wiedereinschalten: hier auf true setzen. Die Seite, der Menuepunkt und
+ * die Verweise darauf kommen dann von selbst zurueck.
+ */
+export const features = {
+  schedule: false,
+} as const;
+
 export const radio = {
   embedAllowed: process.env.NEXT_PUBLIC_RADIO_EMBED === "true",
   /** Where "hören" sends listeners while embedding is off. */
@@ -112,6 +127,8 @@ export type NavItem = {
    * — der Eintrag darf also nie ungefiltert gerendert werden.
    */
   seasonal?: boolean;
+  /** Haengt an einem Schalter aus `features`. */
+  feature?: keyof typeof features;
 };
 
 /**
@@ -123,7 +140,7 @@ export const MAX_VISIBLE_NAV_ITEMS = 7;
 export const mainNav: NavItem[] = [
   { href: "/", label: "Start" },
   { href: "/radio", label: "Radio", hint: "Live hören, Now Playing und Stream-Infos" },
-  { href: "/programm", label: "Programm", hint: "Sendeplan für heute und die ganze Woche" },
+  { href: "/programm", label: "Programm", hint: "Sendeplan für heute und die ganze Woche", feature: "schedule" },
   { href: "/moderatoren", label: "Moderatoren", hint: "Die Stimmen hinter VoltFM" },
   { href: "/news", label: "News", hint: "Aktuelles aus Musik, Radio und Community" },
   { href: "/events", label: "Events", hint: "Livestreams, Specials und Community-Termine" },
@@ -138,7 +155,7 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
     title: "Hören",
     items: [
       { href: "/radio", label: "Livestream" },
-      { href: "/programm", label: "Sendeplan" },
+      ...(features.schedule ? [{ href: "/programm", label: "Sendeplan" }] : []),
       { href: "/moderatoren", label: "Moderatoren" },
     ],
   },
@@ -171,6 +188,7 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
  */
 export function buildMainNav(now: Date = new Date()): NavItem[] {
   return mainNav.filter((item) => {
+    if (item.feature && !features[item.feature]) return false;
     if (!item.seasonal) return true;
     if (item.href === "/radioaid") return getRadioAidSchedule(now).showInNav;
     return true;

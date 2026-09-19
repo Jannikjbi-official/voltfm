@@ -15,6 +15,8 @@ import {
 } from "@/services/radio/schedule";
 import { listHosts, listShows } from "@/services/content";
 import { formatTime } from "@/lib/format";
+import { features, site } from "@/lib/site";
+import { Icon, DiscordIcon, ClockIcon } from "@/lib/icons";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -26,10 +28,72 @@ export const metadata: Metadata = {
 
 export const revalidate = 600;
 
+/**
+ * Was statt des Sendeplans steht, solange er ruht.
+ *
+ * Bewusst eine ehrliche Erklaerung und kein "kommt bald": Der Grund ist
+ * bekannt, und wer hier landet, soll wissen, woran es haengt.
+ */
+function SchedulePaused() {
+  return (
+    <>
+      <PageHeader
+        eyebrow="Programm"
+        title="Der Sendeplan macht gerade Pause"
+        description="Wir senden weiter rund um die Uhr — nur eben ohne festen Plan."
+        breadcrumbs={[
+          { href: "/", label: "Start" },
+          { href: "/programm", label: "Programm" },
+        ]}
+        size="large"
+      />
+
+      <section className="section shell">
+        <div className={styles.paused}>
+          <span className={styles.pausedIcon} aria-hidden="true">
+            <Icon icon={ClockIcon} />
+          </span>
+
+          <h2 className={styles.pausedTitle}>Warum gerade kein Sendeplan?</h2>
+
+          <p className={styles.pausedText}>
+            Unser Programm liegt derzeit als eine durchlaufende Playlist bei
+            laut.fm. Damit lassen sich feste Sendezeiten nicht verlässlich
+            zusagen — und ein Sendeplan, der nicht stimmt, ist schlechter als
+            gar keiner.
+          </p>
+
+          <p className={styles.pausedText}>
+            Sobald wir einen eigenen Sendeserver haben, kommt er zurück: mit
+            festen Sendungen, Moderation zu festen Zeiten und Songwünschen, die
+            tatsächlich in der laufenden Sendung landen.
+          </p>
+
+          <div className={styles.pausedActions}>
+            <ButtonLink href="/radio" variant="primary" mode="filled" size="md">
+              Jetzt live hören
+            </ButtonLink>
+            <ButtonLink href={site.discordUrl} external variant="neutral" mode="stroke" size="md">
+              <Icon icon={DiscordIcon} />
+              Im Discord auf dem Laufenden bleiben
+            </ButtonLink>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
 /** Sunday-first from Date#getDay, but the week should read Monday-first. */
 const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0];
 
 export default async function ProgrammPage() {
+  /* Abgeschaltet, solange das Programm als eine durchlaufende Playlist bei
+     laut.fm liegt: Ein Sendeplan waere dann ein Versprechen, das der Sender
+     nicht halten kann. Die Seite bleibt erreichbar und erklaert das, statt mit
+     404 zu antworten — es gibt Verweise darauf. */
+  if (!features.schedule) return <SchedulePaused />;
+
   const [schedule, shows, hosts] = await Promise.all([getSchedule(), listShows(), listHosts()]);
   const { current } = resolveCurrentAndNext(schedule);
 

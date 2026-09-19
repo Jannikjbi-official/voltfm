@@ -133,10 +133,18 @@ export function ArticleForm({
             <FieldDescription>Kommagetrennt.</FieldDescription>
           </Field>
 
-          <Field name="authorName" className={styles.field}>
-            <FieldLabel>Autor</FieldLabel>
-            <Input name="authorName" required defaultValue={article?.authorName ?? authorName} />
-          </Field>
+          {/* Kein Eingabefeld: Der Autor kommt aus der Anmeldung. Angezeigt
+              wird er trotzdem, damit man vor dem Speichern sieht, unter
+              welchem Namen der Beitrag erscheint. */}
+          <div className={styles.field}>
+            <span className={styles.label}>Autor</span>
+            <p className={styles.readonly}>{article?.authorName ?? authorName}</p>
+            <FieldDescription>
+              {article
+                ? "Bleibt beim ursprünglichen Autor, auch wenn jemand anderes bearbeitet."
+                : "Wird automatisch von deinem Konto übernommen."}
+            </FieldDescription>
+          </div>
 
           <ImageUpload
             name="coverImage"

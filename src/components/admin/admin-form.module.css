@@ -143,3 +143,14 @@
   color: var(--color-error);
   font-weight: 600;
 }
+
+/* Wert, der angezeigt, aber nicht bearbeitet wird. */
+.readonly {
+  padding: var(--spacing-8) var(--spacing-12);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-container);
+  border: 1px solid var(--color-border);
+  font: var(--type-small);
+  font-weight: 600;
+  color: var(--color-text);
+}

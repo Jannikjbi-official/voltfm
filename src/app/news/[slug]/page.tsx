@@ -7,11 +7,12 @@ import { PageHeader } from "@/components/common/page-header";
 import { ArticleCard } from "@/components/news/article-card";
 import { ShareButtons } from "@/components/news/share-buttons";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   getAllPublishedSlugs,
   getArticleBySlug,
   getRelatedArticles,
+  getAuthorAvatars,
 } from "@/services/content";
 import { formatDate, formatReadingTime } from "@/lib/format";
 import { site } from "@/lib/site";
@@ -66,6 +67,8 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
   const article = await getArticleBySlug(slug);
   if (!article) notFound();
 
+  const authorImage = (await getAuthorAvatars())[article.authorName];
+
   const related = await getRelatedArticles(article);
   const url = `${site.url}/news/${article.slug}`;
 
@@ -111,6 +114,7 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
           <div className={styles.main}>
             <div className={styles.byline}>
               <Avatar style={{ width: 40, height: 40 }}>
+                {authorImage && <AvatarImage src={authorImage} alt="" />}
                 <AvatarFallback>
                   {article.authorName.slice(0, 2).toUpperCase()}
                 </AvatarFallback>

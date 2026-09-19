@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { PageHeader } from "@/components/common/page-header";
 import { ButtonLink } from "@/components/common/button-link";
 import { HostCard } from "@/components/common/host-card";
 import { SectionHeader } from "@/components/common/section-header";
@@ -30,17 +29,45 @@ export default async function UeberUnsPage() {
   ]);
 
   return (
-    <>
-      <PageHeader
-        eyebrow="Über uns"
-        title="Radio, dem man anhört, dass jemand da ist."
-        description="VoltFM ist ein unabhängiges Webradio aus Hamburg. Kein Sender einer Kette, keine Werbeblöcke, keine automatisierte Dauerschleife."
-        breadcrumbs={[
-          { href: "/", label: "Start" },
-          { href: "/ueber-uns", label: "Über VoltFM" },
-        ]}
-        size="large"
-      />
+    <div className={styles.page}>
+      {/* --- Kopfbereich --------------------------------------------------- */}
+      <header className={styles.masthead}>
+        <div className="shell">
+          <nav className={styles.crumbs} aria-label="Brotkrumen">
+            <Link href="/">Start</Link>
+            <span aria-hidden="true">/</span>
+            <span>Über VoltFM</span>
+          </nav>
+
+          <p className={styles.kicker}>Über uns</p>
+
+          <h1 className={styles.title}>
+            Radio, dem man anhört,
+            <br />
+            <span className={styles.titleAccent}>dass jemand da ist.</span>
+          </h1>
+
+          <p className={styles.lead}>
+            VoltFM ist ein unabhängiges Webradio aus Hamburg. Kein Sender einer
+            Kette, keine Werbeblöcke, keine automatisierte Dauerschleife.
+          </p>
+
+          <dl className={styles.stats}>
+            <div className={styles.stat}>
+              <dt>Auf Sendung seit</dt>
+              <dd>2021</dd>
+            </div>
+            <div className={styles.stat}>
+              <dt>Am Mikrofon</dt>
+              <dd>{hosts.length}</dd>
+            </div>
+            <div className={styles.stat}>
+              <dt>Sendebetrieb</dt>
+              <dd>24 / 7</dd>
+            </div>
+          </dl>
+        </div>
+      </header>
 
       {/* --- Mission: a single wide statement ----------------------------- */}
       <section className="section shell">
@@ -128,16 +155,35 @@ export default async function UeberUnsPage() {
         </div>
       </section>
 
-      {/* --- Outlook ------------------------------------------------------- */}
+      {/* --- Ausblick ------------------------------------------------------ */}
       <section className={styles.outlook}>
         <div className="shell">
           <div className={styles.outlookInner}>
+            <p className={styles.outlookKicker}>Woran wir arbeiten</p>
             <h2 className={styles.outlookTitle}>Was als Nächstes kommt</h2>
-            <p className={styles.outlookText}>
-              Favoriten, die du dir merken kannst. Benachrichtigungen, wenn deine
-              Sendung startet. Und irgendwann ein Archiv zum Nachhören — daran
-              hängt noch die rechtliche Seite, deshalb gibt es kein Datum.
-            </p>
+
+            <ul className={styles.roadmap} role="list">
+              <li className={styles.roadmapItem}>
+                <h3>Eigener Sendeserver</h3>
+                <p>
+                  Damit feste Sendezeiten wieder verlässlich sind — und Songwünsche
+                  tatsächlich in der laufenden Sendung landen.
+                </p>
+              </li>
+              <li className={styles.roadmapItem}>
+                <h3>Favoriten und Hinweise</h3>
+                <p>
+                  Sendungen merken und benachrichtigt werden, wenn deine startet.
+                </p>
+              </li>
+              <li className={styles.roadmapItem}>
+                <h3>Archiv zum Nachhören</h3>
+                <p>
+                  Daran hängt noch die rechtliche Seite, deshalb gibt es kein Datum.
+                </p>
+              </li>
+            </ul>
+
             <div className={styles.outlookActions}>
               <ButtonLink href="/radio" variant="primary" mode="filled" size="md">
                 Jetzt live hören
@@ -149,6 +195,6 @@ export default async function UeberUnsPage() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }

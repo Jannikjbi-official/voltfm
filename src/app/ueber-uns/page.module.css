@@ -1,3 +1,88 @@
+/* =========================================================================
+   Über VoltFM
+   ========================================================================= */
+
+.page {
+  padding-bottom: var(--section-gap);
+}
+
+/* --- Kopfbereich ---------------------------------------------------------- */
+
+.masthead {
+  padding-block: clamp(2rem, 1.5rem + 4vw, 4.5rem);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-container-low);
+}
+
+.crumbs {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  font: var(--type-caption);
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-24);
+}
+
+.crumbs a:hover {
+  color: var(--color-primary);
+}
+
+.kicker {
+  font: var(--type-caption);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--color-accent);
+  margin-bottom: var(--spacing-16);
+}
+
+.title {
+  font: var(--type-display-md);
+  letter-spacing: -0.035em;
+  color: var(--color-text);
+  text-wrap: balance;
+  margin-bottom: var(--spacing-16);
+}
+
+.titleAccent {
+  color: var(--color-primary);
+}
+
+.lead {
+  font: var(--type-body-lg, var(--type-body));
+  color: var(--color-text-secondary);
+  max-width: 58ch;
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1.5rem, 1rem + 3vw, 3.5rem);
+  margin-top: clamp(1.5rem, 1.25rem + 1.5vw, 2.5rem);
+  padding-top: clamp(1.25rem, 1rem + 1vw, 2rem);
+  border-top: 1px solid var(--color-border);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--spacing-4);
+}
+
+.stat dt {
+  font: var(--type-caption);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.stat dd {
+  font: 700 clamp(1.6rem, 1.4rem + 1.4vw, 2.5rem) / 1 var(--font-display);
+  color: var(--color-text);
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
 /* --- Mission ------------------------------------------------------------- */
 
 .mission {
@@ -242,4 +327,41 @@
   color: var(--color-text-muted);
   font: var(--type-small);
   text-align: center;
+}
+
+/* --- Ausblick ------------------------------------------------------------- */
+
+.outlookKicker {
+  font: var(--type-caption);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--color-accent);
+  margin-bottom: var(--spacing-10);
+}
+
+.roadmap {
+  display: grid;
+  gap: clamp(1.25rem, 1rem + 1.5vw, 2rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  margin-block: clamp(1.5rem, 1.25rem + 2vw, 2.5rem);
+  list-style: none;
+  padding: 0;
+}
+
+.roadmapItem {
+  padding-top: var(--spacing-16);
+  border-top: 2px solid var(--color-border-strong);
+}
+
+.roadmapItem h3 {
+  font: var(--type-h5, var(--type-body));
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-6);
+}
+
+.roadmapItem p {
+  font: var(--type-small);
+  color: var(--color-text-secondary);
 }

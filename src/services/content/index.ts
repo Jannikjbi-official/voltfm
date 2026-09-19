@@ -4,6 +4,7 @@ import { ObjectId } from "mongodb";
 import { categories, events, hosts, shows, timeline } from "@/db/collections";
 import type { Category, Host, Show, TimelineEntry, VoltEvent } from "@/types/content";
 import { serialize, serializeAll, type Plain } from "./serialize";
+import { resolveHostImage } from "@/services/discord/avatar";
 
 export * from "./articles";
 export * from "./serialize";
@@ -87,6 +88,23 @@ export async function listHosts(includeInactive = false): Promise<HostDTO[]> {
  * page stays reachable for anyone who kept the link. The admin reads through
  * `adminGetHost` instead, which ignores the flag.
  */
+/**
+ * Autorenname -> Profilbild.
+ *
+ * Beitraege speichern nur den Namen. Das Bild liegt beim Moderatorenprofil,
+ * teils als Upload, teils bei Discord. `cache` dedupliziert den Aufbau: eine
+ * Liste mit zwanzig Beitragskarten loest die Bilder trotzdem nur einmal auf.
+ */
+export const getAuthorAvatars = cache(async (): Promise<Record<string, string>> => {
+  const list = await listHosts(true);
+  const entries = await Promise.all(
+    list.map(async (host) => [host.name, await resolveHostImage(host)] as const),
+  );
+  return Object.fromEntries(
+    entries.filter((entry): entry is [string, string] => Boolean(entry[1])),
+  );
+});
+
 export async function getHostBySlug(slug: string): Promise<HostDTO | null> {
   return safe(async () => {
     const doc = await hosts().findOne({ slug, active: true });

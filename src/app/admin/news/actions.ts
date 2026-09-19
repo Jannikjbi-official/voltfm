@@ -28,7 +28,6 @@ const schema = z.object({
   tags: z.string().trim().max(300).optional(),
   coverImage: z.string().trim().url().or(z.literal("")).optional(),
   coverAlt: z.string().trim().max(200).optional(),
-  authorName: z.string().trim().min(2).max(80),
   status: z.enum(["draft", "scheduled", "published", "archived"]),
   publishedAt: z.string().trim().optional(),
   seoTitle: z.string().trim().max(160).optional(),
@@ -118,7 +117,6 @@ function parse(formData: FormData) {
     tags: formData.get("tags") ?? "",
     coverImage: formData.get("coverImage") ?? "",
     coverAlt: formData.get("coverAlt") ?? "",
-    authorName: formData.get("authorName"),
     status: formData.get("status"),
     publishedAt: formData.get("publishedAt") ?? "",
     seoTitle: formData.get("seoTitle") ?? "",
@@ -159,6 +157,19 @@ export async function saveArticle(
   const content = sanitizeHtml(data.content, SANITIZE_OPTIONS);
   const now = new Date();
 
+  /*
+   * Der Autor kommt aus der Anmeldung, nicht aus einem Textfeld — sonst kann
+   * jede Person jeden Namen daruntersetzen. Beim Bearbeiten bleibt der
+   * urspruengliche Autor stehen: Wer einen Tippfehler korrigiert, hat den
+   * Beitrag nicht geschrieben.
+   */
+  const existing =
+    id && ObjectId.isValid(id) ? await articles().findOne({ _id: new ObjectId(id) }) : null;
+
+  const authorName =
+    existing?.authorName ?? (user.name || (user as { username?: string }).username || "VoltFM");
+  const authorId = existing?.authorId ?? user.id;
+
   const doc = {
     title: data.title,
     slug,
@@ -166,8 +177,8 @@ export async function saveArticle(
     content,
     coverImage: data.coverImage || undefined,
     coverAlt: data.coverAlt || undefined,
-    authorId: user.id,
-    authorName: data.authorName,
+    authorId,
+    authorName,
     categorySlug: data.categorySlug,
     tags: (data.tags ?? "")
       .split(",")

@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { getCategoryNames, type ArticleDTO } from "@/services/content";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getCategoryNames, getAuthorAvatars, type ArticleDTO } from "@/services/content";
 import { formatDate, formatReadingTime } from "@/lib/format";
 import { ImagePlaceholder } from "@/components/common/image-placeholder";
 import styles from "./article-card.module.css";
@@ -32,6 +32,9 @@ export async function ArticleCard({
      "in-eigener-sache" ist keine Beschriftung. Faellt eine Kategorie weg,
      bleibt der Slug als ehrlicher Rest stehen. */
   const categoryName = (await getCategoryNames())[article.categorySlug] ?? article.categorySlug;
+  /* Beitraege speichern nur den Autorennamen. Gibt es dazu ein
+     Moderatorenprofil, steht dort das Bild — sonst bleiben die Initialen. */
+  const authorImage = (await getAuthorAvatars())[article.authorName];
 
   return (
     <article className={styles.card} data-variant={variant}>
@@ -74,6 +77,7 @@ export async function ArticleCard({
 
         <footer className={styles.footer}>
           <Avatar style={{ width: 22, height: 22 }}>
+            {authorImage && <AvatarImage src={authorImage} alt="" />}
             <AvatarFallback>{article.authorName.slice(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
           <span className={styles.author}>{article.authorName}</span>
