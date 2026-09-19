@@ -30,8 +30,22 @@ const schema = z.object({
   accentHue: z.coerce.number().int().min(0).max(360).optional(),
   showSlugs: z.string().trim().max(300).optional(),
   socials: z.string().trim().max(600).optional(),
+  details: z.string().trim().max(800).optional(),
   order: z.coerce.number().int().min(0).max(999).optional(),
 });
+
+/** "Bezeichnung|Wert" je Zeile — dasselbe Muster wie bei den Social-Links. */
+function parsePairs(raw: string | undefined): { label: string; value: string }[] {
+  return (raw ?? "")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const [label, ...rest] = line.split("|");
+      return { label: (label ?? "").trim(), value: rest.join("|").trim() };
+    })
+    .filter((entry) => entry.label && entry.value);
+}
 
 /** "Discord|https://…" per line — simple enough to edit by hand. */
 function parseSocials(raw: string | undefined): { label: string; url: string }[] {
@@ -73,6 +87,7 @@ export async function saveHost(
     accentHue: formData.get("accentHue") || undefined,
     showSlugs: formData.get("showSlugs") ?? "",
     socials: formData.get("socials") ?? "",
+    details: formData.get("details") ?? "",
     order: formData.get("order") || undefined,
   });
 
@@ -109,6 +124,7 @@ export async function saveHost(
       .map((s) => s.trim())
       .filter(Boolean),
     socials: parseSocials(data.socials),
+    details: parsePairs(data.details),
     order: data.order ?? 99,
     active: formData.get("active") === "on",
     updatedAt: now,

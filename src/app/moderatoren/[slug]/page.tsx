@@ -154,6 +154,8 @@ function Facts({
   }
   if (articleCount > 0) facts.push({ label: "Beiträge", value: String(articleCount) });
   if (host.location) facts.push({ label: "Sitzt in", value: host.location });
+  // Frei im Admin gepflegte Angaben stehen hinter den abgeleiteten.
+  for (const detail of host.details) facts.push(detail);
 
   if (facts.length === 0 && host.genres.length === 0 && !host.quote) return null;
 

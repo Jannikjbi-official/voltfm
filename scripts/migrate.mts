@@ -376,6 +376,18 @@ const MIGRATIONS: Migration[] = [
       return `${result.modifiedCount} Profile ergaenzt`;
     },
   },
+
+  {
+    name: "010-host-zusatzangaben",
+    run: async (db, now) => {
+      /* `details` kam mit den frei pflegbaren Profilangaben dazu. Fehlt das
+         Feld, laeuft jede Schleife darueber ins Leere. */
+      const result = await db
+        .collection("hosts")
+        .updateMany({ details: { $exists: false } }, { $set: { details: [], updatedAt: now } });
+      return `${result.modifiedCount} Profile ergaenzt`;
+    },
+  },
 ];
 
 /* --- Der Lauf ------------------------------------------------------------- */

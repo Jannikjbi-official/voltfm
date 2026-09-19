@@ -64,6 +64,7 @@ function normalizeHost(host: HostDTO): HostDTO {
     genres: host.genres ?? [],
     socials: host.socials ?? [],
     showSlugs: host.showSlugs ?? [],
+    details: host.details ?? [],
   };
 }
 

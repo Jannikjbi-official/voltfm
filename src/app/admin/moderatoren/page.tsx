@@ -43,6 +43,14 @@ const FIELDS: FieldDef[] = [
     hint: "Eine Zeile pro Link, Format: Label|https://…",
   },
   {
+    name: "details",
+    label: "Weitere Angaben",
+    type: "textarea",
+    rows: 4,
+    placeholder: "Lieblingsalbum|Random Access Memories",
+    hint: "Eine Zeile pro Angabe, Format: Bezeichnung|Wert. Erscheint in der Faktenleiste des Profils.",
+  },
+  {
     name: "showSlugs",
     label: "Sendungen",
     type: "text",

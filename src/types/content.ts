@@ -59,6 +59,12 @@ export interface Host {
   joinedAt?: Date | null;
   /** Wo diese Person sitzt — der Sender ist verteilt. */
   location?: string;
+  /**
+   * Freie Zusatzangaben fuer die Faktenleiste, als Paare aus Bezeichnung und
+   * Wert. Damit laesst sich alles nachtragen, wofuer es kein eigenes Feld gibt
+   * — Lieblingsalbum, Equipment, Sendungsjubilaeum.
+   */
+  details: { label: string; value: string }[];
   image?: string;
   /** Discord snowflake, used to pull the avatar from Discord as a fallback. */
   discordUserId?: string | null;
