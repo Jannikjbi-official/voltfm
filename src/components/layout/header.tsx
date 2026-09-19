@@ -6,6 +6,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ButtonLink } from "@/components/common/button-link";
 import {
+  Collapsible,
+  CollapsiblePanel,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
   Sheet,
   SheetBackdrop,
   SheetPopup,
@@ -152,26 +157,36 @@ export function Header({ nav }: { nav: NavItem[] }) {
                   </Link>
                 ))}
 
-                {/* Dieselbe Aufteilung wie auf dem Schirm: Hauptpunkte oben,
-                    der Rest unter einer eigenen Ueberschrift. Ein aufklappbares
-                    Menue waere hier ein Klick zu viel — im Schubfach ist Platz,
-                    also stehen sie einfach darunter. */}
+                {/* Dieselbe Aufteilung wie auf dem Schirm, nur aufklappbar:
+                    Die Hauptpunkte bleiben auf einen Blick sichtbar, der Rest
+                    liegt darunter. Steht man gerade auf einer dieser Seiten,
+                    ist die Gruppe von vornherein offen — sonst waere der
+                    aktive Punkt versteckt. */}
                 {overflow.length > 0 && (
-                  <>
-                    <p className={styles.mobileGroupLabel}>Mehr</p>
-                    {overflow.map((item) => (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        className={styles.mobileLink}
-                        aria-current={isActive(item.href) ? "page" : undefined}
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        <span className={styles.mobileLinkLabel}>{item.label}</span>
-                        {item.hint && <span className={styles.mobileLinkHint}>{item.hint}</span>}
-                      </Link>
-                    ))}
-                  </>
+                  <Collapsible
+                    className={styles.mobileGroup}
+                    defaultOpen={overflow.some((item) => isActive(item.href))}
+                  >
+                    <CollapsibleTrigger className={styles.mobileGroupTrigger}>
+                      <span>Mehr</span>
+                      <Icon icon={ChevronDownIcon} className={styles.mobileGroupChevron} />
+                    </CollapsibleTrigger>
+
+                    <CollapsiblePanel className={styles.mobileGroupPanel}>
+                      {overflow.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className={styles.mobileLink}
+                          aria-current={isActive(item.href) ? "page" : undefined}
+                          onClick={() => setMobileOpen(false)}
+                        >
+                          <span className={styles.mobileLinkLabel}>{item.label}</span>
+                          {item.hint && <span className={styles.mobileLinkHint}>{item.hint}</span>}
+                        </Link>
+                      ))}
+                    </CollapsiblePanel>
+                  </Collapsible>
                 )}
               </nav>
 
