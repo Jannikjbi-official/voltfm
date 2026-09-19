@@ -1,3 +1,100 @@
+/* =========================================================================
+   RadioAid — eigene Gestaltung
+   -------------------------------------------------------------------------
+   Die Seite gehoert thematisch nicht VoltFM, sondern einer fremden Aktion.
+   Deshalb bekommt sie eine eigene Farbwelt: ein warmes Rot statt des
+   Senderblaus, gesetzt als Tokens auf `.page`. Alles darunter erbt sie, ohne
+   dass irgendwo eine Farbe hart im Stylesheet steht.
+   ========================================================================= */
+
+.page {
+  --ra-accent: oklch(0.58 0.19 25);
+  --ra-accent-soft: color-mix(in srgb, var(--ra-accent) 14%, transparent);
+  --ra-accent-line: color-mix(in srgb, var(--ra-accent) 34%, transparent);
+  --ra-warm: oklch(0.72 0.15 55);
+
+  padding-bottom: var(--section-gap);
+}
+
+/* --- Kopfbereich ---------------------------------------------------------- */
+
+.masthead {
+  position: relative;
+  overflow: hidden;
+  padding-block: clamp(2.5rem, 2rem + 5vw, 5.5rem);
+  border-bottom: 1px solid var(--color-border);
+  background:
+    radial-gradient(90rem 40rem at 15% -30%, var(--ra-accent-soft), transparent 60%),
+    var(--color-surface-container-low);
+}
+
+.crumbs {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  font: var(--type-caption);
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-24);
+}
+
+.crumbs a {
+  color: var(--color-text-muted);
+}
+
+.crumbs a:hover {
+  color: var(--ra-accent);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-10);
+  padding: var(--spacing-6) var(--spacing-14) var(--spacing-6) var(--spacing-6);
+  border-radius: var(--radius-rounded);
+  border: 1px solid var(--ra-accent-line);
+  background: var(--ra-accent-soft);
+  font: var(--type-caption);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ra-accent);
+  margin-bottom: var(--spacing-24);
+}
+
+.heart {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-circled);
+  background: var(--ra-accent);
+  color: #fff;
+  font-size: 0.7em;
+}
+
+.mastheadTitle {
+  font: var(--type-display-lg);
+  letter-spacing: -0.035em;
+  color: var(--color-text);
+  text-wrap: balance;
+  margin-bottom: var(--spacing-20);
+}
+
+/* Der Verlauf traegt die zweite Zeile — das ist der Wiedererkennungswert
+   dieser Seite gegenueber dem Rest von VoltFM. */
+.mastheadAccent {
+  background: linear-gradient(100deg, var(--ra-accent), var(--ra-warm));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.mastheadLead {
+  font: var(--type-body-lg, var(--type-body));
+  color: var(--color-text-secondary);
+  max-width: 54ch;
+}
+
 /* --- Countdown ------------------------------------------------------------ */
 
 .hero {
@@ -29,7 +126,7 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   font-weight: 700;
-  color: var(--color-accent);
+  color: var(--ra-accent);
 }
 
 .units {
@@ -70,8 +167,8 @@
   gap: var(--spacing-16);
   padding: var(--spacing-20);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-accent);
-  background: var(--color-surface-container-high);
+  border: 1px solid var(--ra-accent-line);
+  background: var(--ra-accent-soft);
 }
 
 .livePulse {
@@ -79,7 +176,7 @@
   width: 14px;
   height: 14px;
   border-radius: var(--radius-circled);
-  background: var(--color-accent);
+  background: var(--ra-accent);
   animation: pulse 1.6s ease-in-out infinite;
 }
 
@@ -183,13 +280,13 @@
 }
 
 .prose a {
-  color: var(--color-primary);
+  color: var(--ra-accent);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
 .prose a:hover {
-  color: var(--color-accent);
+  color: var(--ra-accent);
 }
 
 .prose strong {
@@ -241,7 +338,7 @@
 
 .factValue {
   font: 700 1.5rem / 1 var(--font-display);
-  color: var(--color-accent);
+  color: var(--ra-accent);
   letter-spacing: -0.02em;
 }
 
@@ -305,8 +402,9 @@
 }
 
 .entry[data-upcoming]::after {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
+  background: var(--ra-accent);
+  border-color: var(--ra-accent);
+  box-shadow: 0 0 0 4px var(--ra-accent-soft);
 }
 
 .entryYear {
@@ -319,7 +417,7 @@
 }
 
 .entry[data-upcoming] .entryYear {
-  color: var(--color-accent);
+  color: var(--ra-accent);
 }
 
 .entryBody {
@@ -353,4 +451,43 @@
   margin-top: var(--spacing-12);
   padding-top: var(--spacing-12);
   border-top: 1px solid var(--color-border);
+}
+
+/* --- Zustaende nach dem Countdown ----------------------------------------- */
+
+.liveBody {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-8);
+  min-width: 0;
+}
+
+.countdownOver {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-10);
+  padding: var(--spacing-20);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-container);
+}
+
+.overTitle {
+  font: var(--type-h4);
+  color: var(--color-text);
+}
+
+.overText {
+  font: var(--type-small);
+  color: var(--color-text-secondary);
+  max-width: 48ch;
+}
+
+/* Laeuft die Sendung, darf der Kopfbereich das auch zeigen. */
+.page[data-phase="live"] .masthead {
+  background:
+    radial-gradient(90rem 40rem at 15% -30%, color-mix(in srgb, var(--ra-accent) 26%, transparent), transparent 60%),
+    var(--color-surface-container-low);
 }

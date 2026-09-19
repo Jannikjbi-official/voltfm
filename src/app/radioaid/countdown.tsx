@@ -1,29 +1,88 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Icon, PlayIcon, ExternalLinkIcon } from "@/lib/icons";
+import { radio } from "@/lib/site";
+import { useRadioPlayer } from "@/components/radio/player-provider";
+import type { RadioAidPhase } from "@/lib/radioaid";
 import styles from "./page.module.css";
 
 /**
- * Countdown bis zum Sendestart.
+ * Countdown bis zum Sendestart — und danach der Weg zum Hören.
  *
- * Der Zielzeitpunkt kommt als Zeitstempel vom Server, damit hier keine
- * Zeitzonen-Arithmetik stattfindet. Bis zum Mount stehen Platzhalter: Server
- * und Browser haben unterschiedliche Uhren, und eine Zahl, die schon im HTML
- * steht, waere beim Hydrieren zwangslaeufig eine andere — das meldet React zu
- * Recht als Fehler.
+ * Zielzeitpunkte kommen als Zeitstempel vom Server, damit hier keine
+ * Zeitzonen-Arithmetik stattfindet. Die Phase wird trotzdem im Browser neu
+ * berechnet: Ein Besucher kann die Seite offen haben, während die Sendung
+ * beginnt, und soll dann nicht auf einem abgelaufenen Countdown sitzen.
+ *
+ * Bis zum Mount stehen Platzhalter. Eine Zahl, die schon im server-gerenderten
+ * HTML steht, wäre beim Hydrieren zwangsläufig eine andere — das meldet React
+ * zu Recht als Fehler.
  */
-export function Countdown({ target, label }: { target: number; label: string }) {
-  const [remaining, setRemaining] = useState<number | null>(null);
+export function Countdown({
+  start,
+  end,
+  initialPhase,
+  label,
+}: {
+  start: number;
+  end: number;
+  initialPhase: RadioAidPhase;
+  label: string;
+}) {
+  const [now, setNow] = useState<number | null>(null);
+  const { openStream } = useRadioPlayer();
 
   useEffect(() => {
-    const tick = () => setRemaining(target - Date.now());
+    const tick = () => setNow(Date.now());
     tick();
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
-  }, [target]);
+  }, []);
 
-  const running = remaining !== null && remaining <= 0;
+  // Vor dem Mount gilt, was der Server gesehen hat.
+  const phase: RadioAidPhase =
+    now === null ? initialPhase : now < start ? "upcoming" : now <= end ? "live" : "over";
 
+  if (phase === "live") {
+    return (
+      <div className={styles.countdownLive} role="status">
+        <span className={styles.livePulse} aria-hidden="true" />
+        <div className={styles.liveBody}>
+          <p className={styles.liveTitle}>Die Sendung läuft</p>
+          <p className={styles.liveText}>
+            24 Stunden Charity-Radio — jetzt einschalten und mitspenden.
+          </p>
+          {/* Führt über denselben Hinweis wie der Player: Die Wiedergabe
+              findet bei laut.fm statt, nicht hier. */}
+          <Button variant="primary" mode="filled" size="lg" onClick={openStream}>
+            <Icon icon={PlayIcon} />
+            Jetzt hören
+            <Icon icon={ExternalLinkIcon} />
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (phase === "over") {
+    return (
+      <div className={styles.countdownOver}>
+        <p className={styles.overTitle}>Die Sendung ist vorbei</p>
+        <p className={styles.overText}>
+          Danke an alle, die zugehört und gespendet haben. Die nächste Ausgabe
+          kommt in einem Jahr — sobald der Termin steht, findest du ihn hier.
+        </p>
+        <Button variant="neutral" mode="stroke" size="md" onClick={openStream}>
+          <Icon icon={PlayIcon} />
+          {radio.providerName} hören
+        </Button>
+      </div>
+    );
+  }
+
+  const remaining = now === null ? null : start - now;
   const units = (() => {
     if (remaining === null || remaining <= 0) {
       return [
@@ -42,20 +101,6 @@ export function Countdown({ target, label }: { target: number; label: string }) 
       { value: pad(total % 60), label: "Sekunden" },
     ];
   })();
-
-  if (running) {
-    return (
-      <div className={styles.countdownLive} role="status">
-        <span className={styles.livePulse} aria-hidden="true" />
-        <div>
-          <p className={styles.liveTitle}>Die Sendung läuft</p>
-          <p className={styles.liveText}>
-            24 Stunden Charity-Radio — jetzt einschalten und mitspenden.
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className={styles.countdown}>

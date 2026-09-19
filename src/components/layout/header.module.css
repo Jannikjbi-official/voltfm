@@ -162,3 +162,43 @@
   margin-top: var(--spacing-8);
   border-top: 1px solid var(--color-border);
 }
+
+/* --- Überlauf-Menü "Mehr" ------------------------------------------------- */
+
+/* Der Auslöser ist ein <button>, sieht aber aus wie die Links daneben. */
+.nav button.navLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  background: none;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+.navChevron {
+  font-size: 0.7em;
+  transition: transform var(--transition-standard-fast-effects);
+}
+
+.nav button.navLink[data-popup-open] .navChevron {
+  transform: rotate(180deg);
+}
+
+.overflowLink {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+}
+
+.overflowLabel {
+  font: var(--type-small);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.overflowHint {
+  font: var(--type-caption);
+  color: var(--color-text-secondary);
+}

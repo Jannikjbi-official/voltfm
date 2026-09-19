@@ -12,7 +12,7 @@ import { RadioPlayerProvider } from "@/components/radio/player-provider";
 import { StickyPlayer } from "@/components/radio/sticky-player";
 import { getRadioSnapshot } from "@/services/radio";
 import { getStreamUrl } from "@/services/radio/stream";
-import { site } from "@/lib/site";
+import { buildMainNav, site } from "@/lib/site";
 
 /* Editorial display face — carries headlines and the wordmark. */
 const display = Bricolage_Grotesque({
@@ -87,7 +87,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <a href="#main" className="skip-link">
                 Zum Inhalt springen
               </a>
-              <Header />
+              <Header nav={buildMainNav()} />
               <main id="main">{children}</main>
               <Footer />
               <StickyPlayer />

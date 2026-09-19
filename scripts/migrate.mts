@@ -148,6 +148,38 @@ const HOSTS = [
   },
 ];
 
+const RELAUNCH_ARTICLE = {
+  slug: "voltfm-geht-weiter-neue-webseite",
+  title: "VoltFM geht weiter — mit neuer Webseite",
+  excerpt:
+    "Der Sender bleibt, die Seite ist neu gebaut. Und weil viele danach fragen: Warum unsere laut.fm-Station jannikjbi heißt und nicht VoltFM.",
+  categorySlug: "in-eigener-sache",
+  tags: ["Relaunch", "In eigener Sache", "laut.fm"],
+  authorName: "jannikjbi",
+  featured: true,
+  content: `<p class="vfm-lead">Kurz und deutlich vorweg: Es geht weiter mit VoltFM. Es war eine Zeit lang still um uns, und wer in den letzten Monaten vorbeigeschaut hat, konnte den Eindruck bekommen, hier passiert nichts mehr. Der Eindruck war falsch — wir haben in der Zwischenzeit die komplette Webseite neu gebaut.</p>
+<h2>Warum die Seite komplett neu ist</h2>
+<p>Die alte Seite war über die Jahre gewachsen, und man hat es ihr angesehen. Jede neue Funktion war irgendwo drangeklebt, Inhalte zu pflegen war eine Zumutung, und auf dem Handy war sie ehrlich gesagt nie richtig gut. Statt das weiter zu flicken, haben wir bei null angefangen.</p>
+<p>Das Ergebnis ist die Seite, auf der du gerade bist. Sie ist schneller, sie funktioniert auf dem Handy genauso wie auf dem Rechner, und dahinter liegt endlich ein richtiges Redaktionssystem: Sendeplan, Moderatorenprofile, News und Events pflegen wir jetzt selbst, ohne dass jemand im Code herumschrauben muss. Das klingt unspektakulär, ist aber der Unterschied zwischen "wir aktualisieren das mal irgendwann" und "das ist heute Abend online".</p>
+<h2>Warum unsere Station jannikjbi heißt</h2>
+<p>Die Frage kommt so oft, dass sie hier stehen soll. Wenn du unseren Stream öffnest, landest du bei laut.fm auf einer Station namens <strong>jannikjbi</strong> — und nicht auf einer, die VoltFM heißt.</p>
+<aside class="vfm-callout">
+  <p><strong>Der Grund ist schlicht Geschichte:</strong> Die Station gehört Jannik, dem Gründer von VoltFM, und läuft seit den allerersten Tagen unter seinem Handle. Damals gab es VoltFM als Namen noch gar nicht.</p>
+</aside>
+<p>Wir hätten eine neue Station anlegen können. Dagegen sprach einiges: Eine bestehende laut.fm-Station bringt ihre Historie mit, ihre Einstellungen, ihre Hörerinnen und Hörer. Bei einem Neuanfang wäre all das weg gewesen — für einen kosmetischen Gewinn. Also bleibt es beim alten Namen. Das Programm, das darüber läuft, ist VoltFM, und das ist der Teil, auf den es ankommt.</p>
+<h2>Was das für dich heißt</h2>
+<p>Praktisch nichts, außer dass du dich nicht wundern musst. Wenn du auf "hören" klickst, öffnet sich laut.fm in einem neuen Fenster und dort läuft unser Programm. Dass die Wiedergabe bei laut.fm stattfindet und nicht hier auf der Seite, hat übrigens ebenfalls einen Grund: Die Nutzungsbedingungen von laut.fm erlauben ausdrücklich das Verlinken, aber nicht das Einbetten des Streams auf fremden Seiten. Daran halten wir uns.</p>
+<h2>Wie es weitergeht</h2>
+<p>Der Sendeplan wird in den nächsten Wochen wieder gefüllt, die Moderatorenprofile stehen bereits, und hier an dieser Stelle wird es regelmäßig Neues geben. Wenn du mitbekommen willst, was läuft, oder Lust hast, selbst etwas beizutragen: Der schnellste Weg zu uns ist nach wie vor der Discord.</p>
+<p>Danke an alle, die in der stillen Zeit drangeblieben sind. Wir sind zurück.</p>`,
+};
+
+/** Rechenschritt wie im Editor: ~200 Woerter pro Minute, mindestens eine. */
+function readingTime(html: string): number {
+  const words = html.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 200));
+}
+
 /* --- Die Migrationen ------------------------------------------------------ */
 
 const MIGRATIONS: Migration[] = [
@@ -309,6 +341,27 @@ const MIGRATIONS: Migration[] = [
         }
       }
       return `${n} Dokumente repariert`;
+    },
+  },
+
+  {
+    name: "008-relaunch-beitrag",
+    run: async (db, now) => {
+      const article = {
+        ...RELAUNCH_ARTICLE,
+        status: "published" as const,
+        publishedAt: now,
+        readingTime: readingTime(RELAUNCH_ARTICLE.content),
+        coverAlt: "",
+        seoTitle: RELAUNCH_ARTICLE.title,
+        seoDescription: RELAUNCH_ARTICLE.excerpt,
+      };
+      const result = await db.collection("articles").updateOne(
+        { slug: article.slug },
+        { $setOnInsert: { ...article, createdAt: now, updatedAt: now } },
+        { upsert: true },
+      );
+      return result.upsertedCount ? `angelegt: /news/${article.slug}` : "war schon da";
     },
   },
 ];

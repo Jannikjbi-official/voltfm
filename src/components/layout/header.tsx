@@ -13,16 +13,30 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { mainNav, site } from "@/lib/site";
-import { Icon, MenuIcon, SearchIcon, DiscordIcon } from "@/lib/icons";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { splitNav, site, type NavItem } from "@/lib/site";
+import { Icon, MenuIcon, SearchIcon, DiscordIcon, ChevronDownIcon } from "@/lib/icons";
 import { Logo } from "./logo";
 import { ThemeToggle } from "./theme-toggle";
 import { AccountMenu } from "./account-menu";
 import styles from "./header.module.css";
 
-export function Header() {
+/**
+ * Die Navigation kommt als Prop vom Server.
+ *
+ * Sie haengt vom Zeitpunkt ab (RadioAid erscheint nur rund um die Sendung).
+ * Wuerde dieser Client-Baustein selbst filtern, saehen Server und Browser
+ * unterschiedliche Eintraege und das Hydrieren schluege fehl.
+ */
+export function Header({ nav }: { nav: NavItem[] }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { primary, overflow } = splitNav(nav);
 
   /** "/" matches exactly; every other entry also matches its sub-routes. */
   const isActive = (href: string) =>
@@ -34,7 +48,7 @@ export function Header() {
         <Logo />
 
         <nav className={styles.nav} aria-label="Hauptnavigation">
-          {mainNav.map((item) => (
+          {primary.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -44,6 +58,40 @@ export function Header() {
               {item.label}
             </Link>
           ))}
+
+          {/* Was nicht mehr in die Leiste passt, statt sie umbrechen zu lassen. */}
+          {overflow.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <button
+                    type="button"
+                    className={styles.navLink}
+                    data-open-overflow
+                    aria-current={
+                      overflow.some((item) => isActive(item.href)) ? "page" : undefined
+                    }
+                  >
+                    Mehr
+                    <Icon icon={ChevronDownIcon} className={styles.navChevron} />
+                  </button>
+                }
+              />
+              <DropdownMenuContent>
+                {overflow.map((item) => (
+                  <DropdownMenuItem
+                    key={item.href}
+                    render={
+                      <Link href={item.href} className={styles.overflowLink}>
+                        <span className={styles.overflowLabel}>{item.label}</span>
+                        {item.hint && <span className={styles.overflowHint}>{item.hint}</span>}
+                      </Link>
+                    }
+                  />
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </nav>
 
         <div className={styles.actions}>
@@ -92,7 +140,7 @@ export function Header() {
                   auf ihre Innenabstaende zusammengefallen. Das Sheet ist
                   ohnehin gesteuert, also schliesst der Klick es direkt. */}
               <nav className={styles.mobileNav} aria-label="Mobile Navigation">
-                {mainNav.map((item) => (
+                {nav.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}

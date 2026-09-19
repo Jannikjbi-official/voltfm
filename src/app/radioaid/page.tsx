@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { PageHeader } from "@/components/common/page-header";
 import { ButtonLink } from "@/components/common/button-link";
 import { Icon, ExternalLinkIcon, DiscordIcon, HeartIcon, CalendarIcon, ClockIcon } from "@/lib/icons";
-import { parseStationTime, formatDate, formatTime } from "@/lib/format";
+import { formatDate, formatTime } from "@/lib/format";
+import { radioaid, getRadioAidSchedule } from "@/lib/radioaid";
 import { site } from "@/lib/site";
 import { Countdown } from "./countdown";
 import styles from "./page.module.css";
@@ -13,18 +13,9 @@ import styles from "./page.module.css";
  * RadioAid — die jaehrliche Charity-Sendung aus der laut.fm-Community, die
  * VoltFM mit ausstrahlt.
  *
- * Der Sendetermin steht hier fest im Code und nicht im CMS: Er wird einmal im
- * Jahr bekanntgegeben und aendert sich nicht spontan. Die Angaben stammen von
- * radioaid.de; aendert sich dort etwas, muss es hier nachgezogen werden.
+ * Termin, Dauer und Empfaenger stehen in `src/lib/radioaid.ts`, damit die
+ * Navigation dieselbe Quelle liest und beide nicht auseinanderlaufen koennen.
  */
-const BROADCAST = {
-  /** Naechster Sendestart, als Senderzeit (Europe/Berlin). */
-  startsAt: "2026-11-06T18:00",
-  /** Die Show laeuft 24 Stunden am Stueck. */
-  durationHours: 24,
-  organisation: "Seelenpflaster e. V.",
-  website: "https://radioaid.de/",
-} as const;
 
 /**
  * Unser eigener Weg mit RadioAid — nicht die Chronik des Projekts.
@@ -73,25 +64,49 @@ export const metadata: Metadata = {
 };
 
 export default function RadioAidPage() {
-  const start = parseStationTime(BROADCAST.startsAt);
-  const end = new Date(start.getTime() + BROADCAST.durationHours * 3_600_000);
+  const { start, end, phase } = getRadioAidSchedule();
 
   return (
-    <>
-      <PageHeader
-        eyebrow="Charity"
-        title="RadioAid — wenn Radio Gutes tut"
-        description="Einmal im Jahr macht die Radio-Community 24 Stunden lang gemeinsam Programm für einen guten Zweck. VoltFM ist dabei."
-        breadcrumbs={[
-          { href: "/", label: "Start" },
-          { href: "/radioaid", label: "RadioAid" },
-        ]}
-        size="large"
-      />
+    /* Eigene Farbwelt: RadioAid ist eine fremde Marke im VoltFM-Gewand, und ein
+       warmes Rot traegt das Thema besser als das Senderblau. Gesetzt als Tokens
+       auf dem Wurzelelement, damit alles darunter sie erbt. */
+    <div className={styles.page} data-phase={phase}>
+      <header className={styles.masthead}>
+        <div className="shell">
+          <nav className={styles.crumbs} aria-label="Brotkrumen">
+            <Link href="/">Start</Link>
+            <span aria-hidden="true">/</span>
+            <span>RadioAid</span>
+          </nav>
+
+          <p className={styles.eyebrow}>
+            <span className={styles.heart} aria-hidden="true">
+              <Icon icon={HeartIcon} />
+            </span>
+            Charity-Aktion der Radio-Community
+          </p>
+
+          <h1 className={styles.mastheadTitle}>
+            Wenn Radio
+            <br />
+            <span className={styles.mastheadAccent}>Gutes tut.</span>
+          </h1>
+
+          <p className={styles.mastheadLead}>
+            Einmal im Jahr macht die Radio-Community 24 Stunden lang gemeinsam
+            Programm für einen guten Zweck. VoltFM ist dabei.
+          </p>
+        </div>
+      </header>
 
       <section className="section shell">
         <div className={styles.hero}>
-          <Countdown target={start.getTime()} label="Bis zum Sendestart" />
+          <Countdown
+            start={start.getTime()}
+            end={end.getTime()}
+            initialPhase={phase}
+            label="Bis zum Sendestart"
+          />
 
           <dl className={styles.when}>
             <div className={styles.whenRow}>
@@ -112,7 +127,7 @@ export default function RadioAidPage() {
               <dt>
                 <Icon icon={HeartIcon} /> Zugunsten von
               </dt>
-              <dd>{BROADCAST.organisation}</dd>
+              <dd>{radioaid.organisation}</dd>
             </div>
           </dl>
         </div>
@@ -143,7 +158,7 @@ export default function RadioAidPage() {
 
             <h2>Wem es dieses Jahr hilft</h2>
             <p>
-              Die Spenden gehen an <strong>{BROADCAST.organisation}</strong>. Der
+              Die Spenden gehen an <strong>{radioaid.organisation}</strong>. Der
               Verein verfolgt seit August 2021 das Ziel, Kindern in besonders
               schweren Lebenssituationen mit personalisierter
               &bdquo;Seelenpflaster&ldquo;-Post eine Freude zu machen: ein kleines
@@ -220,7 +235,7 @@ RadioAid selbst gibt es schon länger als uns — die Chronik des Projekts steht
                 Sendung wird kostenfrei zur Verfügung gestellt.
               </p>
               <ButtonLink
-                href={BROADCAST.website}
+                href={radioaid.website}
                 external
                 variant="primary"
                 mode="filled"
@@ -257,6 +272,6 @@ RadioAid selbst gibt es schon länger als uns — die Chronik des Projekts steht
           </aside>
         </div>
       </section>
-    </>
+    </div>
   );
 }

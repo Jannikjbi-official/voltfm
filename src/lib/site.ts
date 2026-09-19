@@ -1,3 +1,5 @@
+import { getRadioAidSchedule } from "@/lib/radioaid";
+
 /**
  * Static station identity + navigation. Everything that is not editable in the
  * CMS and not secret lives here so pages never hardcode strings.
@@ -105,7 +107,18 @@ export type NavItem = {
   label: string;
   /** Short description used in the mobile drawer and the mega menu. */
   hint?: string;
+  /**
+   * Nur zeitweise sichtbar. Wer das setzt, wird von `buildMainNav()` gefiltert
+   * — der Eintrag darf also nie ungefiltert gerendert werden.
+   */
+  seasonal?: boolean;
 };
+
+/**
+ * Wie viele Eintraege in der Desktop-Leiste direkt stehen. Alles darueber
+ * wandert in ein Menue "Mehr", damit die Leiste nicht umbricht.
+ */
+export const MAX_VISIBLE_NAV_ITEMS = 7;
 
 export const mainNav: NavItem[] = [
   { href: "/", label: "Start" },
@@ -114,6 +127,8 @@ export const mainNav: NavItem[] = [
   { href: "/moderatoren", label: "Moderatoren", hint: "Die Stimmen hinter VoltFM" },
   { href: "/news", label: "News", hint: "Aktuelles aus Musik, Radio und Community" },
   { href: "/events", label: "Events", hint: "Livestreams, Specials und Community-Termine" },
+  /* Wird nur rund um die Sendung eingeblendet — siehe buildMainNav(). */
+  { href: "/radioaid", label: "RadioAid", hint: "24 Stunden Charity-Radio", seasonal: true },
   { href: "/community", label: "Community", hint: "Discord, Social Media und Mitmachen" },
   { href: "/ueber-uns", label: "Über VoltFM", hint: "Geschichte, Team und Mission" },
 ];
@@ -145,3 +160,28 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
     ],
   },
 ];
+
+/**
+ * Die Hauptnavigation fuer den aktuellen Zeitpunkt.
+ *
+ * Zeitabhaengige Eintraege (`seasonal`) werden hier herausgefiltert. Der
+ * Aufruf gehoert in eine Server-Komponente: Wuerde der Browser filtern, haetten
+ * Server- und Client-Markup unterschiedliche Eintraege und das Hydrieren
+ * schluege fehl.
+ */
+export function buildMainNav(now: Date = new Date()): NavItem[] {
+  return mainNav.filter((item) => {
+    if (!item.seasonal) return true;
+    if (item.href === "/radioaid") return getRadioAidSchedule(now).showInNav;
+    return true;
+  });
+}
+
+/** Teilt die Navigation in die sichtbare Leiste und das Menue "Mehr". */
+export function splitNav(items: NavItem[]): { primary: NavItem[]; overflow: NavItem[] } {
+  if (items.length <= MAX_VISIBLE_NAV_ITEMS) return { primary: items, overflow: [] };
+  return {
+    primary: items.slice(0, MAX_VISIBLE_NAV_ITEMS),
+    overflow: items.slice(MAX_VISIBLE_NAV_ITEMS),
+  };
+}
