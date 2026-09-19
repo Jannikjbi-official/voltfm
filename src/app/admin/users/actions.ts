@@ -53,8 +53,36 @@ export async function setUserRole(
     return { status: "error", message: "Rolle konnte nicht geändert werden." };
   }
 
+  /*
+   * Die neue Rolle allein reicht nicht.
+   *
+   * Better Auth liefert die Sitzung samt `role` bis zu fuenf Minuten lang aus
+   * einem signierten Cookie aus (session.cookieCache), ohne die Datenbank zu
+   * fragen. Wer gerade angemeldet ist, behaelt in dieser Zeit seine alte Rolle
+   * und kaeme trotz Beförderung nicht ins Admin — genau der Fehler, der sich
+   * wie "hat nicht wirklich Admin" anfuehlt.
+   *
+   * Deshalb werden die Sitzungen beendet: Nach dem naechsten Anmelden gilt die
+   * neue Rolle sofort. Das ist bei einer Rechteaenderung ohnehin das richtige
+   * Verhalten — auch beim Entzug soll eine offene Sitzung nicht weiterlaufen.
+   */
+  let sessionsEnded = false;
+  if (userId !== me.id) {
+    try {
+      await auth.api.revokeUserSessions({ headers: await headers(), body: { userId } });
+      sessionsEnded = true;
+    } catch (error) {
+      console.error("[admin] revokeUserSessions after setRole failed", error);
+    }
+  }
+
   revalidatePath("/admin/users");
-  return { status: "success", message: `Rolle auf „${ROLE_LABELS[role] ?? role}" gesetzt.` };
+  return {
+    status: "success",
+    message: sessionsEnded
+      ? `Rolle auf „${ROLE_LABELS[role] ?? role}" gesetzt. Die Person muss sich einmal neu anmelden, dann greift sie.`
+      : `Rolle auf „${ROLE_LABELS[role] ?? role}" gesetzt. Für dich selbst greift sie nach dem nächsten Anmelden.`,
+  };
 }
 
 export async function setUserBanned(

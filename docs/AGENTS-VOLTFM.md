@@ -212,6 +212,11 @@ Nützliche Skripte:
 - **Better Auth Account-Linking:** Beim expliziten Verknüpfen im Konto darf die
   E-Mail abweichen (`allowDifferentEmails: true`), beim automatischen Verknüpfen
   während der Anmeldung nicht. Diese Unterscheidung nicht aufweichen.
+- **Rollenwechsel wirken nicht sofort.** Better Auth liefert die Sitzung samt
+  `role` bis zu fünf Minuten aus einem signierten Cookie aus
+  (`session.cookieCache`), ohne die Datenbank zu fragen. Wer gerade angemeldet
+  ist, behält so lange seine alte Rolle. Deshalb beendet `setUserRole` die
+  Sitzungen der betroffenen Person — wer Rechte ändert, muss das mitmachen.
 - **`listShows()`** liefert nur aktive Sendungen (öffentliche Ansicht). Für das
   Admin gibt es `adminListShows()`.
 - **UploadThing-Löschungen** können fehlschlagen, ohne dass die Datenbank falsch

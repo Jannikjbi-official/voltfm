@@ -65,6 +65,22 @@ export async function listArticles({
   );
 }
 
+/**
+ * Wie viele veroeffentlichte Artikel je Kategorie — fuer die Zahlen an den
+ * Filtern. Eine Aggregation statt einer Abfrage pro Kategorie.
+ */
+export async function countArticlesByCategory(): Promise<Record<string, number>> {
+  return safe(async () => {
+    const rows = await articles()
+      .aggregate<{ _id: string; count: number }>([
+        { $match: publishedFilter() },
+        { $group: { _id: "$categorySlug", count: { $sum: 1 } } },
+      ])
+      .toArray();
+    return Object.fromEntries(rows.map((row) => [row._id, row.count]));
+  }, {});
+}
+
 export async function getFeaturedArticle(): Promise<ArticleDTO | null> {
   return safe(async () => {
     const collection = articles();
