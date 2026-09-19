@@ -11,6 +11,7 @@ import { Icon, PlusIcon, CheckIcon, LoadingIcon, EditIcon, DeleteIcon, CloseIcon
 import { ImageUpload } from "./image-upload";
 import { RichTextEditor } from "./rich-text-editor";
 import type { EntityFormState, EntityRow, FieldDef } from "./entity-types";
+import { useActionFeedback } from "./use-action-feedback";
 import styles from "./entity-manager.module.css";
 import formStyles from "./admin-form.module.css";
 
@@ -70,6 +71,9 @@ export function EntityManager({
     if (deleteState.message) setFeedback(deleteState);
   }, [deleteState]);
   /* eslint-enable react-hooks/set-state-in-effect */
+
+  useActionFeedback(saveState);
+  useActionFeedback(deleteState);
 
   const message = feedback?.message;
   const messageStatus = feedback?.status;

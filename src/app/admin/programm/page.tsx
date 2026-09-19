@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { requireCan } from "@/lib/session";
 import { adminListShows, listHosts } from "@/services/content";
 import { WEEKDAY_LABELS } from "@/services/radio/schedule";
 import { EntityManager } from "@/components/admin/entity-manager";
@@ -10,6 +11,9 @@ export const metadata: Metadata = { title: "Programm · Admin", robots: { index:
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
+  // Ein ausgeblendeter Menuepunkt ist kein Schutz — die Seite prueft selbst.
+  await requireCan("show", ["update"]);
+
   const [items, hostList] = await Promise.all([adminListShows(), listHosts(true)]);
 
   const hostHint =

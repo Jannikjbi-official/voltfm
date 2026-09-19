@@ -5,7 +5,7 @@ import { ObjectId } from "mongodb";
 import { z } from "zod";
 
 import { hosts } from "@/db/collections";
-import { assertAdmin, AuthorizationError } from "@/lib/session";
+import { assertCan, AuthorizationError } from "@/lib/session";
 import { slugify } from "@/lib/format";
 import type { EntityFormState } from "@/components/admin/entity-types";
 
@@ -46,7 +46,7 @@ export async function saveHost(
   formData: FormData,
 ): Promise<EntityFormState> {
   try {
-    await assertAdmin();
+    await assertCan("host", ["update"]);
   } catch (error) {
     if (error instanceof AuthorizationError) return { status: "error", message: error.message };
     throw error;
@@ -120,7 +120,7 @@ export async function deleteHost(
   formData: FormData,
 ): Promise<EntityFormState> {
   try {
-    await assertAdmin();
+    await assertCan("host", ["delete"]);
   } catch (error) {
     if (error instanceof AuthorizationError) return { status: "error", message: error.message };
     throw error;

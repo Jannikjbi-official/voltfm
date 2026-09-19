@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
-import { requireAdmin } from "@/lib/session";
+import { requireCan } from "@/lib/session";
 import { UserTable, type AdminUser } from "./user-table";
 import { setUserRole, setUserBanned, revokeUserSessions } from "./actions";
 import { ASSIGNABLE_ROLES, ROLE_LABELS } from "./roles";
@@ -23,7 +23,7 @@ interface RawUser {
 }
 
 export default async function AdminUsersPage() {
-  const me = await requireAdmin();
+  const me = await requireCan("user", ["list"]);
 
   /* Read through Better Auth's admin API rather than querying the user
      collection directly, so its own permission checks still apply. */

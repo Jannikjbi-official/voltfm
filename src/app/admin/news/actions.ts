@@ -7,7 +7,7 @@ import { z } from "zod";
 import sanitizeHtml from "sanitize-html";
 
 import { articles } from "@/db/collections";
-import { assertAdmin, AuthorizationError } from "@/lib/session";
+import { assertCan, AuthorizationError } from "@/lib/session";
 import { slugify } from "@/lib/format";
 import type { ArticleStatus } from "@/types/content";
 
@@ -140,7 +140,7 @@ export async function saveArticle(
 ): Promise<ArticleFormState> {
   let user;
   try {
-    user = await assertAdmin();
+    user = await assertCan("article", ["update"]);
   } catch (error) {
     if (error instanceof AuthorizationError) {
       return { status: "error", message: error.message };
@@ -210,7 +210,7 @@ export async function saveArticle(
 }
 
 export async function deleteArticle(formData: FormData): Promise<void> {
-  await assertAdmin();
+  await assertCan("article", ["update"]);
 
   const id = String(formData.get("id") ?? "");
   if (!ObjectId.isValid(id)) return;

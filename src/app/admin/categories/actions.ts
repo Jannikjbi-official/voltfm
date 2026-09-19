@@ -5,7 +5,7 @@ import { ObjectId } from "mongodb";
 import { z } from "zod";
 
 import { articles, categories } from "@/db/collections";
-import { assertAdmin, AuthorizationError } from "@/lib/session";
+import { assertCan, AuthorizationError } from "@/lib/session";
 import { slugify } from "@/lib/format";
 import type { EntityFormState } from "@/components/admin/entity-types";
 
@@ -28,7 +28,7 @@ export async function saveCategory(
   formData: FormData,
 ): Promise<EntityFormState> {
   try {
-    await assertAdmin();
+    await assertCan("category", ["update"]);
   } catch (error) {
     if (error instanceof AuthorizationError) return { status: "error", message: error.message };
     throw error;
@@ -82,7 +82,7 @@ export async function deleteCategory(
   formData: FormData,
 ): Promise<EntityFormState> {
   try {
-    await assertAdmin();
+    await assertCan("category", ["delete"]);
   } catch (error) {
     if (error instanceof AuthorizationError) return { status: "error", message: error.message };
     throw error;

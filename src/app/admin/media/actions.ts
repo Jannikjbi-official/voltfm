@@ -5,7 +5,7 @@ import { ObjectId } from "mongodb";
 import { UTApi } from "uploadthing/server";
 
 import { articles, events, hosts, media, shows } from "@/db/collections";
-import { assertAdmin, AuthorizationError } from "@/lib/session";
+import { assertCan, AuthorizationError } from "@/lib/session";
 import type { EntityFormState } from "@/components/admin/entity-types";
 
 /**
@@ -39,7 +39,7 @@ export async function deleteMedia(
   formData: FormData,
 ): Promise<EntityFormState> {
   try {
-    await assertAdmin();
+    await assertCan("media", ["delete"]);
   } catch (error) {
     if (error instanceof AuthorizationError) return { status: "error", message: error.message };
     throw error;
@@ -89,7 +89,7 @@ export async function updateMediaAlt(
   formData: FormData,
 ): Promise<EntityFormState> {
   try {
-    await assertAdmin();
+    await assertCan("media", ["upload"]);
   } catch (error) {
     if (error instanceof AuthorizationError) return { status: "error", message: error.message };
     throw error;

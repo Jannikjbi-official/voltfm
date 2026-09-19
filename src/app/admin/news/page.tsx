@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { requireCan } from "@/lib/session";
 import Link from "next/link";
 
 import { ButtonLink } from "@/components/common/button-link";
@@ -25,6 +26,9 @@ export default async function AdminNewsPage({
 }: {
   searchParams: Promise<{ status?: string }>;
 }) {
+  // Ein ausgeblendeter Menuepunkt ist kein Schutz — die Seite prueft selbst.
+  await requireCan("article", ["update"]);
+
   const { status } = await searchParams;
   const active = FILTERS.some((f) => f.value === status)
     ? (status as ArticleStatus)

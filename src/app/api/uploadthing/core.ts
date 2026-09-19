@@ -1,6 +1,6 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
-import { assertAdmin } from "@/lib/session";
+import { assertCan } from "@/lib/session";
 import { media } from "@/db/collections";
 
 const f = createUploadthing();
@@ -19,7 +19,7 @@ export const uploadRouter = {
     image: { maxFileSize: "8MB", maxFileCount: 1 },
   })
     .middleware(async () => {
-      const user = await assertAdmin().catch(() => null);
+      const user = await assertCan("media", ["upload"]).catch(() => null);
       if (!user) throw new UploadThingError("Keine Berechtigung.");
       return { userId: user.id };
     })
@@ -40,7 +40,7 @@ export const uploadRouter = {
     image: { maxFileSize: "4MB", maxFileCount: 1 },
   })
     .middleware(async () => {
-      const user = await assertAdmin().catch(() => null);
+      const user = await assertCan("media", ["upload"]).catch(() => null);
       if (!user) throw new UploadThingError("Keine Berechtigung.");
       return { userId: user.id };
     })

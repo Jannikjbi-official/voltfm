@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { requireCan } from "@/lib/session";
 import { getRadioSnapshot } from "@/services/radio";
 import { getStationInfo, getLastSongs } from "@/services/radio/metadata";
 import { formatTime } from "@/lib/format";
@@ -9,6 +10,9 @@ export const metadata: Metadata = { title: "Radio · Admin", robots: { index: fa
 export const dynamic = "force-dynamic";
 
 export default async function AdminRadioPage() {
+  // Ein ausgeblendeter Menuepunkt ist kein Schutz — die Seite prueft selbst.
+  await requireCan("settings", ["read"]);
+
   const [snapshot, station, history] = await Promise.all([
     getRadioSnapshot(),
     getStationInfo(),

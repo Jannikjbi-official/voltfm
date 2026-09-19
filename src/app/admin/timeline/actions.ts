@@ -5,7 +5,7 @@ import { ObjectId } from "mongodb";
 import { z } from "zod";
 
 import { timeline } from "@/db/collections";
-import { assertAdmin, AuthorizationError } from "@/lib/session";
+import { assertCan, AuthorizationError } from "@/lib/session";
 import { slugify } from "@/lib/format";
 import type { EntityFormState } from "@/components/admin/entity-types";
 
@@ -31,7 +31,7 @@ export async function saveTimelineEntry(
   formData: FormData,
 ): Promise<EntityFormState> {
   try {
-    await assertAdmin();
+    await assertCan("timeline", ["update"]);
   } catch (error) {
     if (error instanceof AuthorizationError) return { status: "error", message: error.message };
     throw error;
@@ -100,7 +100,7 @@ export async function deleteTimelineEntry(
   formData: FormData,
 ): Promise<EntityFormState> {
   try {
-    await assertAdmin();
+    await assertCan("timeline", ["delete"]);
   } catch (error) {
     if (error instanceof AuthorizationError) return { status: "error", message: error.message };
     throw error;

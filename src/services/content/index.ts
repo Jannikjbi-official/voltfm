@@ -123,6 +123,31 @@ export async function listTimeline(): Promise<TimelineDTO[]> {
 
 /* --- Events -------------------------------------------------------------- */
 
+/**
+ * Der Status, wie ihn die oeffentliche Seite sehen soll.
+ *
+ * "past" wird hier abgeleitet und nicht beim Speichern festgeschrieben. Beim
+ * Schreiben waere es in beide Richtungen falsch: Ein Termin, der beim Anlegen
+ * schon vorbei schien (etwa durch eine Zeitzonen-Verschiebung), bliebe fuer
+ * immer vergangen — und ein kuenftiger Termin bliebe "geplant", auch Wochen
+ * nachdem er stattgefunden hat. Eine Absage bleibt eine Absage.
+ */
+function withEffectiveStatus(event: EventDTO, now: Date): EventDTO {
+  if (event.status === "cancelled") return event;
+
+  const start = new Date(event.startsAt);
+  if (Number.isNaN(start.getTime())) return event;
+
+  const end = event.endsAt ? new Date(event.endsAt) : null;
+  const over = (end && !Number.isNaN(end.getTime()) ? end : start) < now;
+  if (over) return { ...event, status: "past" };
+
+  // Laeuft gerade: begonnen, aber noch nicht zu Ende.
+  if (start <= now) return { ...event, status: "live" };
+
+  return { ...event, status: "upcoming" };
+}
+
 export async function listEvents(scope: "upcoming" | "past" | "all" = "all"): Promise<EventDTO[]> {
   return safe(async () => {
     const now = new Date();
@@ -137,14 +162,23 @@ export async function listEvents(scope: "upcoming" | "past" | "all" = "all"): Pr
       // Upcoming reads best soonest-first; past reads best newest-first.
       .sort({ startsAt: scope === "upcoming" ? 1 : -1 })
       .toArray();
-    return serializeAll(docs);
+    return serializeAll(docs).map((event) => withEffectiveStatus(event, now));
   }, []);
+}
+
+/** Admin-Liste: liefert den gespeicherten Status, nicht den abgeleiteten —
+ *  das Formular soll zeigen, was eingetragen wurde. */
+export async function adminListEvents(): Promise<EventDTO[]> {
+  return safe(
+    async () => serializeAll(await events().find().sort({ startsAt: -1 }).toArray()),
+    [],
+  );
 }
 
 export async function getEventBySlug(slug: string): Promise<EventDTO | null> {
   return safe(async () => {
     const doc = await events().findOne({ slug });
-    return doc ? serialize(doc) : null;
+    return doc ? withEffectiveStatus(serialize(doc), new Date()) : null;
   }, null);
 }
 

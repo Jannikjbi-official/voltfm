@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { listEvents, listCategories } from "@/services/content";
+import { requireCan } from "@/lib/session";
+import { adminListEvents, listCategories } from "@/services/content";
 import { formatDateTime, toStationTimeInput } from "@/lib/format";
 import { EntityManager } from "@/components/admin/entity-manager";
 import type { EntityRow, FieldDef } from "@/components/admin/entity-types";
@@ -17,7 +18,10 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 export default async function Page() {
-  const [items, cats] = await Promise.all([listEvents("all"), listCategories()]);
+  // Ein ausgeblendeter Menuepunkt ist kein Schutz — die Seite prueft selbst.
+  await requireCan("event", ["update"]);
+
+  const [items, cats] = await Promise.all([adminListEvents(), listCategories()]);
 
   /* The category is a free-text field on the event, but offering the existing
      categories keeps the spelling consistent across the list. */
@@ -53,12 +57,14 @@ export default async function Page() {
       label: "Status",
       type: "select",
       side: true,
+      /* "Vorbei" steht bewusst nicht zur Auswahl: Das ergibt sich aus dem
+         Datum und wird beim Anzeigen abgeleitet. */
       options: [
         { value: "upcoming", label: "Geplant" },
         { value: "live", label: "Läuft gerade" },
-        { value: "past", label: "Vorbei" },
         { value: "cancelled", label: "Abgesagt" },
       ],
+      hint: "„Vorbei“ ergibt sich automatisch aus dem Datum.",
     },
     { name: "image", label: "Titelbild", type: "image", side: true },
     { name: "slug", label: "Slug", type: "text", side: true, hint: "Leer lassen für automatisch." },
@@ -78,7 +84,8 @@ export default async function Page() {
       endsAt: toStationTimeInput(item.endsAt),
       location: item.location,
       category: item.category,
-      status: item.status,
+      // Alte Datensaetze koennen noch "past" tragen; das Feld kennt es nicht mehr.
+      status: item.status === "past" ? "upcoming" : item.status,
       image: item.image ?? "",
       url: item.url ?? "",
     },

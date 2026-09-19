@@ -6,7 +6,7 @@ import { z } from "zod";
 import sanitizeHtml from "sanitize-html";
 
 import { events } from "@/db/collections";
-import { assertAdmin, AuthorizationError } from "@/lib/session";
+import { assertCan, AuthorizationError } from "@/lib/session";
 import { slugify, parseStationTime } from "@/lib/format";
 import type { EntityFormState } from "@/components/admin/entity-types";
 
@@ -71,7 +71,7 @@ export async function saveEvent(
   formData: FormData,
 ): Promise<EntityFormState> {
   try {
-    await assertAdmin();
+    await assertCan("event", ["update"]);
   } catch (error) {
     if (error instanceof AuthorizationError) return { status: "error", message: error.message };
     throw error;
@@ -122,14 +122,11 @@ export async function saveEvent(
     endsAt,
     location: data.location,
     category: data.category,
-    // "past" is derived from the date unless the event was explicitly cancelled,
-    // so the list never shows a future event greyed out as past.
-    status:
-      data.status === "cancelled"
-        ? ("cancelled" as const)
-        : startsAt < now
-          ? ("past" as const)
-          : data.status,
+    /* Gespeichert wird nur die Absicht der Redaktion. Ob ein Termin vorbei
+       ist, entscheidet beim Lesen das Datum (siehe withEffectiveStatus) —
+       sonst waere ein eben angelegter Termin fuer immer "vergangen", nur weil
+       er beim Speichern einmal so aussah. */
+    status: data.status,
     image: data.image || undefined,
     url: data.url || undefined,
     updatedAt: now,
@@ -162,7 +159,7 @@ export async function deleteEvent(
   formData: FormData,
 ): Promise<EntityFormState> {
   try {
-    await assertAdmin();
+    await assertCan("event", ["delete"]);
   } catch (error) {
     if (error instanceof AuthorizationError) return { status: "error", message: error.message };
     throw error;

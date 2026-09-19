@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Alert, AlertContent, AlertDescription } from "@/components/ui/alert";
 import { Icon, DeleteIcon, LoadingIcon, CheckIcon, CloseIcon } from "@/lib/icons";
 import type { EntityFormState } from "@/components/admin/entity-types";
+import { useActionFeedback } from "@/components/admin/use-action-feedback";
 import { formatDate } from "@/lib/format";
 import styles from "./media.module.css";
 
@@ -39,6 +40,9 @@ export function MediaGrid({
   const [deleteState, remove, deleting] = useActionState(deleteAction, initial);
   const [altState, saveAlt, savingAlt] = useActionState(altAction, initial);
   const [confirmId, setConfirmId] = useState<string | null>(null);
+
+  useActionFeedback(deleteState);
+  useActionFeedback(altState);
 
   const message = deleteState.message ?? altState.message;
   const status = deleteState.message ? deleteState.status : altState.status;

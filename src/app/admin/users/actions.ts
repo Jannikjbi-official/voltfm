@@ -4,14 +4,15 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
 import { auth } from "@/lib/auth";
-import { assertAdmin, AuthorizationError } from "@/lib/session";
+import { assertCan, AuthorizationError } from "@/lib/session";
 import { ADMIN_ROLES } from "@/lib/permissions";
 import type { EntityFormState } from "@/components/admin/entity-types";
 import { ASSIGNABLE_ROLES, ROLE_LABELS, type AssignableRole } from "./roles";
 
+/** Benutzerverwaltung ist Admin-Sache — Redaktionsrechte reichen nicht. */
 async function guard(): Promise<{ id: string } | EntityFormState> {
   try {
-    return await assertAdmin();
+    return await assertCan("user", ["set-role"]);
   } catch (error) {
     if (error instanceof AuthorizationError) return { status: "error", message: error.message };
     throw error;

@@ -78,15 +78,14 @@ export function Header({ nav }: { nav: NavItem[] }) {
                 }
               />
               <DropdownMenuContent>
+                {/* Nur die Beschriftung: Menueeintraege sind in der
+                    Komponente auf eine Zeilenhoehe festgelegt, ein zweizeiliger
+                    Eintrag wuerde sich mit dem naechsten ueberlagern. Den
+                    Zusatztext gibt es im Schubfach, wo Platz dafuer ist. */}
                 {overflow.map((item) => (
                   <DropdownMenuItem
                     key={item.href}
-                    render={
-                      <Link href={item.href} className={styles.overflowLink}>
-                        <span className={styles.overflowLabel}>{item.label}</span>
-                        {item.hint && <span className={styles.overflowHint}>{item.hint}</span>}
-                      </Link>
-                    }
+                    render={<Link href={item.href}>{item.label}</Link>}
                   />
                 ))}
               </DropdownMenuContent>
@@ -128,7 +127,7 @@ export function Header({ nav }: { nav: NavItem[] }) {
               }
             />
             <SheetBackdrop />
-            <SheetPopup>
+            <SheetPopup className={styles.mobilePopup}>
               <SheetHeader>
                 <SheetTitle>Navigation</SheetTitle>
               </SheetHeader>
@@ -140,7 +139,7 @@ export function Header({ nav }: { nav: NavItem[] }) {
                   auf ihre Innenabstaende zusammengefallen. Das Sheet ist
                   ohnehin gesteuert, also schliesst der Klick es direkt. */}
               <nav className={styles.mobileNav} aria-label="Mobile Navigation">
-                {nav.map((item) => (
+                {primary.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
@@ -152,6 +151,28 @@ export function Header({ nav }: { nav: NavItem[] }) {
                     {item.hint && <span className={styles.mobileLinkHint}>{item.hint}</span>}
                   </Link>
                 ))}
+
+                {/* Dieselbe Aufteilung wie auf dem Schirm: Hauptpunkte oben,
+                    der Rest unter einer eigenen Ueberschrift. Ein aufklappbares
+                    Menue waere hier ein Klick zu viel — im Schubfach ist Platz,
+                    also stehen sie einfach darunter. */}
+                {overflow.length > 0 && (
+                  <>
+                    <p className={styles.mobileGroupLabel}>Mehr</p>
+                    {overflow.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={styles.mobileLink}
+                        aria-current={isActive(item.href) ? "page" : undefined}
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        <span className={styles.mobileLinkLabel}>{item.label}</span>
+                        {item.hint && <span className={styles.mobileLinkHint}>{item.hint}</span>}
+                      </Link>
+                    ))}
+                  </>
+                )}
               </nav>
 
               <div className={styles.mobileFooter}>

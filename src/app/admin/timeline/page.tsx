@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { requireCan } from "@/lib/session";
 import { listTimeline } from "@/services/content";
 import { EntityManager } from "@/components/admin/entity-manager";
 import type { EntityRow, FieldDef } from "@/components/admin/entity-types";
@@ -76,6 +77,9 @@ const FIELDS: FieldDef[] = [
 ];
 
 export default async function Page() {
+  // Ein ausgeblendeter Menuepunkt ist kein Schutz — die Seite prueft selbst.
+  await requireCan("timeline", ["update"]);
+
   const items = await listTimeline();
 
   const rows: EntityRow[] = items.map((item) => ({

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { requireCan } from "@/lib/session";
 import { media } from "@/db/collections";
 import { serializeAll } from "@/services/content";
 import { MediaGrid, type MediaItem } from "./media-grid";
@@ -9,6 +10,9 @@ export const metadata: Metadata = { title: "Medien · Admin", robots: { index: f
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
+  // Ein ausgeblendeter Menuepunkt ist kein Schutz — die Seite prueft selbst.
+  await requireCan("media", ["upload"]);
+
   const docs = serializeAll(await media().find().sort({ createdAt: -1 }).limit(120).toArray());
 
   const items: MediaItem[] = docs.map((doc) => ({

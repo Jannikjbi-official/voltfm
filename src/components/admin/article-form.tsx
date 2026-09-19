@@ -10,6 +10,7 @@ import { Alert, AlertContent, AlertDescription } from "@/components/ui/alert";
 import { Icon, LoadingIcon, CheckIcon } from "@/lib/icons";
 import { ImageUpload } from "./image-upload";
 import { RichTextEditor } from "./rich-text-editor";
+import { useActionFeedback } from "./use-action-feedback";
 import { saveArticle, type ArticleFormState } from "@/app/admin/news/actions";
 import type { ArticleDTO, CategoryDTO } from "@/services/content";
 import styles from "./admin-form.module.css";
@@ -33,6 +34,10 @@ export function ArticleForm({
   authorName: string;
 }) {
   const [state, formAction, pending] = useActionState(saveArticle, initial);
+
+  /* Bei Erfolg leitet die Action weiter, hier kommt also nur der Fehlerfall an
+     — und genau der soll auch sichtbar sein, wenn man unten am Knopf steht. */
+  useActionFeedback(state as { status: "idle" | "error" | "success"; message?: string });
 
   return (
     <form action={formAction} className={styles.form}>

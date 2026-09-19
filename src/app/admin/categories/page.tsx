@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { requireCan } from "@/lib/session";
 import { listCategories } from "@/services/content";
 import { EntityManager } from "@/components/admin/entity-manager";
 import type { EntityRow, FieldDef } from "@/components/admin/entity-types";
@@ -37,6 +38,9 @@ const FIELDS: FieldDef[] = [
 ];
 
 export default async function Page() {
+  // Ein ausgeblendeter Menuepunkt ist kein Schutz — die Seite prueft selbst.
+  await requireCan("category", ["update"]);
+
   const items = await listCategories();
 
   const rows: EntityRow[] = items.map((item) => ({

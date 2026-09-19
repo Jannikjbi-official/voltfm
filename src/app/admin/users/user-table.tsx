@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Alert, AlertContent, AlertDescription } from "@/components/ui/alert";
 import { Icon, CheckIcon, LoadingIcon, DeleteIcon, CloseIcon } from "@/lib/icons";
 import type { EntityFormState } from "@/components/admin/entity-types";
+import { useActionFeedback } from "@/components/admin/use-action-feedback";
 import { formatDate } from "@/lib/format";
 import styles from "./users.module.css";
 import formStyles from "@/components/admin/admin-form.module.css";
@@ -54,6 +55,10 @@ export function UserTable({
   const [banState, toggleBan, banning] = useActionState(banAction, initial);
   const [revokeState, revoke, revoking] = useActionState(revokeAction, initial);
   const [banForm, setBanForm] = useState<string | null>(null);
+
+  useActionFeedback(roleState);
+  useActionFeedback(banState);
+  useActionFeedback(revokeState);
 
   const state = roleState.message ? roleState : banState.message ? banState : revokeState;
 

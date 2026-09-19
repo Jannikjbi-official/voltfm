@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { requireAdmin } from "@/lib/session";
+import { requireAdmin, requireCan } from "@/lib/session";
 import { serverEnv } from "@/lib/env";
 import { site } from "@/lib/site";
 import styles from "../page.module.css";
@@ -8,6 +8,9 @@ export const metadata: Metadata = { title: "Einstellungen · Admin", robots: { i
 export const dynamic = "force-dynamic";
 
 export default async function AdminSettingsPage() {
+  // Ein ausgeblendeter Menuepunkt ist kein Schutz — die Seite prueft selbst.
+  await requireCan("settings", ["update"]);
+
   await requireAdmin();
 
   /* Read-only view of the effective configuration. Secrets are never rendered —

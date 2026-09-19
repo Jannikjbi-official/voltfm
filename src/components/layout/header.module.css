@@ -185,20 +185,74 @@
   transform: rotate(180deg);
 }
 
-.overflowLink {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  width: 100%;
+
+/* --- Schubfach: aufgeräumt ------------------------------------------------ */
+
+/*
+ * Mit neun Einträgen plus Fußbereich wurde das Schubfach länger als der Schirm.
+ * Deshalb scrollt die Liste, und der Fußbereich bleibt sichtbar am unteren
+ * Rand stehen, statt darunter wegzurutschen.
+ */
+.mobileNav {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  gap: 0;
+  padding: var(--spacing-4) 0;
+  overscroll-behavior: contain;
 }
 
-.overflowLabel {
-  font: var(--type-small);
+.mobileLink {
+  padding: var(--spacing-10) var(--spacing-12);
+  border-radius: var(--radius-sm);
+}
+
+/* Eine feine Trennlinie statt Abstand: ruhiger bei vielen Einträgen. */
+.mobileLink + .mobileLink {
+  border-top: 1px solid var(--color-border);
+}
+
+.mobileLinkLabel {
+  font: var(--type-body);
   font-weight: 600;
-  color: var(--color-text);
 }
 
-.overflowHint {
+.mobileLinkHint {
   font: var(--type-caption);
-  color: var(--color-text-secondary);
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mobileFooter {
+  flex-shrink: 0;
+  background: var(--color-surface);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/*
+ * Das Schubfach liegt als Vollbild-Ebene über der Seite, die Kopfzeile bleibt
+ * aber darüber sichtbar. Ohne diesen Abstand verschwindet der erste
+ * Navigationspunkt dahinter.
+ */
+.mobilePopup {
+  padding-top: var(--header-height);
+}
+
+/* Überschrift der zweiten Gruppe im Schubfach. */
+.mobileGroupLabel {
+  margin-top: var(--spacing-16);
+  padding: var(--spacing-8) var(--spacing-12) var(--spacing-4);
+  border-top: 1px solid var(--color-border);
+  font: var(--type-caption);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+/* Nach der Überschrift keine zweite Linie. */
+.mobileGroupLabel + .mobileLink {
+  border-top: 0;
 }
