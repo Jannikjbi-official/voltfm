@@ -70,6 +70,14 @@ export const owner = ac.newRole({
 
 export const roles = { user, editor, admin, owner };
 
+/** Deutsche Bezeichnungen der Rollen, fuer jede Anzeige im UI. */
+export const ROLE_LABELS: Record<string, string> = {
+  user: "Hörer",
+  editor: "Redaktion",
+  admin: "Admin",
+  owner: "Inhaber",
+};
+
 /** Roles that may reach /admin at all. */
 export const ADMIN_ROLES = ["admin", "owner", "editor"] as const;
 

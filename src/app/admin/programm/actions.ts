@@ -7,6 +7,7 @@ import { z } from "zod";
 import { shows } from "@/db/collections";
 import { assertCan, AuthorizationError } from "@/lib/session";
 import { slugify } from "@/lib/format";
+import { features } from "@/lib/site";
 import type { EntityFormState } from "@/components/admin/entity-types";
 
 const TIME = /^([01]\d|2[0-3]):[0-5]\d$/;
@@ -31,6 +32,19 @@ export async function saveShow(
   } catch (error) {
     if (error instanceof AuthorizationError) return { status: "error", message: error.message };
     throw error;
+  }
+
+  /* Neue Sendungen erst wieder, wenn der Sendeplan laeuft: Sonst sammeln sich
+     Sendeplaetze an, die niemand sieht und die beim Wiedereinschalten nicht
+     mehr stimmen. Bestehende bleiben bearbeitbar — die Pruefung steht hier und
+     nicht nur in der Oberflaeche, weil eine Server Action ein POST ist. */
+  const isNew = !String(formData.get("id") ?? "").trim();
+  if (isNew && !features.schedule) {
+    return {
+      status: "error",
+      message:
+        "Solange der Sendeplan abgeschaltet ist, lassen sich keine neuen Sendungen anlegen.",
+    };
   }
 
   const parsed = schema.safeParse({

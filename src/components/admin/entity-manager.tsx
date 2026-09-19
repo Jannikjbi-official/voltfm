@@ -32,6 +32,8 @@ export function EntityManager({
   singular,
   addLabel,
   emptyText,
+  canCreate = true,
+  createBlockedText,
 }: {
   rows: EntityRow[];
   fields: FieldDef[];
@@ -40,6 +42,10 @@ export function EntityManager({
   singular: string;
   addLabel: string;
   emptyText: string;
+  /** False blendet das Formular aus, solange nichts bearbeitet wird. */
+  canCreate?: boolean;
+  /** Warum gerade nichts angelegt werden kann. */
+  createBlockedText?: string;
 }) {
   const [saveState, save, saving] = useActionState(saveAction, initial);
   const [deleteState, remove, deleting] = useActionState(deleteAction, initial);
@@ -95,6 +101,14 @@ export function EntityManager({
         </Alert>
       )}
 
+      {/* Ohne Anlegerecht taucht das Formular erst auf, wenn ein vorhandener
+          Eintrag bearbeitet wird — ein leeres Formular, das beim Absenden
+          abgelehnt wird, waere eine Einladung ins Leere. */}
+      {!canCreate && !editing && createBlockedText && (
+        <p className={styles.blocked}>{createBlockedText}</p>
+      )}
+
+      {(canCreate || editing) && (
       <form ref={formRef} action={save} className={formStyles.form} key={editing?.id ?? "new"}>
         {editing && <input type="hidden" name="id" value={editing.id} />}
 
@@ -135,6 +149,7 @@ export function EntityManager({
           </aside>
         </div>
       </form>
+      )}
 
       <section className={styles.listSection} aria-label={`Vorhandene Einträge`}>
         <h2 className={styles.listTitle}>

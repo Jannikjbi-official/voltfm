@@ -23,8 +23,6 @@ import {
   DashboardIcon,
 } from "@/lib/icons";
 
-const ADMIN_ROLES = new Set(["admin", "owner"]);
-
 /**
  * Account entry point. This is a convenience surface only — it decides what to
  * *show*. Whether a user may actually reach /admin is re-checked server-side in
@@ -48,11 +46,6 @@ export function AccountMenu({ account }: { account: AccountAvatar }) {
     username?: string | null;
     role?: string | null;
   };
-
-  const isAdmin = String(user.role ?? "")
-    .split(",")
-    .map((r) => r.trim())
-    .some((r) => ADMIN_ROLES.has(r));
 
   const displayName = user.name || user.username || "Profil";
 
@@ -90,7 +83,7 @@ export function AccountMenu({ account }: { account: AccountAvatar }) {
           <Icon icon={SettingsIcon} />
           Kontoeinstellungen
         </DropdownMenuItem>
-        {isAdmin && (
+        {account.isAdmin && (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuItem render={<Link href="/admin" />}>

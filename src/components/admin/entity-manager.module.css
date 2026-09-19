@@ -128,3 +128,14 @@
   color: var(--color-text-muted);
   font-style: italic;
 }
+
+/* Erklärt, warum gerade kein Anlegen-Formular da ist. */
+.blocked {
+  padding: var(--spacing-16) var(--spacing-20);
+  border-radius: var(--radius-lg);
+  border: 1px dashed var(--color-border-strong);
+  background: var(--color-surface-container-low);
+  font: var(--type-small);
+  color: var(--color-text-secondary);
+  max-width: 80ch;
+}

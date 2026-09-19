@@ -101,6 +101,8 @@ export default async function Page() {
         singular="Sendung"
         addLabel="Sendung anlegen"
         emptyText="Noch keine Sendung angelegt."
+        canCreate={features.schedule}
+        createBlockedText="Neue Sendungen lassen sich anlegen, sobald der Sendeplan wieder aktiv ist. Vorhandene kannst du weiterhin bearbeiten und löschen — wähle dafür unten „Bearbeiten“."
       />
     </>
   );

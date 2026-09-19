@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/common/page-header";
-import { requireUser } from "@/lib/session";
+import { requireUser, effectiveRoleLabel } from "@/lib/session";
 import { serverEnv } from "@/lib/env";
 import { PasskeyManager } from "./passkey-manager";
 import { ConnectedAccounts } from "./connected-accounts";
@@ -60,7 +60,9 @@ export default async function KontoPage(props: PageProps<"/konto">) {
               </div>
               <div className={styles.fact}>
                 <dt>Rolle</dt>
-                <dd>{profile.role || "user"}</dd>
+                {/* Die geltende Rolle, nicht die gespeicherte: Fest
+                    hinterlegte Betreiber tragen in der Datenbank "user". */}
+                <dd>{effectiveRoleLabel(user)}</dd>
               </div>
             </dl>
           </section>

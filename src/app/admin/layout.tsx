@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { requireAdmin, can, type Resource } from "@/lib/session";
+import { requireAdmin, can, effectiveRoleLabel, type Resource } from "@/lib/session";
 import { features } from "@/lib/site";
 import { Icon, DashboardIcon, NewsIcon, TagIcon, EventsIcon, MicIcon, CalendarIcon, ImageIcon, UserIcon, SettingsIcon, RadioIcon, ClockIcon } from "@/lib/icons";
 import styles from "./layout.module.css";
@@ -60,7 +60,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <span className={styles.badge}>Admin</span>
           <span className={styles.who}>
             {profile.name || profile.username}
-            <span className={styles.role}>{profile.role || "admin"}</span>
+            <span className={styles.role}>{effectiveRoleLabel(user)}</span>
           </span>
         </div>
 

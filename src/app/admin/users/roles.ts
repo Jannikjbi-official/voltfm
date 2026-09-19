@@ -5,9 +5,6 @@
 export const ASSIGNABLE_ROLES = ["user", "editor", "admin", "owner"] as const;
 export type AssignableRole = (typeof ASSIGNABLE_ROLES)[number];
 
-export const ROLE_LABELS: Record<string, string> = {
-  user: "Hörer",
-  editor: "Redaktion",
-  admin: "Admin",
-  owner: "Inhaber",
-};
+/* Die Bezeichnungen stehen bei den Rollen selbst — zwei Listen waeren
+   frueher oder spaeter verschieden. */
+export { ROLE_LABELS } from "@/lib/permissions";

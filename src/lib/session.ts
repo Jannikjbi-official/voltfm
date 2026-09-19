@@ -5,6 +5,7 @@ import { auth, type SessionUser } from "@/lib/auth";
 import {
   ADMIN_ROLES,
   OWNER_USER_IDS,
+  ROLE_LABELS,
   roles,
   type statement,
 } from "@/lib/permissions";
@@ -67,10 +68,28 @@ export function isAdminUser(user: SessionUser | null | undefined): boolean {
  * ------------------------------------------------------------------------ */
 
 export type Resource = keyof typeof statement;
+
+/**
+ * Die Rolle, die tatsaechlich gilt — nicht die, die in der Datenbank steht.
+ *
+ * Fest hinterlegte Betreiber tragen dort haeufig "user". Das anzuzeigen ist
+ * irrefuehrend: Wer Inhaberrechte hat, soll das auch lesen koennen.
+ */
+export function effectiveRole(user: SessionUser | null | undefined): string {
+  if (!user) return "user";
+  const [first] = rolesOf(user);
+  return first ?? "user";
+}
+
+/** Dieselbe Rolle, aber lesbar. */
+export function effectiveRoleLabel(user: SessionUser | null | undefined): string {
+  const role = effectiveRole(user);
+  return ROLE_LABELS[role] ?? role;
+}
 export type ActionOf<R extends Resource> = (typeof statement)[R][number];
 
 /** Die Rollen eines Benutzers. `role` kann mehrere enthalten, kommagetrennt. */
-function rolesOf(user: SessionUser): string[] {
+export function rolesOf(user: SessionUser): string[] {
   // Wer ueber ADMIN_USER_IDS Admin ist, hat volle Rechte — sonst koennte sich
   // niemand aus einer verkorksten Rollenlage befreien.
   if (bootstrapAdminIds().has(user.id)) return ["owner"];
