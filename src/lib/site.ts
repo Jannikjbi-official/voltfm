@@ -60,6 +60,8 @@ export const site = {
   contactFormEnabled: false,
   /** Wo im Discord das Ticket aufgemacht wird. */
   supportChannelHint: "Kanal #ticket-erstellen",
+  /** Bewerbungsportal: dort werden offene Stellen ausgeschrieben. */
+  applyUrl: "https://dash.pwr.lol/website/1549922141003190324",
   /** laut.fm station slug — drives every metadata endpoint. */
   station: process.env.NEXT_PUBLIC_RADIO_STATION ?? "jannikjbi",
 } as const;

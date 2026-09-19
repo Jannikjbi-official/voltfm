@@ -58,8 +58,9 @@ export default async function PressePage() {
             </p>
             <p>
               Ausgestrahlt wird über {radio.providerName}, das die Lizenzen mit
-              den Verwertungsgesellschaften hält. Es gibt keine Werbeblöcke,
-              keine Bezahlschranke und keine automatisierte Dauerschleife — das
+              den Verwertungsgesellschaften hält und über Werbung im Stream
+              finanziert. VoltFM selbst verdient daran nichts: Es gibt keine
+              Bezahlschranke und keine automatisierte Dauerschleife — das
               Programm wird von Menschen zusammengestellt.
             </p>
             <p>

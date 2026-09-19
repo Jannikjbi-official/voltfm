@@ -27,7 +27,7 @@ export function RadioHero() {
       <div className="shell">
         <div className={styles.grid}>
           <div className={styles.intro}>
-            <LiveIndicator listeners={snapshot?.listeners} />
+            <LiveIndicator />
 
             <h1 id="hero-title" className={styles.title}>
               Dein Sound.
@@ -110,7 +110,10 @@ export function RadioHero() {
                   </dd>
                 </div>
               )}
-              {next && (
+              {/* "Als Nächstes" kommt aus dem Sendeplan. Solange der ruht, ist
+                  die Angabe bestenfalls die naechste Playlist — als Ansage
+                  einer kommenden Sendung waere sie schlicht falsch. */}
+              {features.schedule && next && (
                 <div className={styles.fact}>
                   <dt>Als Nächstes</dt>
                   <dd>
@@ -119,12 +122,6 @@ export function RadioHero() {
                       <span className={styles.factMuted}> ab {formatTime(next.startsAt)} Uhr</span>
                     )}
                   </dd>
-                </div>
-              )}
-              {typeof snapshot?.listeners === "number" && (
-                <div className={styles.fact}>
-                  <dt>Hören gerade</dt>
-                  <dd>{snapshot.listeners}</dd>
                 </div>
               )}
             </dl>

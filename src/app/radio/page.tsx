@@ -28,7 +28,7 @@ export default async function RadioPage() {
       <PageHeader
         eyebrow="Livestream"
         title="VoltFM hören"
-        description="Ein Klick, kein Konto, keine Werbeunterbrechung — gesendet wird rund um die Uhr über laut.fm."
+        description="Ein Klick, kein Konto — gesendet wird rund um die Uhr über laut.fm."
         breadcrumbs={[
           { href: "/", label: "Start" },
           { href: "/radio", label: "Radio" },

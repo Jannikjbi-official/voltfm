@@ -180,8 +180,8 @@ export function StreamNotice() {
   if (!embedAllowed) {
     return (
       <p className={styles.notice}>
-        Rund um die Uhr auf Sendung, ohne Werbeunterbrechung — moderiert von
-        Menschen, die selbst zuhören.
+        Rund um die Uhr auf Sendung — zusammengestellt von Menschen, die selbst
+        zuhören.
       </p>
     );
   }

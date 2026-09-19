@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { PageHeader } from "@/components/common/page-header";
 import { ButtonLink } from "@/components/common/button-link";
-import { Icon, DiscordIcon, MicIcon, NewsIcon, HeartIcon } from "@/lib/icons";
+import { Icon, DiscordIcon, MicIcon, NewsIcon, HeartIcon, ExternalLinkIcon } from "@/lib/icons";
 import { site } from "@/lib/site";
 import styles from "./page.module.css";
 
@@ -28,14 +28,15 @@ const WAYS = [
   {
     icon: HeartIcon,
     title: "Einfach dabei sein",
-    text: "Zuhören, im Discord mitreden, Songs vorschlagen, Freunden davon erzählen. Das klingt nach wenig, ist aber der Grund, warum es VoltFM noch gibt.",
+    text: "Zuhören, im Discord mitreden, Songs vorschlagen, Freunden davon erzählen. Dafür brauchst du keine Bewerbung — komm einfach vorbei.",
   },
 ] as const;
 
 const STEPS = [
-  "Tritt unserem Discord bei — das ist unser Redaktionsraum.",
-  "Sag im Vorstellungskanal kurz, was du machen willst.",
-  "Wir melden uns, meistens noch am selben Tag, und klären den Rest.",
+  "Öffne unser Bewerbungsportal.",
+  "Such dir die Stelle aus, auf die du Lust hast.",
+  "Fuell die Bewerbung aus — bei manchen Stellen gehört ein kleiner Test dazu.",
+  "Wir schauen sie uns an und melden uns bei dir.",
 ] as const;
 
 export default function MitmachenPage() {
@@ -78,19 +79,29 @@ export default function MitmachenPage() {
                 </li>
               ))}
             </ol>
-            <ButtonLink href={site.discordUrl} external variant="primary" mode="filled" size="lg">
-              <Icon icon={DiscordIcon} />
-              Discord beitreten
-            </ButtonLink>
+            <div className={styles.actions}>
+              <ButtonLink href={site.applyUrl} external variant="primary" mode="filled" size="lg">
+                Zum Bewerbungsportal
+                <Icon icon={ExternalLinkIcon} />
+              </ButtonLink>
+              <ButtonLink href={site.discordUrl} external variant="neutral" mode="stroke" size="lg">
+                <Icon icon={DiscordIcon} />
+                Erst mal fragen
+              </ButtonLink>
+            </div>
           </div>
 
           <aside className={styles.honest}>
             <h2 className={styles.honestTitle}>Ehrlich gesagt</h2>
             <p>
               Wir sind ein kleines, nicht-kommerzielles Projekt. Es gibt kein
-              Geld, keine Quote und keine Hörerzahlen, mit denen man angeben
-              kann. Was es gibt: eigene Sendezeit, Leute, die zuhören, und
-              niemanden, der dir vorschreibt, welchen Song du spielen musst.
+              Geld und keine Quote. Was es gibt: eigene Sendezeit, Leute, die
+              zuhören, und niemanden, der dir vorschreibt, welchen Song du
+              spielen musst.
+            </p>
+            <p>
+              Bei einigen Stellen gehört ein kleiner Test dazu — nichts
+              Schlimmes, es geht nur darum zu sehen, ob die Aufgabe zu dir passt.
             </p>
             <p>
               Wenn du wissen willst, wer schon dabei ist, schau bei den{" "}

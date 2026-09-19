@@ -86,8 +86,10 @@ const FAQ: { question: string; answer: React.ReactNode }[] = [
     question: "Kann ich selbst moderieren?",
     answer: (
       <>
-        Ja. Vorerfahrung brauchst du nicht, Verlässlichkeit schon. Wie es geht,
-        steht auf <Link href="/mitmachen">Mitmachen</Link>.
+        Ja. Wir schreiben offene Stellen in unserem Bewerbungsportal aus — dort
+        suchst du dir aus, worauf du Lust hast. Bei manchen Stellen gehört ein
+        kleiner Test dazu. Die Wege stehen auf{" "}
+        <Link href="/mitmachen">Mitmachen</Link>.
       </>
     ),
   },
@@ -95,9 +97,10 @@ const FAQ: { question: string; answer: React.ReactNode }[] = [
     question: "Kostet VoltFM etwas, und gibt es Werbung?",
     answer: (
       <>
-        Nein und nein. VoltFM ist ein nicht-kommerzielles Projekt. Es gibt keine
-        Werbeblöcke und keine Bezahlschranke — die Musikrechte trägt{" "}
-        {radio.providerName}.
+        VoltFM ist nicht-kommerziell: Wir verlangen nichts und verdienen nichts
+        daran. Werbung im Stream gibt es trotzdem — die schaltet{" "}
+        {radio.providerName} und finanziert damit die Ausstrahlung und die
+        Musikrechte. Darauf haben wir keinen Einfluss.
       </>
     ),
   },

@@ -72,3 +72,37 @@ export const roles = { user, editor, admin, owner };
 
 /** Roles that may reach /admin at all. */
 export const ADMIN_ROLES = ["admin", "owner", "editor"] as const;
+
+/**
+ * Fest hinterlegte Betreiber.
+ *
+ * Diese Konten sind immer Inhaber, unabhaengig davon, was in der Datenbank
+ * steht. Das ist der Notausgang: Wer sich versehentlich selbst die Rechte
+ * entzieht oder eine kaputte Rollenzuweisung hat, kommt darueber wieder rein.
+ *
+ * Bewusst im Code und nicht in einer Umgebungsvariablen — eine Variable kann
+ * in einer Umgebung fehlen, und dann stuende niemand mehr an der Tuer.
+ * ADMIN_USER_IDS wird zusaetzlich weiter beruecksichtigt.
+ */
+export const OWNER_ACCOUNTS = [
+  {
+    label: "jannikjbi",
+    /** Better-Auth-Benutzerkennung. */
+    userId: "6aaef88102f08be2fb69d583",
+    discordUserId: "810459620035657769",
+  },
+  {
+    label: "mochikotv",
+    userId: "6aaef88102f08be2fb69d583",
+    discordUserId: "513032712240627733",
+  },
+] as const;
+
+/** Alle fest hinterlegten Kennungen, aus denen sich Inhaberrechte ableiten. */
+export const OWNER_USER_IDS: readonly string[] = [
+  ...new Set(OWNER_ACCOUNTS.map((account) => account.userId)),
+];
+
+export const OWNER_DISCORD_IDS: readonly string[] = [
+  ...new Set(OWNER_ACCOUNTS.map((account) => account.discordUserId)),
+];

@@ -49,7 +49,7 @@ export default async function UeberUnsPage() {
 
           <p className={styles.lead}>
             VoltFM ist ein unabhängiges Webradio aus Hamburg. Kein Sender einer
-            Kette, keine Werbeblöcke, keine automatisierte Dauerschleife.
+            Kette und keine automatisierte Dauerschleife.
           </p>
 
           <dl className={styles.stats}>

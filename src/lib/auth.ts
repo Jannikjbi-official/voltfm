@@ -7,7 +7,7 @@ import { nextCookies } from "better-auth/next-js";
 import { getDb, getMongoClient } from "@/db/client";
 import { serverEnv, isProduction } from "@/lib/env";
 import { site } from "@/lib/site";
-import { ac, roles, ADMIN_ROLES } from "@/lib/permissions";
+import { ac, roles, ADMIN_ROLES, OWNER_USER_IDS } from "@/lib/permissions";
 
 /**
  * The single source of truth for identity in VoltFM.
@@ -110,10 +110,15 @@ export const auth = betterAuth({
       defaultRole: "user",
       adminRoles: [...ADMIN_ROLES],
       // Bootstraps the first admin before any admin UI exists to grant roles.
-      adminUserIds: (process.env.ADMIN_USER_IDS ?? "")
-        .split(",")
-        .map((id) => id.trim())
-        .filter(Boolean),
+      /* Dieselbe Liste wie in lib/session.ts: sonst akzeptierte Better Auth
+         die Person an den eigenen Endpunkten, waehrend /admin sie abweist. */
+      adminUserIds: [
+        ...OWNER_USER_IDS,
+        ...(process.env.ADMIN_USER_IDS ?? "")
+          .split(",")
+          .map((id) => id.trim())
+          .filter(Boolean),
+      ],
     }),
 
     // 4. Username — unique handles used for profiles and username sign-in.

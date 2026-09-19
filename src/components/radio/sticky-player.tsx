@@ -50,7 +50,7 @@ export function StickyPlayer() {
               läuft gerade
             </Link>
           )}
-          <LiveIndicator listeners={snapshot?.listeners} />
+          <LiveIndicator />
           <VolumeControl />
         </div>
       </div>

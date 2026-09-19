@@ -2,7 +2,12 @@ import "server-only";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth, type SessionUser } from "@/lib/auth";
-import { ADMIN_ROLES, roles, type statement } from "@/lib/permissions";
+import {
+  ADMIN_ROLES,
+  OWNER_USER_IDS,
+  roles,
+  type statement,
+} from "@/lib/permissions";
 
 /**
  * Server-side authorization helpers.
@@ -30,12 +35,14 @@ const ADMIN_ROLE_SET = new Set<string>(ADMIN_ROLES);
  * Better Auth's own endpoints accept the user while /admin bounced them.
  */
 function bootstrapAdminIds(): Set<string> {
-  return new Set(
-    (process.env.ADMIN_USER_IDS ?? "")
+  return new Set([
+    // Fest hinterlegte Betreiber — gelten immer, auch ohne gesetzte Variable.
+    ...OWNER_USER_IDS,
+    ...(process.env.ADMIN_USER_IDS ?? "")
       .split(",")
       .map((id) => id.trim())
       .filter(Boolean),
-  );
+  ]);
 }
 
 export function isAdminUser(user: SessionUser | null | undefined): boolean {

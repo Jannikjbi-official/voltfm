@@ -1,6 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
+import { features } from "@/lib/site";
 import { useRadioPlayer } from "./player-provider";
 import { PlayButton, VolumeControl, PlayerStatusLine, StreamNotice } from "./player-controls";
 import { CoverArt } from "./cover-art";
@@ -32,7 +33,7 @@ export function RadioStage() {
 
       <div className={styles.body}>
         <div className={styles.topRow}>
-          <LiveIndicator listeners={snapshot?.listeners} />
+          <LiveIndicator />
           {current && <Badge mode="lighter" size="sm">{current.name}</Badge>}
         </div>
 
@@ -66,7 +67,7 @@ export function RadioStage() {
               </dd>
             </div>
           )}
-          {next && (
+          {features.schedule && next && (
             <div className={styles.scheduleRow}>
               <dt>Danach</dt>
               <dd>
