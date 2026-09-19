@@ -6,13 +6,18 @@ import { z } from "zod";
 
 import { hosts } from "@/db/collections";
 import { assertCan, AuthorizationError } from "@/lib/session";
-import { slugify } from "@/lib/format";
+import { slugify, parseStationTime } from "@/lib/format";
 import type { EntityFormState } from "@/components/admin/entity-types";
 
 const schema = z.object({
   name: z.string().trim().min(2, "Name ist zu kurz.").max(80),
   slug: z.string().trim().max(80).optional(),
   role: z.string().trim().min(2, "Bitte eine Rolle angeben.").max(80),
+  tagline: z.string().trim().max(120).optional(),
+  quote: z.string().trim().max(240).optional(),
+  genres: z.string().trim().max(200).optional(),
+  location: z.string().trim().max(80).optional(),
+  joinedAt: z.string().trim().max(20).optional(),
   bio: z.string().trim().min(20, "Die Beschreibung ist zu kurz.").max(4000),
   image: z.string().trim().url().or(z.literal("")).optional(),
   discordUserId: z
@@ -56,6 +61,11 @@ export async function saveHost(
     name: formData.get("name"),
     slug: formData.get("slug") ?? "",
     role: formData.get("role"),
+    tagline: formData.get("tagline") ?? "",
+    quote: formData.get("quote") ?? "",
+    genres: formData.get("genres") ?? "",
+    location: formData.get("location") ?? "",
+    joinedAt: formData.get("joinedAt") ?? "",
     bio: formData.get("bio"),
     image: formData.get("image") ?? "",
     discordUserId: formData.get("discordUserId") ?? "",
@@ -79,7 +89,17 @@ export async function saveHost(
     name: data.name,
     slug,
     role: data.role,
+    tagline: data.tagline || undefined,
     bio: data.bio,
+    quote: data.quote || undefined,
+    genres: (data.genres ?? "")
+      .split(",")
+      .map((g) => g.trim())
+      .filter(Boolean),
+    location: data.location || undefined,
+    /* Ein reines Datumsfeld ohne Uhrzeit — als Mitternacht Senderzeit
+       gespeichert, damit die Anzeige nicht um einen Tag springt. */
+    joinedAt: data.joinedAt ? parseStationTime(`${data.joinedAt}T00:00`) : null,
     image: data.image || undefined,
     discordUserId: data.discordUserId || null,
     profileLayout: data.profileLayout,

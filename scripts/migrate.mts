@@ -364,6 +364,18 @@ const MIGRATIONS: Migration[] = [
       return result.upsertedCount ? `angelegt: /news/${article.slug}` : "war schon da";
     },
   },
+
+  {
+    name: "009-host-felder-nachtragen",
+    run: async (db, now) => {
+      /* `genres` kam mit den ausfuehrlicheren Profilen dazu. Fehlt das Feld,
+         laeuft jedes `.length` darauf ins Leere. */
+      const result = await db
+        .collection("hosts")
+        .updateMany({ genres: { $exists: false } }, { $set: { genres: [], updatedAt: now } });
+      return `${result.modifiedCount} Profile ergaenzt`;
+    },
+  },
 ];
 
 /* --- Der Lauf ------------------------------------------------------------- */

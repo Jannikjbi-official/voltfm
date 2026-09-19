@@ -312,3 +312,111 @@
   height: 100%;
   border-bottom: none;
 }
+
+/* --- Zitat, Fakten, Genres, Beiträge -------------------------------------- */
+
+.quote {
+  margin: 0 0 clamp(2rem, 1.5rem + 2vw, 3rem);
+  padding-left: clamp(1rem, 0.75rem + 1vw, 1.75rem);
+  border-left: 3px solid var(--host-accent, var(--color-accent));
+  max-width: 44ch;
+}
+
+.quote p {
+  font: var(--type-h3);
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.quote cite {
+  display: block;
+  margin-top: var(--spacing-10);
+  font: var(--type-caption);
+  font-style: normal;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr));
+  gap: var(--spacing-16);
+  padding-block: clamp(1.25rem, 1rem + 1vw, 2rem);
+  border-block: 1px solid var(--color-border);
+}
+
+.fact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.fact dt {
+  font: var(--type-caption);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.fact dd {
+  font: 700 clamp(1.1rem, 1rem + 0.6vw, 1.5rem) / 1.2 var(--font-display);
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.genres {
+  margin-top: clamp(1.5rem, 1.25rem + 1.5vw, 2.5rem);
+}
+
+.genreList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-8);
+  list-style: none;
+  padding: 0;
+}
+
+.genre {
+  padding: var(--spacing-6) var(--spacing-14);
+  border-radius: var(--radius-rounded);
+  border: 1px solid var(--host-accent, var(--color-border-strong));
+  color: var(--host-accent, var(--color-text-secondary));
+  font: var(--type-small);
+  font-weight: 600;
+}
+
+.articleList {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  padding: 0;
+}
+
+.articleLink {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--spacing-10);
+  padding: var(--spacing-14) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.articleLink:hover .articleTitle {
+  color: var(--host-accent, var(--color-primary));
+}
+
+.articleTitle {
+  font: var(--type-body);
+  font-weight: 600;
+  color: var(--color-text);
+  transition: color var(--transition-standard-fast-effects);
+}
+
+.articleMeta {
+  font: var(--type-caption);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}

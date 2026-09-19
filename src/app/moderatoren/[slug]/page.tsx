@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 
 import { PageHeader } from "@/components/common/page-header";
@@ -7,9 +8,18 @@ import { ButtonLink } from "@/components/common/button-link";
 import { Badge } from "@/components/ui/badge";
 import { ImagePlaceholder } from "@/components/common/image-placeholder";
 import { Icon, ExternalLinkIcon, ClockIcon } from "@/lib/icons";
-import { getHostBySlug, getShowsBySlugs, listHosts, type HostDTO, type ShowDTO } from "@/services/content";
+import {
+  getHostBySlug,
+  getShowsBySlugs,
+  listHosts,
+  listArticlesByAuthor,
+  type ArticleDTO,
+  type HostDTO,
+  type ShowDTO,
+} from "@/services/content";
 import { resolveHostImage } from "@/services/discord/avatar";
 import { WEEKDAY_LABELS } from "@/services/radio/schedule";
+import { formatDate, formatReadingTime } from "@/lib/format";
 import { site } from "@/lib/site";
 import styles from "./page.module.css";
 
@@ -49,9 +59,10 @@ export default async function HostPage({ params }: { params: Promise<Params> }) 
   const host = await getHostBySlug(slug);
   if (!host) notFound();
 
-  const [shows, image] = await Promise.all([
+  const [shows, image, articles] = await Promise.all([
     getShowsBySlugs(host.showSlugs),
     resolveHostImage(host),
+    listArticlesByAuthor(host.name, 4),
   ]);
 
   const layout = host.profileLayout ?? "spotlight";
@@ -82,6 +93,11 @@ export default async function HostPage({ params }: { params: Promise<Params> }) 
       {layout === "editorial" && <Editorial host={host} shows={shows} image={image} />}
       {layout === "stage" && <Stage host={host} shows={shows} image={image} />}
       {layout === "zine" && <Zine host={host} shows={shows} image={image} />}
+
+      {/* Faktenleiste, Zitat und Beitraege stehen unter jedem Layout — sie
+          sind Inhalt, keine Komposition, und sollen nicht viermal existieren. */}
+      <Facts host={host} shows={shows} />
+      <AuthorArticles host={host} articles={articles} />
     </div>
   );
 }
@@ -89,6 +105,95 @@ export default async function HostPage({ params }: { params: Promise<Params> }) 
 /* ------------------------------------------------------------------------ */
 /* Shared pieces                                                             */
 /* ------------------------------------------------------------------------ */
+
+/**
+ * Zahlen und Angaben, die sich aus den Daten ergeben — nichts davon ist
+ * erfunden: Sendungen und Sendezeit kommen aus dem Sendeplan, der Rest aus
+ * dem Profil. Leere Angaben tauchen gar nicht erst auf.
+ */
+function Facts({ host, shows }: { host: HostDTO; shows: ShowDTO[] }) {
+  const weeklyMinutes = shows.reduce((sum, show) => {
+    const [sh, sm] = show.startTime.split(":").map(Number);
+    const [eh, em] = show.endTime.split(":").map(Number);
+    // Ueber Mitternacht laufende Sendungen ergeben sonst eine negative Dauer.
+    const minutes = ((eh * 60 + em - (sh * 60 + sm)) + 1440) % 1440;
+    return sum + minutes;
+  }, 0);
+
+  const facts: { label: string; value: string }[] = [];
+  if (host.joinedAt) facts.push({ label: "Dabei seit", value: formatDate(host.joinedAt, "short") });
+  if (shows.length > 0) {
+    facts.push({ label: "Sendungen", value: String(shows.length) });
+    facts.push({
+      label: "Pro Woche",
+      value: weeklyMinutes >= 60
+        ? `${Math.round((weeklyMinutes / 60) * 10) / 10} Std.`
+        : `${weeklyMinutes} Min.`,
+    });
+  }
+  if (host.location) facts.push({ label: "Sitzt in", value: host.location });
+
+  if (facts.length === 0 && host.genres.length === 0 && !host.quote) return null;
+
+  return (
+    <section className="section shell">
+      {host.quote && (
+        <blockquote className={styles.quote}>
+          <p>{host.quote}</p>
+          <cite>{host.name}</cite>
+        </blockquote>
+      )}
+
+      {facts.length > 0 && (
+        <dl className={styles.facts}>
+          {facts.map((fact) => (
+            <div key={fact.label} className={styles.fact}>
+              <dt>{fact.label}</dt>
+              <dd>{fact.value}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+
+      {host.genres.length > 0 && (
+        <div className={styles.genres}>
+          <h2 className={styles.sectionTitle}>Steht für</h2>
+          <ul className={styles.genreList} role="list">
+            {host.genres.map((genre) => (
+              <li key={genre} className={styles.genre}>
+                {genre}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </section>
+  );
+}
+
+/** Beitraege, die diese Person geschrieben hat. */
+function AuthorArticles({ host, articles }: { host: HostDTO; articles: ArticleDTO[] }) {
+  if (articles.length === 0) return null;
+
+  return (
+    <section className="section shell">
+      <h2 className={styles.sectionTitle}>Beiträge von {host.name}</h2>
+      <ul className={styles.articleList} role="list">
+        {articles.map((article) => (
+          <li key={article.id}>
+            <Link href={`/news/${article.slug}`} className={styles.articleLink}>
+              <span className={styles.articleTitle}>{article.title}</span>
+              <span className={styles.articleMeta}>
+                {article.publishedAt ? formatDate(article.publishedAt) : ""} ·{" "}
+                {formatReadingTime(article.readingTime)}
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
 
 function Portrait({
   host,

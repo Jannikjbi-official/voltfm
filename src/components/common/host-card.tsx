@@ -41,7 +41,19 @@ export async function HostCard({ host }: { host: HostDTO }) {
           </Link>
         </h3>
         <p className={styles.role}>{host.role}</p>
-        <p className={styles.bio}>{host.bio}</p>
+        {/* Die Tagline ist der persönlichere Satz — wenn es einen gibt, steht
+            er statt des Anfangs der Biografie. */}
+        <p className={styles.bio}>{host.tagline || host.bio}</p>
+
+        {host.genres.length > 0 && (
+          <ul className={styles.genres} role="list">
+            {host.genres.slice(0, 3).map((genre) => (
+              <li key={genre} className={styles.genre}>
+                {genre}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </article>
   );

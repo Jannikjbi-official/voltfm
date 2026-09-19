@@ -1,5 +1,122 @@
+/* =========================================================================
+   Moderatoren — Übersicht
+   ========================================================================= */
+
+.page {
+  padding-bottom: var(--section-gap);
+}
+
+/* --- Kopfbereich ---------------------------------------------------------- */
+
+.masthead {
+  padding-block: clamp(2.5rem, 2rem + 4vw, 4.5rem);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-container-low);
+}
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-10);
+  font: var(--type-caption);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--color-accent);
+  margin-bottom: var(--spacing-20);
+}
+
+.kickerIcon {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-circled);
+  background: var(--color-surface-container-high);
+  font-size: 0.75em;
+}
+
+.title {
+  font: var(--type-display-md);
+  letter-spacing: -0.035em;
+  color: var(--color-text);
+  text-wrap: balance;
+  margin-bottom: var(--spacing-16);
+}
+
+.titleAccent {
+  color: var(--color-primary);
+}
+
+.lead {
+  font: var(--type-body-lg, var(--type-body));
+  color: var(--color-text-secondary);
+  max-width: 56ch;
+}
+
+/* --- Kennzahlen ----------------------------------------------------------- */
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1.5rem, 1rem + 3vw, 3.5rem);
+  margin-top: clamp(1.5rem, 1.25rem + 1.5vw, 2.5rem);
+  padding-top: clamp(1.25rem, 1rem + 1vw, 2rem);
+  border-top: 1px solid var(--color-border);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--spacing-4);
+}
+
+.stat dt {
+  font: var(--type-caption);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.stat dd {
+  font: 700 clamp(1.75rem, 1.5rem + 1.5vw, 2.75rem) / 1 var(--font-display);
+  color: var(--color-text);
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Raster --------------------------------------------------------------- */
+
 .grid {
   display: grid;
-  gap: clamp(1.5rem, 1.25rem + 2vw, 2.75rem);
-  grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+  gap: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+}
+
+/* --- Mitmachen ------------------------------------------------------------ */
+
+.join {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(1.25rem, 1rem + 2vw, 2.5rem);
+  padding: clamp(1.5rem, 1.25rem + 2vw, 2.75rem);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-container-low);
+}
+
+.joinTitle {
+  font: var(--type-h3);
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-8);
+  text-wrap: balance;
+}
+
+.joinText {
+  font: var(--type-body);
+  color: var(--color-text-secondary);
+  max-width: 54ch;
 }

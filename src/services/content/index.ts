@@ -49,6 +49,23 @@ export async function getCategoryBySlug(slug: string): Promise<CategoryDTO | nul
 
 /* --- Hosts --------------------------------------------------------------- */
 
+/**
+ * Faengt Datensaetze ab, die aelter sind als ein Feld.
+ *
+ * `genres` kam spaeter dazu; in bestehenden Dokumenten fehlt es schlicht. Der
+ * Typ sagt `string[]`, zur Laufzeit kam `undefined` — und die Seite stuerzte
+ * beim ersten `.length` ab. Die Migration fuellt das Feld nach, aber darauf
+ * darf sich das Lesen nicht verlassen.
+ */
+function normalizeHost(host: HostDTO): HostDTO {
+  return {
+    ...host,
+    genres: host.genres ?? [],
+    socials: host.socials ?? [],
+    showSlugs: host.showSlugs ?? [],
+  };
+}
+
 export async function listHosts(includeInactive = false): Promise<HostDTO[]> {
   return safe(
     async () =>
@@ -57,7 +74,7 @@ export async function listHosts(includeInactive = false): Promise<HostDTO[]> {
           .find(includeInactive ? {} : { active: true })
           .sort({ order: 1 })
           .toArray(),
-      ),
+      ).map(normalizeHost),
     [],
   );
 }
@@ -73,7 +90,7 @@ export async function listHosts(includeInactive = false): Promise<HostDTO[]> {
 export async function getHostBySlug(slug: string): Promise<HostDTO | null> {
   return safe(async () => {
     const doc = await hosts().findOne({ slug, active: true });
-    return doc ? serialize(doc) : null;
+    return doc ? normalizeHost(serialize(doc)) : null;
   }, null);
 }
 
@@ -81,7 +98,7 @@ export async function adminGetHost(id: string): Promise<HostDTO | null> {
   if (!ObjectId.isValid(id)) return null;
   return safe(async () => {
     const doc = await hosts().findOne({ _id: new ObjectId(id) });
-    return doc ? serialize(doc) : null;
+    return doc ? normalizeHost(serialize(doc)) : null;
   }, null);
 }
 

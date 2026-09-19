@@ -127,6 +127,19 @@ export async function getLatestArticles(limit = 4): Promise<ArticleDTO[]> {
 }
 
 /** Slugs for generateStaticParams / the sitemap. */
+/** Veroeffentlichte Beitraege einer Autorin oder eines Autors, neueste zuerst. */
+export async function listArticlesByAuthor(authorName: string, limit = 6): Promise<ArticleDTO[]> {
+  if (!authorName.trim()) return [];
+  return safe(async () => {
+    const docs = await articles()
+      .find({ ...publishedFilter(), authorName })
+      .sort({ publishedAt: -1 })
+      .limit(limit)
+      .toArray();
+    return serializeAll(docs);
+  }, []);
+}
+
 export async function getAllPublishedSlugs(): Promise<{ slug: string; updatedAt: Date }[]> {
   return safe(async () => {
     const docs = await articles()

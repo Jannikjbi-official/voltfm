@@ -48,7 +48,17 @@ export interface Host {
   name: string;
   slug: string;
   role: string;
+  /** Ein Satz unter dem Namen — kuerzer als die Rolle, persoenlicher. */
+  tagline?: string;
   bio: string;
+  /** Motto oder Lieblingssatz, auf der Profilseite hervorgehoben. */
+  quote?: string;
+  /** Musikrichtungen, fuer die diese Person steht. */
+  genres: string[];
+  /** Seit wann bei VoltFM. */
+  joinedAt?: Date | null;
+  /** Wo diese Person sitzt — der Sender ist verteilt. */
+  location?: string;
   image?: string;
   /** Discord snowflake, used to pull the avatar from Discord as a fallback. */
   discordUserId?: string | null;
