@@ -88,7 +88,7 @@ export const OWNER_ACCOUNTS = [
   {
     label: "jannikjbi",
     /** Better-Auth-Benutzerkennung. */
-    userId: "6aaef88102f08be2fb69d583",
+    userId: "6aad709708b9f1bab8b04faa",
     discordUserId: "810459620035657769",
   },
   {
