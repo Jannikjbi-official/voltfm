@@ -148,6 +148,9 @@ export const mainNav: NavItem[] = [
   { href: "/radioaid", label: "RadioAid", hint: "24 Stunden Charity-Radio", seasonal: true },
   { href: "/community", label: "Community", hint: "Discord, Social Media und Mitmachen" },
   { href: "/ueber-uns", label: "Über VoltFM", hint: "Geschichte, Team und Mission" },
+  { href: "/mitmachen", label: "Mitmachen", hint: "Moderieren, schreiben oder einfach dabei sein" },
+  { href: "/faq", label: "Häufige Fragen", hint: "Antworten auf das, was am meisten gefragt wird" },
+  { href: "/presse", label: "Presse", hint: "Kurzprofil, Zahlen und Logo" },
 ];
 
 export const footerNav: { title: string; items: NavItem[] }[] = [
@@ -172,7 +175,10 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
     title: "VoltFM",
     items: [
       { href: "/ueber-uns", label: "Über uns" },
+      { href: "/mitmachen", label: "Mitmachen" },
+      { href: "/faq", label: "Häufige Fragen" },
       { href: "/community", label: "Community" },
+      { href: "/presse", label: "Presse" },
       { href: "/kontakt", label: "Kontakt" },
     ],
   },
@@ -195,11 +201,16 @@ export function buildMainNav(now: Date = new Date()): NavItem[] {
   });
 }
 
-/** Teilt die Navigation in die sichtbare Leiste und das Menue "Mehr". */
+/**
+ * Teilt die Navigation in die sichtbare Leiste und das Menue "Mehr".
+ *
+ * Das Menue lohnt sich erst ab zwei ausgelagerten Eintraegen. Bliebe nur einer
+ * uebrig, waere "Mehr" genauso breit wie der Eintrag selbst — man klickt dann
+ * auf einen Knopf, um genau einen Punkt zu sehen. In dem Fall passt alles in
+ * die Leiste.
+ */
 export function splitNav(items: NavItem[]): { primary: NavItem[]; overflow: NavItem[] } {
-  if (items.length <= MAX_VISIBLE_NAV_ITEMS) return { primary: items, overflow: [] };
-  return {
-    primary: items.slice(0, MAX_VISIBLE_NAV_ITEMS),
-    overflow: items.slice(MAX_VISIBLE_NAV_ITEMS),
-  };
+  const overflow = items.slice(MAX_VISIBLE_NAV_ITEMS);
+  if (overflow.length < 2) return { primary: items, overflow: [] };
+  return { primary: items.slice(0, MAX_VISIBLE_NAV_ITEMS), overflow };
 }

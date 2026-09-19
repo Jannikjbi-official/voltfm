@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { features } from "@/lib/site";
 import { useRadioPlayer } from "./player-provider";
 import { PlayButton, VolumeControl } from "./player-controls";
 import { CoverArt } from "./cover-art";
@@ -42,7 +43,9 @@ export function StickyPlayer() {
 
         <div className={styles.right}>
           {show && (
-            <Link href="/programm" className={styles.show}>
+            /* Zeigt auf den Sendeplan, solange es einen gibt — sonst auf den
+               Player, wo die laufende Sendung ohnehin steht. */
+            <Link href={features.schedule ? "/programm" : "/radio"} className={styles.show}>
               <span className={styles.showName}>{show.name}</span>
               läuft gerade
             </Link>

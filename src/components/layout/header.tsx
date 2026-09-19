@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { splitNav, site, type NavItem } from "@/lib/site";
+import type { AccountAvatar } from "@/services/content/account";
 import { Icon, MenuIcon, SearchIcon, DiscordIcon, ChevronDownIcon } from "@/lib/icons";
 import { Logo } from "./logo";
 import { ThemeToggle } from "./theme-toggle";
@@ -33,7 +34,7 @@ import styles from "./header.module.css";
  * Wuerde dieser Client-Baustein selbst filtern, saehen Server und Browser
  * unterschiedliche Eintraege und das Hydrieren schluege fehl.
  */
-export function Header({ nav }: { nav: NavItem[] }) {
+export function Header({ nav, account }: { nav: NavItem[]; account: AccountAvatar }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { primary, overflow } = splitNav(nav);
@@ -127,7 +128,7 @@ export function Header({ nav }: { nav: NavItem[] }) {
           <ThemeToggle />
 
           <div className={styles.desktopOnly}>
-            <AccountMenu />
+            <AccountMenu account={account} />
           </div>
 
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -210,7 +211,7 @@ export function Header({ nav }: { nav: NavItem[] }) {
               </nav>
 
               <div className={styles.mobileFooter}>
-                <AccountMenu />
+                <AccountMenu account={account} />
                 <ButtonLink href={site.discordUrl} external variant="primary" mode="stroke" size="md">
                   <Icon icon={DiscordIcon} />
                   Discord beitreten

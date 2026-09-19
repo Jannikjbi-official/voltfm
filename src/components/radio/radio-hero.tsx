@@ -8,7 +8,7 @@ import { CoverArt } from "./cover-art";
 import { LiveIndicator } from "./live-indicator";
 import { formatTime } from "@/lib/format";
 import { Icon, ArrowRightIcon, DiscordIcon } from "@/lib/icons";
-import { site } from "@/lib/site";
+import { features, site } from "@/lib/site";
 import styles from "./radio-hero.module.css";
 
 /**
@@ -52,10 +52,19 @@ export function RadioHero() {
             </div>
 
             <div className={styles.links}>
-              <ButtonLink href="/programm" variant="neutral" mode="stroke" size="sm">
-                Sendeplan ansehen
-                <Icon icon={ArrowRightIcon} />
-              </ButtonLink>
+              {/* Solange der Sendeplan ruht, waere ein Verweis darauf ein
+                  Angebot, hinter dem nichts steht. */}
+              {features.schedule ? (
+                <ButtonLink href="/programm" variant="neutral" mode="stroke" size="sm">
+                  Sendeplan ansehen
+                  <Icon icon={ArrowRightIcon} />
+                </ButtonLink>
+              ) : (
+                <ButtonLink href="/radio" variant="neutral" mode="stroke" size="sm">
+                  Was gerade läuft
+                  <Icon icon={ArrowRightIcon} />
+                </ButtonLink>
+              )}
               <ButtonLink href={site.discordUrl} external variant="neutral" mode="ghost" size="sm">
                 <Icon icon={DiscordIcon} />
                 Discord

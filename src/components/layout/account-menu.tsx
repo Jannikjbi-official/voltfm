@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { authClient, useSession } from "@/lib/auth-client";
+import type { AccountAvatar } from "@/services/content/account";
 import {
   Icon,
   UserIcon,
@@ -29,7 +30,7 @@ const ADMIN_ROLES = new Set(["admin", "owner"]);
  * *show*. Whether a user may actually reach /admin is re-checked server-side in
  * the admin layout, so hiding the link here is never the security boundary.
  */
-export function AccountMenu() {
+export function AccountMenu({ account }: { account: AccountAvatar }) {
   const { data: session, isPending } = useSession();
   const router = useRouter();
 
@@ -54,7 +55,12 @@ export function AccountMenu() {
     .some((r) => ADMIN_ROLES.has(r));
 
   const displayName = user.name || user.username || "Profil";
-  const profileHref = user.username ? `/profil/${user.username}` : "/konto";
+
+  /* Ein oeffentliches Profil gibt es nur fuer Moderatorinnen und Moderatoren.
+     Alle anderen landen in den Kontoeinstellungen — vorher zeigte der Punkt
+     auf /profil/<username>, eine Route, die es nie gab. */
+  const profileHref = account.hostSlug ? `/moderatoren/${account.hostSlug}` : "/konto";
+  const avatar = user.image || account.image;
 
   async function handleSignOut() {
     await authClient.signOut();
@@ -68,7 +74,7 @@ export function AccountMenu() {
         render={
           <Button variant="neutral" mode="ghost" size="sm" aria-label="Konto-Menü öffnen">
             <Avatar style={{ width: 26, height: 26 }}>
-              {user.image && <AvatarImage src={user.image} alt="" />}
+              {avatar && <AvatarImage src={avatar} alt="" />}
               <AvatarFallback>{displayName.slice(0, 2).toUpperCase()}</AvatarFallback>
             </Avatar>
             {displayName}
@@ -78,7 +84,7 @@ export function AccountMenu() {
       <DropdownMenuContent>
         <DropdownMenuItem render={<Link href={profileHref} />}>
           <Icon icon={UserIcon} />
-          Profil
+          {account.hostSlug ? "Mein Profil" : "Konto"}
         </DropdownMenuItem>
         <DropdownMenuItem render={<Link href="/konto" />}>
           <Icon icon={SettingsIcon} />

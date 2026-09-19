@@ -1,0 +1,112 @@
+.ways {
+  display: grid;
+  gap: clamp(1.25rem, 1rem + 2vw, 2.25rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+}
+
+.way {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-10);
+  padding: clamp(1.25rem, 1rem + 1.5vw, 2rem);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-container-low);
+}
+
+.wayIcon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-circled);
+  background: var(--color-surface-container-high);
+  color: var(--color-accent);
+  font-size: 1.05rem;
+}
+
+.wayTitle {
+  font: var(--type-h4);
+  color: var(--color-text);
+}
+
+.wayText {
+  font: var(--type-small);
+  color: var(--color-text-secondary);
+}
+
+/* --- Wie es losgeht ------------------------------------------------------- */
+
+.how {
+  display: grid;
+  gap: clamp(2rem, 1.5rem + 3vw, 4rem);
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .how {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
+  }
+}
+
+.howTitle {
+  font: var(--type-h2);
+  letter-spacing: -0.025em;
+  color: var(--color-text);
+  margin-bottom: clamp(1.25rem, 1rem + 1vw, 2rem);
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+  list-style: none;
+  padding: 0;
+  margin-bottom: clamp(1.5rem, 1.25rem + 1.5vw, 2.5rem);
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-14);
+  font: var(--type-body);
+  color: var(--color-text-secondary);
+  max-width: 56ch;
+}
+
+.stepNumber {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-circled);
+  background: var(--color-primary);
+  color: var(--color-on-primary, #fff);
+  font: 700 0.9rem / 1 var(--font-display);
+}
+
+.honest {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+  padding: clamp(1.25rem, 1rem + 1.5vw, 2rem);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-container-low);
+  font: var(--type-small);
+  color: var(--color-text-secondary);
+}
+
+.honestTitle {
+  font: var(--type-h5, var(--type-body));
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.honest a {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

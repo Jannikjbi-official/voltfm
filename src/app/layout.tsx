@@ -11,6 +11,7 @@ import { Footer } from "@/components/layout/footer";
 import { RadioPlayerProvider } from "@/components/radio/player-provider";
 import { StickyPlayer } from "@/components/radio/sticky-player";
 import { getRadioSnapshot } from "@/services/radio";
+import { getAccountAvatar } from "@/services/content/account";
 import { getStreamUrl } from "@/services/radio/stream";
 import { buildMainNav, site } from "@/lib/site";
 
@@ -71,7 +72,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   // Both resolved on the server: the radio snapshot so the first paint already
   // shows what is on air, and the theme so the correct colours are in the HTML
   // itself — no inline script, no flash, no hydration mismatch.
-  const [snapshot, cookieStore] = await Promise.all([getRadioSnapshot(), cookies()]);
+  const [snapshot, cookieStore, account] = await Promise.all([
+    getRadioSnapshot(),
+    cookies(),
+    /* Das Kontobild kommt vom Server: Bei einer Anmeldung per Benutzername ist
+       `user.image` leer, das Bild liegt dann am Moderatorenprofil. Der
+       Client-Baustein kann das nicht nachschlagen. */
+    getAccountAvatar(),
+  ]);
   const theme = normalizeTheme(cookieStore.get(THEME_COOKIE)?.value);
 
   return (
@@ -87,7 +95,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <a href="#main" className="skip-link">
                 Zum Inhalt springen
               </a>
-              <Header nav={buildMainNav()} />
+              <Header nav={buildMainNav()} account={account} />
               <main id="main">{children}</main>
               <Footer />
               <StickyPlayer />
