@@ -203,3 +203,27 @@
   color: var(--color-text-muted);
   font-style: italic;
 }
+
+/* Hinweis über einem Bereich, der öffentlich abgeschaltet ist. */
+.notice {
+  margin-bottom: var(--spacing-24);
+  padding: var(--spacing-16) var(--spacing-20);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-warning, var(--color-border-strong));
+  background: var(--color-surface-container-low);
+  font: var(--type-small);
+  color: var(--color-text-secondary);
+  max-width: 80ch;
+}
+
+.notice strong {
+  color: var(--color-text);
+}
+
+.notice code {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 0.9em;
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius-xs);
+  background: var(--color-surface-container-high);
+}

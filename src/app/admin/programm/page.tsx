@@ -5,6 +5,7 @@ import { WEEKDAY_LABELS } from "@/services/radio/schedule";
 import { EntityManager } from "@/components/admin/entity-manager";
 import type { EntityRow, FieldDef } from "@/components/admin/entity-types";
 import { saveShow, deleteShow } from "./actions";
+import { features } from "@/lib/site";
 import styles from "../page.module.css";
 
 export const metadata: Metadata = { title: "Programm · Admin", robots: { index: false } };
@@ -77,6 +78,20 @@ export default async function Page() {
           </p>
         </div>
       </header>
+
+      {/* Der Bereich bleibt bedienbar, damit vorhandene Sendungen erhalten
+          bleiben und neue vorbereitet werden koennen — aber niemand soll
+          glauben, hier Gepflegtes sei oeffentlich sichtbar. */}
+      {!features.schedule && (
+        <div className={styles.notice} role="status">
+          <strong>Der Sendeplan ist öffentlich abgeschaltet.</strong> Was du hier
+          anlegst, wird gespeichert, erscheint aber nicht auf der Website: Die
+          Seite <code>/programm</code> zeigt stattdessen einen Hinweis, und der
+          Menüpunkt ist ausgeblendet. Wieder einschalten lässt sich das über{" "}
+          <code>features.schedule</code> in <code>src/lib/site.ts</code> — sinnvoll,
+          sobald ein eigener Sendeserver läuft.
+        </div>
+      )}
 
       <EntityManager
         rows={rows}

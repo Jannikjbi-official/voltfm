@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { requireAdmin, can, type Resource } from "@/lib/session";
+import { features } from "@/lib/site";
 import { Icon, DashboardIcon, NewsIcon, TagIcon, EventsIcon, MicIcon, CalendarIcon, ImageIcon, UserIcon, SettingsIcon, RadioIcon, ClockIcon } from "@/lib/icons";
 import styles from "./layout.module.css";
 
@@ -13,13 +14,22 @@ const ADMIN_NAV: {
   label: string;
   icon: typeof DashboardIcon;
   needs?: { resource: Resource; actions: string[] };
+  /** Zeigt an, dass der Bereich oeffentlich nicht sichtbar ist. */
+  off?: boolean;
 }[] = [
   { href: "/admin", label: "Übersicht", icon: DashboardIcon },
   { href: "/admin/news", label: "News", icon: NewsIcon, needs: { resource: "article", actions: ["update"] } },
   { href: "/admin/categories", label: "Kategorien", icon: TagIcon, needs: { resource: "category", actions: ["update"] } },
   { href: "/admin/events", label: "Events", icon: EventsIcon, needs: { resource: "event", actions: ["update"] } },
   { href: "/admin/moderatoren", label: "Moderatoren", icon: MicIcon, needs: { resource: "host", actions: ["update"] } },
-  { href: "/admin/programm", label: "Programm", icon: CalendarIcon, needs: { resource: "show", actions: ["update"] } },
+  {
+    href: "/admin/programm",
+    label: "Programm",
+    icon: CalendarIcon,
+    needs: { resource: "show", actions: ["update"] },
+    // Bleibt erreichbar, ist aber oeffentlich abgeschaltet.
+    off: !features.schedule,
+  },
   { href: "/admin/radio", label: "Radio", icon: RadioIcon, needs: { resource: "settings", actions: ["read"] } },
   { href: "/admin/timeline", label: "Zeitleiste", icon: ClockIcon, needs: { resource: "timeline", actions: ["update"] } },
   { href: "/admin/media", label: "Medien", icon: ImageIcon, needs: { resource: "media", actions: ["upload"] } },
@@ -59,6 +69,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <Link key={item.href} href={item.href} className={styles.navLink}>
               <Icon icon={item.icon} className={styles.navIcon} />
               {item.label}
+              {item.off && <span className={styles.navOff}>aus</span>}
             </Link>
           ))}
         </nav>
