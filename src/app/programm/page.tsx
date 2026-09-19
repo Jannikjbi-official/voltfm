@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { HostChip } from "@/components/common/host-card";
 import {
   getSchedule,
+  formatSlotStart,
+  formatSlotEnd,
   groupByWeekday,
   resolveCurrentAndNext,
   WEEKDAY_LABELS,
@@ -112,11 +114,9 @@ export default async function ProgrammPage() {
                           >
                             <div className={styles.slotTime}>
                               <span className={styles.slotStart}>
-                                {String(slot.startHour).padStart(2, "0")}:00
+                                {formatSlotStart(slot)}
                               </span>
-                              <span className={styles.slotEnd}>
-                                bis {String(slot.endHour).padStart(2, "0")}:00
-                              </span>
+                              <span className={styles.slotEnd}>{formatSlotEnd(slot)}</span>
                             </div>
 
                             <div className={styles.slotBody}>

@@ -2,14 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ButtonLink } from "@/components/common/button-link";
-import {
-  Collapsible,
-  CollapsiblePanel,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import {
   Sheet,
   SheetBackdrop,
@@ -42,6 +37,25 @@ export function Header({ nav }: { nav: NavItem[] }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { primary, overflow } = splitNav(nav);
+
+  /* Eigener Zustand statt der Collapsible-Komponente: die misst ihre Hoehe
+     beim Oeffnen und kam im Schubfach auf ein leeres Panel. Ein- und
+     Ausblenden reicht hier voellig. Steht man auf einer Seite der Gruppe,
+     ist sie von vornherein offen — sonst waere der aktive Punkt versteckt. */
+  const moreRef = useRef<HTMLDivElement>(null);
+  const [moreOpen, setMoreOpen] = useState(() =>
+    overflow.some((item) =>
+      item.href === "/" ? pathname === "/" : pathname.startsWith(item.href),
+    ),
+  );
+
+  /* Die Gruppe sitzt am Ende einer scrollenden Liste. Ohne diesen Schubs
+     klappt sie unterhalb des sichtbaren Ausschnitts auf und es sieht aus, als
+     waere nichts passiert. */
+  useEffect(() => {
+    if (!moreOpen || !mobileOpen) return;
+    moreRef.current?.scrollIntoView({ block: "end", behavior: "smooth" });
+  }, [moreOpen, mobileOpen]);
 
   /** "/" matches exactly; every other entry also matches its sub-routes. */
   const isActive = (href: string) =>
@@ -163,30 +177,35 @@ export function Header({ nav }: { nav: NavItem[] }) {
                     ist die Gruppe von vornherein offen — sonst waere der
                     aktive Punkt versteckt. */}
                 {overflow.length > 0 && (
-                  <Collapsible
-                    className={styles.mobileGroup}
-                    defaultOpen={overflow.some((item) => isActive(item.href))}
-                  >
-                    <CollapsibleTrigger className={styles.mobileGroupTrigger}>
+                  <div className={styles.mobileGroup} ref={moreRef}>
+                    <button
+                      type="button"
+                      className={styles.mobileGroupTrigger}
+                      aria-expanded={moreOpen}
+                      aria-controls="mobile-more"
+                      onClick={() => setMoreOpen((open) => !open)}
+                    >
                       <span>Mehr</span>
                       <Icon icon={ChevronDownIcon} className={styles.mobileGroupChevron} />
-                    </CollapsibleTrigger>
+                    </button>
 
-                    <CollapsiblePanel className={styles.mobileGroupPanel}>
-                      {overflow.map((item) => (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          className={styles.mobileLink}
-                          aria-current={isActive(item.href) ? "page" : undefined}
-                          onClick={() => setMobileOpen(false)}
-                        >
-                          <span className={styles.mobileLinkLabel}>{item.label}</span>
-                          {item.hint && <span className={styles.mobileLinkHint}>{item.hint}</span>}
-                        </Link>
-                      ))}
-                    </CollapsiblePanel>
-                  </Collapsible>
+                    {moreOpen && (
+                      <div id="mobile-more" className={styles.mobileGroupPanel}>
+                        {overflow.map((item) => (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            className={styles.mobileLink}
+                            aria-current={isActive(item.href) ? "page" : undefined}
+                            onClick={() => setMobileOpen(false)}
+                          >
+                            <span className={styles.mobileLinkLabel}>{item.label}</span>
+                            {item.hint && <span className={styles.mobileLinkHint}>{item.hint}</span>}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 )}
               </nav>
 

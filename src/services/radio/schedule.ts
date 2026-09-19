@@ -41,9 +41,40 @@ interface RawSlot {
   name: string;
   day: string;
   hour: number;
-  end_time: number;
+  /** Stunde des Endes — kann null sein, dann zaehlt `length`. */
+  end_time: number | null;
+  /** Laenge der Playlist in Sekunden. */
+  length?: number | null;
   description: string | null;
   color: string | null;
+}
+
+/**
+ * Wie lange ein Slot laeuft, in Minuten.
+ *
+ * laut.fm beschreibt das auf zwei Arten, und welche gefuellt ist, haengt davon
+ * ab, wie der Sendeplatz angelegt wurde:
+ *
+ *   `end_time` — die Stunde, zu der Schluss ist. Kann ueber Mitternacht laufen.
+ *   `length`   — die Laenge der Playlist in Sekunden.
+ *
+ * Frueher wurde nur `end_time` gelesen. Ist das null, wurde daraus die Stunde 0
+ * und der Sendeplan zeigte "00:00 bis 00:00".
+ */
+function durationOf(slot: RawSlot): number {
+  const startHour = Number(slot.hour) || 0;
+
+  if (typeof slot.end_time === "number") {
+    const diff = (slot.end_time - startHour + 24) % 24;
+    // start === end ist laut.fms Schreibweise fuer "die vollen 24 Stunden".
+    return (diff === 0 ? 24 : diff) * 60;
+  }
+
+  if (typeof slot.length === "number" && slot.length > 0) {
+    return Math.max(1, Math.round(slot.length / 60));
+  }
+
+  return 24 * 60;
 }
 
 export async function getSchedule(): Promise<ScheduleSlot[]> {
@@ -64,7 +95,8 @@ export async function getSchedule(): Promise<ScheduleSlot[]> {
         description: slot.description?.trim() || null,
         weekday: DAY_INDEX[slot.day?.toLowerCase()] ?? 0,
         startHour: Number(slot.hour) || 0,
-        endHour: Number(slot.end_time) || 0,
+        startMinute: 0,
+        durationMinutes: durationOf(slot),
         color: slot.color?.trim() || null,
       }))
       .sort((a, b) => a.weekday - b.weekday || a.startHour - b.startHour);
@@ -95,13 +127,34 @@ function weekMinutes(weekday: number, hour: number, minute = 0): number {
   return weekday * 1440 + hour * 60 + minute;
 }
 
+/** "07:00" — die Startzeit eines Slots. */
+export function formatSlotStart(slot: ScheduleSlot): string {
+  return `${String(slot.startHour).padStart(2, "0")}:${String(slot.startMinute).padStart(2, "0")}`;
+}
+
 /**
- * Slot length in minutes, handling slots that run past midnight and slots where
- * start === end (laut.fm's way of saying "the full 24 hours").
+ * "bis 18:13" bzw. "24 Stunden".
+ *
+ * Laeuft ein Slot ueber Mitternacht, steht das dabei — sonst liest sich
+ * "23:00 bis 02:00" wie ein Fehler.
  */
+export function formatSlotEnd(slot: ScheduleSlot): string {
+  if (slot.durationMinutes >= 24 * 60) return "durchgehend";
+
+  const startTotal = slot.startHour * 60 + slot.startMinute;
+  const endTotal = startTotal + slot.durationMinutes;
+  const hour = Math.floor(endTotal / 60) % 24;
+  const minute = endTotal % 60;
+  const naechsterTag = endTotal >= 24 * 60;
+
+  return `bis ${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}${
+    naechsterTag ? " (Folgetag)" : ""
+  }`;
+}
+
+/** Die bereits verrechnete Dauer des Slots. */
 function slotDuration(slot: ScheduleSlot): number {
-  const diff = (slot.endHour - slot.startHour + 24) % 24;
-  return (diff === 0 ? 24 : diff) * 60;
+  return slot.durationMinutes;
 }
 
 function toShow(slot: ScheduleSlot, startsAt: Date): CurrentShow {

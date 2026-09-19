@@ -43,7 +43,13 @@ export interface ScheduleSlot {
   /** 0 = Sunday … 6 = Saturday, matching Date#getDay. */
   weekday: number;
   startHour: number;
-  endHour: number;
+  /** Minuten ab Beginn der Stunde — laut.fm-Slots starten immer zur vollen Stunde. */
+  startMinute: number;
+  /**
+   * Dauer in Minuten. laut.fm liefert entweder `end_time` (Stunde des Endes)
+   * oder `length` (Sekunden der Playlist) — hier ist beides schon verrechnet.
+   */
+  durationMinutes: number;
   color: string | null;
 }
 
