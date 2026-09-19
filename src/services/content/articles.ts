@@ -140,6 +140,12 @@ export async function listArticlesByAuthor(authorName: string, limit = 6): Promi
   }, []);
 }
 
+/** Wie viele veroeffentlichte Beitraege diese Person geschrieben hat. */
+export async function countArticlesByAuthor(authorName: string): Promise<number> {
+  if (!authorName.trim()) return 0;
+  return safe(async () => articles().countDocuments({ ...publishedFilter(), authorName }), 0);
+}
+
 export async function getAllPublishedSlugs(): Promise<{ slug: string; updatedAt: Date }[]> {
   return safe(async () => {
     const docs = await articles()

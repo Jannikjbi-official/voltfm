@@ -420,3 +420,45 @@
   color: var(--color-text-muted);
   white-space: nowrap;
 }
+
+/* --- Weitere Moderatoren -------------------------------------------------- */
+
+.relatedList {
+  display: grid;
+  gap: var(--spacing-12);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+  list-style: none;
+  padding: 0;
+}
+
+.relatedLink {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--spacing-14) var(--spacing-16);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-container-low);
+  transition:
+    border-color var(--transition-standard-fast-effects),
+    background var(--transition-standard-fast-effects);
+}
+
+.relatedLink:hover {
+  border-color: var(--host-accent, var(--color-border-strong));
+  background: var(--color-surface-container);
+}
+
+.relatedName {
+  font: var(--type-body);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.relatedRole {
+  font: var(--type-caption);
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

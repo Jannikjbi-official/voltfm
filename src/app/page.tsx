@@ -11,6 +11,9 @@ import { Badge } from "@/components/ui/badge";
 
 import { getFeaturedArticle, getLatestArticles, listEvents, listHosts } from "@/services/content";
 import { getSchedule, groupByWeekday, WEEKDAY_LABELS } from "@/services/radio/schedule";
+import { getLastSongs } from "@/services/radio/metadata";
+import { features } from "@/lib/site";
+import { formatTime } from "@/lib/format";
 import { getStationInfo } from "@/services/radio/metadata";
 import { site } from "@/lib/site";
 import { Icon, ArrowRightIcon, DiscordIcon, MusicIcon } from "@/lib/icons";
@@ -27,13 +30,15 @@ export const metadata: Metadata = {
 export const revalidate = 3600;
 
 export default async function HomePage() {
-  const [featured, latest, hosts, events, schedule, station] = await Promise.all([
+  const [featured, latest, hosts, events, schedule, station, history] = await Promise.all([
     getFeaturedArticle(),
     getLatestArticles(5),
     listHosts(),
     listEvents("upcoming"),
     getSchedule(),
     getStationInfo(),
+    // Nur geholt, wenn sie auch gezeigt wird.
+    features.schedule ? Promise.resolve([]) : getLastSongs(6),
   ]);
 
   // The featured article leads the news section, so keep it out of the grid.
@@ -98,46 +103,79 @@ export default async function HomePage() {
         )}
       </section>
 
-      {/* --- Programme: timeline, visually distinct from the news grid ----- */}
-      <section className={styles.programme}>
-        <div className="shell">
-          <SectionHeader
-            eyebrow="Sendeplan"
-            title="Heute auf Sendung"
-            description="Der Sendeplan kommt direkt von laut.fm und ist damit immer aktuell."
-            action={{ href: "/programm", label: "Ganze Woche" }}
-          />
-
-          {todaySlots.length > 0 ? (
-            <ol className={styles.timeline} role="list">
-              {todaySlots.map((slot) => (
-                <li key={`${slot.id}-${slot.startHour}`} className={styles.timelineItem}>
-                  <span className={styles.timelineTime}>
-                    {String(slot.startHour).padStart(2, "0")}:00
-                  </span>
-                  <span className={styles.timelineDot} aria-hidden="true" />
-                  <div className={styles.timelineBody}>
-                    <h3 className={styles.timelineTitle}>{slot.name}</h3>
-                    {slot.description && (
-                      <p className={styles.timelineDescription}>{slot.description}</p>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ol>
-          ) : (
-            <EmptyState
-              title={`Für ${WEEKDAY_LABELS[today]} liegt kein Sendeplan vor`}
-              description="Die Musik läuft trotzdem durchgehend — schalte einfach ein."
-              action={
-                <ButtonLink href="/radio" variant="primary" mode="filled" size="sm">
-                  Zum Player
-                </ButtonLink>
-              }
+      {/* --- Zuletzt gespielt bzw. Sendeplan ------------------------------ */}
+      {features.schedule ? (
+        <section className={styles.programme}>
+          <div className="shell">
+            <SectionHeader
+              eyebrow="Sendeplan"
+              title="Heute auf Sendung"
+              description="Der Sendeplan kommt direkt von laut.fm und ist damit immer aktuell."
+              action={{ href: "/programm", label: "Ganze Woche" }}
             />
-          )}
-        </div>
-      </section>
+
+            {todaySlots.length > 0 ? (
+              <ol className={styles.timeline} role="list">
+                {todaySlots.map((slot) => (
+                  <li key={`${slot.id}-${slot.startHour}`} className={styles.timelineItem}>
+                    <span className={styles.timelineTime}>
+                      {String(slot.startHour).padStart(2, "0")}:00
+                    </span>
+                    <span className={styles.timelineDot} aria-hidden="true" />
+                    <div className={styles.timelineBody}>
+                      <h3 className={styles.timelineTitle}>{slot.name}</h3>
+                      {slot.description && (
+                        <p className={styles.timelineDescription}>{slot.description}</p>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <EmptyState
+                title={`Für ${WEEKDAY_LABELS[today]} liegt kein Sendeplan vor`}
+                description="Die Musik läuft trotzdem durchgehend — schalte einfach ein."
+                action={
+                  <ButtonLink href="/radio" variant="primary" mode="filled" size="sm">
+                    Zum Player
+                  </ButtonLink>
+                }
+              />
+            )}
+          </div>
+        </section>
+      ) : (
+        /* Solange der Sendeplan ruht, waere hier nur ein leerer Kasten. Die
+           Titelhistorie ist echte, immer gefuellte Information — und zeigt
+           genau das, was der Sendeplan nicht kann: was tatsaechlich lief. */
+        history.length > 0 && (
+          <section className={styles.programme}>
+            <div className="shell">
+              <SectionHeader
+                eyebrow="Zuletzt gespielt"
+                title="Was gerade lief"
+                description="Die letzten Titel aus unserem Programm, direkt von laut.fm."
+                action={{ href: "/radio", label: "Zum Player" }}
+              />
+
+              <ol className={styles.tracks} role="list">
+                {history.map((track) => (
+                  <li key={`${track.id}-${track.startedAt}`} className={styles.track}>
+                    <span className={styles.trackTime}>
+                      {track.startedAt ? formatTime(track.startedAt) : "—"}
+                    </span>
+                    <span className={styles.trackDot} aria-hidden="true" />
+                    <div className={styles.trackBody}>
+                      <h3 className={styles.trackTitle}>{track.title}</h3>
+                      <p className={styles.trackArtist}>{track.artist}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </section>
+        )
+      )}
 
       {/* --- Hosts: portrait grid ---------------------------------------- */}
       <section className="section shell">

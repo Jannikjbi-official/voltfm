@@ -13,6 +13,7 @@ import {
   getShowsBySlugs,
   listHosts,
   listArticlesByAuthor,
+  countArticlesByAuthor,
   type ArticleDTO,
   type HostDTO,
   type ShowDTO,
@@ -59,11 +60,21 @@ export default async function HostPage({ params }: { params: Promise<Params> }) 
   const host = await getHostBySlug(slug);
   if (!host) notFound();
 
-  const [shows, image, articles] = await Promise.all([
+  const [shows, image, articles, articleCount, allHosts] = await Promise.all([
     getShowsBySlugs(host.showSlugs),
     resolveHostImage(host),
     listArticlesByAuthor(host.name, 4),
+    countArticlesByAuthor(host.name),
+    listHosts(),
   ]);
+
+  /* Wer sonst noch auf denselben Sendungen steht. Kommt aus den Sendungen
+     selbst, nicht aus einer eigenen Liste — so kann es nicht auseinanderlaufen. */
+  const coHostSlugs = new Set(
+    shows.flatMap((show) => show.hostSlugs).filter((s) => s !== host.slug),
+  );
+  const coHosts = allHosts.filter((h) => coHostSlugs.has(h.slug));
+  const otherHosts = allHosts.filter((h) => h.slug !== host.slug && !coHostSlugs.has(h.slug));
 
   const layout = host.profileLayout ?? "spotlight";
 
@@ -96,8 +107,10 @@ export default async function HostPage({ params }: { params: Promise<Params> }) 
 
       {/* Faktenleiste, Zitat und Beitraege stehen unter jedem Layout — sie
           sind Inhalt, keine Komposition, und sollen nicht viermal existieren. */}
-      <Facts host={host} shows={shows} />
+      <Facts host={host} shows={shows} articleCount={articleCount} />
       <AuthorArticles host={host} articles={articles} />
+      <RelatedHosts title={`Zusammen mit ${host.name} auf Sendung`} hosts={coHosts} />
+      <RelatedHosts title="Weitere Stimmen" hosts={otherHosts} />
     </div>
   );
 }
@@ -111,7 +124,15 @@ export default async function HostPage({ params }: { params: Promise<Params> }) 
  * erfunden: Sendungen und Sendezeit kommen aus dem Sendeplan, der Rest aus
  * dem Profil. Leere Angaben tauchen gar nicht erst auf.
  */
-function Facts({ host, shows }: { host: HostDTO; shows: ShowDTO[] }) {
+function Facts({
+  host,
+  shows,
+  articleCount,
+}: {
+  host: HostDTO;
+  shows: ShowDTO[];
+  articleCount: number;
+}) {
   const weeklyMinutes = shows.reduce((sum, show) => {
     const [sh, sm] = show.startTime.split(":").map(Number);
     const [eh, em] = show.endTime.split(":").map(Number);
@@ -131,6 +152,7 @@ function Facts({ host, shows }: { host: HostDTO; shows: ShowDTO[] }) {
         : `${weeklyMinutes} Min.`,
     });
   }
+  if (articleCount > 0) facts.push({ label: "Beiträge", value: String(articleCount) });
   if (host.location) facts.push({ label: "Sitzt in", value: host.location });
 
   if (facts.length === 0 && host.genres.length === 0 && !host.quote) return null;
@@ -167,6 +189,30 @@ function Facts({ host, shows }: { host: HostDTO; shows: ShowDTO[] }) {
           </ul>
         </div>
       )}
+    </section>
+  );
+}
+
+/**
+ * Andere Moderatorinnen und Moderatoren — einmal die, mit denen diese Person
+ * eine Sendung teilt, einmal der Rest des Teams.
+ */
+function RelatedHosts({ title, hosts }: { title: string; hosts: HostDTO[] }) {
+  if (hosts.length === 0) return null;
+
+  return (
+    <section className="section shell">
+      <h2 className={styles.sectionTitle}>{title}</h2>
+      <ul className={styles.relatedList} role="list">
+        {hosts.map((other) => (
+          <li key={other.id}>
+            <Link href={`/moderatoren/${other.slug}`} className={styles.relatedLink}>
+              <span className={styles.relatedName}>{other.name}</span>
+              <span className={styles.relatedRole}>{other.role}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
