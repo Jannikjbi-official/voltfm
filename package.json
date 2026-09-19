@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "vercel-build": "tsx scripts/migrate.mts && next build",
+    "migrate": "tsx scripts/migrate.mts",
     "start": "next start",
     "lint": "eslint",
     "db": "tsx scripts/dev-db.mts",

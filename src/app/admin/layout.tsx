@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/session";
-import { Icon, DashboardIcon, NewsIcon, TagIcon, EventsIcon, MicIcon, CalendarIcon, ImageIcon, UserIcon, SettingsIcon, RadioIcon } from "@/lib/icons";
+import { Icon, DashboardIcon, NewsIcon, TagIcon, EventsIcon, MicIcon, CalendarIcon, ImageIcon, UserIcon, SettingsIcon, RadioIcon, ClockIcon } from "@/lib/icons";
 import styles from "./layout.module.css";
 
 const ADMIN_NAV = [
@@ -11,6 +11,7 @@ const ADMIN_NAV = [
   { href: "/admin/moderatoren", label: "Moderatoren", icon: MicIcon },
   { href: "/admin/programm", label: "Programm", icon: CalendarIcon },
   { href: "/admin/radio", label: "Radio", icon: RadioIcon },
+  { href: "/admin/timeline", label: "Zeitleiste", icon: ClockIcon },
   { href: "/admin/media", label: "Medien", icon: ImageIcon },
   { href: "/admin/users", label: "Benutzer", icon: UserIcon },
   { href: "/admin/settings", label: "Einstellungen", icon: SettingsIcon },

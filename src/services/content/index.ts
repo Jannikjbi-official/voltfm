@@ -1,8 +1,8 @@
 import "server-only";
 import { cache } from "react";
 import { ObjectId } from "mongodb";
-import { categories, events, hosts, shows } from "@/db/collections";
-import type { Category, Host, Show, VoltEvent } from "@/types/content";
+import { categories, events, hosts, shows, timeline } from "@/db/collections";
+import type { Category, Host, Show, TimelineEntry, VoltEvent } from "@/types/content";
 import { serialize, serializeAll, type Plain } from "./serialize";
 
 export * from "./articles";
@@ -12,6 +12,7 @@ export type CategoryDTO = Plain<Category>;
 export type HostDTO = Plain<Host>;
 export type ShowDTO = Plain<Show>;
 export type EventDTO = Plain<VoltEvent>;
+export type TimelineDTO = Plain<TimelineEntry>;
 
 async function safe<T>(run: () => Promise<T>, fallback: T): Promise<T> {
   try {
@@ -106,6 +107,16 @@ export async function getShowsBySlugs(slugs: string[]): Promise<ShowDTO[]> {
   if (slugs.length === 0) return [];
   return safe(
     async () => serializeAll(await shows().find({ slug: { $in: slugs } }).toArray()),
+    [],
+  );
+}
+
+/* --- Zeitleiste ---------------------------------------------------------- */
+
+/** Die Stationen der VoltFM-Geschichte, in der Reihenfolge ihres `order`. */
+export async function listTimeline(): Promise<TimelineDTO[]> {
+  return safe(
+    async () => serializeAll(await timeline().find().sort({ order: 1 }).toArray()),
     [],
   );
 }

@@ -8,6 +8,7 @@ import type {
   MediaAsset,
   SettingsDoc,
   Show,
+  TimelineEntry,
   VoltEvent,
 } from "@/types/content";
 
@@ -22,6 +23,8 @@ export const hosts = (): Collection<Host> => getDb().collection<Host>("hosts");
 export const shows = (): Collection<Show> => getDb().collection<Show>("shows");
 export const events = (): Collection<VoltEvent> => getDb().collection<VoltEvent>("events");
 export const media = (): Collection<MediaAsset> => getDb().collection<MediaAsset>("media");
+export const timeline = (): Collection<TimelineEntry> =>
+  getDb().collection<TimelineEntry>("timeline");
 export const contactMessages = (): Collection<ContactMessage> =>
   getDb().collection<ContactMessage>("contactMessages");
 export const settings = (): Collection<SettingsDoc> => getDb().collection<SettingsDoc>("settings");
@@ -50,5 +53,7 @@ export async function ensureIndexes(): Promise<void> {
     events().createIndex({ slug: 1 }, { unique: true }),
     events().createIndex({ startsAt: -1 }),
     media().createIndex({ createdAt: -1 }),
+    timeline().createIndex({ key: 1 }, { unique: true }),
+    timeline().createIndex({ order: 1 }),
   ]);
 }

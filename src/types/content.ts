@@ -102,6 +102,30 @@ export interface VoltEvent {
   updatedAt: Date;
 }
 
+/**
+ * Ein Eintrag der Zeitleiste auf /ueber-uns.
+ *
+ * `year` ist bewusst ein freier Text und keine Zahl: nicht jeder Schritt laesst
+ * sich auf ein Jahr festnageln ("danach", "2023-2025").
+ */
+export interface TimelineEntry {
+  _id?: ObjectId;
+  /** Eindeutig, damit die Migration Eintraege wiedererkennt. */
+  key: string;
+  year: string;
+  kicker: string;
+  title: string;
+  text: string;
+  /** Optionaler Verweis, z. B. auf /radioaid. */
+  href?: string;
+  linkLabel?: string;
+  /** Hebt den Eintrag als aktuellen Stand hervor. */
+  current: boolean;
+  order: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface MediaAsset {
   _id?: ObjectId;
   url: string;

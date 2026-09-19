@@ -12,7 +12,6 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  SheetClose,
 } from "@/components/ui/sheet";
 import { mainNav, site } from "@/lib/site";
 import { Icon, MenuIcon, SearchIcon, DiscordIcon } from "@/lib/icons";
@@ -86,23 +85,24 @@ export function Header() {
                 <SheetTitle>Navigation</SheetTitle>
               </SheetHeader>
 
+              {/* Bewusst kein <SheetClose>: das setzt data-slot="sheet-close",
+                  und diese Kennzeichnung ist in der Sheet-Komponente die
+                  Gestaltung des X-Knopfes — position: absolute, oben rechts.
+                  Jeder Link haette sich dort gestapelt und die Navigation waere
+                  auf ihre Innenabstaende zusammengefallen. Das Sheet ist
+                  ohnehin gesteuert, also schliesst der Klick es direkt. */}
               <nav className={styles.mobileNav} aria-label="Mobile Navigation">
                 {mainNav.map((item) => (
-                  <SheetClose
+                  <Link
                     key={item.href}
-                    render={
-                      <Link
-                        href={item.href}
-                        className={styles.mobileLink}
-                        aria-current={isActive(item.href) ? "page" : undefined}
-                      >
-                        <span className={styles.mobileLinkLabel}>{item.label}</span>
-                        {item.hint && (
-                          <span className={styles.mobileLinkHint}>{item.hint}</span>
-                        )}
-                      </Link>
-                    }
-                  />
+                    href={item.href}
+                    className={styles.mobileLink}
+                    aria-current={isActive(item.href) ? "page" : undefined}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    <span className={styles.mobileLinkLabel}>{item.label}</span>
+                    {item.hint && <span className={styles.mobileLinkHint}>{item.hint}</span>}
+                  </Link>
                 ))}
               </nav>
 
