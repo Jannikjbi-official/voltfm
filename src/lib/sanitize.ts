@@ -80,3 +80,25 @@ export const RICH_TEXT_SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
 export function renderRichText(source: string): string {
   return sanitizeHtml(markdownToHtml(source), RICH_TEXT_SANITIZE_OPTIONS);
 }
+
+/** Der Vorschlag, den der Editor einsetzt, solange niemand etwas tippt. */
+const ALT_PLACEHOLDER = "Bildbeschreibung ergänzen";
+
+/**
+ * Findet Bilder, denen noch die Beschreibung fehlt.
+ *
+ * Vorher erzwang das ein Dialog mit Pflichtfeld. Der ist weg — Bilder landen
+ * jetzt per Ziehen, Einfügen oder Knopfdruck direkt im Text. Der Zwang bleibt
+ * trotzdem, nur an einer Stelle, die sich nicht umgehen lässt: Ein Beitrag mit
+ * unbeschriebenem Bild wird nicht gespeichert.
+ *
+ * Erwartet den bereits erzeugten HTML-Text, damit auch Bilder erfasst werden,
+ * die als rohes `<img>` im Beitrag stehen.
+ */
+export function findImageWithoutAlt(html: string): boolean {
+  for (const match of html.matchAll(/<img\b[^>]*>/g)) {
+    const alt = /\salt="([^"]*)"/.exec(match[0])?.[1]?.trim() ?? "";
+    if (!alt || alt === ALT_PLACEHOLDER) return true;
+  }
+  return false;
+}

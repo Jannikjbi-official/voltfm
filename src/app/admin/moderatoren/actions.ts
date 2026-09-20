@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { ObjectId } from "mongodb";
 import { z } from "zod";
 
+import { imageUrl } from "@/lib/validation";
+
 import { hosts } from "@/db/collections";
 import { assertCan, AuthorizationError } from "@/lib/session";
 import { slugify, parseDateInput } from "@/lib/format";
@@ -19,7 +21,7 @@ const schema = z.object({
   location: z.string().trim().max(80).optional(),
   joinedAt: z.string().trim().max(20).optional(),
   bio: z.string().trim().min(20, "Die Beschreibung ist zu kurz.").max(4000),
-  image: z.string().trim().url().or(z.literal("")).optional(),
+  image: imageUrl.optional(),
   discordUserId: z
     .string()
     .trim()

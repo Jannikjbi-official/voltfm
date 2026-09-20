@@ -3,7 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { ObjectId } from "mongodb";
 import { z } from "zod";
-import { renderRichText } from "@/lib/sanitize";
+
+import { imageUrl } from "@/lib/validation";
+import { renderRichText, findImageWithoutAlt } from "@/lib/sanitize";
 
 import { events } from "@/db/collections";
 import { assertCan, AuthorizationError } from "@/lib/session";
@@ -20,7 +22,7 @@ const schema = z.object({
   location: z.string().trim().min(2, "Bitte einen Ort angeben.").max(120),
   category: z.string().trim().min(2, "Bitte eine Kategorie angeben.").max(60),
   status: z.enum(["upcoming", "live", "past", "cancelled"]),
-  image: z.string().trim().url().or(z.literal("")).optional(),
+  image: imageUrl.optional(),
   url: z.string().trim().url().or(z.literal("")).optional(),
 });
 
@@ -70,12 +72,23 @@ export async function saveEvent(
     return { status: "error", message: "Das Enddatum liegt vor dem Start." };
   }
 
+  const content = data.content ? renderRichText(data.content) : undefined;
+
+  /* Wie bei den Artikeln: kein Bild ohne Beschreibung. */
+  if (content && findImageWithoutAlt(content)) {
+    return {
+      status: "error",
+      message:
+        "Ein Bild hat noch keine Beschreibung. Trag sie in den eckigen Klammern ein: ![Was zu sehen ist](…).",
+    };
+  }
+
   const now = new Date();
   const doc = {
     title: data.title,
     slug,
     description: data.description,
-    content: data.content ? renderRichText(data.content) : undefined,
+    content,
     contentSource: data.content || undefined,
     startsAt,
     endsAt,

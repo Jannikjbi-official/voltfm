@@ -5,10 +5,12 @@ import { redirect } from "next/navigation";
 import { ObjectId } from "mongodb";
 import { z } from "zod";
 
+import { imageUrl } from "@/lib/validation";
+
 import { articles } from "@/db/collections";
 import { assertCan, AuthorizationError } from "@/lib/session";
 import { slugify } from "@/lib/format";
-import { renderRichText } from "@/lib/sanitize";
+import { renderRichText, findImageWithoutAlt } from "@/lib/sanitize";
 import type { ArticleStatus } from "@/types/content";
 
 /**
@@ -26,7 +28,7 @@ const schema = z.object({
   content: z.string().trim().min(1, "Der Artikel hat keinen Inhalt."),
   categorySlug: z.string().trim().min(1, "Bitte eine Kategorie wählen."),
   tags: z.string().trim().max(300).optional(),
-  coverImage: z.string().trim().url().or(z.literal("")).optional(),
+  coverImage: imageUrl.optional(),
   coverAlt: z.string().trim().max(200).optional(),
   status: z.enum(["draft", "scheduled", "published", "archived"]),
   publishedAt: z.string().trim().optional(),
@@ -88,6 +90,17 @@ export async function saveArticle(
   const id = String(formData.get("id") ?? "").trim();
   const slug = slugify(data.slug || data.title);
   const content = renderRichText(data.content);
+
+  /* Ein Bild ohne Beschreibung ist fuer alle unbrauchbar, die es nicht sehen
+     koennen — und faellt sonst niemandem auf. Deshalb hier, nicht nur im
+     Editor. */
+  if (findImageWithoutAlt(content)) {
+    return {
+      status: "error",
+      message:
+        "Ein Bild hat noch keine Beschreibung. Trag sie in den eckigen Klammern ein: ![Was zu sehen ist](…).",
+    };
+  }
   const now = new Date();
 
   /*

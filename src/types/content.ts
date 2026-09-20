@@ -155,6 +155,15 @@ export interface TimelineEntry {
 
 export interface MediaAsset {
   _id?: ObjectId;
+  /**
+   * Die Kennung, unter der das Bild ausgeliefert wird (`/api/bilder/<id>`).
+   *
+   * Fehlt bei Bildern, die noch vor dem eigenen Bild-Endpunkt hochgeladen
+   * wurden — deren `url` zeigt direkt auf den Anbieter.
+   */
+  publicId?: string;
+  /** Der Schlüssel beim Speicheranbieter. Verlässt den Server nicht. */
+  storageKey?: string;
   url: string;
   alt: string;
   width?: number;

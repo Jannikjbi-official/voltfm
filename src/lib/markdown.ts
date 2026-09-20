@@ -51,6 +51,8 @@ function inline(text: string): string {
   );
 
   out = out
+    .replace(/~~([^~]+)~~/g, "<s>$1</s>")
+    .replace(/==([^=]+)==/g, "<mark>$1</mark>")
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
     .replace(/(^|[^*])\*([^*\n]+)\*/g, "$1<em>$2</em>")
     .replace(/(^|\s)_([^_\n]+)_/g, "$1<em>$2</em>");
@@ -67,6 +69,20 @@ function figureOf(block: string): string | null {
   const image = `<img src="${escape(url)}" alt="${escape(alt)}" loading="lazy" />`;
   const text = caption ? `\n  <figcaption>${inline(caption)}</figcaption>` : "";
   return `<figure class="vfm-figure">\n  ${image}${text}\n</figure>`;
+}
+
+/** Zerlegt eine Tabellenzeile in ihre Zellen. */
+function cellsOf(line: string): string[] {
+  return line
+    .trim()
+    .replace(/^\||\|$/g, "")
+    .split("|")
+    .map((cell) => cell.trim());
+}
+
+/** Erkennt die Trennzeile unter der Kopfzeile: | --- | --- | */
+function isTableDivider(line: string): boolean {
+  return /^\s*\|?[\s:-]*-[\s:|-]*\|?\s*$/.test(line) && line.includes("-");
 }
 
 /** Eine Folge von Listenzeilen zu <ul>/<ol>. */
@@ -141,6 +157,64 @@ export function markdownToHtml(source: string): string {
         index += 1;
       }
       out.push(`<blockquote>\n  <p>${inline(body.join(" ").trim())}</p>\n</blockquote>`);
+      continue;
+    }
+
+    // Hinweis- und Warnbox: ::: hinweis … :::
+    const callout = /^:::\s*(hinweis|warnung|erfolg)\s*$/i.exec(line.trim());
+    if (callout) {
+      const body: string[] = [];
+      index += 1;
+      while (index < lines.length && lines[index].trim() !== ":::") {
+        body.push(lines[index]);
+        index += 1;
+      }
+      index += 1;
+      const kind = callout[1].toLowerCase();
+      const className =
+        kind === "warnung"
+          ? "vfm-callout vfm-callout--warning"
+          : kind === "erfolg"
+            ? "vfm-callout vfm-callout--success"
+            : "vfm-callout";
+      // Der Inhalt darf selbst wieder Markdown sein.
+      const inner = markdownToHtml(body.join("\n"));
+      out.push(`<aside class="${className}">\n${inner}\n</aside>`);
+      continue;
+    }
+
+    // Tabelle: Kopfzeile, Trennzeile, dann die Daten.
+    if (line.includes("|") && index + 1 < lines.length && isTableDivider(lines[index + 1])) {
+      const head = cellsOf(line);
+      index += 2;
+      const rows: string[][] = [];
+      while (index < lines.length && lines[index].includes("|") && lines[index].trim()) {
+        rows.push(cellsOf(lines[index]));
+        index += 1;
+      }
+
+      const headCells = head.map((cell) => `    <th scope="col">${inline(cell)}</th>`).join("\n");
+      const bodyRows = rows
+        .map((row) => {
+          const cells = row.map((cell) => `    <td>${inline(cell)}</td>`).join("\n");
+          return `  <tr>\n${cells}\n  </tr>`;
+        })
+        .join("\n");
+
+      out.push(
+        [
+          `<table class="vfm-table">`,
+          "  <thead>",
+          "  <tr>",
+          headCells,
+          "  </tr>",
+          "  </thead>",
+          "  <tbody>",
+          bodyRows,
+          "  </tbody>",
+          "</table>",
+        ].join("\n"),
+      );
       continue;
     }
 

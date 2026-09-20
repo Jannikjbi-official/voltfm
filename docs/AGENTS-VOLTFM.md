@@ -18,7 +18,7 @@ Nutzer — aber sag ihm vorher, welche Regel du dafür brichst.
 | UI | OlyxUI auf Base UI (`src/components/ui/**`) + CSS Modules |
 | Auth | Better Auth (Admin-, Username-, Passkey-, Discord-Plugin) |
 | Datenbank | MongoDB (Atlas), Zugriff nur über `src/db/collections.ts` |
-| Uploads | UploadThing |
+| Uploads | UploadThing, ausgeliefert über `/api/bilder/<kennung>` |
 | Radio | laut.fm (Metadaten serverseitig, Wiedergabe verlinkt) |
 | Sprache im UI | Deutsch, Du-Form |
 
@@ -89,6 +89,13 @@ Einwilligung, **bevor** die Verbindung aufgebaut wird. Muster:
 Metadaten holt der Server (`/api/radio/now`) — dafür braucht es keine
 Einwilligung, und das soll auch so bleiben.
 
+Aus demselben Grund werden **Bilder nicht direkt von UploadThing geladen**.
+`registerImage` in `src/lib/images.ts` legt zu jedem Upload eine Zufallskennung
+an; gespeichert und ausgeliefert wird `/api/bilder/<kennung>`, die Route
+schlägt den Schlüssel serverseitig nach. Speichere nie eine `ufs.sh`-Adresse in
+einem Inhalt, und baue keinen Rückfall auf `res[0].ufsUrl` in einen
+Upload-Aufruf — beides umgeht die Umleitung still und leise.
+
 ---
 
 ## 3. laut.fm: nicht einbetten, nur verlinken
@@ -120,6 +127,8 @@ Nutzer darum bittet, weise auf § 6 Abs. 9 hin und biete den Schalter an.
 | CRUD-Maske (Liste + Formular + Löschen) | `src/components/admin/entity-manager.tsx` |
 | Feldbeschreibung dafür | `src/components/admin/entity-types.ts` |
 | Textfeld mit Markdown, Bild-Upload, Vorschau | `src/components/admin/rich-text-editor.tsx` |
+| Was im Textfeld funktioniert (Spickzettel) | `/admin/markdown`, Quelle: `src/app/admin/markdown/examples.ts` |
+| Bildkennungen und Auslieferung | `src/lib/images.ts`, `src/app/api/bilder/[kennung]/route.ts` |
 | Markdown → HTML → bereinigt | `src/lib/sanitize.ts`, `src/lib/markdown.ts` |
 | Bild als `<figure>` einfügen | `src/components/admin/image-dialog.tsx` |
 | Einzelnes Bildfeld (Upload) | `src/components/admin/image-upload.tsx` |
@@ -237,5 +246,13 @@ Nützliche Skripte:
 - **UploadThing-Löschungen** können fehlschlagen, ohne dass die Datenbank falsch
   wird — erst den Datensatz löschen, dann die Datei, und den Teilerfolg
   ehrlich melden.
-- **Bilder ohne Alt-Text** sind nicht akzeptabel. Der Bild-Dialog erzwingt das
-  bereits; baue keinen Weg daran vorbei.
+- **Bilder ohne Alt-Text** sind nicht akzeptabel. Den erzwingenden Dialog gibt
+  es nicht mehr — Bilder landen per Ziehen, Einfügen oder Knopfdruck direkt im
+  Text. Stattdessen weist `findImageWithoutAlt` in `src/lib/sanitize.ts` einen
+  Beitrag zurück, dessen Bild keine oder nur die Platzhalter-Beschreibung hat.
+  Diese Prüfung gehört in jede Action, die Text mit Bildern speichert.
+- **Neue Markdown-Konstrukte** gehören in `src/lib/markdown.ts`, ihre
+  Formatierung in `src/styles/editor-content.css`, ihre Tags in
+  `RICH_TEXT_SANITIZE_OPTIONS` — und ein Beispiel in
+  `src/app/admin/markdown/examples.ts`. Die Seite rendert jedes Beispiel
+  tatsächlich, also fällt dort sofort auf, wenn eine der drei Stellen fehlt.

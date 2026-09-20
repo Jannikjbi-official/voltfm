@@ -94,6 +94,11 @@
   color: var(--color-text-muted);
 }
 
+.syntaxLink {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
 .syntax code {
   font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
   color: var(--color-text-secondary);

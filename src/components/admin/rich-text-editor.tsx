@@ -1,16 +1,34 @@
 "use client";
 
 import { useCallback, useRef, useState, useTransition } from "react";
+import Link from "next/link";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Icon, ImageIcon, EditIcon, LoadingIcon } from "@/lib/icons";
 import { useUploadThing } from "@/lib/uploadthing";
 import { previewRichText } from "@/app/admin/preview-actions";
-import { ImageDialog } from "./image-dialog";
 import styles from "./rich-text-editor.module.css";
 
-/** Steht im eingefuegten Bild, bis jemand die Beschreibung tippt. */
-const ALT_PLACEHOLDER = "Bildbeschreibung ergänzen";
+/** Steht im eingefuegten Bild, wenn der Dateiname nichts hergibt. */
+export const ALT_PLACEHOLDER = "Bildbeschreibung ergänzen";
+
+/**
+ * Macht aus einem Dateinamen einen Vorschlag für die Bildbeschreibung.
+ *
+ * "studio-umbau-2026.jpg" wird zu "studio umbau 2026" — kein guter Alt-Text,
+ * aber ein Anfang, der sich überschreiben lässt. Bei "IMG_2843" kommt nichts
+ * Brauchbares heraus, dann bleibt es beim Platzhalter.
+ */
+function altFromFileName(name: string): string {
+  const text = name
+    .replace(/\.[^.]+$/, "")
+    .replace(/[-_]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  return /[a-zäöüß]{3}/i.test(text) && !/^(img|dsc|foto|image|screenshot|bild)[\s\d]*$/i.test(text)
+    ? text
+    : ALT_PLACEHOLDER;
+}
 
 /**
  * Das Textfeld für Artikel und Veranstaltungen.
@@ -21,8 +39,10 @@ const ALT_PLACEHOLDER = "Bildbeschreibung ergänzen";
  * beim Schreiben muss niemand mehr Tags tippen.
  *
  * Vorher stand hier eine Werkzeugleiste mit gut zwanzig Knöpfen über einem
- * Feld voller spitzer Klammern. Zwei Knöpfe genügen: alles Übrige ist mit
- * `##`, `**` und `-` schneller getippt als geklickt.
+ * Feld voller spitzer Klammern, und „Bild einfügen" öffnete einen Dialog mit
+ * sechs Feldern. Zwei Knöpfe genügen: alles Übrige ist mit `##`, `**` und `-`
+ * schneller getippt als geklickt, und die Bildunterschrift steht als
+ * `![Beschreibung](…  "Unterschrift")` dort, wo man ohnehin schreibt.
  */
 export function RichTextEditor({
   name,
@@ -38,7 +58,7 @@ export function RichTextEditor({
   required?: boolean;
 }) {
   const ref = useRef<HTMLTextAreaElement>(null);
-  const [imageOpen, setImageOpen] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [preview, setPreview] = useState(false);
@@ -67,17 +87,28 @@ export function RichTextEditor({
     [],
   );
 
+  /* Was beim naechsten fertigen Upload als Beschreibung eingesetzt wird. Ein
+     Ref und kein State: Es wird zwischen zwei Ereignissen gemerkt, nicht
+     angezeigt, und soll kein erneutes Rendern ausloesen. */
+  const pendingAlt = useRef(ALT_PLACEHOLDER);
+
   const { startUpload, isUploading } = useUploadThing("articleImage", {
     onClientUploadComplete: (res) => {
-      const url = res?.[0]?.serverData?.url ?? res?.[0]?.ufsUrl;
+      // Kein Rueckfall auf die Anbieter-Adresse — siehe lib/images.ts.
+      const url = res?.[0]?.serverData?.url;
       if (!url) return;
       setUploadError(null);
-      /* Der Alt-Text wird vorbelegt und gleich markiert: So steht nie ein Bild
-         ohne Beschreibung im Text, und der erste Tastendruck überschreibt den
-         Platzhalter. */
-      const snippet = `\n\n![${ALT_PLACEHOLDER}](${url})\n\n`;
-      const altAt = snippet.indexOf(ALT_PLACEHOLDER);
-      insertAtCaret(snippet, altAt, altAt + ALT_PLACEHOLDER.length);
+      /* Die Beschreibung wird vorbelegt und gleich markiert: Der erste
+         Tastendruck ueberschreibt sie. Stehen bleiben darf sie nicht — die
+         Server Action weist einen Beitrag mit unbeschriebenem Bild zurueck. */
+      const alt = pendingAlt.current;
+      const snippet = `
+
+![${alt}](${url})
+
+`;
+      const altAt = snippet.indexOf(alt);
+      insertAtCaret(snippet, altAt, altAt + alt.length);
     },
     onUploadError: () =>
       setUploadError("Das Bild konnte nicht hochgeladen werden. Ist UPLOADTHING_TOKEN gesetzt?"),
@@ -89,6 +120,7 @@ export function RichTextEditor({
       const image = Array.from(files ?? []).find((file) => file.type.startsWith("image/"));
       if (!image) return false;
       setUploadError(null);
+      pendingAlt.current = altFromFileName(image.name);
       void startUpload([image]);
       return true;
     },
@@ -98,15 +130,31 @@ export function RichTextEditor({
   return (
     <div className={styles.editor}>
       <div className={styles.toolbar} role="toolbar" aria-label="Werkzeuge">
+        {/* Direkt die Dateiauswahl statt eines Zwischendialogs: Bildunterschrift
+            und Beschreibung stehen danach im Text und lassen sich dort
+            tippen, wo man ohnehin schreibt. */}
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          hidden
+          onChange={(event) => {
+            uploadFirstImage(event.target.files);
+            // Damit dieselbe Datei ein zweites Mal ausgewählt werden kann.
+            event.target.value = "";
+          }}
+        />
+
         <Button
           type="button"
           variant="neutral"
           mode="stroke"
           size="sm"
-          onClick={() => setImageOpen(true)}
+          disabled={isUploading}
+          onClick={() => fileRef.current?.click()}
         >
           <Icon icon={isUploading ? LoadingIcon : ImageIcon} spin={isUploading} />
-          Bild einfügen
+          {isUploading ? "Bild wird hochgeladen …" : "Bild einfügen"}
         </Button>
 
         <Button
@@ -134,11 +182,7 @@ export function RichTextEditor({
           {rendering ? "Moment …" : preview ? "Weiter schreiben" : "Vorschau"}
         </Button>
 
-        <span className={styles.dropHint}>
-          {isUploading
-            ? "Bild wird hochgeladen …"
-            : "oder Bild in das Textfeld ziehen bzw. einfügen"}
-        </span>
+        <span className={styles.dropHint}>oder Bild in das Textfeld ziehen bzw. einfügen</span>
       </div>
 
       {/* Das Feld bleibt während der Vorschau eingehängt — sein Wert ist das,
@@ -193,15 +237,13 @@ export function RichTextEditor({
       {uploadError && <p className={styles.uploadError}>{uploadError}</p>}
 
       <p className={styles.syntax}>
-        Markdown: <code>## Überschrift</code>, <code>**fett**</code>,{" "}
-        <code>[Link](https://…)</code>, <code>- Liste</code>, <code>&gt; Zitat</code>
+        <code>## Überschrift</code>, <code>**fett**</code>,{" "}
+        <code>[Link](https://…)</code>, <code>- Liste</code>, <code>&gt; Zitat</code> —{" "}
+        <Link href="/admin/markdown" className={styles.syntaxLink} target="_blank">
+          alles Weitere
+        </Link>
       </p>
 
-      <ImageDialog
-        open={imageOpen}
-        onOpenChange={setImageOpen}
-        onInsert={(html) => insertAtCaret(`\n\n${html}\n\n`)}
-      />
     </div>
   );
 }

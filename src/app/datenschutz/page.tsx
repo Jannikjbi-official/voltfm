@@ -176,10 +176,18 @@ export default function DatenschutzPage() {
           <h2>Bilder und Uploads (UploadThing)</h2>
           <p>
             Titel-, Cover- und Profilbilder liegen bei <strong>UploadThing</strong>
-            (Ping Labs, Inc., USA) und werden von dort ausgeliefert. Beim Laden
-            eines solchen Bildes wird deine IP-Adresse an diesen Dienst
-            übertragen; Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Hochladen
-            können ausschließlich angemeldete Personen mit Redaktionsrechten.
+            (Ping Labs, Inc., USA). Ausgeliefert werden sie über unseren eigenen
+            Server unter <code>/api/bilder/…</code>: Dein Browser verbindet sich
+            beim Betrachten eines Bildes also mit voltfm.xyz, nicht mit
+            UploadThing. Deine IP-Adresse wird dabei nicht an diesen Dienst
+            übertragen. Hochladen können ausschließlich angemeldete Personen mit
+            Redaktionsrechten.
+          </p>
+          <p>
+            Ältere Bilder, die vor dieser Umstellung hochgeladen wurden, werden
+            noch direkt von UploadThing geladen; dabei wird deine IP-Adresse an
+            den Dienst übertragen. Rechtsgrundlage ist insoweit Art. 6 Abs. 1
+            lit. f DSGVO.
           </p>
 
           <h2>Eingesetzte Dienste auf einen Blick</h2>
@@ -204,7 +212,7 @@ export default function DatenschutzPage() {
               </tr>
               <tr>
                 <td>Ping Labs, Inc. (UploadThing)</td>
-                <td>Speichern und Ausliefern von Bildern</td>
+                <td>Speichern von Bildern (Auslieferung über unseren Server)</td>
                 <td>USA</td>
               </tr>
               <tr>

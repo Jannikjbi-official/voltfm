@@ -31,7 +31,9 @@ export function ImageUpload({
 
   const { startUpload, isUploading } = useUploadThing(endpoint, {
     onClientUploadComplete: (res) => {
-      const uploaded = res?.[0]?.serverData?.url ?? res?.[0]?.ufsUrl;
+      // Bewusst kein Rueckfall auf res[0].ufsUrl: Das waere die Adresse des
+      // Anbieters, und genau die soll nirgends gespeichert werden.
+      const uploaded = res?.[0]?.serverData?.url;
       if (uploaded) setUrl(uploaded);
       setError(null);
     },

@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { ObjectId } from "mongodb";
 import { z } from "zod";
 
+import { imageUrl } from "@/lib/validation";
+
 import { shows } from "@/db/collections";
 import { assertCan, AuthorizationError } from "@/lib/session";
 import { slugify } from "@/lib/format";
@@ -16,7 +18,7 @@ const schema = z.object({
   title: z.string().trim().min(2, "Titel ist zu kurz.").max(100),
   slug: z.string().trim().max(100).optional(),
   description: z.string().trim().min(10, "Beschreibung ist zu kurz.").max(1000),
-  image: z.string().trim().url().or(z.literal("")).optional(),
+  image: imageUrl.optional(),
   hostSlugs: z.string().trim().max(300).optional(),
   weekday: z.coerce.number().int().min(0).max(6),
   startTime: z.string().trim().regex(TIME, "Startzeit im Format HH:MM."),

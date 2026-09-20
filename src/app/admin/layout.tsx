@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requireAdmin, can, effectiveRoleLabel, type Resource } from "@/lib/session";
 import { features } from "@/lib/site";
-import { Icon, DashboardIcon, NewsIcon, TagIcon, EventsIcon, MicIcon, CalendarIcon, ImageIcon, UserIcon, SettingsIcon, RadioIcon, ClockIcon } from "@/lib/icons";
+import { Icon, DashboardIcon, NewsIcon, TagIcon, EventsIcon, MicIcon, CalendarIcon, ImageIcon, UserIcon, SettingsIcon, RadioIcon, ClockIcon, EditIcon } from "@/lib/icons";
 import styles from "./layout.module.css";
 
 /**
@@ -33,6 +33,7 @@ const ADMIN_NAV: {
   { href: "/admin/radio", label: "Radio", icon: RadioIcon, needs: { resource: "settings", actions: ["read"] } },
   { href: "/admin/timeline", label: "Zeitleiste", icon: ClockIcon, needs: { resource: "timeline", actions: ["update"] } },
   { href: "/admin/media", label: "Medien", icon: ImageIcon, needs: { resource: "media", actions: ["upload"] } },
+  { href: "/admin/markdown", label: "Textformat", icon: EditIcon, needs: { resource: "article", actions: ["update"] } },
   { href: "/admin/users", label: "Benutzer", icon: UserIcon, needs: { resource: "user", actions: ["list"] } },
   { href: "/admin/settings", label: "Einstellungen", icon: SettingsIcon, needs: { resource: "settings", actions: ["update"] } },
 ];

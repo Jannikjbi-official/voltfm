@@ -12,8 +12,17 @@ import type { EntityFormState } from "@/components/admin/entity-types";
  * UploadThing addresses files by key, which is the last path segment of the
  * URL it handed back on upload.
  */
-function fileKey(url: string): string | null {
-  const key = url.split("/").filter(Boolean).pop();
+/**
+ * Der Schluessel beim Speicheranbieter.
+ *
+ * Neuere Dateien haben ihn als eigenes Feld; bei aelteren stand er als letztes
+ * Stueck in der Anbieter-Adresse. Aus `/api/bilder/<kennung>` laesst er sich
+ * nicht ableiten — dort steht bewusst nur die eigene Kennung.
+ */
+function fileKey(asset: { storageKey?: string; url: string }): string | null {
+  if (asset.storageKey) return asset.storageKey;
+  if (asset.url.startsWith("/")) return null;
+  const key = asset.url.split("/").filter(Boolean).pop();
   return key && key.length > 4 ? key : null;
 }
 
@@ -65,7 +74,7 @@ export async function deleteMedia(
   // worse failure, and UploadThing may legitimately 404 for an already-gone key.
   await media().deleteOne({ _id: new ObjectId(id) });
 
-  const key = fileKey(asset.url);
+  const key = fileKey(asset);
   if (key && process.env.UPLOADTHING_TOKEN) {
     try {
       await new UTApi().deleteFiles([key]);

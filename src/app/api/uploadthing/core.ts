@@ -1,7 +1,7 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 import { assertCan } from "@/lib/session";
-import { media } from "@/db/collections";
+import { registerImage } from "@/lib/images";
 
 const f = createUploadthing();
 
@@ -12,6 +12,9 @@ const f = createUploadthing();
  * hands out an upload URL — an unauthenticated client never receives one.
  * `onUploadComplete` also runs server-side, so the media record cannot be
  * forged by the browser.
+ *
+ * Zurueckgegeben wird nie die Adresse des Anbieters, sondern immer
+ * `/api/bilder/<kennung>` auf der eigenen Domain (siehe `lib/images.ts`).
  */
 export const uploadRouter = {
   /** Article cover images and in-article images. Admin only. */
@@ -24,15 +27,8 @@ export const uploadRouter = {
       return { userId: user.id };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      await media().insertOne({
-        url: file.ufsUrl,
-        alt: "",
-        mimeType: file.type,
-        uploadedBy: metadata.userId,
-        createdAt: new Date(),
-      });
       // Returned to the client that started the upload.
-      return { url: file.ufsUrl };
+      return { url: await registerImage(file.key, file.type, metadata.userId) };
     }),
 
   /** Host portraits and event images. Admin only. */
@@ -45,14 +41,7 @@ export const uploadRouter = {
       return { userId: user.id };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      await media().insertOne({
-        url: file.ufsUrl,
-        alt: "",
-        mimeType: file.type,
-        uploadedBy: metadata.userId,
-        createdAt: new Date(),
-      });
-      return { url: file.ufsUrl };
+      return { url: await registerImage(file.key, file.type, metadata.userId) };
     }),
 } satisfies FileRouter;
 
