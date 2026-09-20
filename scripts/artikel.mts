@@ -76,7 +76,7 @@ Noch etwas, das auffällt: Die Wiedergabe passiert nicht auf dieser Seite, sonde
 
 Dazu gehört eine zweite ehrliche Auskunft: **Über laut.fm läuft Werbung.** Wir schalten sie nicht, wir verdienen nichts daran, und abschalten können wir sie nicht.
 
-Aus demselben Grund steht gerade **kein Sendeplan**: Solange wir über laut.fm senden, können wir keine Songwünsche annehmen und keine verlässlichen Sendezeiten zusagen. Ein Sendeplan, auf den kein Verlass ist, ist schlimmer als gar keiner. Wir arbeiten an einem eigenen Radioserver — damit kommen feste Zeiten zurück, und Songwünsche, die tatsächlich ankommen.
+Aus demselben Grund steht gerade **kein Sendeplan**: Solange wir über laut.fm senden, können wir keine Songwünsche annehmen und keine verlässlichen Sendezeiten zusagen. Ein Sendeplan, auf den kein Verlass ist, ist schlimmer als gar keiner. Wir haben im August einen eigenen Sendeweg getestet und ihn aus Kostengründen wieder aufgegeben; woran wir stattdessen arbeiten, steht [im Beitrag zur neuen Seite](/news/was-die-neue-seite-kann).
 
 ## RadioAid: 24 Stunden für einen guten Zweck
 
@@ -151,15 +151,17 @@ export const WEBSEITE_ARTICLE: SeedArticle = {
 
 ## Warum die Seite offline war
 
-Die Abschaltung hatte **private Gründe**. Mehr davon gehört nicht auf eine öffentliche Seite. Wichtig ist nur, was es *nicht* war: kein Streit, kein Ärger im Team, kein Ende von VoltFM.
+Die Abschaltung hatte **private Gründe**. Mehr davon gehört nicht auf eine öffentliche Seite.
+
+Ehrlich dazugehört aber etwas anderes: **Es stand ernsthaft zur Debatte, VoltFM ganz zu beenden.** Das war keine Trotzreaktion und kein Streit im Team — es war die nüchterne Frage, ob sich der Aufwand noch lohnt. Ein paar Tage lang sah es nach Schluss aus.
+
+Wir haben uns dagegen entschieden. Und wenn man einmal so weit war, will man danach nicht dort weitermachen, wo man aufgehört hat.
 
 ::: hinweis
 **Der Stream lief die ganze Zeit weiter.** Offline war nur die Webseite, nicht der Sender. Wer die Station direkt bei laut.fm oder in einer Radio-App gespeichert hatte, hat von alldem nichts gemerkt.
 :::
 
-Als klar war, dass es weitergeht, stand die Frage: die alte Seite einfach wieder anschalten — oder die Gelegenheit nutzen? Sie war ohnehin vom Netz, ein Umbau bei laufendem Betrieb entfiel also. Die Antwort war schnell klar.
-
-**Sechzehn Tage später stand das hier.** Weil „wir haben die Seite neu gebaut" wenig darüber sagt, was sich tatsächlich ändert, hier der ausführliche Rundgang.
+Also die Gelegenheit genutzt: Die Seite war ohnehin vom Netz, ein Umbau bei laufendem Betrieb entfiel. **Sechzehn Tage später stand das hier.** Weil „wir haben die Seite neu gebaut" wenig darüber sagt, was sich tatsächlich ändert, hier der ausführliche Rundgang.
 
 ## Erst einmal: Es ist wirklich neu
 
@@ -277,15 +279,42 @@ Technisch steht die Seite auf Next.js 16 und React 19, die Inhalte liegen in ein
 
 Seiten werden auf dem Server erzeugt und zwischengespeichert; nach jeder Änderung im Adminbereich wird gezielt nur das erneuert, was diese Änderung betrifft. Deshalb ist ein neuer Beitrag sofort da, ohne dass die ganze Seite neu gebaut werden muss.
 
+## Der Versuch im August: eigener Server
+
+Dass wir wieder über laut.fm senden, ist keine Bequemlichkeit. Wir hatten es anders versucht.
+
+Im **August** haben wir eine eigene Infrastruktur mit **AzuraCast** aufgesetzt — gedacht als Test, um zu sehen, was ein eigener Sendeweg bringt. Gebracht hat er vor allem Klarheit darüber, was er kostet.
+
+Drei Posten, die zusammen den Ausschlag gaben:
+
+- **Der Server.** Ein Stream läuft rund um die Uhr. Das ist keine Website, die nachts schläft, und es schlägt jeden Monat zu Buche.
+- **GEMA und GVL.** Der größte Brocken. Wer selbst sendet, muss die Musik auch selbst lizenzieren — bei laut.fm ist das abgedeckt, auf eigenen Füßen nicht. Für ein Projekt dieser Größe sind das Summen, die in keinem Verhältnis stehen.
+- **Die Software.** Was man für einen ordentlichen Betrieb braucht, gibt es nicht umsonst.
+
+Also sind wir zurück auf die laut.fm-Station, die es seit 2021 gibt — dieselbe, die deshalb bis heute **jannikjbi** heißt. Der Test war kein verlorener Monat: Er hat uns davor bewahrt, Kosten einzugehen, die wir auf Dauer nicht tragen können.
+
+## Wie es weitergehen soll
+
+Ganz vom Tisch ist die Sache nicht. Inzwischen haben wir eine Software gefunden, mit der sich ein eigener Server betreiben lässt, der **von dort aus auf laut.fm sendet** — also der laut.fm-Weg bleibt, aber die Steuerung liegt bei uns. Damit wäre möglich, was heute nicht geht:
+
+- Songs gezielt abspielen, statt nur eine Playlist laufen zu lassen
+- eigene Einspieler und Werbung
+- die laut.fm-Nachrichten automatisch einbinden, stündlich oder alle zwei Stunden
+- und damit auch: verlässliche Sendezeiten und Songwünsche
+
+::: warnung
+**Ein Haken bleibt.** Sobald eigene Werbung dazukommt, ist VoltFM nach unserem Verständnis kein reines Hobbyprojekt mehr, sondern ein kommerzielles Angebot — mit allem, was rechtlich daran hängt. Das will überlegt sein. **Ob und wann das kommt, ist deshalb offen.** Geplant ist es, versprochen ist nichts.
+:::
+
 ## Was noch fehlt
 
 Ehrlich bleiben gehört dazu. Einiges, was es auf der alten Seite gab, gibt es hier noch nicht:
 
 | Fehlt noch | Warum | Wann |
 | --- | --- | --- |
-| Sendeplan | keine verlässlichen Zeiten über laut.fm | mit eigenem Radioserver |
-| Songwünsche | über laut.fm nicht möglich | mit eigenem Radioserver |
-| Player auf der Seite | laut.fm erlaubt nur Verlinken | wenn wir selbst senden |
+| Sendeplan | keine verlässlichen Zeiten über laut.fm | geplant, Zeitpunkt offen |
+| Songwünsche | über laut.fm nicht möglich | geplant, Zeitpunkt offen |
+| Player auf der Seite | laut.fm erlaubt nur Verlinken | nur wenn wir selbst senden |
 | Kontaktformular | unser Mailserver ist ausgefallen | sobald Mail wieder läuft |
 | Podcast- und Partnerbereich | kommt nach dem Wesentlichen | noch offen |
 
