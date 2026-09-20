@@ -32,16 +32,14 @@ export const RELAUNCH_ARTICLE: SeedArticle = {
   slug: "voltfm-geht-weiter-neue-webseite",
   /* Der Titel nennt jetzt, worum es wirklich geht. Der Slug bleibt, damit
      bereits geteilte Links weiter funktionieren. */
-  title: "VoltFM ist zurück — warum die Station jannikjbi heißt und was RadioAid ist",
+  title: "RadioAid am 6. November — und warum unsere Station jannikjbi heißt",
   excerpt:
-    "Der Sender bleibt, die Seite ist neu gebaut. Dazu die zwei Fragen, die am häufigsten kommen: Warum unsere Station jannikjbi heißt — und was es mit RadioAid auf sich hat, das am 6. November wieder läuft.",
+    "Die zwei Fragen, die uns am häufigsten erreichen: Warum bei laut.fm nicht VoltFM steht, sondern jannikjbi. Und was es mit RadioAid auf sich hat — 24 Stunden Radio für einen guten Zweck, dieses Jahr für Seelenpflaster e. V.",
   categorySlug: "in-eigener-sache",
   tags: ["Relaunch", "In eigener Sache", "laut.fm", "RadioAid"],
   authorName: "jannikjbi",
   featured: true,
-  source: `<p class="vfm-lead">Kurz und deutlich vorweg: Es geht weiter mit VoltFM. Es war eine Zeit lang still, und wer zwischendurch vorbeigeschaut hat, konnte den Eindruck bekommen, hier passiert nichts mehr. Der Eindruck war falsch — wir haben in der Zwischenzeit die komplette Webseite neu gebaut. Das ist sie.</p>
-
-Was die neue Seite kann und was sich dahinter geändert hat, steht ausführlich in einem [eigenen Beitrag](/news/was-die-neue-seite-kann). Hier geht es um das, was in der stillen Zeit an Fragen liegen geblieben ist — und das sind vor allem zwei: Warum heißt die Station eigentlich jannikjbi? Und was ist dieses RadioAid, von dem hier überall die Rede ist?
+  source: `<p class="vfm-lead">Zwei Fragen erreichen uns häufiger als alle anderen: Warum steht bei laut.fm eigentlich jannikjbi und nicht VoltFM? Und was ist dieses RadioAid, von dem hier überall die Rede ist? Beide sollen hier einmal ausführlich beantwortet werden — die zweite ist die wichtigere, denn am 6. November ist es wieder so weit.</p>
 
 ## Wo wir herkommen
 
@@ -99,13 +97,27 @@ Für uns heißt das: **An diesem Tag läuft bei VoltFM nicht unser Programm.** W
 
 ### Wofür 2026 gesendet wird
 
-In diesem Jahr geht es an **Seelenpflaster e. V.** Der Verein unterstützt Kinder, die sich in unheilbar oder akut erkrankten, schwer beeinträchtigten oder psychisch belastenden Lebenssituationen befinden.
+In diesem Jahr gehen die Spenden an **Seelenpflaster e. V.** Der Verein verfolgt seit August 2021 ein Ziel, das man in einem Satz erklären kann: Kindern in besonders schweren Lebenssituationen mit persönlicher Post eine Freude machen. Ein kleines Überraschungsgeschenk, eine Grußkarte — adressiert an genau dieses Kind, mit seinem Namen darauf.
+
+Es geht um Kinder, die unheilbar oder akut erkrankt sind, um Kinder mit schweren Beeinträchtigungen und um Kinder in psychisch belastenden Situationen. Das erklärte Ziel ist bewusst unbescheiden: ein breites Grinsen. Der Alltag dieser Kinder ist schwer genug.
+
+### Worum es an dem Tag geht
+
+Nicht um Reichweite für einen einzelnen Sender — sondern darum, möglichst viele Ohren zu erreichen. Die Hörerinnen und Hörer sollen erfahren, was der Verein macht, wie man ihn konkret unterstützen kann, und am Ende möglichst auch spenden.
+
+Deshalb macht es auch nichts, dass an diesem Tag überall dasselbe läuft. Das ist der Punkt.
 
 ### Wie lange wir schon dabei sind
 
 Länger, als es VoltFM gibt. Jannik hat unter verschiedenen Namen und mit verschiedenen Radioprojekten an RadioAid teilgenommen; unter dem Namen **VoltFM** wird die Geschichte seit 2025 weitergeführt. Die Zwecke der vergangenen Jahre reichen von den Tafeln Deutschland über die Deutsche Depressionshilfe und das Ambulante Kinderhospiz München bis zu den Hamburger Kinderwünschen.
 
 Inzwischen ist es eine kleine Tradition — und der Tag im Jahr, an dem sich der ganze Aufwand am deutlichsten lohnt.
+
+### Du hast selbst einen Sender?
+
+Dann mach mit. Bei RadioAid kann jede Station teilnehmen, die Sendung wird **kostenfrei** zur Verfügung gestellt. Moderieren, übertragen oder einfach nur Werbung dafür machen — alles hilft. Die Anlaufstelle dafür ist [radioaid.de](https://radioaid.de/).
+
+Und wenn du keinen Sender hast: Einschalten und weitersagen zählt genauso.
 
 [Alles zu RadioAid, samt Countdown](/radioaid)
 
@@ -119,21 +131,35 @@ Der schnellste Weg zu uns bleibt der [Discord](${DISCORD_URL}).
 Unser Mailserver ist ausgefallen, und wir suchen nach etwas Neuem. Schreib uns in der Zwischenzeit bitte über Discord im Kanal **#ticket-erstellen** — dort geht nichts verloren.
 :::
 
-## Danke
+## Und sonst
 
-An alle, die in der stillen Zeit drangeblieben sind: Danke. Wir sind zurück.`,
+Die Webseite ist neu — was sie kann und warum sie zwischendurch offline war, steht in einem [eigenen Beitrag](/news/was-die-neue-seite-kann).
+
+Bleibt das Wichtigste: **6. November, 18 Uhr.** Schalt ein.`,
 };
 
 export const WEBSEITE_ARTICLE: SeedArticle = {
   slug: "was-die-neue-seite-kann",
-  title: "Was die neue Seite kann — und was bewusst fehlt",
+  title: "16 Tage offline — und was danach dastand",
   excerpt:
-    "Der ausführliche Rundgang: was sich gegenüber der alten Seite ändert, was von Grund auf neu geschrieben wurde, warum es kein Tracking und keine fremden Bilder mehr gibt — und was ehrlicherweise noch fehlt.",
+    "Am 3. September ging voltfm.xyz vom Netz, am 19. September war die Seite zurück: komplett neu gebaut, keine Zeile übernommen. Der ausführliche Rundgang — was neu ist, was anders gelöst ist, was noch fehlt.",
   categorySlug: "hinter-den-kulissen",
   tags: ["Relaunch", "Hinter den Kulissen", "Technik"],
   authorName: "jannikjbi",
   featured: false,
-  source: `<p class="vfm-lead">Die neue Seite ist online. Weil „wir haben die Seite neu gebaut" wenig darüber sagt, was sich tatsächlich ändert, hier der ausführliche Rundgang: was neu ist, was anders gelöst ist als vorher, und was ehrlicherweise noch fehlt.</p>
+  source: `<p class="vfm-lead">Am 3. September ging voltfm.xyz offline. Am 19. September war die Seite wieder da — und zwar eine andere. Wer dazwischen vorbeigeschaut hat, stand ohne Vorwarnung vor einer Seite, die es nicht mehr gab. Dafür eine Entschuldigung, und hier die Erklärung.</p>
+
+## Warum die Seite offline war
+
+Die Abschaltung hatte **private Gründe**. Mehr davon gehört nicht auf eine öffentliche Seite. Wichtig ist nur, was es *nicht* war: kein Streit, kein Ärger im Team, kein Ende von VoltFM.
+
+::: hinweis
+**Der Stream lief die ganze Zeit weiter.** Offline war nur die Webseite, nicht der Sender. Wer die Station direkt bei laut.fm oder in einer Radio-App gespeichert hatte, hat von alldem nichts gemerkt.
+:::
+
+Als klar war, dass es weitergeht, stand die Frage: die alte Seite einfach wieder anschalten — oder die Gelegenheit nutzen? Sie war ohnehin vom Netz, ein Umbau bei laufendem Betrieb entfiel also. Die Antwort war schnell klar.
+
+**Sechzehn Tage später stand das hier.** Weil „wir haben die Seite neu gebaut" wenig darüber sagt, was sich tatsächlich ändert, hier der ausführliche Rundgang.
 
 ## Erst einmal: Es ist wirklich neu
 
@@ -141,7 +167,7 @@ Die alte Seite war keine Bastelei — auch sie war eine selbst gebaute Anwendung
 
 Trotzdem ist von ihr **keine einzige Zeile** in die neue Seite übernommen worden. Nicht, weil die alte schlecht war, sondern weil im Fundament zu vieles anders sein sollte: eine andere Datenbank, ein anderes Gestaltungssystem, ein anderes Verständnis davon, wie Inhalte gepflegt werden. Wer das Fundament tauscht, baut das Haus neu.
 
-Die neue Seite steht heute bei rund **32.000 Zeilen in knapp 300 Dateien**.
+Die neue Seite steht heute bei rund **32.000 Zeilen in knapp 300 Dateien** — in sechzehn Tagen geschrieben.
 
 | | vorher | jetzt |
 | --- | --- | --- |
@@ -269,5 +295,7 @@ Solange die Mail nicht läuft, erreichst du uns über Discord im Kanal **#ticket
 
 ## Sag uns, was klemmt
 
-Wenn dir etwas auffällt — ein Knopf, der nicht tut, eine Seite, die auf deinem Gerät komisch aussieht, ein Text, der falsch ist: Schreib es uns im [Discord](${DISCORD_URL}). Eine neue Seite hat immer Ecken, die erst auffallen, wenn andere sie benutzen.`,
+Wenn dir etwas auffällt — ein Knopf, der nicht tut, eine Seite, die auf deinem Gerät komisch aussieht, ein Text, der falsch ist: Schreib es uns im [Discord](${DISCORD_URL}). Sechzehn Tage sind kurz, und eine neue Seite hat immer Ecken, die erst auffallen, wenn andere sie benutzen.
+
+Danke an alle, die in den zwei Wochen einfach abgewartet haben. Wir sind zurück — diesmal auf einem Fundament, das hält.`,
 };
