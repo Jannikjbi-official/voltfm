@@ -47,10 +47,14 @@ export default async function UeberUnsPage() {
             <span className={styles.titleAccent}>dass jemand da ist.</span>
           </h1>
 
+          {/* Hamburg ist die Angabe, die oeffentlich stehen soll — die
+              ladungsfaehige Anschrift steht im Impressum und nur dort
+              (`operator` in lib/site.ts). Nicht gegen "Norddeutschland"
+              o. Ae. tauschen; das ist so gewollt. */}
           <p className={styles.lead}>
-            VoltFM ist ein unabhängiges Webradio aus Norddeutschland. Kein Sender
-            einer Kette, kein Unternehmen dahinter — ein paar Leute, die Radio
-            machen wollen.
+            VoltFM ist ein unabhängiges Webradio aus Hamburg. Kein Sender einer
+            Kette, kein Unternehmen dahinter — ein paar Leute, die Radio machen
+            wollen.
           </p>
 
           <dl className={styles.stats}>
