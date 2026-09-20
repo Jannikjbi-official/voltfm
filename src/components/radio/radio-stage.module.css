@@ -19,11 +19,19 @@
 .artwork {
   display: flex;
   justify-content: center;
+  /* Ohne das behaelt ein Grid-Item die Breite seines Inhalts — das Cover
+     waere auf sehr schmalen Geraeten (320 px) breiter als der Bildschirm. */
+  min-width: 0;
 }
 
 .cover {
   width: 100%;
   max-width: 320px;
+  /* Dasselbe Bild traegt auch die Klasse aus player.module.css, und die setzt
+     fuer die Leiste `flex-shrink: 0`. Hier soll es schrumpfen duerfen — sonst
+     steht es auf sehr schmalen Geraeten ueber dem Rand. */
+  flex-shrink: 1;
+  min-width: 0;
   height: auto;
   aspect-ratio: 1;
   border-radius: var(--radius-lg);

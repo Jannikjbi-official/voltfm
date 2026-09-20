@@ -1,7 +1,9 @@
 .layout {
   display: grid;
   gap: clamp(2rem, 1.5rem + 3vw, 4rem);
-  grid-template-columns: 1fr;
+  /* minmax(0, 1fr) statt 1fr: Eine 1fr-Spalte waechst sonst mit ihrem Inhalt
+     und steht auf schmalen Geraeten ueber den Rand hinaus. */
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
 }
 
@@ -177,6 +179,17 @@
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-border);
   background: var(--color-surface-container-low);
+}
+
+/* Der Knopf "Ticket im Discord oeffnen" traegt zwei Sinnbilder und ist damit
+   breiter als ein sehr schmales Display. Umbrechen statt ueberstehen. */
+.ticket {
+  min-width: 0;
+}
+
+.ticket > * {
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .ticketIcon {

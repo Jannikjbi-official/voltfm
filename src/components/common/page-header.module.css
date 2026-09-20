@@ -58,6 +58,10 @@
   flex-direction: column;
   gap: var(--spacing-12);
   max-width: 64ch;
+  /* Ohne das behaelt ein Flex-Element die Breite seines laengsten Wortes —
+     "Datenschutzerklaerung" waere damit breiter als ein schmales Display,
+     und overflow-wrap im Titel kaeme gar nicht erst zum Zug. */
+  min-width: 0;
 }
 
 .eyebrow {
@@ -72,6 +76,11 @@
   letter-spacing: -0.035em;
   color: var(--color-text);
   text-wrap: balance;
+  /* "Datenschutzerklaerung" passt auf ein 280-px-Display in keine Zeile.
+     `anywhere` statt `break-word`, weil `text-wrap: balance` darueber sonst
+     gewinnt und das Wort trotzdem ueber den Rand stellt. */
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 
 .header[data-size="large"] .title {

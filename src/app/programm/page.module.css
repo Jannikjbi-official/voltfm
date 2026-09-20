@@ -209,3 +209,11 @@
   gap: var(--spacing-10);
   margin-top: var(--spacing-8);
 }
+
+/* "Im Discord auf dem Laufenden bleiben" ist laenger als ein 320-px-Display.
+   Umbrechen ist haesslicher als abschneiden — aber lesbar. */
+.pausedActions > * {
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+}
