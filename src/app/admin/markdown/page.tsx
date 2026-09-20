@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { requireCan } from "@/lib/session";
 import { renderRichText } from "@/lib/sanitize";
 import { MARKDOWN_GROUPS } from "./examples";
+import { CopyButton } from "./copy-button";
 import pageStyles from "../page.module.css";
 import styles from "./page.module.css";
 
@@ -45,9 +46,14 @@ export default async function Page() {
                     {example.hint && <p className={styles.hint}>{example.hint}</p>}
                   </div>
 
-                  <pre className={styles.source}>
-                    <code>{example.source}</code>
-                  </pre>
+                  <div className={styles.sourceBox}>
+                    <pre className={styles.source}>
+                      <code>{example.source}</code>
+                    </pre>
+                    <div className={styles.copy}>
+                      <CopyButton source={example.source} label={example.title} />
+                    </div>
+                  </div>
 
                   {/* Aus renderRichText() und damit schon bereinigt — derselbe
                       Weg, den ein gespeicherter Beitrag nimmt. */}

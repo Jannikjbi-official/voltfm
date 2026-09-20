@@ -62,6 +62,27 @@
   color: var(--color-text-muted);
 }
 
+/* Der Knopf sitzt in der Ecke des Quelltextkastens und tritt erst hervor,
+   wenn die Maus in der Naehe ist — sichtbar bleibt er trotzdem, sonst
+   findet ihn niemand, der mit der Tastatur arbeitet. */
+.sourceBox {
+  position: relative;
+  min-width: 0;
+}
+
+.copy {
+  position: absolute;
+  top: var(--spacing-4);
+  right: var(--spacing-4);
+  opacity: 0.55;
+  transition: opacity 120ms ease;
+}
+
+.sourceBox:hover .copy,
+.copy:focus-within {
+  opacity: 1;
+}
+
 .source {
   margin: 0;
   padding: var(--spacing-12);
@@ -69,6 +90,8 @@
   background: var(--color-surface-container-highest);
   border: 1px solid var(--color-border);
   overflow-x: auto;
+  /* Platz fuer den Knopf, damit er keine Zeile verdeckt. */
+  padding-right: var(--spacing-40);
 }
 
 .source code {
