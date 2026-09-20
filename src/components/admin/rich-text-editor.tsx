@@ -4,9 +4,19 @@ import { useCallback, useRef, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Icon, ImageIcon, LinkIcon, EditIcon } from "@/lib/icons";
-import { EDITOR_ACTIONS, EDITOR_SNIPPETS, escapeAttribute, type EditorAction } from "./editor-actions";
+import {
+  EDITOR_ACTIONS,
+  EDITOR_SNIPPETS,
+  escapeAttribute,
+  buildFigure,
+  type EditorAction,
+} from "./editor-actions";
+import { useUploadThing } from "@/lib/uploadthing";
 import { ImageDialog } from "./image-dialog";
 import styles from "./rich-text-editor.module.css";
+
+/** Steht im eingefuegten Bild, bis jemand die Beschreibung tippt. */
+const ALT_PLACEHOLDER = "Bildbeschreibung ergänzen";
 
 const GROUP_LABELS: Record<EditorAction["group"], string> = {
   text: "Text",
@@ -37,6 +47,8 @@ export function RichTextEditor({
 }) {
   const ref = useRef<HTMLTextAreaElement>(null);
   const [imageOpen, setImageOpen] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [preview, setPreview] = useState(false);
   const [previewHtml, setPreviewHtml] = useState("");
 
@@ -86,6 +98,48 @@ export function RichTextEditor({
       });
     },
     [replaceSelection],
+  );
+
+  /**
+   * Bild direkt im Textfeld: ziehen oder einfuegen.
+   *
+   * Der Dialog bleibt fuer alles, was Bildunterschrift oder Ausrichtung
+   * braucht. Hier geht es um den haeufigen Fall — Bildschirmfoto in die
+   * Zwischenablage, ab ins Textfeld. Der Alt-Text bleibt leer und muss
+   * nachgetragen werden; das ist ehrlicher als ein erfundener.
+   */
+  const { startUpload, isUploading } = useUploadThing("articleImage", {
+    onClientUploadComplete: (res) => {
+      const url = res?.[0]?.serverData?.url ?? res?.[0]?.ufsUrl;
+      if (!url) return;
+      setUploadError(null);
+      /* Der Alt-Text wird vorbelegt und gleich markiert: So steht nie ein
+         Bild ohne Beschreibung im Text, und der erste Tastendruck
+         ueberschreibt den Platzhalter. */
+      const figure = `
+${buildFigure({ url, alt: ALT_PLACEHOLDER })}
+`;
+      const altAt = figure.indexOf(ALT_PLACEHOLDER);
+      replaceSelection(() => ({
+        text: figure,
+        selectFrom: altAt,
+        selectTo: altAt + ALT_PLACEHOLDER.length,
+      }));
+    },
+    onUploadError: () =>
+      setUploadError("Das Bild konnte nicht hochgeladen werden. Ist UPLOADTHING_TOKEN gesetzt?"),
+  });
+
+  /** Nimmt die erste Bilddatei aus einer Dateiübergabe. */
+  const uploadFirstImage = useCallback(
+    (files: FileList | File[] | null | undefined) => {
+      const image = Array.from(files ?? []).find((file) => file.type.startsWith("image/"));
+      if (!image) return false;
+      setUploadError(null);
+      void startUpload([image]);
+      return true;
+    },
+    [startUpload],
   );
 
   const insertSnippet = useCallback(
@@ -165,6 +219,12 @@ export function RichTextEditor({
           ))}
         </div>
 
+        <span className={styles.dropHint}>
+          {isUploading
+            ? "Bild wird hochgeladen …"
+            : "oder Bild ins Textfeld ziehen bzw. einfügen"}
+        </span>
+
         <div className={styles.spacer} />
 
         <Button
@@ -194,6 +254,24 @@ export function RichTextEditor({
           placeholder={placeholder}
           onKeyDown={onKeyDown}
           className={styles.area}
+          data-dragover={dragOver || undefined}
+          onPaste={(event) => {
+            // Nur abfangen, wenn wirklich ein Bild dabei ist — sonst bliebe
+            // normales Textkopieren auf der Strecke.
+            if (uploadFirstImage(event.clipboardData?.files)) event.preventDefault();
+          }}
+          onDragOver={(event) => {
+            if (!event.dataTransfer?.types.includes("Files")) return;
+            event.preventDefault();
+            setDragOver(true);
+          }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={(event) => {
+            if (!event.dataTransfer?.files?.length) return;
+            event.preventDefault();
+            setDragOver(false);
+            uploadFirstImage(event.dataTransfer.files);
+          }}
         />
       </div>
 
@@ -208,6 +286,8 @@ export function RichTextEditor({
           <div className={styles.previewBody} dangerouslySetInnerHTML={{ __html: previewHtml }} />
         </div>
       )}
+
+      {uploadError && <p className={styles.uploadError}>{uploadError}</p>}
 
       <ImageDialog
         open={imageOpen}

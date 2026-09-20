@@ -72,3 +72,17 @@
   gap: var(--spacing-4);
   list-style: none;
 }
+
+/* Fehlerkennung auf der Fehlerseite — hilft beim Zuordnen einer Meldung. */
+.digest {
+  margin-top: var(--spacing-24);
+  font: var(--type-caption);
+  color: var(--color-text-muted);
+}
+
+.digest code {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  padding: 0.1em 0.4em;
+  border-radius: var(--radius-xs);
+  background: var(--color-surface-container);
+}

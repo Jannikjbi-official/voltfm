@@ -139,11 +139,14 @@ export function ArticleForm({
           <div className={styles.field}>
             <span className={styles.label}>Autor</span>
             <p className={styles.readonly}>{article?.authorName ?? authorName}</p>
-            <FieldDescription>
+            {/* Bewusst kein <FieldDescription>: Das ist ein Base-UI-Bauteil und
+                verlangt ein <Field> darum herum. Hier gibt es kein Eingabefeld,
+                also auch kein Field — sonst wirft es beim Rendern. */}
+            <p className={styles.hint}>
               {article
                 ? "Bleibt beim ursprünglichen Autor, auch wenn jemand anderes bearbeitet."
                 : "Wird automatisch von deinem Konto übernommen."}
-            </FieldDescription>
+            </p>
           </div>
 
           <ImageUpload

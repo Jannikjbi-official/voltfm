@@ -138,3 +138,26 @@ export function toStationTimeInput(value: string | Date | null | undefined): str
   const shifted = new Date(date.getTime() + berlinOffsetMs(date));
   return shifted.toISOString().slice(0, 16);
 }
+
+/**
+ * Liest ein Datum aus einem Eingabefeld — als Senderzeit, Mitternacht.
+ *
+ * Akzeptiert `JJJJ-MM-TT` (was `<input type="date">` liefert) und die deutsche
+ * Schreibweise `TT.MM.JJJJ`, weil die beim Tippen naheliegt. Alles andere
+ * ergibt `null` statt eines ungueltigen Datums: Ein `Invalid Date` in der
+ * Datenbank faellt erst viel spaeter auf, und dann als unerklaerliche Anzeige.
+ */
+export function parseDateInput(value: string): Date | null {
+  const input = value.trim();
+  if (!input) return null;
+
+  const german = /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/.exec(input);
+  const iso = german
+    ? `${german[3]}-${german[2].padStart(2, "0")}-${german[1].padStart(2, "0")}`
+    : input;
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null;
+
+  const date = parseStationTime(`${iso}T00:00`);
+  return Number.isNaN(date.getTime()) ? null : date;
+}

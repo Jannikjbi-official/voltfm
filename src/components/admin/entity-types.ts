@@ -21,7 +21,13 @@ export type FieldType =
   | "checkbox"
   | "image"
   | "time"
-  | "datetime";
+  | "datetime"
+  /** Reines Datum mit Kalenderauswahl. */
+  | "date"
+  /** Wiederholbare Zeilen aus Plattform und Adresse. */
+  | "socials"
+  /** Farbwahl aus einer Palette oder per Hex-Code. */
+  | "hue";
 
 export interface FieldDef {
   name: string;

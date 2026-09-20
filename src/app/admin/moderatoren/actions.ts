@@ -6,7 +6,7 @@ import { z } from "zod";
 
 import { hosts } from "@/db/collections";
 import { assertCan, AuthorizationError } from "@/lib/session";
-import { slugify, parseStationTime } from "@/lib/format";
+import { slugify, parseDateInput } from "@/lib/format";
 import type { EntityFormState } from "@/components/admin/entity-types";
 
 const schema = z.object({
@@ -100,6 +100,16 @@ export async function saveHost(
   const slug = slugify(data.slug || data.name);
   const now = new Date();
 
+  /* Lieber eine klare Meldung als ein ungueltiges Datum in der Datenbank —
+     das faellt sonst erst Wochen spaeter als kaputte Anzeige auf. */
+  const joinedAt = data.joinedAt ? parseDateInput(data.joinedAt) : null;
+  if (data.joinedAt && !joinedAt) {
+    return {
+      status: "error",
+      message: "Das Datum bei „Dabei seit“ konnte nicht gelesen werden (JJJJ-MM-TT oder TT.MM.JJJJ).",
+    };
+  }
+
   const doc = {
     name: data.name,
     slug,
@@ -112,9 +122,9 @@ export async function saveHost(
       .map((g) => g.trim())
       .filter(Boolean),
     location: data.location || undefined,
-    /* Ein reines Datumsfeld ohne Uhrzeit — als Mitternacht Senderzeit
-       gespeichert, damit die Anzeige nicht um einen Tag springt. */
-    joinedAt: data.joinedAt ? parseStationTime(`${data.joinedAt}T00:00`) : null,
+    /* Als Mitternacht Senderzeit gespeichert, damit die Anzeige nicht um
+       einen Tag springt. */
+    joinedAt,
     image: data.image || undefined,
     discordUserId: data.discordUserId || null,
     profileLayout: data.profileLayout,

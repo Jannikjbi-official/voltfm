@@ -10,6 +10,8 @@ import { Alert, AlertContent, AlertDescription } from "@/components/ui/alert";
 import { Icon, PlusIcon, CheckIcon, LoadingIcon, EditIcon, DeleteIcon, CloseIcon } from "@/lib/icons";
 import { ImageUpload } from "./image-upload";
 import { RichTextEditor } from "./rich-text-editor";
+import { SocialLinksField } from "./social-links-field";
+import { AccentColorField } from "./accent-color-field";
 import type { EntityFormState, EntityRow, FieldDef } from "./entity-types";
 import { useActionFeedback } from "./use-action-feedback";
 import styles from "./entity-manager.module.css";
@@ -254,6 +256,21 @@ function FormField({ field, row }: { field: FieldDef; row: EntityRow | null }) {
     return <ImageUpload name={field.name} value={value || undefined} label={field.label} />;
   }
 
+  if (field.type === "socials") {
+    return <SocialLinksField name={field.name} defaultValue={value} />;
+  }
+
+  if (field.type === "hue") {
+    return (
+      <AccentColorField
+        name={field.name}
+        defaultValue={value}
+        label={field.label}
+        hint={field.hint}
+      />
+    );
+  }
+
   if (field.type === "rich") {
     return (
       <Field name={field.name} className={formStyles.field}>
@@ -312,9 +329,11 @@ function FormField({ field, row }: { field: FieldDef; row: EntityRow | null }) {
               ? "number"
               : field.type === "time"
                 ? "time"
-                : field.type === "datetime"
-                  ? "datetime-local"
-                  : "text"
+                : field.type === "date"
+                  ? "date"
+                  : field.type === "datetime"
+                    ? "datetime-local"
+                    : "text"
           }
           required={field.required}
           defaultValue={value}

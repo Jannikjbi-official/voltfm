@@ -126,3 +126,22 @@
   height: auto;
   border-radius: var(--radius-md);
 }
+
+.dropHint {
+  font: var(--type-caption);
+  color: var(--color-text-muted);
+  align-self: center;
+  padding-inline: var(--spacing-4);
+}
+
+/* Sichtbare Rueckmeldung, solange eine Datei ueber dem Feld haengt. */
+.area[data-dragover] {
+  border-color: var(--color-primary);
+  background: var(--color-surface-container-low);
+}
+
+.uploadError {
+  margin-top: var(--spacing-8);
+  font: var(--type-caption);
+  color: var(--color-error);
+}

@@ -154,3 +154,9 @@
   font-weight: 600;
   color: var(--color-text);
 }
+
+/* Erklärung unter einem Wert, der kein Eingabefeld ist. */
+.hint {
+  font: var(--type-caption);
+  color: var(--color-text-muted);
+}
