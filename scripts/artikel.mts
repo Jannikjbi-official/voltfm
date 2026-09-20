@@ -295,9 +295,11 @@ Also sind wir zurück auf die laut.fm-Station, die es seit 2021 gibt — dieselb
 
 ## Wie es weitergehen soll
 
-Ganz vom Tisch ist die Sache nicht. Inzwischen haben wir eine Software gefunden, mit der sich ein eigener Server betreiben lässt, der **von dort aus auf laut.fm sendet** — also der laut.fm-Weg bleibt, aber die Steuerung liegt bei uns. Damit wäre möglich, was heute nicht geht:
+Dazu muss man wissen, was heute läuft: **Wir nutzen den Musikpool von laut.fm.** Die Musik kommt also aus deren Bestand, und laut.fm spielt sie ab — wir stellen zusammen, was in welcher Richtung läuft, aber wir senden nicht selbst.
 
-- Songs gezielt abspielen, statt nur eine Playlist laufen zu lassen
+Ganz vom Tisch ist der eigene Weg trotzdem nicht. Inzwischen haben wir eine Software gefunden, mit der sich ein eigener Server betreiben lässt, der **von dort aus auf laut.fm sendet** — der laut.fm-Weg bleibt also, aber die Steuerung liegt bei uns. Statt eines Musikpools wären wir dann **rund um die Uhr live**. Damit wäre möglich, was heute nicht geht:
+
+- eigene Musik statt des laut.fm-Pools, und Songs gezielt abspielen
 - eigene Einspieler und Werbung
 - die laut.fm-Nachrichten automatisch einbinden, stündlich oder alle zwei Stunden
 - und damit auch: verlässliche Sendezeiten und Songwünsche

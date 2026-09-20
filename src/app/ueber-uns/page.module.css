@@ -134,22 +134,29 @@
 
 /*
  * Zweispaltig: links die Jahresangabe, dazwischen die durchgehende Schiene,
- * rechts der Text. Die Schiene liegt in der Luecke, nicht unter der Jahreszahl.
+ * rechts eine Karte mit dem Text. Die Schiene liegt in der Luecke, nicht
+ * unter der Jahreszahl.
+ *
+ * Die Karte ist neu: Vorher stand der Text nackt neben der Schiene, und bei
+ * acht Eintraegen lief das zu einer Textwand zusammen. Jetzt ist jeder
+ * Abschnitt als eigener Block erkennbar.
  */
 .entry {
-  --rail: clamp(5.5rem, 4rem + 4vw, 8rem);
+  --rail: clamp(5rem, 3.5rem + 4vw, 8rem);
+  --gap: clamp(1.25rem, 1rem + 2vw, 2.75rem);
 
   position: relative;
   display: grid;
   grid-template-columns: var(--rail) minmax(0, 1fr);
-  column-gap: clamp(1.5rem, 1rem + 2vw, 2.75rem);
-  padding-block: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+  column-gap: var(--gap);
+  padding-block: var(--spacing-10);
 }
 
+/* Die Schiene laeuft oben und unten aus, statt hart abzubrechen. */
 .entry::before {
   content: "";
   position: absolute;
-  left: calc(var(--rail) + clamp(1.5rem, 1rem + 2vw, 2.75rem) / 2);
+  left: calc(var(--rail) + var(--gap) / 2 - 1px);
   top: 0;
   bottom: 0;
   width: 2px;
@@ -157,23 +164,26 @@
 }
 
 .entry:first-child::before {
-  top: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+  top: var(--spacing-24);
+  background: linear-gradient(to bottom, transparent, var(--color-border) 2rem);
 }
 
 .entry:last-child::before {
-  bottom: calc(100% - clamp(1.5rem, 1rem + 2vw, 2.5rem) - 0.8em);
+  bottom: auto;
+  height: var(--spacing-32);
+  background: linear-gradient(to bottom, var(--color-border), transparent);
 }
 
 /* Der Punkt auf der Schiene, auf Hoehe der ersten Textzeile. */
 .entry::after {
   content: "";
   position: absolute;
-  left: calc(var(--rail) + clamp(1.5rem, 1rem + 2vw, 2.75rem) / 2 - 6px);
-  top: calc(clamp(1.5rem, 1rem + 2vw, 2.5rem) + 0.35em);
+  left: calc(var(--rail) + var(--gap) / 2 - 7px);
+  top: calc(var(--spacing-10) + var(--spacing-20));
   width: 14px;
   height: 14px;
   border-radius: var(--radius-circled);
-  background: var(--color-surface-container-low);
+  background: var(--color-surface);
   border: 2px solid var(--color-border-strong);
   transition: border-color var(--transition-standard-fast-effects);
 }
@@ -181,17 +191,17 @@
 .entry[data-current]::after {
   background: var(--color-accent);
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 5px color-mix(in srgb, var(--color-accent) 18%, transparent);
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--color-accent) 16%, transparent);
 }
 
 .entryYear {
   display: flex;
   justify-content: flex-end;
-  padding-top: 0.1em;
+  padding-top: var(--spacing-20);
 }
 
 .entryYearValue {
-  font: 700 clamp(1.1rem, 0.95rem + 0.7vw, 1.6rem) / 1.2 var(--font-display);
+  font: 700 clamp(1rem, 0.9rem + 0.5vw, 1.35rem) / 1.25 var(--font-display);
   font-variant-numeric: tabular-nums;
   color: var(--color-text-muted);
   letter-spacing: -0.02em;
@@ -203,11 +213,34 @@
   color: var(--color-accent);
 }
 
+/* --- Die Karte ----------------------------------------------------------- */
+
 .entryBody {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-6);
+  gap: var(--spacing-8);
   min-width: 0;
+  padding: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-container-lowest);
+  transition:
+    border-color var(--transition-standard-fast-effects),
+    transform var(--transition-standard-fast-effects);
+}
+
+.entry:hover .entryBody {
+  border-color: var(--color-border-strong);
+}
+
+/* Der aktuelle Abschnitt hebt sich ab, ohne zu schreien. */
+.entry[data-current] .entryBody {
+  border-color: color-mix(in srgb, var(--color-accent) 45%, var(--color-border));
+  background: linear-gradient(
+    140deg,
+    color-mix(in srgb, var(--color-accent) 7%, var(--color-surface-container-lowest)),
+    var(--color-surface-container-lowest) 60%
+  );
 }
 
 .entryKicker {
@@ -216,6 +249,10 @@
   text-transform: uppercase;
   font-weight: 700;
   color: var(--color-primary);
+}
+
+.entry[data-current] .entryKicker {
+  color: var(--color-accent);
 }
 
 .entryTitle {
@@ -247,11 +284,11 @@
 }
 
 /* Auf schmalen Schirmen kippt die Zeitleiste einspaltig: die Schiene wandert
-   ganz nach links, das Jahr wird zur Zeile ueber dem Text. */
-@media (max-width: 640px) {
+   ganz nach links, das Jahr wird zum Etikett ueber der Karte. */
+@media (max-width: 720px) {
   .entry {
-    grid-template-columns: 1fr;
-    row-gap: var(--spacing-4);
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--spacing-8);
     padding-left: var(--spacing-24);
   }
 
@@ -261,15 +298,26 @@
 
   .entry::after {
     left: -3px;
-    top: calc(clamp(1.5rem, 1rem + 2vw, 2.5rem) + 0.25em);
+    top: var(--spacing-12);
   }
 
   .entryYear {
     justify-content: flex-start;
+    padding-top: 0;
   }
 
   .entryYearValue {
     text-align: left;
+    padding: var(--spacing-2) var(--spacing-10);
+    border-radius: var(--radius-circled);
+    background: var(--color-surface-container);
+    border: 1px solid var(--color-border);
+    font-size: 0.8125rem;
+  }
+
+  .entry[data-current] .entryYearValue {
+    background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
   }
 }
 
@@ -304,6 +352,15 @@
   letter-spacing: -0.03em;
   color: var(--color-text);
   text-wrap: balance;
+}
+
+/* Der ehrliche Vorbehalt ueber der Liste — gehoert dazu, soll aber die
+   Ueberschrift nicht ueberlagern. */
+.outlookLead {
+  margin-top: var(--spacing-16);
+  max-width: 62ch;
+  font: var(--type-body);
+  color: var(--color-text-secondary);
 }
 
 .outlookText {

@@ -48,8 +48,9 @@ export default async function UeberUnsPage() {
           </h1>
 
           <p className={styles.lead}>
-            VoltFM ist ein unabhängiges Webradio aus Hamburg. Kein Sender einer
-            Kette und keine automatisierte Dauerschleife.
+            VoltFM ist ein unabhängiges Webradio aus Norddeutschland. Kein Sender
+            einer Kette, kein Unternehmen dahinter — ein paar Leute, die Radio
+            machen wollen.
           </p>
 
           <dl className={styles.stats}>
@@ -62,8 +63,8 @@ export default async function UeberUnsPage() {
               <dd>{hosts.length}</dd>
             </div>
             <div className={styles.stat}>
-              <dt>Sendebetrieb</dt>
-              <dd>24 / 7</dd>
+              <dt>Zu hören über</dt>
+              <dd>laut.fm</dd>
             </div>
           </dl>
         </div>
@@ -162,24 +163,33 @@ export default async function UeberUnsPage() {
             <p className={styles.outlookKicker}>Woran wir arbeiten</p>
             <h2 className={styles.outlookTitle}>Was als Nächstes kommt</h2>
 
+            <p className={styles.outlookLead}>
+              Nichts davon hat ein Datum. Wir haben im August einen eigenen
+              Sendeweg getestet und ihn an den Kosten scheitern sehen — seitdem
+              versprechen wir nichts mehr, was wir nicht halten können.
+            </p>
+
             <ul className={styles.roadmap} role="list">
               <li className={styles.roadmapItem}>
-                <h3>Eigener Sendeserver</h3>
+                <h3>Rund um die Uhr live</h3>
                 <p>
-                  Damit feste Sendezeiten wieder verlässlich sind — und Songwünsche
-                  tatsächlich in der laufenden Sendung landen.
+                  Heute läuft der Musikpool von laut.fm. Mit einer eigenen Software,
+                  die von unserem Server auf laut.fm sendet, käme eigene Musik dazu
+                  — und feste Sendezeiten, auf die Verlass ist.
                 </p>
               </li>
               <li className={styles.roadmapItem}>
-                <h3>Favoriten und Hinweise</h3>
+                <h3>Songwünsche</h3>
                 <p>
-                  Sendungen merken und benachrichtigt werden, wenn deine startet.
+                  Wünsche, die tatsächlich in der laufenden Sendung landen statt in
+                  einer Liste, die niemand liest. Hängt am selben Schritt.
                 </p>
               </li>
               <li className={styles.roadmapItem}>
-                <h3>Archiv zum Nachhören</h3>
+                <h3>Der Sendeplan zurück</h3>
                 <p>
-                  Daran hängt noch die rechtliche Seite, deshalb gibt es kein Datum.
+                  Solange die Zeiten nicht verlässlich sind, steht lieber keiner da
+                  als ein falscher.
                 </p>
               </li>
             </ul>

@@ -112,11 +112,51 @@ const TIMELINE = [
   {
     key: "plattform-2026",
     year: "2026",
-    kicker: "Heute",
+    kicker: "Die eigene Plattform",
     title: "VoltFM bekommt ein Zuhause",
-    text: "Eine eigene Website mit Redaktionssystem: Sendeplan, News, Moderatorenprofile und ein Player, der beim Seitenwechsel nicht abbricht. Am 6. November läuft wieder RadioAid, diesmal für Seelenpflaster e. V.",
-    current: true,
+    text: "Eine eigene Website statt einer Seite von der Stange: Moderatorenprofile, News, Events — und ein Player, der beim Seitenwechsel nicht abbricht.",
+    current: false,
     order: 50,
+  },
+];
+
+/**
+ * Was 2026 noch dazukam.
+ *
+ * Getrennt gehalten, weil Migration 005 die Zeitleiste bereits angelegt hat
+ * und nichts anfassen darf, was seitdem im Admin gepflegt wurde.
+ */
+const TIMELINE_2026 = [
+  {
+    key: "azuracast-august-2026",
+    year: "Aug 2026",
+    kicker: "Der Versuch",
+    title: "Einmal alles selbst machen",
+    text: "Wir bauen eine eigene Sendeinfrastruktur mit AzuraCast auf — zunächst als Test. Er zeigt vor allem, was so etwas kostet: der Server rund um die Uhr, GEMA und GVL als größter Posten, dazu die nötige Software. Wir gehen zurück auf die laut.fm-Station von 2021.",
+    current: false,
+    order: 60,
+  },
+  {
+    key: "pause-september-2026",
+    year: "3.–19. Sep 2026",
+    kicker: "Fast Schluss",
+    title: "Sechzehn Tage offline",
+    text: "Die Webseite geht aus privaten Gründen vom Netz, und es steht ernsthaft zur Debatte, VoltFM zu beenden. Der Stream läuft weiter. Am Ende fällt die Entscheidung anders — und statt die alte Seite wieder anzuschalten, entsteht in sechzehn Tagen eine neue.",
+    href: "/news/was-die-neue-seite-kann",
+    linkLabel: "Die ganze Geschichte",
+    current: false,
+    order: 70,
+  },
+  {
+    key: "heute-2026",
+    year: "Jetzt",
+    kicker: "Heute",
+    title: "Zurück auf Sendung",
+    text: "Die neue Seite steht, die Station läuft über den Musikpool von laut.fm, und am 6. November übertragen wir wieder RadioAid — diesmal für Seelenpflaster e. V. Woran wir als Nächstes arbeiten: rund um die Uhr live senden, mit eigener Musik.",
+    href: "/radioaid",
+    linkLabel: "Zu RadioAid",
+    current: true,
+    order: 80,
   },
 ];
 
@@ -434,6 +474,22 @@ const MIGRATIONS: Migration[] = [
       );
 
       return result.upsertedCount ? `angelegt: /news/${rest.slug}` : "war schon da";
+    },
+  },
+
+  {
+    name: "013-zeitleiste-2026",
+    run: async (db, now) => {
+      const created = await insertMissing(db, "timeline", "key", TIMELINE_2026, now);
+
+      /* Der Eintrag zur Plattform war als "Heute" markiert. Das ist er nicht
+         mehr — aber nur anfassen, wenn dort noch der eingespielte Text steht. */
+      const moved = await db.collection("timeline").updateOne(
+        { key: "plattform-2026", kicker: "Heute" },
+        { $set: { kicker: "Die eigene Plattform", current: false, updatedAt: now } },
+      );
+
+      return `${created} von ${TIMELINE_2026.length} angelegt, ${moved.modifiedCount} umgestellt`;
     },
   },
 ];
