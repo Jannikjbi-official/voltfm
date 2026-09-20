@@ -32,6 +32,26 @@
   border: 1px solid var(--color-border);
 }
 
+/* Abschnitt in der Seitenspalte — gruppiert, was zusammengehoert, damit die
+   Spalte nicht als eine lange Reihe gleichwertiger Felder erscheint. */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+}
+
+.section + .section {
+  padding-top: var(--spacing-16);
+  border-top: 1px solid var(--color-border);
+}
+
+.sectionTitle {
+  font: var(--type-small);
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: 0.02em;
+}
+
 .field {
   display: flex;
   flex-direction: column;
@@ -81,19 +101,6 @@
   font: var(--type-small);
   color: var(--color-text-secondary);
   cursor: pointer;
-}
-
-.seo {
-  border-top: 1px solid var(--color-border);
-  padding-top: var(--spacing-12);
-}
-
-.seo summary {
-  font: var(--type-small);
-  font-weight: 600;
-  color: var(--color-text);
-  cursor: pointer;
-  margin-bottom: var(--spacing-12);
 }
 
 /* --- Image upload -------------------------------------------------------- */

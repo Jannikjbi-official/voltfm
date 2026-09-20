@@ -272,6 +272,10 @@ function FormField({ field, row }: { field: FieldDef; row: EntityRow | null }) {
   }
 
   if (field.type === "rich") {
+    /* Beim Bearbeiten soll wieder der getippte Text erscheinen, nicht das
+       daraus erzeugte HTML. Aeltere Datensaetze haben kein "<feld>Source" —
+       dann bleibt es beim HTML, das der Konverter unveraendert durchreicht. */
+    const source = row?.values[`${field.name}Source`];
     return (
       <Field name={field.name} className={formStyles.field}>
         <FieldLabel>{field.label}</FieldLabel>
@@ -279,7 +283,7 @@ function FormField({ field, row }: { field: FieldDef; row: EntityRow | null }) {
           name={field.name}
           required={field.required}
           rows={field.rows ?? 12}
-          defaultValue={value}
+          defaultValue={typeof source === "string" && source ? source : value}
           placeholder={field.placeholder}
         />
         {field.hint && <FieldDescription>{field.hint}</FieldDescription>}

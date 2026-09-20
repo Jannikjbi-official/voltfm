@@ -18,11 +18,11 @@ import styles from "./admin-form.module.css";
 const initial: ArticleFormState = { status: "idle" };
 
 /**
- * The article editor.
+ * Die Artikelmaske.
  *
- * The body is authored as HTML through <RichTextEditor>. The server sanitises
- * whatever arrives against a strict allow-list, so the editor can be permissive
- * without the render path becoming an XSS surface.
+ * Der Text wird als Markdown geschrieben; die Server Action macht daraus HTML
+ * und bereinigt es gegen eine feste Liste erlaubter Tags. Der Editor darf
+ * deshalb grosszuegig sein, ohne dass die Ausgabe zur XSS-Flaeche wird.
  */
 export function ArticleForm({
   article,
@@ -58,126 +58,128 @@ export function ArticleForm({
             <Input name="title" required minLength={4} maxLength={160} defaultValue={article?.title} />
           </Field>
 
-          <Field name="slug" className={styles.field}>
-            <FieldLabel>Slug</FieldLabel>
-            <Input name="slug" maxLength={120} defaultValue={article?.slug} placeholder="wird aus dem Titel erzeugt" />
-            <FieldDescription>Leer lassen, um ihn aus dem Titel zu erzeugen.</FieldDescription>
-          </Field>
-
           <Field name="excerpt" className={styles.field}>
             <FieldLabel>Teaser</FieldLabel>
             <Textarea name="excerpt" required minLength={20} maxLength={400} rows={3} defaultValue={article?.excerpt} />
           </Field>
 
           <Field name="content" className={styles.field}>
-            <FieldLabel>Inhalt (HTML)</FieldLabel>
+            <FieldLabel>Text</FieldLabel>
+            {/* Beim Bearbeiten erscheint wieder der getippte Text. Bei
+                Beiträgen aus der HTML-Zeit gibt es den nicht — dann steht das
+                HTML da, und der Konverter reicht es unverändert durch. */}
             <RichTextEditor
               name="content"
               required
-              rows={22}
-              defaultValue={article?.content}
-              placeholder="<p>Dein Text …</p>"
+              rows={20}
+              defaultValue={article?.contentSource ?? article?.content}
+              placeholder="Schreib deinen Beitrag …"
             />
-            <FieldDescription>
-              Erlaubt: Überschriften (h2–h4), Absätze, Fett/Kursiv/Unterstrichen,
-              Markierungen, Listen, Zitate, Tabellen, Infoboxen, Links, Bilder und
-              Code. Alles andere wird beim Speichern entfernt.
-            </FieldDescription>
           </Field>
         </div>
 
         <aside className={styles.side}>
-          <Field name="status" className={styles.field}>
-            <FieldLabel>Status</FieldLabel>
-            <select name="status" defaultValue={article?.status ?? "draft"} className={styles.select}>
-              <option value="draft">Entwurf</option>
-              <option value="scheduled">Geplant</option>
-              <option value="published">Veröffentlicht</option>
-              <option value="archived">Archiviert</option>
-            </select>
-          </Field>
+          {/* Die Seitenspalte in drei Abschnitte geteilt: wo der Beitrag
+              erscheint, wie er aussieht, und wer ihn geschrieben hat. */}
+          <section className={styles.section}>
+            <h2 className={styles.sectionTitle}>Einordnung</h2>
 
-          <Field name="publishedAt" className={styles.field}>
-            <FieldLabel>Veröffentlichung</FieldLabel>
-            <Input
-              name="publishedAt"
-              type="datetime-local"
-              defaultValue={
-                article?.publishedAt
-                  ? new Date(article.publishedAt).toISOString().slice(0, 16)
-                  : undefined
-              }
+            <Field name="status" className={styles.field}>
+              <FieldLabel>Status</FieldLabel>
+              <select name="status" defaultValue={article?.status ?? "draft"} className={styles.select}>
+                <option value="draft">Entwurf (nicht öffentlich)</option>
+                <option value="scheduled">Geplant</option>
+                <option value="published">Veröffentlicht</option>
+                <option value="archived">Archiviert</option>
+              </select>
+            </Field>
+
+            <Field name="categorySlug" className={styles.field}>
+              <FieldLabel>Kategorie</FieldLabel>
+              <select
+                name="categorySlug"
+                defaultValue={article?.categorySlug ?? categories[0]?.slug}
+                className={styles.select}
+                required
+              >
+                {categories.map((category) => (
+                  <option key={category.id} value={category.slug}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
+
+            <Field name="publishedAt" className={styles.field}>
+              <FieldLabel>Veröffentlichung</FieldLabel>
+              <Input
+                name="publishedAt"
+                type="datetime-local"
+                defaultValue={
+                  article?.publishedAt
+                    ? new Date(article.publishedAt).toISOString().slice(0, 16)
+                    : undefined
+                }
+              />
+              <FieldDescription>Für &bdquo;Geplant&ldquo; ein Datum in der Zukunft setzen.</FieldDescription>
+            </Field>
+
+            <Field name="slug" className={styles.field}>
+              <FieldLabel>Slug (URL)</FieldLabel>
+              <Input name="slug" maxLength={120} defaultValue={article?.slug} placeholder="mein-beitrag" />
+              <FieldDescription>Leer lassen = aus dem Titel.</FieldDescription>
+            </Field>
+
+            <Field name="tags" className={styles.field}>
+              <FieldLabel>Schlagwörter</FieldLabel>
+              <Input name="tags" defaultValue={article?.tags.join(", ")} placeholder="Radio, Community" />
+              <FieldDescription>Komma-getrennt.</FieldDescription>
+            </Field>
+
+            <label className={styles.checkboxRow}>
+              <CheckBox name="featured" defaultChecked={article?.featured} />
+              <span>Als Aufmacher hervorheben</span>
+            </label>
+          </section>
+
+          <section className={styles.section}>
+            {/* Die Ueberschrift kommt von <ImageUpload> selbst — zweimal
+                "Titelbild" untereinander waere nur Laerm. */}
+            <ImageUpload
+              name="coverImage"
+              value={article?.coverImage}
+              label="Titelbild"
+              endpoint="articleImage"
             />
-            <FieldDescription>Für &bdquo;Geplant&ldquo; ein Datum in der Zukunft setzen.</FieldDescription>
-          </Field>
 
-          <Field name="categorySlug" className={styles.field}>
-            <FieldLabel>Kategorie</FieldLabel>
-            <select
-              name="categorySlug"
-              defaultValue={article?.categorySlug ?? categories[0]?.slug}
-              className={styles.select}
-              required
-            >
-              {categories.map((category) => (
-                <option key={category.id} value={category.slug}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-          </Field>
-
-          <Field name="tags" className={styles.field}>
-            <FieldLabel>Tags</FieldLabel>
-            <Input name="tags" defaultValue={article?.tags.join(", ")} placeholder="Radio, Community" />
-            <FieldDescription>Kommagetrennt.</FieldDescription>
-          </Field>
-
-          {/* Kein Eingabefeld: Der Autor kommt aus der Anmeldung. Angezeigt
-              wird er trotzdem, damit man vor dem Speichern sieht, unter
-              welchem Namen der Beitrag erscheint. */}
-          <div className={styles.field}>
-            <span className={styles.label}>Autor</span>
-            <p className={styles.readonly}>{article?.authorName ?? authorName}</p>
-            {/* Bewusst kein <FieldDescription>: Das ist ein Base-UI-Bauteil und
-                verlangt ein <Field> darum herum. Hier gibt es kein Eingabefeld,
-                also auch kein Field — sonst wirft es beim Rendern. */}
-            <p className={styles.hint}>
-              {article
-                ? "Bleibt beim ursprünglichen Autor, auch wenn jemand anderes bearbeitet."
-                : "Wird automatisch von deinem Konto übernommen."}
-            </p>
-          </div>
-
-          <ImageUpload
-            name="coverImage"
-            value={article?.coverImage}
-            label="Titelbild"
-            endpoint="articleImage"
-          />
-
-          <Field name="coverAlt" className={styles.field}>
-            <FieldLabel>Bildbeschreibung</FieldLabel>
-            <Input name="coverAlt" defaultValue={article?.coverAlt} maxLength={200} />
-            <FieldDescription>Für Screenreader und wenn das Bild nicht lädt.</FieldDescription>
-          </Field>
-
-          <label className={styles.checkboxRow}>
-            <CheckBox name="featured" defaultChecked={article?.featured} />
-            <span>Als Aufmacher hervorheben</span>
-          </label>
-
-          <details className={styles.seo}>
-            <summary>SEO</summary>
-            <Field name="seoTitle" className={styles.field}>
-              <FieldLabel>SEO-Titel</FieldLabel>
-              <Input name="seoTitle" maxLength={160} defaultValue={article?.seoTitle} />
+            <Field name="coverAlt" className={styles.field}>
+              <FieldLabel>Bildbeschreibung</FieldLabel>
+              <Input name="coverAlt" defaultValue={article?.coverAlt} maxLength={200} />
+              <FieldDescription>
+                Für Screenreader und wenn das Bild nicht lädt.
+              </FieldDescription>
             </Field>
-            <Field name="seoDescription" className={styles.field}>
-              <FieldLabel>SEO-Beschreibung</FieldLabel>
-              <Textarea name="seoDescription" rows={3} maxLength={300} defaultValue={article?.seoDescription} />
-            </Field>
-          </details>
+          </section>
+
+          <section className={styles.section}>
+            <h2 className={styles.sectionTitle}>Autor</h2>
+
+            {/* Kein Eingabefeld: Der Autor kommt aus der Anmeldung. Angezeigt
+                wird er trotzdem, damit man vor dem Speichern sieht, unter
+                welchem Namen der Beitrag erscheint. */}
+            <div className={styles.field}>
+              <p className={styles.readonly}>{article?.authorName ?? authorName}</p>
+              {/* Bewusst kein <FieldDescription>: Das ist ein Base-UI-Bauteil
+                  und verlangt ein <Field> darum herum. Hier gibt es kein
+                  Eingabefeld, also auch kein Field — sonst wirft es beim
+                  Rendern. */}
+              <p className={styles.hint}>
+                {article
+                  ? "Bleibt beim ursprünglichen Autor, auch wenn jemand anderes bearbeitet."
+                  : "Wird automatisch von deinem Konto übernommen."}
+              </p>
+            </div>
+          </section>
 
           <Button type="submit" variant="primary" mode="filled" size="lg" disabled={pending}>
             <Icon icon={pending ? LoadingIcon : CheckIcon} spin={pending} />

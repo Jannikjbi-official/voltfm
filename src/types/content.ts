@@ -26,6 +26,15 @@ export interface Article {
   excerpt: string;
   /** Rich text stored as HTML produced by the admin editor. Sanitised on write. */
   content: string;
+  /**
+   * Was im Editor stand, bevor daraus HTML wurde.
+   *
+   * Gerendert wird immer `content`; dieses Feld existiert nur, damit beim
+   * Bearbeiten wieder der getippte Markdown-Text erscheint und nicht das
+   * erzeugte HTML. Bei Beitraegen aus der HTML-Zeit fehlt es — dann wird
+   * `content` gezeigt, und der Konverter reicht HTML unveraendert durch.
+   */
+  contentSource?: string;
   coverImage?: string;
   coverAlt?: string;
   authorId?: string;
@@ -107,6 +116,8 @@ export interface VoltEvent {
   slug: string;
   description: string;
   content?: string;
+  /** Siehe `Article.contentSource`. */
+  contentSource?: string;
   startsAt: Date;
   endsAt: Date | null;
   location: string;

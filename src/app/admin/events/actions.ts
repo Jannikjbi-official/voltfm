@@ -3,54 +3,12 @@
 import { revalidatePath } from "next/cache";
 import { ObjectId } from "mongodb";
 import { z } from "zod";
-import sanitizeHtml from "sanitize-html";
+import { renderRichText } from "@/lib/sanitize";
 
 import { events } from "@/db/collections";
 import { assertCan, AuthorizationError } from "@/lib/session";
 import { slugify, parseStationTime } from "@/lib/format";
 import type { EntityFormState } from "@/components/admin/entity-types";
-
-/** Same allow-list idea as the article editor: the render path must be able to
- *  trust what is stored, so sanitising happens on write. */
-const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
-  allowedTags: [
-    "p", "br", "strong", "em", "u", "s", "mark", "blockquote",
-    "h2", "h3", "h4",
-    "ul", "ol", "li",
-    "a", "img", "figure", "figcaption",
-    "table", "thead", "tbody", "tr", "th", "td",
-    "aside", "div", "hr",
-  ],
-  allowedAttributes: {
-    a: ["href", "title", "target", "rel"],
-    img: ["src", "alt", "title", "loading"],
-    figure: ["class"],
-    aside: ["class"],
-    div: ["class"],
-    table: ["class"],
-    p: ["class"],
-  },
-  allowedClasses: {
-    figure: ["vfm-figure", "vfm-figure--wide", "vfm-figure--left", "vfm-figure--right"],
-    aside: ["vfm-callout", "vfm-callout--warning", "vfm-callout--success"],
-    div: ["vfm-columns", "vfm-clear"],
-    table: ["vfm-table"],
-    p: ["vfm-lead"],
-  },
-  allowedSchemes: ["https", "mailto"],
-  allowedSchemesByTag: { img: ["https"] },
-  transformTags: {
-    a: (tagName, attribs) => ({
-      tagName,
-      attribs: {
-        ...attribs,
-        ...(attribs.href?.startsWith("http")
-          ? { target: "_blank", rel: "noreferrer noopener" }
-          : {}),
-      },
-    }),
-  },
-};
 
 const schema = z.object({
   title: z.string().trim().min(3, "Titel ist zu kurz.").max(140),
@@ -117,7 +75,8 @@ export async function saveEvent(
     title: data.title,
     slug,
     description: data.description,
-    content: data.content ? sanitizeHtml(data.content, SANITIZE_OPTIONS) : undefined,
+    content: data.content ? renderRichText(data.content) : undefined,
+    contentSource: data.content || undefined,
     startsAt,
     endsAt,
     location: data.location,

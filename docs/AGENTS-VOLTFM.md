@@ -49,22 +49,36 @@ Versteckte UI ist nie ein Schutz. Wenn die Oberfläche etwas verhindert
 (z. B. sich selbst degradieren oder sperren), muss der Server es ebenfalls
 verhindern — siehe `src/app/admin/users/actions.ts`.
 
-### 2.2 Gespeichertes HTML wird beim Schreiben bereinigt, nicht beim Rendern
+### 2.2 Geschrieben wird Markdown, gespeichert wird bereinigtes HTML
 
-Artikel- und Event-Inhalte werden mit `dangerouslySetInnerHTML` ausgegeben. Die
-Sicherheitsgrenze ist deshalb `sanitizeHtml` in der jeweiligen Action
-(`admin/news/actions.ts`, `admin/events/actions.ts`).
+Im Editor steht Markdown. Beim Speichern läuft der Text durch
+`renderRichText` in `src/lib/sanitize.ts`: erst `markdownToHtml`
+(`src/lib/markdown.ts`), dann `sanitizeHtml` gegen eine feste Liste. Die
+Reihenfolge ist keine Geschmacksfrage — der Konverter soll nicht für
+Sicherheit geradestehen müssen.
 
-Wenn du dem Editor ein neues Tag, Attribut oder eine neue CSS-Klasse gibst,
-musst du **alle drei** Stellen anfassen:
+Artikel- und Event-Inhalte werden mit `dangerouslySetInnerHTML` ausgegeben.
+Die Sicherheitsgrenze ist deshalb `RICH_TEXT_SANITIZE_OPTIONS` — **eine**
+Liste für beide, bewusst nicht je Action eine eigene.
 
-1. `src/components/admin/editor-actions.ts` — was der Editor erzeugen kann
-2. `SANITIZE_OPTIONS` in der Action — `allowedTags`, `allowedAttributes`,
+Gespeichert werden zwei Felder: `content` ist das bereinigte HTML und wird
+gerendert, `contentSource` der getippte Text und erscheint beim Bearbeiten
+wieder. Beiträgen aus der HTML-Zeit fehlt `contentSource`; der Konverter
+reicht Blöcke, die mit `<` beginnen, unverändert durch, deshalb lassen sie
+sich weiter öffnen und speichern.
+
+Wenn du ein neues Tag, Attribut oder eine neue CSS-Klasse zulässt, gehören
+zwei Stellen zusammen:
+
+1. `RICH_TEXT_SANITIZE_OPTIONS` — `allowedTags`, `allowedAttributes`,
    `allowedClasses`
-3. `src/styles/editor-content.css` — wie es aussieht (global, weil CSS Modules
+2. `src/styles/editor-content.css` — wie es aussieht (global, weil CSS Modules
    die Klassennamen sonst hashen würden)
 
-Fehlt Schritt 2, verschwindet die Formatierung beim Speichern kommentarlos.
+Fehlt Schritt 1, verschwindet die Formatierung beim Speichern kommentarlos.
+
+Die Vorschau im Editor läuft über die Server Action `previewRichText` und
+damit durch denselben Weg — sie zeigt das Ergebnis, nicht etwas Ähnliches.
 
 ### 2.3 Externe Ressourcen erst nach Einwilligung
 
@@ -105,7 +119,8 @@ Nutzer darum bittet, weise auf § 6 Abs. 9 hin und biete den Schalter an.
 | --- | --- |
 | CRUD-Maske (Liste + Formular + Löschen) | `src/components/admin/entity-manager.tsx` |
 | Feldbeschreibung dafür | `src/components/admin/entity-types.ts` |
-| HTML-Editor mit Werkzeugleiste | `src/components/admin/rich-text-editor.tsx` |
+| Textfeld mit Markdown, Bild-Upload, Vorschau | `src/components/admin/rich-text-editor.tsx` |
+| Markdown → HTML → bereinigt | `src/lib/sanitize.ts`, `src/lib/markdown.ts` |
 | Bild als `<figure>` einfügen | `src/components/admin/image-dialog.tsx` |
 | Einzelnes Bildfeld (Upload) | `src/components/admin/image-upload.tsx` |
 | Typisierte Collection-Zugriffe | `src/db/collections.ts` |

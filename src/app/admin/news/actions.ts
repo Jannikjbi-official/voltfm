@@ -4,11 +4,11 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { ObjectId } from "mongodb";
 import { z } from "zod";
-import sanitizeHtml from "sanitize-html";
 
 import { articles } from "@/db/collections";
 import { assertCan, AuthorizationError } from "@/lib/session";
 import { slugify } from "@/lib/format";
+import { renderRichText } from "@/lib/sanitize";
 import type { ArticleStatus } from "@/types/content";
 
 /**
@@ -30,72 +30,7 @@ const schema = z.object({
   coverAlt: z.string().trim().max(200).optional(),
   status: z.enum(["draft", "scheduled", "published", "archived"]),
   publishedAt: z.string().trim().optional(),
-  seoTitle: z.string().trim().max(160).optional(),
-  seoDescription: z.string().trim().max(300).optional(),
 });
-
-/**
- * What the editor is allowed to store.
- *
- * The article body is rendered with dangerouslySetInnerHTML, so this is the
- * security boundary for stored XSS: sanitising here means the render path can
- * trust what is in the database. Anything not on this list is stripped.
- */
-const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
-  allowedTags: [
-    "p", "br", "strong", "em", "u", "s", "mark", "small", "sup", "sub", "blockquote",
-    "h2", "h3", "h4",
-    "ul", "ol", "li",
-    "a", "img", "figure", "figcaption",
-    "table", "thead", "tbody", "tfoot", "tr", "th", "td", "caption",
-    "aside", "div",
-    "code", "pre", "hr",
-  ],
-  allowedAttributes: {
-    a: ["href", "title", "target", "rel"],
-    img: ["src", "alt", "title", "width", "height", "loading"],
-    th: ["scope", "colspan", "rowspan"],
-    td: ["colspan", "rowspan"],
-    // `class` is allowed only on these, and only with the names below.
-    figure: ["class"],
-    aside: ["class"],
-    div: ["class"],
-    table: ["class"],
-    p: ["class"],
-  },
-  /**
-   * The layout vocabulary the editor toolbar can emit, styled globally in
-   * styles/editor-content.css. Restricting it here means an editor cannot
-   * smuggle in arbitrary class names and hang unexpected styling off them.
-   */
-  allowedClasses: {
-    figure: ["vfm-figure", "vfm-figure--wide", "vfm-figure--left", "vfm-figure--right"],
-    aside: ["vfm-callout", "vfm-callout--warning", "vfm-callout--success"],
-    div: ["vfm-columns", "vfm-clear"],
-    table: ["vfm-table"],
-    p: ["vfm-lead"],
-  },
-  allowedSchemes: ["https", "mailto"],
-  // Images may only come from hosts we actually serve, which keeps the editor
-  // from embedding trackers or mixed content.
-  allowedSchemesByTag: { img: ["https"] },
-  transformTags: {
-    // Force external links to be safe regardless of what the editor produced.
-    a: (tagName, attribs) => ({
-      tagName,
-      attribs: {
-        ...attribs,
-        ...(attribs.href?.startsWith("http")
-          ? { target: "_blank", rel: "noreferrer noopener" }
-          : {}),
-      },
-    }),
-    img: (tagName, attribs) => ({
-      tagName,
-      attribs: { ...attribs, loading: "lazy" },
-    }),
-  },
-};
 
 export type ArticleFormState = {
   status: "idle" | "error";
@@ -119,8 +54,6 @@ function parse(formData: FormData) {
     coverAlt: formData.get("coverAlt") ?? "",
     status: formData.get("status"),
     publishedAt: formData.get("publishedAt") ?? "",
-    seoTitle: formData.get("seoTitle") ?? "",
-    seoDescription: formData.get("seoDescription") ?? "",
   });
 }
 
@@ -154,7 +87,7 @@ export async function saveArticle(
   const data = parsed.data;
   const id = String(formData.get("id") ?? "").trim();
   const slug = slugify(data.slug || data.title);
-  const content = sanitizeHtml(data.content, SANITIZE_OPTIONS);
+  const content = renderRichText(data.content);
   const now = new Date();
 
   /*
@@ -175,6 +108,7 @@ export async function saveArticle(
     slug,
     excerpt: data.excerpt,
     content,
+    contentSource: data.content,
     coverImage: data.coverImage || undefined,
     coverAlt: data.coverAlt || undefined,
     authorId,
@@ -188,8 +122,6 @@ export async function saveArticle(
     featured: formData.get("featured") === "on",
     publishedAt: resolvePublishedAt(data.status, data.publishedAt),
     readingTime: readingTimeOf(content),
-    seoTitle: data.seoTitle || undefined,
-    seoDescription: data.seoDescription || undefined,
     updatedAt: now,
   };
 

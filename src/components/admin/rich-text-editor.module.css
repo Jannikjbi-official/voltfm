@@ -9,56 +9,11 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--spacing-6);
-  padding: var(--spacing-8);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface-container-low);
+  gap: var(--spacing-8);
 }
 
-.group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-4);
-  padding-right: var(--spacing-6);
-  border-right: 1px solid var(--color-border);
-}
-
-.group:last-of-type {
-  border-right: 0;
-}
-
-.tool {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-4);
-  padding: var(--spacing-4) var(--spacing-8);
-  border: 1px solid transparent;
-  border-radius: var(--radius-xs);
-  background: transparent;
-  color: var(--color-text-secondary);
-  font: var(--type-caption);
-  font-weight: 600;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background 120ms ease, color 120ms ease;
-}
-
-.tool:hover {
-  background: var(--color-surface-container-high);
-  color: var(--color-text);
-}
-
-.tool:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 1px;
-}
-
-.spacer {
-  flex: 1;
-}
-
-/* Monospace so HTML structure is readable while editing. */
+/* Schreibmaschinenschrift: Markdown lebt davon, dass Einrueckungen und
+   Sternchen an derselben Stelle stehen, wo man sie getippt hat. */
 .area {
   font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
   font-size: 0.875rem;
@@ -130,8 +85,18 @@
 .dropHint {
   font: var(--type-caption);
   color: var(--color-text-muted);
-  align-self: center;
-  padding-inline: var(--spacing-4);
+}
+
+/* Die Kurzfassung der Syntax, direkt unter dem Feld — dort, wo man
+   hinschaut, wenn man gerade nicht weiterweiss. */
+.syntax {
+  font: var(--type-caption);
+  color: var(--color-text-muted);
+}
+
+.syntax code {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color: var(--color-text-secondary);
 }
 
 /* Sichtbare Rueckmeldung, solange eine Datei ueber dem Feld haengt. */

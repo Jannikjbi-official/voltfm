@@ -1,41 +1,33 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useTransition } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Icon, ImageIcon, LinkIcon, EditIcon } from "@/lib/icons";
-import {
-  EDITOR_ACTIONS,
-  EDITOR_SNIPPETS,
-  escapeAttribute,
-  buildFigure,
-  type EditorAction,
-} from "./editor-actions";
+import { Icon, ImageIcon, EditIcon, LoadingIcon } from "@/lib/icons";
 import { useUploadThing } from "@/lib/uploadthing";
+import { previewRichText } from "@/app/admin/preview-actions";
 import { ImageDialog } from "./image-dialog";
 import styles from "./rich-text-editor.module.css";
 
 /** Steht im eingefuegten Bild, bis jemand die Beschreibung tippt. */
 const ALT_PLACEHOLDER = "Bildbeschreibung ergänzen";
 
-const GROUP_LABELS: Record<EditorAction["group"], string> = {
-  text: "Text",
-  block: "Absatz",
-  layout: "Layout",
-};
-
 /**
- * HTML body editor with a formatting toolbar.
+ * Das Textfeld für Artikel und Veranstaltungen.
  *
- * The body is authored as HTML rather than in a WYSIWYG surface: the server
- * sanitises against a strict allow-list on save, so what is stored is always
- * exactly what the render path can handle. The toolbar exists so that authoring
- * that HTML does not mean typing tags by hand.
+ * Geschrieben wird Markdown, gespeichert wird HTML: Die Server Action lässt den
+ * Text durch `markdownToHtml` und danach durch `sanitizeHtml` laufen. Die
+ * Sicherheitsgrenze liegt also weiterhin beim Speichern (Leitfaden 2.2), aber
+ * beim Schreiben muss niemand mehr Tags tippen.
+ *
+ * Vorher stand hier eine Werkzeugleiste mit gut zwanzig Knöpfen über einem
+ * Feld voller spitzer Klammern. Zwei Knöpfe genügen: alles Übrige ist mit
+ * `##`, `**` und `-` schneller getippt als geklickt.
  */
 export function RichTextEditor({
   name,
   defaultValue,
-  rows = 22,
+  rows = 20,
   placeholder,
   required,
 }: {
@@ -51,80 +43,41 @@ export function RichTextEditor({
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [preview, setPreview] = useState(false);
   const [previewHtml, setPreviewHtml] = useState("");
+  const [rendering, startRendering] = useTransition();
 
-  /** Replaces the current selection and restores a sensible caret afterwards. */
-  const replaceSelection = useCallback(
-    (build: (selected: string) => { text: string; selectFrom?: number; selectTo?: number }) => {
+  /** Setzt Text an der Schreibmarke ein und lässt die Marke sinnvoll stehen. */
+  const insertAtCaret = useCallback(
+    (text: string, selectFrom?: number, selectTo?: number) => {
       const textarea = ref.current;
       if (!textarea) return;
 
       const start = textarea.selectionStart;
       const end = textarea.selectionEnd;
-      const selected = textarea.value.slice(start, end);
-      const { text, selectFrom, selectTo } = build(selected);
 
       textarea.value = textarea.value.slice(0, start) + text + textarea.value.slice(end);
       textarea.focus();
       textarea.selectionStart = start + (selectFrom ?? text.length);
       textarea.selectionEnd = start + (selectTo ?? selectFrom ?? text.length);
 
-      // A direct value assignment bypasses React's own input tracking; the form
-      // reads the DOM value on submit, but anything listening for input needs
-      // this event.
+      // Die direkte Zuweisung geht an Reacts Eingabeverfolgung vorbei. Das
+      // Formular liest beim Absenden den DOM-Wert, aber alles, was auf
+      // Eingaben lauscht, braucht dieses Ereignis.
       textarea.dispatchEvent(new Event("input", { bubbles: true }));
     },
     [],
   );
 
-  const applyAction = useCallback(
-    (action: EditorAction) => {
-      replaceSelection((selected) => {
-        if (action.perLine) {
-          const lines = (selected || action.placeholder || "").split("\n");
-          const wrapper = action.id === "ul" ? "ul" : "ol";
-          const body = lines
-            .map((line) => `  ${action.before}${line.trim()}${action.after}`)
-            .join("\n");
-          return { text: `\n<${wrapper}>\n${body}\n</${wrapper}>\n` };
-        }
-
-        const inner = selected || action.placeholder || "";
-        const text = `${action.before}${inner}${action.after}`;
-        // With nothing selected, leave the placeholder selected so typing
-        // replaces it straight away.
-        return selected
-          ? { text }
-          : { text, selectFrom: action.before.length, selectTo: action.before.length + inner.length };
-      });
-    },
-    [replaceSelection],
-  );
-
-  /**
-   * Bild direkt im Textfeld: ziehen oder einfuegen.
-   *
-   * Der Dialog bleibt fuer alles, was Bildunterschrift oder Ausrichtung
-   * braucht. Hier geht es um den haeufigen Fall — Bildschirmfoto in die
-   * Zwischenablage, ab ins Textfeld. Der Alt-Text bleibt leer und muss
-   * nachgetragen werden; das ist ehrlicher als ein erfundener.
-   */
   const { startUpload, isUploading } = useUploadThing("articleImage", {
     onClientUploadComplete: (res) => {
       const url = res?.[0]?.serverData?.url ?? res?.[0]?.ufsUrl;
       if (!url) return;
       setUploadError(null);
-      /* Der Alt-Text wird vorbelegt und gleich markiert: So steht nie ein
-         Bild ohne Beschreibung im Text, und der erste Tastendruck
-         ueberschreibt den Platzhalter. */
-      const figure = `
-${buildFigure({ url, alt: ALT_PLACEHOLDER })}
-`;
-      const altAt = figure.indexOf(ALT_PLACEHOLDER);
-      replaceSelection(() => ({
-        text: figure,
-        selectFrom: altAt,
-        selectTo: altAt + ALT_PLACEHOLDER.length,
-      }));
+      /* Der Alt-Text wird vorbelegt und gleich markiert: So steht nie ein Bild
+         ohne Beschreibung im Text, und der erste Tastendruck überschreibt den
+         Platzhalter. */
+      const snippet = `\n\n![${ALT_PLACEHOLDER}](${url})\n\n`;
+      const altAt = snippet.indexOf(ALT_PLACEHOLDER);
+      insertAtCaret(snippet, altAt, altAt + ALT_PLACEHOLDER.length);
     },
     onUploadError: () =>
       setUploadError("Das Bild konnte nicht hochgeladen werden. Ist UPLOADTHING_TOKEN gesetzt?"),
@@ -142,108 +95,54 @@ ${buildFigure({ url, alt: ALT_PLACEHOLDER })}
     [startUpload],
   );
 
-  const insertSnippet = useCallback(
-    (html: string) => replaceSelection(() => ({ text: `\n${html}\n` })),
-    [replaceSelection],
-  );
-
-  const insertLink = useCallback(() => {
-    const href = window.prompt("Wohin soll der Link führen?", "https://");
-    if (!href) return;
-    replaceSelection((selected) => ({
-      text: `<a href="${escapeAttribute(href)}">${selected || "Linktext"}</a>`,
-    }));
-  }, [replaceSelection]);
-
-  /** Ctrl/Cmd shortcuts for the inline actions that have one. */
-  function onKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (!(event.ctrlKey || event.metaKey) || event.altKey) return;
-    const action = EDITOR_ACTIONS.find((item) => item.shortcut === event.key.toLowerCase());
-    if (!action) return;
-    event.preventDefault();
-    applyAction(action);
-  }
-
-  const groups: EditorAction["group"][] = ["text", "block"];
-
   return (
     <div className={styles.editor}>
-      <div className={styles.toolbar} role="toolbar" aria-label="Formatierung">
-        {groups.map((group) => (
-          <div key={group} className={styles.group} aria-label={GROUP_LABELS[group]}>
-            {EDITOR_ACTIONS.filter((action) => action.group === group).map((action) => (
-              <button
-                key={action.id}
-                type="button"
-                className={styles.tool}
-                onClick={() => applyAction(action)}
-                title={
-                  action.shortcut
-                    ? `${action.label} (Strg+${action.shortcut.toUpperCase()})`
-                    : action.label
-                }
-              >
-                {action.label}
-              </button>
-            ))}
-          </div>
-        ))}
-
-        <div className={styles.group} aria-label="Einfügen">
-          <button type="button" className={styles.tool} onClick={insertLink} title="Link einfügen">
-            <Icon icon={LinkIcon} />
-            Link
-          </button>
-          <button
-            type="button"
-            className={styles.tool}
-            onClick={() => setImageOpen(true)}
-            title="Bild als Figure einfügen"
-          >
-            <Icon icon={ImageIcon} />
-            Bild
-          </button>
-        </div>
-
-        <div className={styles.group} aria-label="Bausteine">
-          {EDITOR_SNIPPETS.map((snippet) => (
-            <button
-              key={snippet.id}
-              type="button"
-              className={styles.tool}
-              onClick={() => insertSnippet(snippet.html)}
-              title={snippet.hint}
-            >
-              {snippet.label}
-            </button>
-          ))}
-        </div>
-
-        <span className={styles.dropHint}>
-          {isUploading
-            ? "Bild wird hochgeladen …"
-            : "oder Bild ins Textfeld ziehen bzw. einfügen"}
-        </span>
-
-        <div className={styles.spacer} />
+      <div className={styles.toolbar} role="toolbar" aria-label="Werkzeuge">
+        <Button
+          type="button"
+          variant="neutral"
+          mode="stroke"
+          size="sm"
+          onClick={() => setImageOpen(true)}
+        >
+          <Icon icon={isUploading ? LoadingIcon : ImageIcon} spin={isUploading} />
+          Bild einfügen
+        </Button>
 
         <Button
           type="button"
           variant="neutral"
-          mode={preview ? "filled" : "ghost"}
+          mode={preview ? "filled" : "stroke"}
           size="sm"
+          disabled={rendering}
           onClick={() => {
-            setPreviewHtml(ref.current?.value ?? "");
-            setPreview((open) => !open);
+            if (preview) {
+              setPreview(false);
+              return;
+            }
+            /* Gerendert wird auf dem Server, mit demselben Weg wie beim
+               Speichern — so zeigt die Vorschau wirklich das Ergebnis und
+               nicht etwas Ähnliches. */
+            const source = ref.current?.value ?? "";
+            startRendering(async () => {
+              setPreviewHtml(await previewRichText(source));
+              setPreview(true);
+            });
           }}
         >
-          <Icon icon={EditIcon} />
-          {preview ? "Weiter schreiben" : "Vorschau"}
+          <Icon icon={rendering ? LoadingIcon : EditIcon} spin={rendering} />
+          {rendering ? "Moment …" : preview ? "Weiter schreiben" : "Vorschau"}
         </Button>
+
+        <span className={styles.dropHint}>
+          {isUploading
+            ? "Bild wird hochgeladen …"
+            : "oder Bild in das Textfeld ziehen bzw. einfügen"}
+        </span>
       </div>
 
-      {/* The textarea stays mounted while previewing so its value — the thing
-          the form submits — is never lost. */}
+      {/* Das Feld bleibt während der Vorschau eingehängt — sein Wert ist das,
+          was abgeschickt wird, und darf nicht verlorengehen. */}
       <div hidden={preview}>
         <Textarea
           ref={ref}
@@ -252,13 +151,18 @@ ${buildFigure({ url, alt: ALT_PLACEHOLDER })}
           rows={rows}
           defaultValue={defaultValue}
           placeholder={placeholder}
-          onKeyDown={onKeyDown}
           className={styles.area}
           data-dragover={dragOver || undefined}
           onPaste={(event) => {
-            // Nur abfangen, wenn wirklich ein Bild dabei ist — sonst bliebe
-            // normales Textkopieren auf der Strecke.
-            if (uploadFirstImage(event.clipboardData?.files)) event.preventDefault();
+            // Manche Browser legen ein eingefügtes Bild nur unter `items` ab,
+            // nicht unter `files`. Nur abfangen, wenn wirklich eines dabei ist
+            // — sonst bliebe normales Textkopieren auf der Strecke.
+            const fromItems = Array.from(event.clipboardData?.items ?? [])
+              .filter((item) => item.type.startsWith("image/"))
+              .map((item) => item.getAsFile())
+              .filter((file): file is File => file !== null);
+            const files = event.clipboardData?.files;
+            if (uploadFirstImage(files?.length ? files : fromItems)) event.preventDefault();
           }}
           onDragOver={(event) => {
             if (!event.dataTransfer?.types.includes("Files")) return;
@@ -278,21 +182,25 @@ ${buildFigure({ url, alt: ALT_PLACEHOLDER })}
       {preview && (
         <div className={styles.preview}>
           <p className={styles.previewHint}>
-            Ungefähre Vorschau. Beim Speichern wird nicht erlaubtes HTML entfernt.
+            So sieht der Beitrag aus. Was hier fehlt, wird auch beim Speichern
+            entfernt.
           </p>
-          {/* Admin-authored content, shown only to its own author inside the
-              admin area, and sanitised again on the server before it is ever
-              rendered publicly. */}
+          {/* Kommt aus previewRichText() und ist dort schon bereinigt. */}
           <div className={styles.previewBody} dangerouslySetInnerHTML={{ __html: previewHtml }} />
         </div>
       )}
 
       {uploadError && <p className={styles.uploadError}>{uploadError}</p>}
 
+      <p className={styles.syntax}>
+        Markdown: <code>## Überschrift</code>, <code>**fett**</code>,{" "}
+        <code>[Link](https://…)</code>, <code>- Liste</code>, <code>&gt; Zitat</code>
+      </p>
+
       <ImageDialog
         open={imageOpen}
         onOpenChange={setImageOpen}
-        onInsert={(html) => replaceSelection(() => ({ text: html }))}
+        onInsert={(html) => insertAtCaret(`\n\n${html}\n\n`)}
       />
     </div>
   );
