@@ -85,14 +85,28 @@ function isTableDivider(line: string): boolean {
   return /^\s*\|?[\s:-]*-[\s:|-]*\|?\s*$/.test(line) && line.includes("-");
 }
 
-/** Eine Folge von Listenzeilen zu <ul>/<ol>. */
+/**
+ * Eine Folge von Listenzeilen zu <ul>/<ol>.
+ *
+ * Ein Punkt darf ueber mehrere Zeilen gehen: Was eingerueckt unter einem Punkt
+ * steht, gehoert dazu. Ohne das zerfaellt jede Liste, deren Punkte laenger als
+ * eine Zeile sind — und genau so tippt man sie.
+ */
 function listOf(lines: string[], ordered: boolean): string {
   const tag = ordered ? "ol" : "ul";
   const pattern = ordered ? /^\d+[.)]\s+/ : /^[-*+]\s+/;
-  const items = lines
-    .map((line) => `  <li>${inline(line.replace(pattern, ""))}</li>`)
-    .join("\n");
-  return `<${tag}>\n${items}\n</${tag}>`;
+
+  const items: string[] = [];
+  for (const line of lines) {
+    if (pattern.test(line)) {
+      items.push(line.replace(pattern, "").trim());
+    } else if (items.length > 0) {
+      items[items.length - 1] += ` ${line.trim()}`;
+    }
+  }
+
+  const body = items.map((item) => `  <li>${inline(item)}</li>`).join("\n");
+  return `<${tag}>\n${body}\n</${tag}>`;
 }
 
 export function markdownToHtml(source: string): string {
@@ -222,7 +236,12 @@ export function markdownToHtml(source: string): string {
     if (ordered || /^[-*+]\s+/.test(line)) {
       const body: string[] = [];
       const pattern = ordered ? /^\d+[.)]\s+/ : /^[-*+]\s+/;
-      while (index < lines.length && pattern.test(lines[index])) {
+      // Eine eingerueckte Zeile setzt den Punkt darueber fort.
+      while (
+        index < lines.length &&
+        lines[index].trim() &&
+        (pattern.test(lines[index]) || /^\s{2,}\S/.test(lines[index]))
+      ) {
         body.push(lines[index]);
         index += 1;
       }
