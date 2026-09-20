@@ -161,16 +161,6 @@
   font-size: 0.8125rem;
 }
 
-/* Die Beispielbilder zeigen auf eine Kennung, die es nicht gibt. Das ist
-   Absicht — der Kasten soll die Struktur zeigen, nicht ein Foto laden. */
-.result :global(img) {
-  max-width: 100%;
-  height: auto;
-  border-radius: var(--radius-sm);
-  background: var(--color-surface-container);
-  min-height: var(--spacing-40);
-}
-
 .footer {
   margin-top: var(--spacing-32);
   font: var(--type-small);

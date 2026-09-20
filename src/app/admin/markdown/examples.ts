@@ -67,22 +67,14 @@ export const MARKDOWN_GROUPS: MarkdownGroup[] = [
     ],
   },
   {
-    title: "Links und Bilder",
+    title: "Links",
+    intro:
+      "Bilder stehen hier bewusst nicht: Die setzt das Textfeld selbst ein, sobald du eines hineinziehst, einfügst oder über „Bild einfügen“ auswählst. Zu tippen ist danach nur noch die Beschreibung in den eckigen Klammern — und, wenn du magst, eine Bildunterschrift in Anführungszeichen dahinter.",
     examples: [
       {
         title: "Link",
         hint: "Externe Links öffnen automatisch in einem neuen Tab.",
         source: "Mehr dazu auf [laut.fm](https://laut.fm/jannikjbi).",
-      },
-      {
-        title: "Bild",
-        hint: "Am einfachsten: Bild ins Textfeld ziehen. In den eckigen Klammern steht die Bildbeschreibung — die ist Pflicht, sonst lässt sich der Beitrag nicht speichern.",
-        source: "![Das Studio bei Nacht](/api/bilder/beispiel)",
-      },
-      {
-        title: "Bild mit Unterschrift",
-        hint: "Der Text in Anführungszeichen erscheint sichtbar unter dem Bild.",
-        source: '![Das Studio bei Nacht](/api/bilder/beispiel "Unser Studio, kurz vor der Sendung")',
       },
     ],
   },
