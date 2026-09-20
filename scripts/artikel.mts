@@ -30,7 +30,9 @@ export interface SeedArticle {
 
 export const RELAUNCH_ARTICLE: SeedArticle = {
   slug: "voltfm-geht-weiter-neue-webseite",
-  title: "VoltFM geht weiter — mit neuer Webseite",
+  /* Der Titel nennt jetzt, worum es wirklich geht. Der Slug bleibt, damit
+     bereits geteilte Links weiter funktionieren. */
+  title: "VoltFM ist zurück — warum die Station jannikjbi heißt und was RadioAid ist",
   excerpt:
     "Der Sender bleibt, die Seite ist neu gebaut. Dazu die zwei Fragen, die am häufigsten kommen: Warum unsere Station jannikjbi heißt — und was es mit RadioAid auf sich hat, das am 6. November wieder läuft.",
   categorySlug: "in-eigener-sache",
@@ -157,17 +159,47 @@ Unten am Rand siehst du immer, was gerade läuft: Titel, Interpret und das Cover
 
 ## Was auf der Seite steht
 
-- **News** mit Kategorien, Schlagwörtern und einer Suche, die tatsächlich sucht.
-- **Moderatorenprofile** mit Werdegang, Genres, Lieblingssendungen, eigener Akzentfarbe und Links — statt Name und Bild.
-- **Events** mit Datum, Ort und Beschreibung, die nach dem Termin von selbst ins Archiv wandern.
-- **Eine Zeitleiste** auf „Über uns", die zeigt, wo VoltFM herkommt.
-- **RadioAid** mit eigenem Countdown, der nach der Sendung wieder verschwindet.
+### News
 
-Das Menü ist mitgewachsen. Damit es keine Bleiwüste wird, rutscht alles, was nicht in die erste Reihe passt, in ein Aufklappmenü unter **Mehr**.
+Jeder Beitrag hat eine Kategorie und Schlagwörter, über die sich zusammengehörige Themen finden lassen. Die Suche durchsucht die Beiträge tatsächlich im Volltext und sortiert nach Treffergüte — sie vergleicht nicht bloß Überschriften.
+
+Beiträge können außerdem **geplant** werden: Datum setzen, Status auf „Geplant", und der Text erscheint von selbst, wenn es so weit ist. Für Ankündigungen, die um Mitternacht online gehen sollen, muss niemand mehr wach bleiben.
+
+### Moderatorenprofile
+
+Vorher: Bild, Name, zwei Zeilen. Jetzt: Werdegang, Motto, Genres, Ort, dabei seit wann, Links zu den eigenen Kanälen und beliebig viele weitere Angaben.
+
+Dazu kommt etwas, das man sehen muss: Jedes Profil hat eine **eigene Akzentfarbe** und eine von vier **Gestaltungsvarianten**. Zwei Profile nebeneinander sehen deshalb nicht gleich aus — was bei Leuten, die im Radio ihre eigene Sendung haben, auch richtig so ist.
+
+### Events und Zeitleiste
+
+Events haben Datum, Ort und Beschreibung und wandern nach dem Termin von selbst ins Archiv. Niemand muss aufräumen, und es steht nie ein vergangener Termin als „demnächst" herum.
+
+Die Zeitleiste auf „Über uns" erzählt, wo VoltFM herkommt — und ist genauso pflegbar wie alles andere.
+
+### RadioAid
+
+Eigene Seite mit eigenem Aussehen und einem Countdown, der auf den 6. November läuft. Nach der Sendung verschwindet der Eintrag von selbst aus dem Menü, statt bis zum nächsten Jahr auf einen vergangenen Termin zu zeigen.
+
+### Das Menü
+
+Mit den Seiten ist auch das Menü gewachsen. Damit daraus keine Bleiwüste wird, rutscht alles, was nicht in die erste Reihe passt, in ein Aufklappmenü unter **Mehr**. Auf dem Handy klappt die Navigation als eigene Fläche auf, statt als Liste unter der Kopfzeile zu kleben.
 
 ## Hell, dunkel, und was dein Gerät gerade will
 
 Die Seite hat einen hellen und einen dunklen Modus. Von sich aus richtet sie sich danach, was dein Gerät eingestellt hat; über das Zahnrad oben kannst du es überschreiben. Die Wahl bleibt gespeichert — auf deinem Gerät, nicht bei uns.
+
+Dass beide Modi funktionieren, ist kein Zufall: Jede Farbe auf der Seite ist ein benannter Wert, kein fest eingetragener Farbcode. Hell und dunkel sind zwei Sätze dieser Werte. Deshalb gibt es keine Ecke, die im hellen Modus plötzlich weiß auf weiß ist.
+
+## Anmelden — auf drei Wegen
+
+Ein Konto ist für nichts nötig, was man zum Hören braucht. Wer eines hat, kann sich auf drei Arten anmelden:
+
+- **Mit Discord** — ein Klick, kein weiteres Passwort.
+- **Mit Benutzername und Passwort** — für alle, die kein Discord wollen.
+- **Mit Passkey** — Fingerabdruck, Gesicht oder Geräte-PIN, ganz ohne Passwort.
+
+Wer mehrere Wege nutzen will, kann sie im Konto miteinander verknüpfen. Und weil Passwörter das schwächste Glied sind: Anmeldeversuche sind begrenzt, damit niemand sie einfach durchprobieren kann.
 
 ## Was wir bewusst nicht tun
 
@@ -185,15 +217,39 @@ Drei Dinge, die auf vielen Seiten selbstverständlich sind und bei uns nicht:
 
 ## Barrierefreiheit ist kein Extra
 
-Jedes Bild braucht eine Beschreibung — nicht als Empfehlung, sondern als Bedingung: Ein Beitrag mit unbeschriebenem Bild lässt sich bei uns gar nicht speichern. Dazu kommt, was man nicht bemerkt, solange man es nicht braucht: saubere Überschriften-Ebenen, sichtbare Fokusrahmen beim Blättern mit der Tastatur, ausreichende Kontraste in beiden Farbmodi.
+Jedes Bild braucht eine Beschreibung — nicht als Empfehlung, sondern als Bedingung: Ein Beitrag mit unbeschriebenem Bild lässt sich bei uns gar nicht speichern. Das ist unbequem, und genau deshalb funktioniert es.
+
+Dazu kommt, was man nicht bemerkt, solange man es nicht braucht:
+
+- **Saubere Überschriften-Ebenen**, damit Screenreader die Seite überspringen können, statt sie vorzulesen.
+- **Sichtbare Fokusrahmen** — wer mit der Tastatur blättert, sieht immer, wo er gerade ist.
+- **Ausreichende Kontraste** in beiden Farbmodi, nicht nur im dunklen.
+- **Beschriftete Knöpfe**, auch wenn nur ein Symbol zu sehen ist.
+- **Respekt vor „weniger Bewegung"**: Wer das im Betriebssystem eingestellt hat, bekommt keine Animationen.
 
 ## Hinter den Kulissen
 
 Für uns selbst ist der größte Unterschied das Redaktionssystem. Früher hieß „wir schreiben mal was" oft auch: Jemand muss Code anfassen, testen und hochladen. Heute ist es ein Textfeld, ein Knopf, fertig.
 
-Geschrieben wird in Markdown — Überschriften mit Rauten, Fettes zwischen Sternchen, Listen mit Bindestrichen. Bilder zieht man ins Textfeld, den Rest erledigt die Seite. Wer Rechte hat, kann News, Events, Moderatorenprofile, Kategorien und die Zeitleiste selbst pflegen; wer welche Rechte hat, steht ebenfalls im Adminbereich und gilt auf dem Server, nicht nur in der Oberfläche.
+### Schreiben
 
-Technisch steht die Seite auf Next.js 16 und React 19, die Inhalte liegen in einer MongoDB, gehostet wird bei Vercel. Änderungen an der Datenbank laufen bei jeder Veröffentlichung automatisch mit, damit niemand von Hand nachziehen muss — und es vergisst.
+Geschrieben wird in Markdown — Überschriften mit Rauten, Fettes zwischen Sternchen, Listen mit Bindestrichen. Ein Bild zieht man einfach ins Textfeld oder fügt es aus der Zwischenablage ein; hochgeladen und eingesetzt wird es von selbst. Eine Vorschau zeigt vorher, wie der Beitrag aussehen wird — und zwar gerendert wie beim Speichern, nicht bloß ungefähr.
+
+Wer nicht weiß, wie eine Tabelle oder ein Hinweiskasten geschrieben wird, findet im Adminbereich einen Spickzettel mit allen Möglichkeiten und einem Kopierknopf daneben.
+
+### Wer was darf
+
+Es gibt vier Rollen: **Hörer**, **Redaktion**, **Admin** und **Inhaber**. Die Redaktion schreibt Beiträge, kümmert sich aber nicht um Konten; Admins verwalten alles außer den Grundfesten. Entscheidend ist dabei: Die Rechte gelten auf dem Server. Einen Knopf auszublenden ist kein Schutz — jede Aktion prüft selbst nach, ob sie ausgeführt werden darf.
+
+### Wenn doch etwas schiefgeht
+
+Eine Seite, die es nicht gibt, zeigt eine richtige 404-Seite mit Wegen zurück — kein leeres Fenster. Und wenn wirklich einmal etwas abstürzt, erscheint eine Fehlerseite im Aussehen der Seite, mit einem Knopf zum erneuten Versuch und einer Kennung, die uns hilft, den Fall zuzuordnen. Was genau schiefging, steht bewusst nicht dort: Solche Meldungen enthalten oft Interna.
+
+### Veröffentlichen
+
+Technisch steht die Seite auf Next.js 16 und React 19, die Inhalte liegen in einer MongoDB, gehostet wird bei Vercel. Bei jeder Veröffentlichung laufen die nötigen Änderungen an der Datenbank automatisch mit — jede genau einmal. Das klingt nach Kleinkram, ist aber der Unterschied zwischen „läuft" und „läuft, bis jemand einen Schritt vergessen hat".
+
+Seiten werden auf dem Server erzeugt und zwischengespeichert; nach jeder Änderung im Adminbereich wird gezielt nur das erneuert, was diese Änderung betrifft. Deshalb ist ein neuer Beitrag sofort da, ohne dass die ganze Seite neu gebaut werden muss.
 
 ## Was noch fehlt
 
