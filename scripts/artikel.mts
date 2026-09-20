@@ -8,6 +8,9 @@
  * Absaetze stehen bewusst in einer einzigen langen Zeile: Ein Zeilenumbruch im
  * Quelltext ist im Textfeld ein echter Umbruch, und mitten im Satz will den
  * niemand.
+ *
+ * Die Angaben zur vorigen Webseite stammen aus deren Quelltext (Seitenbaum,
+ * package.json, Design-Regeln), nicht aus der Erinnerung.
  */
 
 const DISCORD_URL = process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/6JzSsUTWuh";
@@ -29,14 +32,14 @@ export const RELAUNCH_ARTICLE: SeedArticle = {
   slug: "voltfm-geht-weiter-neue-webseite",
   title: "VoltFM geht weiter — mit neuer Webseite",
   excerpt:
-    "Der Sender bleibt, die Seite ist neu gebaut. Dazu die Fragen, die am häufigsten kommen: Warum die Station jannikjbi heißt, warum der Stream bei laut.fm läuft und warum gerade kein Sendeplan steht.",
+    "Der Sender bleibt, die Seite ist neu gebaut. Dazu die zwei Fragen, die am häufigsten kommen: Warum unsere Station jannikjbi heißt — und was es mit RadioAid auf sich hat, das am 6. November wieder läuft.",
   categorySlug: "in-eigener-sache",
   tags: ["Relaunch", "In eigener Sache", "laut.fm", "RadioAid"],
   authorName: "jannikjbi",
   featured: true,
   source: `<p class="vfm-lead">Kurz und deutlich vorweg: Es geht weiter mit VoltFM. Es war eine Zeit lang still, und wer zwischendurch vorbeigeschaut hat, konnte den Eindruck bekommen, hier passiert nichts mehr. Der Eindruck war falsch — wir haben in der Zwischenzeit die komplette Webseite neu gebaut. Das ist sie.</p>
 
-Weil in der stillen Zeit einige Fragen liegen geblieben sind, beantworten wir sie hier alle auf einmal: warum die Station anders heißt als der Sender, warum der Stream bei laut.fm läuft und nicht hier, warum gerade kein Sendeplan steht und was als Nächstes kommt.
+Was die neue Seite kann und was sich dahinter geändert hat, steht ausführlich in einem [eigenen Beitrag](/news/was-die-neue-seite-kann). Hier geht es um das, was in der stillen Zeit an Fragen liegen geblieben ist — und das sind vor allem zwei: Warum heißt die Station eigentlich jannikjbi? Und was ist dieses RadioAid, von dem hier überall die Rede ist?
 
 ## Wo wir herkommen
 
@@ -44,52 +47,65 @@ Angefangen hat das im **Januar 2021** mit einer laut.fm-Station, die damals noch
 
 Danach kam die Namenssuche. Aus jannikjbiFM wurde ein anderer Name, und noch einer, und noch einer. Ausprobiert, verworfen, neu versucht — weil schlicht nicht klar war, was bei Hörern ankommt. Geblieben ist am Ende **VoltFM**.
 
-Seit **2022** übertragen wir außerdem jedes Jahr RadioAid, die 24-stündige Charity-Sendung der laut.fm-Community: erst für die Tafeln Deutschland, dann für die Deutsche Depressionshilfe, das Ambulante Kinderhospiz München und die Hamburger Kinderwünsche.
-
-## Warum die Seite komplett neu ist
-
-Die alte Seite lief auf einem System, das wir nicht selbst gebaut hatten. Das ging eine Weile gut und hörte dann auf, gut zu gehen: Jede neue Funktion war irgendwo drangeklebt, Inhalte zu pflegen war eine Zumutung, und an dem, was uns wirklich gestört hat, ließ sich nichts ändern — es war ja nicht unser System. Auf dem Handy war die Seite ehrlich gesagt nie richtig gut.
-
-Also haben wir bei null angefangen. Nicht umgezogen, nicht umgebaut: neu gebaut, Zeile für Zeile. Herausgekommen sind rund **32.000 Zeilen in fast 300 Dateien** — Oberfläche, Redaktionssystem, Anmeldung, Radio-Anbindung, alles selbst.
-
-Was jetzt da ist:
-
-- **Ein Player, der beim Seitenwechsel nicht abbricht.** Du kannst durch die Seite klicken, ohne dass der Ton stoppt.
-- **Moderatorenprofile**, die mehr sind als ein Bild und zwei Zeilen.
-- **News und Events**, die wir selbst pflegen — ohne dass jemand im Code herumschrauben muss.
-- **Eine Seite, die auf dem Handy funktioniert.** Nicht „geht auch", sondern dafür gebaut.
-
-Was dahinter steckt, steht ausführlich in einem [eigenen Beitrag](/news/was-die-neue-seite-kann).
-
 ## Warum unsere Station jannikjbi heißt
 
-Die Frage kommt so oft, dass sie hier stehen soll. Wenn du unseren Stream öffnest, landest du bei laut.fm auf einer Station namens **jannikjbi** — und nicht auf einer, die VoltFM heißt.
+Die Frage kommt so oft, dass sie hier ausführlich beantwortet werden soll. Wenn du auf „hören" drückst, öffnet sich laut.fm — und dort steht nicht VoltFM, sondern **jannikjbi**.
+
+Der Grund ist schlicht Geschichte. Die Station gehört Jannik und wurde im Januar 2021 unter seinem Handle angelegt. Den Namen VoltFM gab es damals noch gar nicht; er ist erst Jahre später aus der Namenssuche hervorgegangen. Der Sender hat sich seitdem umbenannt, die Station nicht.
+
+### Warum wir nicht einfach umgezogen sind
+
+Naheliegende Frage: Dann legt doch eine neue Station namens „voltfm" an und gut. Dagegen spricht mehr, als man denkt.
+
+- **Die Historie wäre weg.** Eine laut.fm-Station sammelt über Jahre, was sie gespielt hat. Das ist nicht übertragbar.
+- **Die Einstellungen wären weg.** Playlisten, Regeln, Feinjustierung — alles, was seit 2021 gewachsen ist, müsste von vorn aufgebaut werden.
+- **Die Hörerinnen und Hörer wären weg.** Wer die Station gespeichert hat, in einer Radio-App oder als Lesezeichen, landet danach im Leeren. Niemand zieht freiwillig um, nur weil ein Name sich ändert.
+- **Gewonnen hätten wir: einen schöneren Namen in der Adresszeile.** Mehr nicht.
+
+Also bleibt es beim alten Namen.
 
 ::: hinweis
-Der Grund ist schlicht Geschichte: Die Station gehört Jannik, dem Gründer von VoltFM, und läuft seit den allerersten Tagen unter seinem Handle. Damals gab es den Namen VoltFM noch gar nicht.
+**jannikjbi ist die Station, VoltFM ist das Programm.** Der Name bedeutet nicht, dass hier einer allein sendet — er ist die Kennung, unter der die Station 2021 angelegt wurde, und sonst nichts.
 :::
 
-Wir hätten eine neue Station anlegen können. Dagegen sprach einiges: Eine bestehende laut.fm-Station bringt ihre Historie mit, ihre Einstellungen, ihre Hörerinnen und Hörer. Bei einem Neuanfang wäre all das weg gewesen — für einen rein kosmetischen Gewinn. Also bleibt es beim alten Namen. Das Programm, das darüber läuft, ist VoltFM, und das ist der Teil, auf den es ankommt.
+Wenn wir irgendwann über einen eigenen Radioserver senden, stellt sich die Frage neu. Bis dahin: Nicht wundern, wenn beim Klicken auf „hören" ein anderer Name auftaucht. Es ist der richtige Stream.
 
 ## Warum der Stream bei laut.fm läuft und nicht hier
 
-Wenn du auf „hören" klickst, öffnet sich laut.fm in einem neuen Fenster. Das ist kein Versehen und keine fehlende Funktion: Die Nutzungsbedingungen von laut.fm erlauben ausdrücklich das Verlinken, aber **nicht das Einbetten** des Streams auf fremden Seiten (§ 6 Abs. 9). Daran halten wir uns, auch wenn ein Player direkt auf der Seite bequemer wäre.
+Noch etwas, das auffällt: Die Wiedergabe passiert nicht auf dieser Seite, sondern in einem neuen Fenster bei laut.fm. Das ist kein Versehen und keine fehlende Funktion. Die Nutzungsbedingungen von laut.fm erlauben ausdrücklich das Verlinken, aber **nicht das Einbetten** des Streams auf fremden Seiten (§ 6 Abs. 9). Daran halten wir uns, auch wenn ein Player direkt auf der Seite bequemer wäre.
 
 Dazu gehört eine zweite ehrliche Auskunft: **Über laut.fm läuft Werbung.** Wir schalten sie nicht, wir verdienen nichts daran, und abschalten können wir sie nicht.
 
-## Warum gerade kein Sendeplan steht
+Aus demselben Grund steht gerade **kein Sendeplan**: Solange wir über laut.fm senden, können wir keine Songwünsche annehmen und keine verlässlichen Sendezeiten zusagen. Ein Sendeplan, auf den kein Verlass ist, ist schlimmer als gar keiner. Wir arbeiten an einem eigenen Radioserver — damit kommen feste Zeiten zurück, und Songwünsche, die tatsächlich ankommen.
 
-Der Sendeplan ist vorübergehend abgeschaltet — bewusst, nicht aus Versehen. Solange wir über laut.fm senden, können wir keine Songwünsche annehmen und keine verlässlichen Sendezeiten zusagen. Ein Sendeplan, auf den kein Verlass ist, ist schlimmer als gar keiner.
+## RadioAid: 24 Stunden für einen guten Zweck
 
-::: hinweis
-Wir arbeiten an einem eigenen Radioserver. Damit kommen feste Sendezeiten zurück — und Songwünsche, die tatsächlich ankommen. Sobald das steht, ist der Sendeplan wieder da.
-:::
+Am **6. November 2026** läuft wieder RadioAid. Wer davon noch nie gehört hat: Es lohnt sich, das zu wissen, denn es ist der Termin, auf den bei uns das ganze Jahr zuläuft.
 
-## Als Nächstes: RadioAid am 6. November
+**RadioAid bringt Webradios und Radiostationen für eine gemeinsame Charity-Aktion zusammen.** Über 24 Stunden entsteht ein einziges Programm, das alle teilnehmenden Sender gleichzeitig übertragen. Jeder einzelne Sender wäre für sich zu klein — zusammen entsteht Reichweite, und die geht an einen guten Zweck.
 
-Am **6. November 2026 ab 18 Uhr** läuft wieder RadioAid — 24 Stunden Programm, das nicht uns gehört, sondern einem guten Zweck. In diesem Jahr für **Seelenpflaster e. V.**
+Für uns heißt das: **An diesem Tag läuft bei VoltFM nicht unser Programm.** Wir schalten auf RadioAid um, 24 Stunden lang. Das ist der Sinn der Sache.
 
-Alles dazu, samt Countdown, steht auf [der RadioAid-Seite](/radioaid).
+### Der Ablauf 2026
+
+| Wann | Was |
+| --- | --- |
+| 6.11., ab 17:00 Uhr | Warm-up zu RadioAid 2026 |
+| 6.11., 18:00 Uhr | Start — ab hier läuft das gemeinsame Programm |
+| 6.11. bis 7.11. | 24 Stunden durchgehend |
+| 7.11., 18:00 Uhr | Ende |
+
+### Wofür 2026 gesendet wird
+
+In diesem Jahr geht es an **Seelenpflaster e. V.** Der Verein unterstützt Kinder, die sich in unheilbar oder akut erkrankten, schwer beeinträchtigten oder psychisch belastenden Lebenssituationen befinden.
+
+### Wie lange wir schon dabei sind
+
+Länger, als es VoltFM gibt. Jannik hat unter verschiedenen Namen und mit verschiedenen Radioprojekten an RadioAid teilgenommen; unter dem Namen **VoltFM** wird die Geschichte seit 2025 weitergeführt. Die Zwecke der vergangenen Jahre reichen von den Tafeln Deutschland über die Deutsche Depressionshilfe und das Ambulante Kinderhospiz München bis zu den Hamburger Kinderwünschen.
+
+Inzwischen ist es eine kleine Tradition — und der Tag im Jahr, an dem sich der ganze Aufwand am deutlichsten lohnt.
+
+[Alles zu RadioAid, samt Countdown](/radioaid)
 
 ## Mitmachen
 
@@ -110,25 +126,39 @@ export const WEBSEITE_ARTICLE: SeedArticle = {
   slug: "was-die-neue-seite-kann",
   title: "Was die neue Seite kann — und was bewusst fehlt",
   excerpt:
-    "Ein Rundgang durch die neue Webseite: der Player, der beim Klicken nicht abbricht, die Profile, die Suche — und warum es kein Tracking, keine fremden Bilder und vorerst keinen Sendeplan gibt.",
+    "Der ausführliche Rundgang: was sich gegenüber der alten Seite ändert, was von Grund auf neu geschrieben wurde, warum es kein Tracking und keine fremden Bilder mehr gibt — und was ehrlicherweise noch fehlt.",
   categorySlug: "hinter-den-kulissen",
   tags: ["Relaunch", "Hinter den Kulissen", "Technik"],
   authorName: "jannikjbi",
   featured: false,
-  source: `<p class="vfm-lead">Die neue Seite ist online. Weil „wir haben die Seite neu gebaut" wenig darüber sagt, was sich für dich ändert, hier der ausführliche Rundgang — und ein Blick darauf, warum ein paar Dinge bewusst anders gelöst sind, als man es gewohnt ist.</p>
+  source: `<p class="vfm-lead">Die neue Seite ist online. Weil „wir haben die Seite neu gebaut" wenig darüber sagt, was sich tatsächlich ändert, hier der ausführliche Rundgang: was neu ist, was anders gelöst ist als vorher, und was ehrlicherweise noch fehlt.</p>
+
+## Erst einmal: Es ist wirklich neu
+
+Die alte Seite war keine Bastelei — auch sie war eine selbst gebaute Anwendung, und zwar keine kleine: rund **33.000 Zeilen in gut 220 Dateien**. Sie hatte Sendungsseiten, Podcasts, Partnerbereiche, einen Changelog und ein Bewerbungssystem.
+
+Trotzdem ist von ihr **keine einzige Zeile** in die neue Seite übernommen worden. Nicht, weil die alte schlecht war, sondern weil im Fundament zu vieles anders sein sollte: eine andere Datenbank, ein anderes Gestaltungssystem, ein anderes Verständnis davon, wie Inhalte gepflegt werden. Wer das Fundament tauscht, baut das Haus neu.
+
+Die neue Seite steht heute bei rund **32.000 Zeilen in knapp 300 Dateien**.
+
+| | vorher | jetzt |
+| --- | --- | --- |
+| Datenbank | Postgres über Prisma | MongoDB |
+| Gestaltung | Tailwind mit fertigen Bausteinen | CSS-Module mit eigenen Design-Tokens |
+| Texte im Beitrag | Markdown-Bibliothek | eigener Konverter, beim Speichern bereinigt |
+| Bilder | direkt vom Speicheranbieter | über voltfm.xyz ausgeliefert |
+| Inhalte pflegen | teils im Code hinterlegt | vollständig im Adminbereich |
 
 ## Der Player bleibt an
 
-Das war die wichtigste Anforderung. Auf der alten Seite riss der Ton ab, sobald man irgendwo hinklickte — jeder Seitenwechsel bedeutete: neu starten, warten, wieder einsteigen. Jetzt liegt der Player über der ganzen Seite. Du kannst durch die News blättern, ein Profil ansehen, die Zeitleiste lesen, und es läuft weiter.
+Das war die wichtigste Anforderung. Früher riss der Ton ab, sobald man irgendwo hinklickte — jeder Seitenwechsel bedeutete: neu starten, warten, wieder einsteigen. Jetzt liegt der Player über der ganzen Seite. Du kannst durch die News blättern, ein Profil ansehen, die Zeitleiste lesen, und es läuft weiter.
 
 Unten am Rand siehst du immer, was gerade läuft: Titel, Interpret und das Cover, soweit wir eines finden. Auf dem Handy ist die Leiste schmaler und ohne Lautstärkeregler — mit dem Daumen trifft man die Tasten des Geräts ohnehin schneller.
 
-## Alles an einem Ort statt auf fünf Seiten
-
-Der Bereich, in dem du gerade liest, ist neu aufgebaut:
+## Was auf der Seite steht
 
 - **News** mit Kategorien, Schlagwörtern und einer Suche, die tatsächlich sucht.
-- **Moderatorenprofile** mit Werdegang, Genres, Lieblingssendungen und Links — statt Name und Bild.
+- **Moderatorenprofile** mit Werdegang, Genres, Lieblingssendungen, eigener Akzentfarbe und Links — statt Name und Bild.
 - **Events** mit Datum, Ort und Beschreibung, die nach dem Termin von selbst ins Archiv wandern.
 - **Eine Zeitleiste** auf „Über uns", die zeigt, wo VoltFM herkommt.
 - **RadioAid** mit eigenem Countdown, der nach der Sendung wieder verschwindet.
@@ -149,7 +179,9 @@ Drei Dinge, die auf vielen Seiten selbstverständlich sind und bei uns nicht:
 
 **Keine Verbindung zu Dritten, bevor du zustimmst.** Der Stream liegt bei laut.fm. Sobald du auf Play drückst, weiß laut.fm, dass jemand von deiner Adresse zuhört — daran führt kein Weg vorbei. Aber wir fragen vorher, statt die Verbindung im Hintergrund schon einmal aufzubauen. Die Titelanzeige holt unser eigener Server; dafür braucht es nichts.
 
-**Keine Bilder von fremden Servern.** Die Fotos in den Beiträgen liegen bei einem Speicheranbieter, ausgeliefert werden sie aber über voltfm.xyz. Dein Browser verbindet sich beim Betrachten eines Bildes also mit uns und mit niemandem sonst.
+**Keine Bilder von fremden Servern.** Die Fotos in den Beiträgen liegen bei einem Speicheranbieter, ausgeliefert werden sie aber über voltfm.xyz. Dein Browser verbindet sich beim Betrachten eines Bildes also mit uns und mit niemandem sonst. Das war vorher anders.
+
+**Und keine geschönten Zahlen.** Wenn irgendwo eine Zahl steht, ist es die echte — oder sie steht nicht da.
 
 ## Barrierefreiheit ist kein Extra
 
@@ -157,17 +189,15 @@ Jedes Bild braucht eine Beschreibung — nicht als Empfehlung, sondern als Bedin
 
 ## Hinter den Kulissen
 
-Für uns selbst ist der größte Unterschied das Redaktionssystem. Früher hieß „wir schreiben mal was" auch: Jemand muss Code anfassen, testen und hochladen. Heute ist es ein Textfeld, ein Knopf, fertig.
+Für uns selbst ist der größte Unterschied das Redaktionssystem. Früher hieß „wir schreiben mal was" oft auch: Jemand muss Code anfassen, testen und hochladen. Heute ist es ein Textfeld, ein Knopf, fertig.
 
-Geschrieben wird in Markdown — Überschriften mit Rauten, Fettes zwischen Sternchen, Listen mit Bindestrichen. Bilder zieht man ins Textfeld, den Rest erledigt die Seite.
+Geschrieben wird in Markdown — Überschriften mit Rauten, Fettes zwischen Sternchen, Listen mit Bindestrichen. Bilder zieht man ins Textfeld, den Rest erledigt die Seite. Wer Rechte hat, kann News, Events, Moderatorenprofile, Kategorien und die Zeitleiste selbst pflegen; wer welche Rechte hat, steht ebenfalls im Adminbereich und gilt auf dem Server, nicht nur in der Oberfläche.
 
 Technisch steht die Seite auf Next.js 16 und React 19, die Inhalte liegen in einer MongoDB, gehostet wird bei Vercel. Änderungen an der Datenbank laufen bei jeder Veröffentlichung automatisch mit, damit niemand von Hand nachziehen muss — und es vergisst.
 
-Gekauft oder zusammengeklickt ist davon nichts. Die vorige Seite lief auf einem fertigen System, bei dem wir nehmen mussten, was es gab. Diesmal ist alles selbst geschrieben: **rund 32.000 Zeilen in fast 300 Dateien.** Das ist kein Selbstzweck — es ist der Grund, warum wir den Player über die ganze Seite legen konnten, warum es kein Tracking gibt und warum eine Änderung heute Abend online ist statt irgendwann.
-
 ## Was noch fehlt
 
-Ehrlich bleiben gehört dazu:
+Ehrlich bleiben gehört dazu. Einiges, was es auf der alten Seite gab, gibt es hier noch nicht:
 
 | Fehlt noch | Warum | Wann |
 | --- | --- | --- |
@@ -175,6 +205,7 @@ Ehrlich bleiben gehört dazu:
 | Songwünsche | über laut.fm nicht möglich | mit eigenem Radioserver |
 | Player auf der Seite | laut.fm erlaubt nur Verlinken | wenn wir selbst senden |
 | Kontaktformular | unser Mailserver ist ausgefallen | sobald Mail wieder läuft |
+| Podcast- und Partnerbereich | kommt nach dem Wesentlichen | noch offen |
 
 ::: warnung
 Solange die Mail nicht läuft, erreichst du uns über Discord im Kanal **#ticket-erstellen**. Dort geht nichts verloren.
