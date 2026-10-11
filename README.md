@@ -3,7 +3,11 @@
 Die Webplattform von **VoltFM** — Webradio aus Hamburg. Livestream, Sendeplan,
 Moderatorenprofile, News-Redaktion, Events und ein Admin-CMS.
 
-Produktion: <https://voltfm.xyz>
+Produktion: <https://voltfm.xyz> (Branch `main`)
+Dev-Seite: <https://dev.voltfm.xyz> (Branch `dev`)
+
+Neue Änderungen gehen zuerst nach `dev` und sind dort zu sehen. Nach der
+Freigabe wird `dev` per Pull Request nach `main` gemerged.
 
 ---
 

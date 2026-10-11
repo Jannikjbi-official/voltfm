@@ -1,5 +1,12 @@
 import type { NextConfig } from "next";
 
+/**
+ * Only the production deployment (voltfm.xyz) may be indexed. The dev site
+ * (dev.voltfm.xyz) and every other preview build tell crawlers to stay away,
+ * otherwise search engines would list unreleased work next to the real site.
+ */
+const isIndexable = process.env.VERCEL_ENV === undefined || process.env.VERCEL_ENV === "production";
+
 const nextConfig: NextConfig = {
   images: {
     /**
@@ -26,6 +33,16 @@ const nextConfig: NextConfig = {
 
   // Type errors must fail the build; they are never silently ignored.
   typescript: { ignoreBuildErrors: false },
+
+  async headers() {
+    if (isIndexable) return [];
+    return [
+      {
+        source: "/(.*)",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
