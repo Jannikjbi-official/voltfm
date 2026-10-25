@@ -191,6 +191,22 @@ const HOSTS = [
   },
 ];
 
+/**
+ * Janniks Profil ohne Versprechen, die der Sender gerade nicht haelt: kein
+ * "steht regelmaessig am Mikrofon", keine "Sendungen", solange nur der
+ * Musikpool laeuft. Die Rolle passt sich an "Co-Founder" bei Mochiko an.
+ *
+ * `from` ist genau der Wert, den Migration 003 eingespielt hat — nur dann wird
+ * ersetzt (Regel 2).
+ */
+const JANNIK_PROFILE = {
+  bio: {
+    from: HOSTS[0].bio,
+    to: "Jannik hat 2021 bei laut.fm angefangen, mit der Station jannikjbi. Daraus wurde erst JannikjbiFM und dann, zusammen mit Mochiko, VoltFM. Die Station-ID ist geblieben, deshalb steht im Stream bis heute jannikjbi. 2026 kam der Versuch, mit AzuraCast über einen eigenen Server zu senden. Nach einem Monat war klar, dass sich die Kosten nicht lohnen. Seitdem läuft VoltFM wieder über laut.fm.",
+  },
+  role: { from: HOSTS[0].role, to: "Founder" },
+};
+
 /** Rechenschritt wie im Editor: ~200 Woerter pro Minute, mindestens eine. */
 function readingTime(html: string): number {
   const words = html.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
@@ -490,6 +506,22 @@ const MIGRATIONS: Migration[] = [
       );
 
       return `${created} von ${TIMELINE_2026.length} angelegt, ${moved.modifiedCount} umgestellt`;
+    },
+  },
+
+  {
+    name: "014-profil-jannikjbi-ohne-sendungen",
+    run: async (db, now) => {
+      const changed: string[] = [];
+      for (const [field, { from, to }] of Object.entries(JANNIK_PROFILE)) {
+        const result = await db
+          .collection("hosts")
+          .updateOne({ slug: "jannikjbi", [field]: from }, { $set: { [field]: to, updatedAt: now } });
+        if (result.modifiedCount) changed.push(field);
+      }
+      return changed.length
+        ? `jannikjbi: ${changed.join(", ")} ersetzt`
+        : "schon bearbeitet oder nicht vorhanden — nichts angefasst";
     },
   },
 ];

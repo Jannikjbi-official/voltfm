@@ -85,7 +85,7 @@ export default async function RadioPage() {
                 </div>
                 <div className={styles.infoRow}>
                   <dt>Genres</dt>
-                  <dd>{station?.genres.join(", ") || "Pop, Rock, Schlager"}</dd>
+                  <dd>{site.genres.join(", ")}</dd>
                 </div>
                 <div className={styles.infoRow}>
                   <dt>Standort</dt>

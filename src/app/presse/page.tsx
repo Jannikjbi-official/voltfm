@@ -52,16 +52,16 @@ export default async function PressePage() {
             <h2>Kurzprofil</h2>
             <p>
               VoltFM ist ein unabhängiges, nicht-kommerzielles Webradio aus
-              Hamburg. Gestartet im Januar 2021 als Ein-Personen-Projekt im
-              Jugendzimmer, heute ein kleines Team mit eigener Redaktion,
-              Moderation und Community.
+              Hamburg. Gestartet im Januar 2021 als laut.fm-Station jannikjbi.
+              Jannik und Mochiko sind von Anfang an dabei und machen den Sender
+              bis heute zu zweit.
             </p>
             <p>
               Ausgestrahlt wird über {radio.providerName}, das die Lizenzen mit
               den Verwertungsgesellschaften hält und über Werbung im Stream
-              finanziert. VoltFM selbst verdient daran nichts: Es gibt keine
-              Bezahlschranke und keine automatisierte Dauerschleife — das
-              Programm wird von Menschen zusammengestellt.
+              finanziert. VoltFM selbst verdient daran nichts, und es gibt keine
+              Bezahlschranke. Gespielt wird derzeit der Musikpool von{" "}
+              {radio.providerName}.
             </p>
             <p>
               Einmal im Jahr überträgt VoltFM{" "}

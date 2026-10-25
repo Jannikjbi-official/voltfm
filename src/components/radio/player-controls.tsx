@@ -180,8 +180,7 @@ export function StreamNotice() {
   if (!embedAllowed) {
     return (
       <p className={styles.notice}>
-        Rund um die Uhr auf Sendung — zusammengestellt von Menschen, die selbst
-        zuhören.
+        Läuft rund um die Uhr, im Moment mit dem {radio.providerName}-Musikpool.
       </p>
     );
   }

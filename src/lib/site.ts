@@ -15,7 +15,15 @@ export const site = {
   name: "VoltFM",
   tagline: "Dein Sound. Deine Community. Dein Radio.",
   description:
-    "VoltFM ist ein unabhängiges Webradio mit eigener Community: 24/7 Musik, feste Sendungen, Moderatorinnen und Moderatoren zum Anfassen, News und Events.",
+    "VoltFM ist ein kleines Webradio aus Hamburg. Seit 2021 rund um die Uhr Charts, Pop und Deutschrap über laut.fm, dazu News, Events und ein Discord.",
+  /**
+   * Was tatsaechlich laeuft. Steht bewusst hier und nicht aus der laut.fm-API:
+   * Deren Genreliste ist fest vorgegeben, und was dort hinterlegt ist, hat mit
+   * dem Programm schon einmal nicht uebereingestimmt (Schlager, Rock, Pop).
+   */
+  genres: ["Charts", "Pop", "Deutschrap"],
+  /** Seit wann es die Station gibt — damals noch unter dem Namen jannikjbi. */
+  foundedYear: 2021,
   locale: "de_DE",
   lang: "de",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",

@@ -38,9 +38,8 @@ export function RadioHero() {
             </h1>
 
             <p className={styles.lead}>
-              VoltFM sendet rund um die Uhr aus Hamburg — mit festen Sendungen,
-              echten Moderatorinnen und Moderatoren und einer Community, die das
-              Programm mitgestaltet.
+              Zwei Leute, ein Sender, seit 2021. Gerade läuft rund um die Uhr
+              der Musikpool von laut.fm, wir arbeiten an mehr.
             </p>
 
             <div className={styles.actions}>

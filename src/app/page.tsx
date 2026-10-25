@@ -52,6 +52,8 @@ export default async function HomePage() {
       <RadioHero />
 
       {/* --- Station facts: a thin editorial strip, not a card row --------- */}
+      {/* Nur, was stimmt. Die Zahl der laut.fm-Playlistplaetze stand hier
+          frueher als "Feste Sendungen" — das sind keine Sendungen. */}
       <section className={styles.facts} aria-label="VoltFM in Zahlen">
         <div className="shell">
           <dl className={styles.factsRow}>
@@ -60,16 +62,20 @@ export default async function HomePage() {
               <dd>24 / 7</dd>
             </div>
             <div className={styles.factsItem}>
-              <dt>Zuhause in</dt>
+              <dt>Seit</dt>
+              <dd>{site.foundedYear}</dd>
+            </div>
+            <div className={styles.factsItem}>
+              <dt>Am Mikrofon</dt>
+              <dd>{hosts.length}</dd>
+            </div>
+            <div className={styles.factsItem}>
+              <dt>Aus</dt>
               <dd>Hamburg</dd>
             </div>
             <div className={styles.factsItem}>
-              <dt>Feste Sendungen</dt>
-              <dd>{schedule.length > 0 ? schedule.length : "6"}</dd>
-            </div>
-            <div className={styles.factsItem}>
-              <dt>Genres</dt>
-              <dd>{station?.genres.slice(0, 3).join(", ") || "Pop, Dance, Deutschpop"}</dd>
+              <dt>Musik</dt>
+              <dd>{site.genres.join(", ")}</dd>
             </div>
           </dl>
         </div>
@@ -80,7 +86,7 @@ export default async function HomePage() {
         <SectionHeader
           eyebrow="Aktuelles"
           title="News aus dem Sender"
-          description="Programmänderungen, Blicke hinter die Kulissen und was in der Community passiert."
+          description="Was sich bei VoltFM tut, und warum."
           action={{ href: "/news", label: "Alle News" }}
         />
 
@@ -180,9 +186,9 @@ export default async function HomePage() {
       {/* --- Hosts: portrait grid ---------------------------------------- */}
       <section className="section shell">
         <SectionHeader
-          eyebrow="Die Stimmen"
-          title="Unsere Moderatorinnen und Moderatoren"
-          description="Vier Menschen, sechs Sendungen und ein gemeinsamer Anspruch: Radio, dem man anhört, dass jemand da ist."
+          eyebrow="Das Team"
+          title="Die zwei hinter VoltFM"
+          description="Jannik und Mochiko haben den Sender gegründet und machen ihn bis heute."
           action={{ href: "/moderatoren", label: "Alle Moderatoren" }}
         />
 
@@ -226,17 +232,16 @@ export default async function HomePage() {
                 Community
               </Badge>
               <h2 className={styles.communityTitle}>
-                Radio wird erst mit euch zu VoltFM.
+                Am schnellsten erreichst du uns im Discord.
               </h2>
               <p className={styles.communityText}>
-                Im Discord laufen Songwünsche, Feedback und die Planung der
-                nächsten Sendungen zusammen. Wer mitreden will, ist in zwei
-                Klicks dabei — ohne Anmeldung auf der Website.
+                Da kündigen wir alles zuerst an, und da lesen wir, was dir gefällt
+                oder fehlt. Zwei Klicks, kein Konto auf dieser Seite.
               </p>
               <ul className={styles.communityList} role="list">
-                <li>Songwünsche direkt an die Redaktion</li>
-                <li>Live-Chat während der Sendungen</li>
-                <li>Monatliche Community-Abende</li>
+                <li>Ankündigungen, bevor sie hier stehen</li>
+                <li>Feedback direkt an uns zwei</li>
+                <li>Ein Ticket statt einer E-Mail</li>
               </ul>
               <div className={styles.communityActions}>
                 <ButtonLink href={site.discordUrl} external variant="primary" mode="filled" size="md">
@@ -265,9 +270,9 @@ export default async function HomePage() {
               {station?.format || "VoltFM – Dein Klang. Deine Welt."}
             </p>
             <p className={styles.aboutText}>
-              Was 2021 als Experiment in einem Jugendzimmer in Hamburg begann,
-              ist heute ein Sender mit festem Programm, eigener Redaktion und
-              einer Community, die ihn trägt.
+              2021 eine laut.fm-Station, ein paar Namen später VoltFM. Kein
+              festes Programm, keine Redaktion, dafür zwei Leute, die
+              weitermachen.
             </p>
             <ButtonLink href="/ueber-uns" variant="neutral" mode="stroke" size="md">
               Die ganze Geschichte
