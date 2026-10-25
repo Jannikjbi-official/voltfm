@@ -47,7 +47,13 @@ export async function getPlaylistDays(): Promise<PlaylistDay[] | null> {
       signal: AbortSignal.timeout(8000),
       headers: { accept: "application/json" },
     });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      /* Eine Zeile im Log, damit sich ein Ausfall von einer Sperre
+         unterscheiden laesst — die Seite zeigt in beiden Faellen nur den
+         Hinweis. */
+      console.warn(`[lautstation] HTTP ${res.status}`);
+      return null;
+    }
 
     const raw: unknown = await res.json();
     const days = (raw as { days?: unknown })?.days;
@@ -67,7 +73,8 @@ export async function getPlaylistDays(): Promise<PlaylistDay[] | null> {
       }))
       .filter((day) => day.tracks.length > 0)
       .sort((a, b) => a.date.localeCompare(b.date));
-  } catch {
+  } catch (error) {
+    console.warn("[lautstation] Abruf fehlgeschlagen:", error instanceof Error ? error.message : error);
     return null;
   }
 }
