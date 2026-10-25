@@ -295,6 +295,69 @@ const TIMELINE_FIXES: { key: string; from: Record<string, unknown>; to: Record<s
   },
 ];
 
+/**
+ * Phase 4: Zwei Beitraege versprechen noch einen Player, der auf der Seite
+ * laeuft und beim Klicken nicht abbricht. Den gab es nie — "Jetzt hören"
+ * oeffnet seit dem 25.10.2026 den Webplayer von lautstation.de in einem
+ * eigenen Fenster, vorher laut.fm.
+ *
+ * Live steht nicht die Fassung aus artikel.mts, sondern die aus cab92bf (am
+ * 25.10.2026 gegen voltfm.xyz geprueft): 011 und 012 schreiben nur, wo noch
+ * nichts steht. Ersetzt wird deshalb Satz fuer Satz im `contentSource`. Ein
+ * Satz, den jemand im Admin umgeschrieben hat, wird nicht gefunden und bleibt,
+ * wie er ist. Kurzbeschreibung und SEO-Text nur bei exakt dem alten Wortlaut.
+ */
+const WEBPLAYER_FIXES: {
+  slug: string;
+  sentences: [from: string, to: string][];
+  excerpt?: [from: string, to: string];
+}[] = [
+  {
+    slug: "was-die-neue-seite-kann",
+    sentences: [
+      ["## Der Player bleibt an", "## Der Ton bleibt an"],
+      [
+        "Jetzt liegt der Player über der ganzen Seite. Du kannst durch die News blättern, ein Profil ansehen, die Zeitleiste lesen, und es läuft weiter.",
+        "Inzwischen öffnet „Jetzt hören“ den Webplayer in einem eigenen Fenster. Dort läuft die Musik weiter, egal, wo du hier gerade klickst.",
+      ],
+      [
+        /* Einen Lautstaerkeregler gibt es ohne eingebetteten Player gar nicht. */
+        " Auf dem Handy ist die Leiste schmaler und ohne Lautstärkeregler — mit dem Daumen trifft man die Tasten des Geräts ohnehin schneller.",
+        "",
+      ],
+      [
+        "Der Stream liegt bei laut.fm. Sobald du auf Play drückst, weiß laut.fm, dass jemand von deiner Adresse zuhört — daran führt kein Weg vorbei. Aber wir fragen vorher,",
+        "Der Stream liegt bei laut.fm, der Webplayer bei lautstation.de. Sobald du auf Play drückst, wissen beide, dass jemand von deiner Adresse zuhört — daran führt kein Weg vorbei. Aber wir sagen es dir vorher,",
+      ],
+      [
+        "warum wir den Player über die ganze Seite legen konnten,",
+        "warum auf jeder Seite unten steht, was gerade läuft,",
+      ],
+    ],
+    excerpt: [
+      "Ein Rundgang durch die neue Webseite: der Player, der beim Klicken nicht abbricht, die Profile, die Suche — und warum es kein Tracking, keine fremden Bilder und vorerst keinen Sendeplan gibt.",
+      "Ein Rundgang durch die neue Webseite: die Leiste, die immer zeigt, was läuft, die Profile, die Suche — und warum es kein Tracking, keine fremden Bilder und vorerst keinen Sendeplan gibt.",
+    ],
+  },
+  {
+    slug: "voltfm-geht-weiter-neue-webseite",
+    sentences: [
+      [
+        "**Ein Player, der beim Seitenwechsel nicht abbricht.** Du kannst durch die Seite klicken, ohne dass der Ton stoppt.",
+        "**Eine Leiste, die immer zeigt, was läuft.** Gehört wird in einem eigenen Fenster, du kannst also durch die Seite klicken, ohne dass der Ton stoppt.",
+      ],
+      [
+        "Wenn du unseren Stream öffnest, landest du bei laut.fm auf einer Station namens **jannikjbi** — und nicht auf einer, die VoltFM heißt.",
+        "Wenn du unseren Stream öffnest, heißt die Station dort **jannikjbi** — und nicht VoltFM.",
+      ],
+      [
+        "Wenn du auf „hören\" klickst, öffnet sich laut.fm in einem neuen Fenster.",
+        "Wenn du auf „Jetzt hören“ klickst, öffnet sich der Webplayer von lautstation.de in einem neuen Fenster.",
+      ],
+    ],
+  },
+];
+
 /** Rechenschritt wie im Editor: ~200 Woerter pro Minute, mindestens eine. */
 function readingTime(html: string): number {
   const words = html.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
@@ -726,6 +789,60 @@ const MIGRATIONS: Migration[] = [
           .collection("timeline")
           .updateOne({ key: fix.key, ...fix.from }, { $set: { ...fix.to, updatedAt: now } });
         if (result.modifiedCount) changed.push(`timeline.${fix.key}`);
+      }
+
+      return changed.length ? `angepasst: ${changed.join(", ")}` : "nichts mehr im Ausgangszustand — nichts angefasst";
+    },
+  },
+
+  {
+    name: "019-beitraege-webplayer-statt-player",
+    run: async (db, now) => {
+      const articles = db.collection("articles");
+      const changed: string[] = [];
+
+      for (const fix of WEBPLAYER_FIXES) {
+        const doc = await articles.findOne({ slug: fix.slug }, { projection: { contentSource: 1 } });
+        const before = typeof doc?.contentSource === "string" ? doc.contentSource : null;
+
+        if (before !== null) {
+          let source = before;
+          let hits = 0;
+          for (const [from, to] of fix.sentences) {
+            if (!source.includes(from)) continue;
+            source = source.replace(from, () => to);
+            hits++;
+          }
+
+          if (hits > 0) {
+            const content = renderRichText(source);
+            /* Gegen den gelesenen Stand: Hat jemand in der Zwischenzeit
+               gespeichert, greift das hier nicht. */
+            const result = await articles.updateOne(
+              { slug: fix.slug, contentSource: before },
+              {
+                $set: {
+                  content,
+                  contentSource: source,
+                  readingTime: readingTime(content),
+                  updatedAt: now,
+                },
+              },
+            );
+            if (result.modifiedCount) changed.push(`${fix.slug} (${hits}/${fix.sentences.length} Sätze)`);
+          }
+        }
+
+        if (fix.excerpt) {
+          const [from, to] = fix.excerpt;
+          for (const field of ["excerpt", "seoDescription"]) {
+            const result = await articles.updateOne(
+              { slug: fix.slug, [field]: from },
+              { $set: { [field]: to, updatedAt: now } },
+            );
+            if (result.modifiedCount) changed.push(`${fix.slug}.${field}`);
+          }
+        }
       }
 
       return changed.length ? `angepasst: ${changed.join(", ")}` : "nichts mehr im Ausgangszustand — nichts angefasst";
