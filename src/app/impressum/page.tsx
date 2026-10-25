@@ -85,8 +85,9 @@ export default function ImpressumPage() {
           <p>
             Das Programm von VoltFM wird über laut.fm ausgestrahlt. laut.fm hält
             die erforderlichen Lizenzen mit GEMA und GVL und trägt die
-            Streamingkosten. Die Wiedergabe findet deshalb auf laut.fm statt und
-            wird auf dieser Website nicht eingebettet, sondern verlinkt.
+            Streamingkosten. Eingebettet wird der Stream auf dieser Website nicht:
+            Der Play-Knopf öffnet den Webplayer von lautstation.de in einem neuen
+            Fenster.
           </p>
 
           <h2>Urheberrecht</h2>

@@ -109,7 +109,12 @@ Deshalb:
 - `radio.embedAllowed` in `src/lib/site.ts` ist **false** (gesteuert über
   `NEXT_PUBLIC_RADIO_EMBED`).
 - Solange der Wert false ist, wird **kein `<audio>`-Element gerendert**. Der
-  Play-Button ist ein `<a target="_blank">` auf `https://laut.fm/<station>`.
+  Play-Button ist ein `<a target="_blank">` auf den Webplayer von
+  lautstation.de (`radio.externalUrl`, `https://lautstation.de/?webplayer=<station>`)
+  — so entschieden vom Betreiber am 25.10.2026, vorher war es laut.fm selbst.
+  Dieser Webplayer wird **nie** auf voltfm.xyz eingebettet, auch nicht als
+  `<iframe>`: Er spielt den laut.fm-Stream, und das waere genau das Einbinden,
+  das § 6 Abs. 9 verbietet.
 - Der eingebaute Player ist nicht gelöscht, sondern abgeschaltet. Erst wenn
   VoltFM über einen Anbieter sendet, dessen Lizenz die Wiedergabe auf der
   eigenen Seite abdeckt, wird der Schalter auf `true` gesetzt.
@@ -256,3 +261,24 @@ Nützliche Skripte:
   `RICH_TEXT_SANITIZE_OPTIONS` — und ein Beispiel in
   `src/app/admin/markdown/examples.ts`. Die Seite rendert jedes Beispiel
   tatsächlich, also fällt dort sofort auf, wenn eine der drei Stellen fehlt.
+
+---
+
+## 10. Branches und Freigabe
+
+| Branch | Domain | Vercel-Umgebung |
+| --- | --- | --- |
+| `main` | <https://voltfm.xyz> | Production |
+| `dev` | <https://dev.voltfm.xyz> | Preview (Domain fest an `dev` gebunden) |
+
+- Neue Arbeit landet **zuerst auf `dev`**: Pull Requests gehen gegen `dev`,
+  nicht gegen `main`.
+- `main` bekommt Änderungen nur über einen Pull Request `dev` → `main`, und den
+  merged der Betreiber, wenn er die Dev-Seite freigegeben hat. Nie direkt nach
+  `main` pushen.
+- Die Dev-Seite hat eigene Umgebungsvariablen (in Vercel: Preview, Branch
+  `dev`): `NEXT_PUBLIC_SITE_URL` und `BETTER_AUTH_URL` zeigen auf
+  `https://dev.voltfm.xyz`, `MONGODB_DB` auf eine eigene Datenbank. Wer dort
+  Daten anlegt oder löscht, trifft nicht die echte Seite.
+- Alles außer Production schickt `X-Robots-Tag: noindex` und sperrt in
+  `robots.txt` alles (`next.config.ts`, `src/app/robots.ts`).

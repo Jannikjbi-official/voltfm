@@ -17,7 +17,8 @@ import styles from "./stream-consent.module.css";
  *
  * Zwei Faelle, gleiche Aufmachung:
  *
- *   "redirect" — der Regelfall. Die Wiedergabe findet bei laut.fm statt, der
+ *   "redirect" — der Regelfall. Die Wiedergabe findet im Webplayer von
+ *     lautstation.de statt (Stream von laut.fm), der
  *     Klick fuehrt also von VoltFM weg. Das sagen wir vorher, zusammen mit dem,
  *     was laut.fm dabei erfaehrt. Wer nicht jedes Mal gefragt werden will,
  *     haekelt es ab.
@@ -50,18 +51,18 @@ export function StreamConsentDialog({
             <Icon icon={isRedirect ? ExternalLinkIcon : RadioIcon} />
           </span>
           <AlertDialogTitle>
-            {isRedirect
-              ? `Weiter zu ${radio.providerName}`
-              : `Livestream von ${radio.providerName} laden?`}
+            {isRedirect ? "Weiter zum Webplayer" : `Livestream von ${radio.providerName} laden?`}
           </AlertDialogTitle>
         </div>
 
         <AlertDialogDescription>
           {isRedirect ? (
             <>
-              Unser Programm läuft bei {radio.providerName}. Mit einem Klick auf
-              &bdquo;Weiterhören&ldquo; verlässt du VoltFM und der Stream öffnet
-              sich dort in einem neuen Fenster.
+              Gehört wird im Webplayer von {radio.externalName}, einem privaten
+              Verzeichnis für laut.fm-Stationen. Mit einem Klick auf
+              &bdquo;Weiterhören&ldquo; verlässt du VoltFM, und der Player öffnet
+              sich dort in einem neuen Fenster. Der Stream selbst kommt von{" "}
+              {radio.providerName}.
             </>
           ) : (
             <>
@@ -76,10 +77,11 @@ export function StreamConsentDialog({
           {isRedirect ? (
             <>
               <li>
-                Ab dem Klick erfährt {radio.providerName} deine IP-Adresse und
-                Browserkennung — ohne die ist keine Verbindung möglich.
+                Ab dem Klick erfahren {radio.externalName} und {radio.providerName}{" "}
+                deine IP-Adresse und Browserkennung — ohne die ist keine Verbindung
+                möglich.
               </li>
-              <li>Von welcher Seite du kommst, erfährt {radio.providerName} nicht.</li>
+              <li>Von welcher Seite du kommst, erfahren sie nicht.</li>
               <li>Solange du hier bleibst, wird nichts dorthin übertragen.</li>
             </>
           ) : (
@@ -93,6 +95,12 @@ export function StreamConsentDialog({
 
         <p className={styles.links}>
           <Link href="/datenschutz">Unsere Datenschutzerklärung</Link>
+          {isRedirect && (
+            <a href={radio.externalPrivacyUrl} target="_blank" rel="noreferrer noopener">
+              Datenschutz bei {radio.externalName}
+              <Icon icon={ExternalLinkIcon} />
+            </a>
+          )}
           <a href={radio.providerPrivacyUrl} target="_blank" rel="noreferrer noopener">
             Datenschutz bei {radio.providerName}
             <Icon icon={ExternalLinkIcon} />

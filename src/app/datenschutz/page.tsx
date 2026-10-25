@@ -73,8 +73,9 @@ export default function DatenschutzPage() {
           <p>
             Das Programm von VoltFM wird von der laut.fm GmbH ausgestrahlt. Auf
             dieser Website ist der Stream <strong>nicht eingebettet</strong> — wir
-            verlinken auf laut.fm, und die Wiedergabe findet dort statt. Für den
-            Datenschutz sind dabei zwei Vorgänge zu unterscheiden:
+            verlinken auf den Webplayer von lautstation.de, und die Wiedergabe
+            findet dort statt. Für den Datenschutz sind dabei zwei Vorgänge zu
+            unterscheiden:
           </p>
 
           <h3>1. Titel- und Sendungsinformationen (Server-zu-Server)</h3>
@@ -90,16 +91,22 @@ export default function DatenschutzPage() {
 
           <h3>2. Der Klick auf &bdquo;hören&ldquo; (Weiterleitung)</h3>
           <p>
-            Klickst du auf den Play-Button, verlässt du unsere Website und
-            landest bei laut.fm. Erst dort baut dein Browser eine Verbindung auf
-            und überträgt dabei deine IP-Adresse und Browserkennung an laut.fm —
+            Klickst du auf den Play-Button, verlässt du unsere Website, und in
+            einem neuen Fenster öffnet sich der Webplayer von lautstation.de,
+            einem privaten Verzeichnis für laut.fm-Stationen. Dein Browser lädt
+            dann die Seite von lautstation.de und den Stream von laut.fm und
+            überträgt dabei an beide deine IP-Adresse und Browserkennung —
             technisch geht das nicht ohne. Das passiert ausschließlich, weil du
             den Link bewusst anklickst; ohne diesen Klick wird nichts übertragen.
-            Wir setzen den Link mit <code>rel=&quot;noreferrer&quot;</code>, laut.fm
-            erfährt also nicht, von welcher Seite du kommst. Ab dem Klick gilt
-            die{" "}
+            Wir öffnen den Link mit <code>noreferrer</code>, lautstation.de
+            erfährt also nicht, von welcher Seite du kommst. Ab dem Klick gelten
+            die Datenschutzerklärungen von{" "}
+            <a href="https://lautstation.de/?mode=datenschutz" target="_blank" rel="noreferrer noopener">
+              lautstation.de
+            </a>{" "}
+            und{" "}
             <a href="https://laut.fm/pages/privacy" target="_blank" rel="noreferrer noopener">
-              Datenschutzerklärung von laut.fm
+              laut.fm
             </a>
             , auf deren Inhalt wir keinen Einfluss haben.
           </p>
@@ -114,8 +121,8 @@ export default function DatenschutzPage() {
 
           <h2>Playlist der letzten Tage (lautstation.de)</h2>
           <p>
-            Unter <a href="/radio/playlist">/radio/playlist</a> zeigen wir alle
-            Titel der letzten Tage. Die Liste stammt von lautstation.de, einem
+            Auf der <a href="/radio">Radio-Seite</a> zeigen wir unter
+            &bdquo;Was gerade lief&ldquo; alle Titel der letzten Tage. Die Liste stammt von lautstation.de, einem
             privaten Verzeichnis für laut.fm-Stationen, das weder zu VoltFM noch
             zu laut.fm gehört. Angezeigt wird sie über ein Widget von
             lautstation.de, und das lädt <strong>erst, wenn du auf

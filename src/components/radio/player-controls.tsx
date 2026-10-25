@@ -11,6 +11,7 @@ import {
   VolumeLowIcon,
   VolumeMuteIcon,
   LoadingIcon,
+  ExternalLinkIcon,
 } from "@/lib/icons";
 import { radio } from "@/lib/site";
 import { useRadioPlayer } from "./player-provider";
@@ -21,20 +22,63 @@ import styles from "./player.module.css";
  *
  * While `radio.embedAllowed` is false this is a link to the provider rather
  * than a transport control — laut.fm's terms allow linking, not embedding.
+ * Das Ziel ist der Webplayer von lautstation.de (siehe `radio.externalUrl`).
+ * Damit vor dem Klick klar ist, dass ein neues Fenster aufgeht, steht dann
+ * "Jetzt hören" mit dem Extern-Pfeil daneben (`withLabel`, Hero und /radio)
+ * bzw. ein kleiner Pfeil am Knopf (Sticky-Leiste, ohne Platz fuer Text).
  */
-export function PlayButton({ size = "md" }: { size?: "md" | "lg" }) {
+export function PlayButton({
+  size = "md",
+  withLabel = false,
+}: {
+  size?: "md" | "lg";
+  /** Nur ohne eingebetteten Player: Text und Knopf als ein gemeinsamer Link. */
+  withLabel?: boolean;
+}) {
   const { status, isPlaying, toggle, retry, embedAllowed, externalUrl, openStream } =
     useRadioPlayer();
 
   if (!embedAllowed) {
-    const label = `Auf ${radio.providerName} hören (öffnet ein neues Fenster)`;
+    const label = `Im Webplayer von ${radio.externalName} hören (öffnet ein neues Fenster)`;
+    /* Bleibt ein echter Link: Mittelklick, Strg-Klick und "Adresse kopieren"
+       sollen weiter funktionieren. Nur der normale Klick wird abgefangen,
+       damit vorher der Hinweis erscheint. */
+    const onClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+      if (event.defaultPrevented) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      if (event.button !== 0) return;
+      event.preventDefault();
+      openStream();
+    };
+
+    if (withLabel) {
+      return (
+        <a
+          href={externalUrl}
+          target="_blank"
+          rel="noreferrer noopener"
+          data-player-size={size}
+          className={styles.externalPlayLabeled}
+          onClick={onClick}
+        >
+          <span className={styles.externalPlay} data-player-size={size} aria-hidden="true">
+            <Icon icon={PlayIcon} />
+          </span>
+          <span className={styles.externalPlayText}>
+            Jetzt hören
+            <Icon icon={ExternalLinkIcon} className={styles.externalPlayArrow} />
+            <span className="visually-hidden">
+              {" "}im Webplayer von {radio.externalName} (öffnet ein neues Fenster)
+            </span>
+          </span>
+        </a>
+      );
+    }
+
     return (
       <Tooltip>
         <TooltipTrigger
           render={
-            /* Bleibt ein echter Link: Mittelklick, Strg-Klick und "Adresse
-               kopieren" sollen weiter funktionieren. Nur der normale Klick wird
-               abgefangen, damit vorher der Hinweis erscheint. */
             <a
               href={externalUrl}
               target="_blank"
@@ -42,15 +86,13 @@ export function PlayButton({ size = "md" }: { size?: "md" | "lg" }) {
               aria-label={label}
               data-player-size={size}
               className={styles.externalPlay}
-              onClick={(event) => {
-                if (event.defaultPrevented) return;
-                if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-                if (event.button !== 0) return;
-                event.preventDefault();
-                openStream();
-              }}
+              onClick={onClick}
             >
               <Icon icon={PlayIcon} />
+              {/* Ohne Text: der kleine Pfeil sagt, dass ein neues Fenster aufgeht. */}
+              <span className={styles.externalBadge} aria-hidden="true">
+                <Icon icon={ExternalLinkIcon} />
+              </span>
             </a>
           }
         />

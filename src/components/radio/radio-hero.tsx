@@ -17,7 +17,7 @@ import styles from "./radio-hero.module.css";
  * page gets to be loud.
  */
 export function RadioHero() {
-  const { snapshot } = useRadioPlayer();
+  const { snapshot, embedAllowed } = useRadioPlayer();
   const track = snapshot?.nowPlaying;
   const current = snapshot?.currentShow;
   const next = snapshot?.nextShow;
@@ -43,11 +43,19 @@ export function RadioHero() {
             </p>
 
             <div className={styles.actions}>
-              <PlayButton size="lg" />
-              <div className={styles.actionText}>
-                <span className={styles.actionLabel}>Jetzt live hören</span>
-                <PlayerStatusLine />
-              </div>
+              {/* Ohne eingebetteten Player fuehrt der Knopf zu laut.fm und
+                  sagt das selbst; mit Player bleibt es bei "Jetzt live hören". */}
+              {embedAllowed ? (
+                <>
+                  <PlayButton size="lg" />
+                  <div className={styles.actionText}>
+                    <span className={styles.actionLabel}>Jetzt live hören</span>
+                    <PlayerStatusLine />
+                  </div>
+                </>
+              ) : (
+                <PlayButton size="lg" withLabel />
+              )}
             </div>
 
             <div className={styles.links}>

@@ -236,6 +236,16 @@ Jede Station kann mitmachen, die Sendung gibt es kostenlos. Alles dazu steht auf
 
 [Alles zu RadioAid bei VoltFM](/radioaid)`;
 
+/**
+ * Die Playlist steht inzwischen direkt auf /radio statt hinter einem Link.
+ * Der neue Satz stimmt fuer beide Staende, deshalb ist es egal, ob die
+ * Migration vor oder nach dem Code live geht.
+ */
+const PLAYLIST_SENTENCE = {
+  from: "Auf der [Radio-Seite](/radio) gibt es jetzt einen Link zur Playlist der letzten Tage: jeder Titel mit Uhrzeit, Tag für Tag.",
+  to: "Auf der [Radio-Seite](/radio) findest du jetzt die Playlist der letzten Tage: jeder Titel mit Uhrzeit, Tag für Tag.",
+};
+
 /** Rechenschritt wie im Editor: ~200 Woerter pro Minute, mindestens eine. */
 function readingTime(html: string): number {
   const words = html.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
@@ -617,6 +627,33 @@ const MIGRATIONS: Migration[] = [
         if (result.upsertedCount) created.push(`/news/${rest.slug}`);
       }
       return created.length ? `angelegt: ${created.join(", ")}` : "waren schon da";
+    },
+  },
+
+  {
+    name: "017-update-beitrag-playlist-auf-radio",
+    run: async (db, now) => {
+      /* Regel 2: nur, wo noch genau der Text von 016 steht. Wer den Beitrag im
+         Admin bearbeitet hat, hat einen anderen contentSource. */
+      const source = UPDATE_OKTOBER_2026_ARTICLE.source;
+      const before = source.replace(PLAYLIST_SENTENCE.to, PLAYLIST_SENTENCE.from);
+      if (before === source) throw new Error("Satz in UPDATE_OKTOBER_2026_ARTICLE nicht gefunden");
+
+      const content = renderRichText(source);
+      const result = await db.collection("articles").updateOne(
+        { slug: UPDATE_OKTOBER_2026_ARTICLE.slug, contentSource: before },
+        {
+          $set: {
+            content,
+            contentSource: source,
+            readingTime: readingTime(content),
+            updatedAt: now,
+          },
+        },
+      );
+      return result.modifiedCount
+        ? `/news/${UPDATE_OKTOBER_2026_ARTICLE.slug} angepasst`
+        : "schon bearbeitet oder nicht vorhanden — nichts angefasst";
     },
   },
 ];

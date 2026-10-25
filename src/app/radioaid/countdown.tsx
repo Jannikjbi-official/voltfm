@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Icon, PlayIcon, ExternalLinkIcon } from "@/lib/icons";
-import { radio } from "@/lib/site";
 import { useRadioPlayer } from "@/components/radio/player-provider";
 import type { RadioAidPhase } from "@/lib/radioaid";
 import styles from "./page.module.css";
@@ -55,7 +54,7 @@ export function Countdown({
             24 Stunden Charity-Radio — jetzt einschalten und mitspenden.
           </p>
           {/* Führt über denselben Hinweis wie der Player: Die Wiedergabe
-              findet bei laut.fm statt, nicht hier. */}
+              findet im Webplayer von lautstation.de statt, nicht hier. */}
           <Button variant="primary" mode="filled" size="lg" onClick={openStream}>
             <Icon icon={PlayIcon} />
             Jetzt hören
@@ -76,7 +75,8 @@ export function Countdown({
         </p>
         <Button variant="neutral" mode="stroke" size="md" onClick={openStream}>
           <Icon icon={PlayIcon} />
-          {radio.providerName} hören
+          Jetzt hören
+          <Icon icon={ExternalLinkIcon} />
         </Button>
       </div>
     );
