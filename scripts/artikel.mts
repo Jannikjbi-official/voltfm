@@ -46,13 +46,13 @@ export const RELAUNCH_ARTICLE: SeedArticle = {
 
 ## Wo wir herkommen
 
-Angefangen hat das im **Januar 2021** mit einer laut.fm-Station, die damals noch **jannikjbiFM** hieß. Kein Konzept, kein Sendeplan, keine Hörer — jemand hat auf Play gedrückt und geschaut, was passiert. Mochiko war von der ersten Stunde an dabei.
+Angefangen hat das im **Januar 2021** mit einer laut.fm-Station namens **jannikjbi**. Kein Konzept, kein Sendeplan, keine Hörer — jemand hat auf Play gedrückt und geschaut, was passiert. Mochiko war von der ersten Stunde an dabei.
 
-Danach kam die Namenssuche. Aus jannikjbiFM wurde ein anderer Name, und noch einer, und noch einer. Ausprobiert, verworfen, neu versucht — weil schlicht nicht klar war, was bei Hörern ankommt. Geblieben ist am Ende **VoltFM**.
+Danach kam die Namenssuche. Aus jannikjbi wurde jannikjbiFM, dann ein anderer Name, und noch einer. Ausprobiert, verworfen, neu versucht — weil schlicht nicht klar war, was bei Hörern ankommt. Geblieben ist am Ende **VoltFM**.
 
 ## Warum unsere Station jannikjbi heißt
 
-Die Frage kommt so oft, dass sie hier ausführlich beantwortet werden soll. Wenn du auf „hören" drückst, öffnet sich laut.fm — und dort steht nicht VoltFM, sondern **jannikjbi**.
+Die Frage kommt so oft, dass sie hier ausführlich beantwortet werden soll. Wenn du auf „Jetzt hören“ drückst, öffnet sich der Webplayer — und dort steht nicht VoltFM, sondern **jannikjbi**.
 
 Der Grund ist schlicht Geschichte. Die Station gehört Jannik und wurde im Januar 2021 unter seinem Handle angelegt. Den Namen VoltFM gab es damals noch gar nicht; er ist erst Jahre später aus der Namenssuche hervorgegangen. Der Sender hat sich seitdem umbenannt, die Station nicht.
 
@@ -71,11 +71,11 @@ Also bleibt es beim alten Namen.
 **jannikjbi ist die Station, VoltFM ist das Programm.** Der Name bedeutet nicht, dass hier einer allein sendet — er ist die Kennung, unter der die Station 2021 angelegt wurde, und sonst nichts.
 :::
 
-Wenn wir irgendwann über einen eigenen Radioserver senden, stellt sich die Frage neu. Bis dahin: Nicht wundern, wenn beim Klicken auf „hören" ein anderer Name auftaucht. Es ist der richtige Stream.
+Wenn wir irgendwann über einen eigenen Radioserver senden, stellt sich die Frage neu. Bis dahin: Nicht wundern, wenn beim Klicken auf „Jetzt hören“ ein anderer Name auftaucht. Es ist der richtige Stream.
 
 ## Warum der Stream bei laut.fm läuft und nicht hier
 
-Noch etwas, das auffällt: Die Wiedergabe passiert nicht auf dieser Seite, sondern in einem neuen Fenster bei laut.fm. Das ist kein Versehen und keine fehlende Funktion. Die Nutzungsbedingungen von laut.fm erlauben ausdrücklich das Verlinken, aber **nicht das Einbetten** des Streams auf fremden Seiten (§ 6 Abs. 9). Daran halten wir uns, auch wenn ein Player direkt auf der Seite bequemer wäre.
+Noch etwas, das auffällt: Die Wiedergabe passiert nicht auf dieser Seite, sondern in einem neuen Fenster, im Webplayer von lautstation.de. Das ist kein Versehen und keine fehlende Funktion. Die Nutzungsbedingungen von laut.fm erlauben ausdrücklich das Verlinken, aber **nicht das Einbetten** des Streams auf fremden Seiten (§ 6 Abs. 9). Daran halten wir uns, auch wenn ein Player direkt auf der Seite bequemer wäre.
 
 Dazu gehört eine zweite ehrliche Auskunft: **Über laut.fm läuft Werbung.** Wir schalten sie nicht, wir verdienen nichts daran, und abschalten können wir sie nicht.
 
@@ -182,11 +182,11 @@ Die neue Seite steht heute bei rund **32.000 Zeilen in knapp 300 Dateien** — i
 | Bilder | direkt vom Speicheranbieter | über voltfm.xyz ausgeliefert |
 | Inhalte pflegen | teils im Code hinterlegt | vollständig im Adminbereich |
 
-## Der Player bleibt an
+## Der Ton bleibt an
 
-Das war die wichtigste Anforderung. Früher riss der Ton ab, sobald man irgendwo hinklickte — jeder Seitenwechsel bedeutete: neu starten, warten, wieder einsteigen. Jetzt liegt der Player über der ganzen Seite. Du kannst durch die News blättern, ein Profil ansehen, die Zeitleiste lesen, und es läuft weiter.
+Das war die wichtigste Anforderung. Früher riss der Ton ab, sobald man irgendwo hinklickte — jeder Seitenwechsel bedeutete: neu starten, warten, wieder einsteigen. Inzwischen öffnet „Jetzt hören“ den Webplayer in einem eigenen Fenster. Dort läuft die Musik weiter, egal, wo du hier gerade klickst.
 
-Unten am Rand siehst du immer, was gerade läuft: Titel, Interpret und das Cover, soweit wir eines finden. Auf dem Handy ist die Leiste schmaler und ohne Lautstärkeregler — mit dem Daumen trifft man die Tasten des Geräts ohnehin schneller.
+Unten am Rand siehst du immer, was gerade läuft: Titel, Interpret und das Cover, soweit wir eines finden.
 
 ## Was auf der Seite steht
 
@@ -240,7 +240,7 @@ Drei Dinge, die auf vielen Seiten selbstverständlich sind und bei uns nicht:
 **Kein Tracking.** Wir zählen nicht, wer wie lange wo war. Kein Analysewerkzeug, keine Zählpixel, keine Werbe-Cookies. Was wir speichern, steht in der Datenschutzerklärung — und das ist kurz.
 :::
 
-**Keine Verbindung zu Dritten, bevor du zustimmst.** Der Stream liegt bei laut.fm. Sobald du auf Play drückst, weiß laut.fm, dass jemand von deiner Adresse zuhört — daran führt kein Weg vorbei. Aber wir fragen vorher, statt die Verbindung im Hintergrund schon einmal aufzubauen. Die Titelanzeige holt unser eigener Server; dafür braucht es nichts.
+**Keine Verbindung zu Dritten, bevor du zustimmst.** Der Stream liegt bei laut.fm, der Webplayer bei lautstation.de. Sobald du auf Play drückst, wissen beide, dass jemand von deiner Adresse zuhört — daran führt kein Weg vorbei. Aber wir sagen es dir vorher, statt die Verbindung im Hintergrund schon einmal aufzubauen. Die Titelanzeige holt unser eigener Server; dafür braucht es nichts.
 
 **Keine Bilder von fremden Servern.** Die Fotos in den Beiträgen liegen bei einem Speicheranbieter, ausgeliefert werden sie aber über voltfm.xyz. Dein Browser verbindet sich beim Betrachten eines Bildes also mit uns und mit niemandem sonst. Das war vorher anders.
 
