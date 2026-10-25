@@ -9,8 +9,8 @@ import { ShareButtons } from "@/components/news/share-buttons";
 import { Badge } from "@/components/ui/badge";
 import { AuthorAvatar } from "@/components/news/author-avatar";
 import {
-  getAllPublishedSlugs,
   getArticleBySlug,
+  getCategoryNames,
   getRelatedArticles,
   getAuthorProfiles,
 } from "@/services/content";
@@ -20,10 +20,9 @@ import styles from "./page.module.css";
 
 type Params = { slug: string };
 
-export async function generateStaticParams(): Promise<Params[]> {
-  const slugs = await getAllPublishedSlugs();
-  return slugs.map(({ slug }) => ({ slug }));
-}
+/* Kein generateStaticParams — aus demselben Grund wie bei /events/[slug]:
+   Ein Beitrag, der nach dem Deploy im Admin entsteht, waere sonst auf Vercel
+   eine statische Seite, die an cookies() im Root-Layout scheitert (500). */
 
 export async function generateMetadata({
   params,
@@ -99,7 +98,7 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
       />
 
       <PageHeader
-        eyebrow={article.categorySlug}
+        eyebrow={(await getCategoryNames())[article.categorySlug] ?? article.categorySlug}
         title={article.title}
         description={article.excerpt}
         breadcrumbs={[
