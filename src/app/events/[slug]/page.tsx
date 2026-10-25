@@ -6,17 +6,18 @@ import { PageHeader } from "@/components/common/page-header";
 import { ButtonLink } from "@/components/common/button-link";
 import { Badge } from "@/components/ui/badge";
 import { Icon, ClockIcon, LocationIcon, CalendarIcon, ExternalLinkIcon } from "@/lib/icons";
-import { getEventBySlug, listEvents } from "@/services/content";
+import { getEventBySlug } from "@/services/content";
 import { formatDate, formatTime } from "@/lib/format";
 import { site } from "@/lib/site";
 import styles from "./page.module.css";
 
 type Params = { slug: string };
 
-export async function generateStaticParams(): Promise<Params[]> {
-  const events = await listEvents("all");
-  return events.map((event) => ({ slug: event.slug }));
-}
+/* Kein generateStaticParams: Das Root-Layout liest das Theme-Cookie, jede
+   Seite rendert also ohnehin pro Anfrage. Mit vorab erzeugten Pfaden
+   behandelt Vercel jeden spaeter angelegten Slug als statische Seite, und
+   die scheitert an cookies() mit DYNAMIC_SERVER_USAGE (500). So erging es
+   /events/radioaid-2026 bis zum naechsten Deploy. */
 
 export async function generateMetadata({
   params,

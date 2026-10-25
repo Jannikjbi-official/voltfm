@@ -26,10 +26,11 @@ import styles from "./page.module.css";
 
 type Params = { slug: string };
 
-export async function generateStaticParams(): Promise<Params[]> {
-  const hosts = await listHosts();
-  return hosts.map((host) => ({ slug: host.slug }));
-}
+/* Kein generateStaticParams: Das Root-Layout liest das Theme-Cookie, jede
+   Seite rendert also ohnehin pro Anfrage. Mit vorab erzeugten Pfaden
+   behandelt Vercel jeden spaeter angelegten Slug als statische Seite, und
+   die scheitert an cookies() mit DYNAMIC_SERVER_USAGE (500) — passiert mit
+   /events/radioaid-2026, und ein neues Profil haette dasselbe Problem. */
 
 export async function generateMetadata({
   params,
