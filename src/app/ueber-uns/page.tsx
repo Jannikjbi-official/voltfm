@@ -5,7 +5,6 @@ import { ButtonLink } from "@/components/common/button-link";
 import { HostCard } from "@/components/common/host-card";
 import { SectionHeader } from "@/components/common/section-header";
 import { listHosts, listTimeline } from "@/services/content";
-import { getStationInfo } from "@/services/radio/metadata";
 import { Icon, ArrowRightIcon } from "@/lib/icons";
 import { site } from "@/lib/site";
 import styles from "./page.module.css";
@@ -22,11 +21,7 @@ export const revalidate = 3600;
 
 
 export default async function UeberUnsPage() {
-  const [hosts, station, entries] = await Promise.all([
-    listHosts(),
-    getStationInfo(),
-    listTimeline(),
-  ]);
+  const [hosts, entries] = await Promise.all([listHosts(), listTimeline()]);
 
   return (
     <div className={styles.page}>
@@ -78,7 +73,7 @@ export default async function UeberUnsPage() {
       <section className="section shell">
         <div className={styles.mission}>
           <p className={styles.missionQuote}>
-            {station?.format || "VoltFM – Dein Klang. Deine Welt."}
+            {site.tagline}
           </p>
           <div className={styles.missionText}>
             <p>

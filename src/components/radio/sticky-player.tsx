@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { features } from "@/lib/site";
+import { features, site } from "@/lib/site";
 import { useRadioPlayer } from "./player-provider";
 import { PlayButton, VolumeControl } from "./player-controls";
 import { CoverArt } from "./cover-art";
@@ -36,7 +36,7 @@ export function StickyPlayer() {
               {track?.title ?? (status === "idle" ? "VoltFM Livestream" : "VoltFM")}
             </span>
             <span className={styles.artist}>
-              {track?.artist ?? "Dein Sound. Deine Community."}
+              {track?.artist ?? site.tagline}
             </span>
           </div>
         </div>

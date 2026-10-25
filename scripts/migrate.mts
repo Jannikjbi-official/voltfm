@@ -246,6 +246,55 @@ const PLAYLIST_SENTENCE = {
   to: "Auf der [Radio-Seite](/radio) findest du jetzt die Playlist der letzten Tage: jeder Titel mit Uhrzeit, Tag für Tag.",
 };
 
+/**
+ * Phase 3: Mochikos Profil und drei Eintraege der Zeitleiste.
+ *
+ * `from` ist jeweils exakt der Wert, der live steht (am 25.10.2026 von
+ * voltfm.xyz abgelesen). Rolle und Bio von mochikotv wurden im Admin
+ * gepflegt, die Zeitleiste stammt aus Migration 005 bzw. wurde dort von Hand
+ * ergaenzt. Wo inzwischen etwas anderes steht, bleibt es unangetastet.
+ */
+const MOCHIKO_PROFILE = {
+  role: { from: "co founder", to: "Co-Founder" },
+  bio: {
+    from: "ist 100 mal schlechter als jannik",
+    to: "Hat VoltFM mit Jannik gegründet und ist seit dem ersten Tag dabei. Die Webseite, auf der du gerade bist, haben die beiden zusammen gebaut.",
+  },
+};
+
+const TIMELINE_FIXES: { key: string; from: Record<string, unknown>; to: Record<string, unknown> }[] = [
+  {
+    /* Die Station hiess anfangs nur jannikjbi, jannikjbiFM kam danach. */
+    key: "start-2021",
+    from: { text: TIMELINE[0].text },
+    to: { text: TIMELINE[0].text.replace("damals noch als jannikjbiFM", "damals unter dem Namen jannikjbi") },
+  },
+  {
+    key: "namenssuche",
+    from: { text: TIMELINE[1].text },
+    to: {
+      text: TIMELINE[1].text.replace(
+        "Aus jannikjbiFM wird ein anderer Name, und noch einer, und noch einer.",
+        "Aus jannikjbi wird jannikjbiFM, dann ein anderer Name, und noch einer.",
+      ),
+    },
+  },
+  {
+    /* Stand vor "Aug 2026" und versprach Sendeplan und einen Player, der auf
+       der Seite laeuft. Beides gibt es nicht. Jetzt nach "3.–19. Sep 2026"
+       (order 70) und vor "Jetzt" (order 80). */
+    key: "plattform-2026",
+    from: {
+      text: "Eine eigene Website mit Redaktionssystem: Sendeplan, News, Moderatorenprofile und ein Player, der beim Seitenwechsel nicht abbricht. Am 6. November läuft wieder RadioAid, diesmal für Seelenpflaster e. V.",
+    },
+    to: {
+      year: "19. Sep 2026",
+      order: 75,
+      text: "Die neue Seite geht online: News, Moderatorenprofile, Events und ein Admin-Bereich, in dem wir selbst schreiben können, ohne Code anzufassen.",
+    },
+  },
+];
+
 /** Rechenschritt wie im Editor: ~200 Woerter pro Minute, mindestens eine. */
 function readingTime(html: string): number {
   const words = html.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
@@ -654,6 +703,32 @@ const MIGRATIONS: Migration[] = [
       return result.modifiedCount
         ? `/news/${UPDATE_OKTOBER_2026_ARTICLE.slug} angepasst`
         : "schon bearbeitet oder nicht vorhanden — nichts angefasst";
+    },
+  },
+
+  {
+    name: "018-mochiko-und-zeitleiste",
+    run: async (db, now) => {
+      const changed: string[] = [];
+
+      for (const [field, { from, to }] of Object.entries(MOCHIKO_PROFILE)) {
+        const result = await db
+          .collection("hosts")
+          .updateOne({ slug: "mochikotv", [field]: from }, { $set: { [field]: to, updatedAt: now } });
+        if (result.modifiedCount) changed.push(`mochikotv.${field}`);
+      }
+
+      for (const fix of TIMELINE_FIXES) {
+        if (JSON.stringify(fix.from) === JSON.stringify(fix.to)) {
+          throw new Error(`${fix.key}: Ersetzung greift nicht, Text hat sich geaendert`);
+        }
+        const result = await db
+          .collection("timeline")
+          .updateOne({ key: fix.key, ...fix.from }, { $set: { ...fix.to, updatedAt: now } });
+        if (result.modifiedCount) changed.push(`timeline.${fix.key}`);
+      }
+
+      return changed.length ? `angepasst: ${changed.join(", ")}` : "nichts mehr im Ausgangszustand — nichts angefasst";
     },
   },
 ];

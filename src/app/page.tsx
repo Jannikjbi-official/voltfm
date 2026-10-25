@@ -16,7 +16,6 @@ import { getLastSongs } from "@/services/radio/metadata";
 import { features } from "@/lib/site";
 import { formatDayMonth, formatTime } from "@/lib/format";
 import { radioaid, getRadioAidSchedule } from "@/lib/radioaid";
-import { getStationInfo } from "@/services/radio/metadata";
 import { site } from "@/lib/site";
 import { Icon, ArrowRightIcon, DiscordIcon, MusicIcon } from "@/lib/icons";
 
@@ -32,13 +31,12 @@ export const metadata: Metadata = {
 export const revalidate = 3600;
 
 export default async function HomePage() {
-  const [featured, latest, hosts, events, schedule, station, history] = await Promise.all([
+  const [featured, latest, hosts, events, schedule, history] = await Promise.all([
     getFeaturedArticle(),
     getLatestArticles(5),
     listHosts(),
     listEvents("upcoming"),
     getSchedule(),
-    getStationInfo(),
     // Nur geholt, wenn sie auch gezeigt wird.
     features.schedule ? Promise.resolve([]) : getLastSongs(6),
   ]);
@@ -282,12 +280,13 @@ export default async function HomePage() {
               icon={MusicIcon}
               className={styles.aboutIcon}
             />
+            {/* Kein Slogan hier: Der steht schon im Hero, zweimal auf einer
+                Seite waere einmal zu viel. */}
             <p className={styles.aboutQuote}>
-              {station?.format || "VoltFM – Dein Klang. Deine Welt."}
+              2021 eine laut.fm-Station, ein paar Namen später VoltFM.
             </p>
             <p className={styles.aboutText}>
-              2021 eine laut.fm-Station, ein paar Namen später VoltFM. Kein
-              festes Programm, keine Redaktion, dafür zwei Leute, die
+              Kein festes Programm, keine Redaktion, dafür zwei Leute, die
               weitermachen.
             </p>
             <ButtonLink href="/ueber-uns" variant="neutral" mode="stroke" size="md">

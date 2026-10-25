@@ -8,7 +8,7 @@ import { RadioStage } from "@/components/radio/radio-stage";
 import { LautstationPlaylist } from "@/components/radio/lautstation-playlist";
 import { Icon, DiscordIcon, ExternalLinkIcon } from "@/lib/icons";
 import { lautstation } from "@/lib/lautstation";
-import { getLastSongs, getStationInfo } from "@/services/radio/metadata";
+import { getLastSongs } from "@/services/radio/metadata";
 import { formatTime } from "@/lib/format";
 import { site } from "@/lib/site";
 import styles from "./page.module.css";
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function RadioPage() {
-  const [station, history] = await Promise.all([getStationInfo(), getLastSongs(10)]);
+  const history = await getLastSongs(10);
 
   return (
     <>
@@ -102,8 +102,8 @@ export default async function RadioPage() {
                   <dd>{site.name}</dd>
                 </div>
                 <div className={styles.infoRow}>
-                  <dt>Format</dt>
-                  <dd>{station?.format || "Pop, Dance, Deutschpop"}</dd>
+                  <dt>Motto</dt>
+                  <dd>{site.tagline}</dd>
                 </div>
                 <div className={styles.infoRow}>
                   <dt>Genres</dt>
