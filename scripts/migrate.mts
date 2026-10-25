@@ -23,7 +23,12 @@ import { MongoClient, type Db } from "mongodb";
 import { renderRichText } from "../src/lib/sanitize";
 import { radioaid, getRadioAidSchedule } from "../src/lib/radioaid";
 import { formatDayMonth, formatTime } from "../src/lib/format";
-import { RELAUNCH_ARTICLE, WEBSEITE_ARTICLE } from "./artikel.mjs";
+import {
+  RELAUNCH_ARTICLE,
+  WEBSEITE_ARTICLE,
+  RADIOAID_2026_ARTICLE,
+  UPDATE_OKTOBER_2026_ARTICLE,
+} from "./artikel.mjs";
 
 // Eine bereits gesetzte Umgebungsvariable gewinnt gegen die Dateien (Vercel).
 config({ path: ".env.local" });
@@ -574,6 +579,44 @@ const MIGRATIONS: Migration[] = [
         { upsert: true },
       );
       return result.upsertedCount ? `angelegt: /events/${event.slug}` : "war schon da";
+    },
+  },
+
+  {
+    name: "016-beitraege-radioaid-und-update",
+    run: async (db, now) => {
+      const created: string[] = [];
+      /* RadioAid zuerst und eine Minute frueher: So steht das Update in der
+         Liste oben, RadioAid bleibt als einziger "featured" der Aufmacher. */
+      const items = [
+        { article: RADIOAID_2026_ARTICLE, publishedAt: new Date(now.getTime() - 60_000) },
+        { article: UPDATE_OKTOBER_2026_ARTICLE, publishedAt: now },
+      ];
+      for (const { article, publishedAt } of items) {
+        const { source, ...rest } = article;
+        const content = renderRichText(source);
+        const result = await db.collection("articles").updateOne(
+          { slug: rest.slug },
+          {
+            $setOnInsert: {
+              ...rest,
+              content,
+              contentSource: source,
+              status: "published" as const,
+              publishedAt,
+              readingTime: readingTime(content),
+              coverAlt: rest.coverAlt ?? "",
+              seoTitle: rest.title,
+              seoDescription: rest.excerpt,
+              createdAt: now,
+              updatedAt: now,
+            },
+          },
+          { upsert: true },
+        );
+        if (result.upsertedCount) created.push(`/news/${rest.slug}`);
+      }
+      return created.length ? `angelegt: ${created.join(", ")}` : "waren schon da";
     },
   },
 ];
