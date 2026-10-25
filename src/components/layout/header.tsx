@@ -97,15 +97,23 @@ export function Header({ nav, account }: { nav: NavItem[]; account: AccountAvata
                   </button>
                 }
               />
-              <DropdownMenuContent>
-                {/* Nur die Beschriftung: Menueeintraege sind in der
-                    Komponente auf eine Zeilenhoehe festgelegt, ein zweizeiliger
-                    Eintrag wuerde sich mit dem naechsten ueberlagern. Den
-                    Zusatztext gibt es im Schubfach, wo Platz dafuer ist. */}
+              {/* Wie im Schubfach auf dem Handy: Name und Zusatztext. OlyxUI legt
+                  Menueeintraege auf eine Zeilenhoehe fest; .moreItem hebt das
+                  auf, sonst ueberlagern sich zweizeilige Eintraege. */}
+              <DropdownMenuContent className={styles.moreMenu} align="end">
                 {overflow.map((item) => (
                   <DropdownMenuItem
                     key={item.href}
-                    render={<Link href={item.href}>{item.label}</Link>}
+                    className={styles.moreItem}
+                    render={
+                      <Link
+                        href={item.href}
+                        aria-current={isActive(item.href) ? "page" : undefined}
+                      >
+                        <span className={styles.moreLabel}>{item.label}</span>
+                        {item.hint && <span className={styles.moreHint}>{item.hint}</span>}
+                      </Link>
+                    }
                   />
                 ))}
               </DropdownMenuContent>
