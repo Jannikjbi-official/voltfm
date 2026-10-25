@@ -17,6 +17,8 @@ export const radioaid = {
   durationHours: 24,
   organisation: "Seelenpflaster e. V.",
   website: "https://radioaid.de/",
+  /** Der Spendenlink, auf den radioaid.de selbst verweist. */
+  donateUrl: "https://spende.radioaid.de",
   /**
    * Wie lange der Eintrag nach dem Sendeende noch in der Navigation bleibt.
    * Null waere hart: Wer am Morgen danach nachschauen will, was lief, stuende

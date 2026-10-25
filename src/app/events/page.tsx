@@ -11,7 +11,7 @@ import styles from "./page.module.css";
 export const metadata: Metadata = {
   title: "Events",
   description:
-    "Community-Abende, Specials und Livestreams: alle kommenden und vergangenen VoltFM Events.",
+    "Was bei VoltFM ansteht und was schon war, mit Datum und Uhrzeit.",
   alternates: { canonical: "/events" },
 };
 
@@ -25,7 +25,7 @@ export default async function EventsPage() {
       <PageHeader
         eyebrow="Termine"
         title="Events"
-        description="Community-Abende, Sendungs-Specials und alles, wozu wir euch einladen."
+        description="Was bei VoltFM ansteht und was schon war, mit Datum und Uhrzeit."
         breadcrumbs={[
           { href: "/", label: "Start" },
           { href: "/events", label: "Events" },

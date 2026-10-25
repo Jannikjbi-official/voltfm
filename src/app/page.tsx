@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { RadioHero } from "@/components/radio/radio-hero";
+import { RadioAidBanner } from "@/components/radioaid/radioaid-banner";
 import { SectionHeader } from "@/components/common/section-header";
 import { EmptyState } from "@/components/common/empty-state";
 import { ArticleCard } from "@/components/news/article-card";
@@ -13,7 +14,8 @@ import { getFeaturedArticle, getLatestArticles, listEvents, listHosts } from "@/
 import { getSchedule, groupByWeekday, WEEKDAY_LABELS } from "@/services/radio/schedule";
 import { getLastSongs } from "@/services/radio/metadata";
 import { features } from "@/lib/site";
-import { formatTime } from "@/lib/format";
+import { formatDayMonth, formatTime } from "@/lib/format";
+import { radioaid, getRadioAidSchedule } from "@/lib/radioaid";
 import { getStationInfo } from "@/services/radio/metadata";
 import { site } from "@/lib/site";
 import { Icon, ArrowRightIcon, DiscordIcon, MusicIcon } from "@/lib/icons";
@@ -45,10 +47,24 @@ export default async function HomePage() {
   const gridArticles = latest.filter((a) => a.slug !== featured?.slug).slice(0, 3);
 
   const today = new Date().getDay();
+  const aid = getRadioAidSchedule();
   const todaySlots = groupByWeekday(schedule).find((d) => d.weekday === today)?.slots ?? [];
 
   return (
     <>
+      {/* Verschwindet nach dem Sendeende von selbst — auf dem Server beim
+          naechsten Neubau, im offenen Tab sofort. */}
+      {aid.phase !== "over" && (
+        <RadioAidBanner
+          start={aid.start.getTime()}
+          end={aid.end.getTime()}
+          initialPhase={aid.phase}
+          organisation={radioaid.organisation}
+          donateUrl={radioaid.donateUrl}
+          dateLabel={`${formatDayMonth(aid.start)}, ${formatTime(aid.start)} Uhr`}
+        />
+      )}
+
       <RadioHero />
 
       {/* --- Station facts: a thin editorial strip, not a card row --------- */}

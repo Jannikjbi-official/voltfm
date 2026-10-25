@@ -133,8 +133,13 @@ export default async function EventPage({ params }: { params: Promise<Params> })
                   <Icon icon={ClockIcon} /> Uhrzeit
                 </dt>
                 <dd>
-                  {formatTime(event.startsAt)}
-                  {event.endsAt ? ` – ${formatTime(event.endsAt)}` : ""} Uhr
+                  {/* Endet es an einem anderen Tag, muss der Tag dabei
+                      stehen — "18:00 – 18:00 Uhr" liest sich wie null Minuten. */}
+                  {formatTime(event.startsAt)} Uhr
+                  {event.endsAt &&
+                    (formatDate(event.endsAt) === formatDate(event.startsAt)
+                      ? ` bis ${formatTime(event.endsAt)} Uhr`
+                      : ` bis ${formatDate(event.endsAt)}, ${formatTime(event.endsAt)} Uhr`)}
                 </dd>
               </div>
               <div className={styles.fact}>

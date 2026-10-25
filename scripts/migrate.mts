@@ -21,6 +21,8 @@ import { config } from "dotenv";
 import { MongoClient, type Db } from "mongodb";
 
 import { renderRichText } from "../src/lib/sanitize";
+import { radioaid, getRadioAidSchedule } from "../src/lib/radioaid";
+import { formatDayMonth, formatTime } from "../src/lib/format";
 import { RELAUNCH_ARTICLE, WEBSEITE_ARTICLE } from "./artikel.mjs";
 
 // Eine bereits gesetzte Umgebungsvariable gewinnt gegen die Dateien (Vercel).
@@ -206,6 +208,28 @@ const JANNIK_PROFILE = {
   },
   role: { from: HOSTS[0].role, to: "Founder" },
 };
+
+/**
+ * RadioAid 2026 als Event. Termin und Empfaenger kommen aus src/lib/radioaid.ts,
+ * damit /radioaid, der Banner auf der Startseite und das Event nicht
+ * auseinanderlaufen koennen. Der Spendenlink ist der, auf den radioaid.de
+ * selbst verweist.
+ */
+const RADIOAID_EVENT_SOURCE = `Einmal im Jahr machen Radiostationen 24 Stunden lang gemeinsam Programm für einen guten Zweck. RadioAid kommt aus der laut.fm-Community, inzwischen kann jede Station mitmachen. Wir sind seit 2022 dabei und übertragen die Sendung auch dieses Jahr in voller Länge.
+
+## Für wen
+
+Die Spenden gehen 2026 an **${radioaid.organisation}** Der Verein schickt Kindern in schweren Lebenssituationen persönliche Post: ein kleines Überraschungsgeschenk und eine Grußkarte, adressiert an genau dieses Kind.
+
+## Wie du hilfst
+
+Einschalten, weitersagen und, wenn du kannst, spenden. Gespendet wird direkt bei RadioAid: [spende.radioaid.de](${radioaid.donateUrl}).
+
+## Du hast selbst einen Sender?
+
+Jede Station kann mitmachen, die Sendung gibt es kostenlos. Alles dazu steht auf [radioaid.de](${radioaid.website}).
+
+[Alles zu RadioAid bei VoltFM](/radioaid)`;
 
 /** Rechenschritt wie im Editor: ~200 Woerter pro Minute, mindestens eine. */
 function readingTime(html: string): number {
@@ -522,6 +546,34 @@ const MIGRATIONS: Migration[] = [
       return changed.length
         ? `jannikjbi: ${changed.join(", ")} ersetzt`
         : "schon bearbeitet oder nicht vorhanden — nichts angefasst";
+    },
+  },
+
+  {
+    name: "015-event-radioaid-2026",
+    run: async (db, now) => {
+      const { start, end } = getRadioAidSchedule(now);
+      const event = {
+        title: "RadioAid 2026",
+        slug: "radioaid-2026",
+        description: `24 Stunden Charity-Radio für ${radioaid.organisation} VoltFM überträgt die gemeinsame Sendung vom ${formatDayMonth(start)}, ${formatTime(start)} Uhr, bis zum ${formatDayMonth(end)}, ${formatTime(end)} Uhr.`,
+        content: renderRichText(RADIOAID_EVENT_SOURCE),
+        contentSource: RADIOAID_EVENT_SOURCE,
+        startsAt: start,
+        endsAt: end,
+        location: "Im VoltFM-Stream auf laut.fm",
+        category: "Events",
+        status: "upcoming" as const,
+        url: radioaid.website,
+      };
+      /* Nur anlegen. Wer das Event im Admin schon selbst angelegt hat, behaelt
+         seine Fassung (Regel 2). */
+      const result = await db.collection("events").updateOne(
+        { slug: event.slug },
+        { $setOnInsert: { ...event, createdAt: now, updatedAt: now } },
+        { upsert: true },
+      );
+      return result.upsertedCount ? `angelegt: /events/${event.slug}` : "war schon da";
     },
   },
 ];

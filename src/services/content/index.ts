@@ -193,11 +193,21 @@ function withEffectiveStatus(event: EventDTO, now: Date): EventDTO {
 export async function listEvents(scope: "upcoming" | "past" | "all" = "all"): Promise<EventDTO[]> {
   return safe(async () => {
     const now = new Date();
+    /* Massgeblich ist das Ende, nicht der Beginn: Ein Event, das gerade
+       laeuft, gehoert noch zu den kommenden — sonst verschwaende RadioAid
+       genau in den 24 Stunden, in denen es stattfindet, von der Startseite.
+       `endsAt: null` trifft auch Dokumente, denen das Feld ganz fehlt. */
+    const notOver = {
+      $or: [{ endsAt: { $gte: now } }, { endsAt: null, startsAt: { $gte: now } }],
+    };
+    const over = {
+      $or: [{ endsAt: { $lt: now } }, { endsAt: null, startsAt: { $lt: now } }],
+    };
     const filter =
       scope === "upcoming"
-        ? { startsAt: { $gte: now }, status: { $ne: "cancelled" as const } }
+        ? { ...notOver, status: { $ne: "cancelled" as const } }
         : scope === "past"
-          ? { startsAt: { $lt: now } }
+          ? over
           : {};
     const docs = await events()
       .find(filter)
