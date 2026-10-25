@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import { PageHeader } from "@/components/common/page-header";
 import { ButtonLink } from "@/components/common/button-link";
-import { Icon, DiscordIcon, ExternalLinkIcon } from "@/lib/icons";
+import { Icon, DiscordIcon, DownloadIcon } from "@/lib/icons";
 import { listHosts } from "@/services/content";
 import { operator, radio, site } from "@/lib/site";
 import styles from "./page.module.css";
@@ -80,20 +80,22 @@ export default async function PressePage() {
             <h2>Logo</h2>
             <p>
               Das Logo darf im Zusammenhang mit Berichterstattung über VoltFM
-              verwendet werden. Bitte nicht verzerren, einfärben oder Teile
-              davon einzeln nutzen.
+              verwendet werden. Bitte nicht verzerren oder umfärben. Im Paket
+              stecken Logo und Icon als PNG und SVG, jeweils für helle und
+              dunkle Flächen.
             </p>
             <div className={styles.logoBox}>
               <Image
-                src="/voltfm-logo.webp"
+                src="/logo/voltfm-play-logo-dunkel.png"
                 alt="Das VoltFM-Logo"
-                width={160}
-                height={160}
+                width={1600}
+                height={359}
+                sizes="280px"
                 className={styles.logo}
               />
-              <ButtonLink href="/voltfm-logo.webp" variant="neutral" mode="stroke" size="sm">
-                Logo herunterladen
-                <Icon icon={ExternalLinkIcon} />
+              <ButtonLink href="/logo/voltfm-logo.zip" external variant="neutral" mode="stroke" size="sm">
+                <Icon icon={DownloadIcon} />
+                Logo-Paket herunterladen
               </ButtonLink>
             </div>
           </article>
