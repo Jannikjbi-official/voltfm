@@ -5,7 +5,7 @@ import Image from "next/image";
 import { EmptyState } from "@/components/common/empty-state";
 import { ArticleCard } from "@/components/news/article-card";
 import { ButtonLink } from "@/components/common/button-link";
-import { ImagePlaceholder } from "@/components/common/image-placeholder";
+import { ArticleCover } from "@/components/news/article-cover";
 import { Icon, ArrowRightIcon, ArrowLeftIcon } from "@/lib/icons";
 import { formatDate, formatReadingTime } from "@/lib/format";
 import {
@@ -154,7 +154,10 @@ export default async function NewsPage({
                       priority
                     />
                   ) : (
-                    <ImagePlaceholder label={featured.title} ratio="16 / 9" />
+                    <ArticleCover
+                      categorySlug={featured.categorySlug}
+                      categoryName={categoryNames[featured.categorySlug] ?? featured.categorySlug}
+                    />
                   )}
                 </Link>
 

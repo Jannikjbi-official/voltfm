@@ -29,7 +29,7 @@ const EDITIONS = [
   {
     year: "Jan 2021",
     title: "Die Station geht an den Start",
-    text: "Jannik legt seine laut.fm-Station an — damals noch als jannikjbiFM. RadioAid ist zu dem Zeitpunkt noch kein Thema.",
+    text: "Jannik legt seine laut.fm-Station an — damals unter dem Namen jannikjbi. RadioAid ist zu dem Zeitpunkt noch kein Thema.",
     org: null,
   },
   {
@@ -185,8 +185,9 @@ export default function RadioAidPage() {
               Station in dieser Zeit nicht durchgehend VoltFM.
             </p>
             <p>
-              Angefangen hat sie als <strong>jannikjbiFM</strong>, danach kamen
-              etliche weitere Namen, die ausprobiert und wieder verworfen wurden —
+              Angefangen hat sie als <strong>jannikjbi</strong>, dann kam{" "}
+              <strong>jannikjbiFM</strong>, danach etliche weitere Namen, die
+              ausprobiert und wieder verworfen wurden —
               aus Langeweile und weil damals schlicht nicht klar war, was bei den
               Hörern ankommt. Geblieben sind am Ende zwei Dinge: der Sendername{" "}
               <strong>VoltFM</strong> und die laut.fm-Station{" "}

@@ -51,24 +51,27 @@ export function LogoIcon({ className }: { className?: string }) {
   );
 }
 
+/** Play-Icon plus "VOLTFM", ohne Link — z. B. auf den Titelbildern der News. */
+export function LogoWordmark({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 34 1006 160" className={className} aria-hidden="true" focusable="false">
+      <g transform="translate(-67.3828125,0) scale(0.44921875)">
+        <PlayMark />
+      </g>
+      <path d={VOLT} className={styles.word} />
+      <path d={FM} className={styles.accent} />
+    </svg>
+  );
+}
+
 /**
- * Die Wortmarke: Play-Icon plus "VOLTFM". Sie ist dekorativ — den Namen
+ * Die Wortmarke als Link zur Startseite. Sie ist dekorativ — den Namen
  * traegt das aria-label des Links.
  */
 export function Logo({ compact = false }: { compact?: boolean }) {
   return (
     <Link href="/" className={styles.logo} aria-label="VoltFM — zur Startseite">
-      {compact ? (
-        <LogoIcon className={styles.icon} />
-      ) : (
-        <svg viewBox="0 34 1006 160" className={styles.wordmark} aria-hidden="true" focusable="false">
-          <g transform="translate(-67.3828125,0) scale(0.44921875)">
-            <PlayMark />
-          </g>
-          <path d={VOLT} className={styles.word} />
-          <path d={FM} className={styles.accent} />
-        </svg>
-      )}
+      {compact ? <LogoIcon className={styles.icon} /> : <LogoWordmark className={styles.wordmark} />}
     </Link>
   );
 }

@@ -1,0 +1,54 @@
+/* Farben aus --color-cover-* (src/styles/brand.css). Das Logo liest
+   --color-logo-*; hier auf die dunkle Fassung gesetzt, damit es auch im
+   Hellmodus auf der dunklen Flaeche sichtbar ist. */
+.cover {
+  --color-logo-mark: var(--color-cover-accent);
+  --color-logo-word: var(--color-cover-fg);
+  --color-logo-accent: var(--color-cover-accent);
+
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  container-type: size;
+  color: var(--color-cover-fg);
+  background:
+    radial-gradient(
+      120% 90% at 85% 0%,
+      color-mix(in srgb, var(--color-cover-accent) 13%, transparent),
+      transparent 65%
+    ),
+    var(--color-cover-bg);
+}
+
+.icon {
+  position: absolute;
+  left: 7cqw;
+  top: 9cqh;
+  width: auto;
+  height: 24cqh;
+  color: var(--color-cover-accent);
+}
+
+.foot {
+  position: absolute;
+  left: 7cqw;
+  right: 7cqw;
+  bottom: 8cqh;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--spacing-12);
+}
+
+.name {
+  font: 800 clamp(1rem, 7.5cqw, 2.6rem) / 1.05 var(--font-display);
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+.wordmark {
+  flex-shrink: 0;
+  width: auto;
+  height: clamp(9px, 5cqh, 20px);
+  opacity: 0.85;
+}
