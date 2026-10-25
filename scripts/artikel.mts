@@ -402,7 +402,7 @@ Am 6. November ab 18 Uhr übertragen wir 24 Stunden RadioAid, dieses Jahr für S
 
 ## Was lief wann
 
-Auf der [Radio-Seite](/radio) gibt es jetzt einen Link zur Playlist der letzten Tage: jeder Titel mit Uhrzeit, Tag für Tag. Die Liste kommt von lautstation.de. Weil sich dein Browser dafür mit einem anderen Anbieter verbindet, lädt sie erst, wenn du auf „Playlist laden“ klickst.
+Auf der [Radio-Seite](/radio) findest du jetzt die Playlist der letzten Tage: jeder Titel mit Uhrzeit, Tag für Tag. Die Liste kommt von lautstation.de. Weil sich dein Browser dafür mit einem anderen Anbieter verbindet, lädt sie erst, wenn du auf „Playlist laden“ klickst.
 
 ## Kleinigkeiten
 
