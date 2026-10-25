@@ -87,6 +87,14 @@ export default function DatenschutzPage() {
             <strong>keine personenbezogenen Daten von dir</strong> an laut.fm
             übermittelt, und es wird dabei nichts auf deinem Gerät gespeichert.
           </p>
+          <p>
+            Genauso funktioniert die Playlist der letzten Tage unter{" "}
+            <a href="/radio/playlist">/radio/playlist</a>: Die Titelliste holt
+            unser Server bei lautstation.de, einem privaten Verzeichnis für
+            laut.fm-Stationen. Dein Browser verbindet sich dabei nicht mit
+            lautstation.de. Das passiert erst, wenn du dort auf den Link zur
+            Quelle klickst.
+          </p>
 
           <h3>2. Der Klick auf &bdquo;hören&ldquo; (Weiterleitung)</h3>
           <p>

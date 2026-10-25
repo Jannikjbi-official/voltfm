@@ -47,6 +47,7 @@ export default async function RadioPage() {
               <SectionHeader
                 eyebrow="Zuletzt gespielt"
                 title="Was gerade lief"
+                action={{ href: "/radio/playlist", label: "Die letzten Tage" }}
               />
 
               {history.length > 0 ? (
