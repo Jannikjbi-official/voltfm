@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { resolveHostImage } from "@/services/discord/avatar";
+import { LogoIcon } from "@/components/layout/logo";
 import type { HostDTO } from "@/services/content";
 import styles from "./host-card.module.css";
 
@@ -67,7 +68,7 @@ export async function HostCard({ host }: { host: HostDTO }) {
 function HostLogoFallback() {
   return (
     <span className={styles.logoFallback} aria-hidden="true">
-      <Image src="/voltfm-logo.webp" alt="" width={120} height={120} className={styles.logoImage} />
+      <LogoIcon className={styles.logoImage} />
     </span>
   );
 }

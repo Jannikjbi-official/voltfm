@@ -39,6 +39,19 @@
   margin-top: 1.75em;
 }
 
+/* Wie auf der News-Seite: Ohne das erben Links die Textfarbe und sind nicht
+   als Links zu erkennen. */
+.prose a {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.prose a:hover {
+  color: var(--color-accent);
+}
+
 .side {
   display: flex;
   flex-direction: column;

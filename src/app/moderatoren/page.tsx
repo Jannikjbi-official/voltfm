@@ -11,7 +11,7 @@ import styles from "./page.module.css";
 export const metadata: Metadata = {
   title: "Moderatoren",
   description:
-    "Die Stimmen hinter VoltFM: Wer bei uns moderiert, welche Sendungen sie machen und wofür sie stehen.",
+    "Die Leute hinter VoltFM: Profile, Musikgeschmack und Beiträge.",
   alternates: { canonical: "/moderatoren" },
 };
 
@@ -42,9 +42,8 @@ export default async function ModeratorenPage() {
           </h1>
 
           <p className={styles.lead}>
-            Radio lebt davon, dass jemand da ist. Das hier sind die Menschen, die
-            bei uns am Mikrofon sitzen — mit ihren Sendungen, ihrer Musik und
-            ihren Eigenheiten.
+            Das sind die Leute hinter VoltFM, mit ihrer Musik und ihren
+            Eigenheiten.
           </p>
 
           {hosts.length > 0 && (

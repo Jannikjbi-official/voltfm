@@ -13,7 +13,7 @@ import styles from "./page.module.css";
 export const metadata: Metadata = {
   title: "Über VoltFM",
   description:
-    "Wie aus einem Jugendzimmer in Hamburg ein Webradio mit eigener Redaktion und Community wurde.",
+    "Wie aus einer laut.fm-Station in Hamburg VoltFM wurde, und woran wir gerade arbeiten.",
   alternates: { canonical: "/ueber-uns" },
 };
 
@@ -109,7 +109,7 @@ export default async function UeberUnsPage() {
           <SectionHeader
             eyebrow="Geschichte"
             title="Wie es dazu kam"
-            description="Seit Januar 2021 — von einer Playlist im Jugendzimmer zu einem Sender mit Redaktion."
+            description="Seit Januar 2021: ein paar Namen, ein Umweg über einen eigenen Server, eine Station."
           />
 
           {entries.length === 0 ? (

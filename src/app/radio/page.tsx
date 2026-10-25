@@ -47,6 +47,7 @@ export default async function RadioPage() {
               <SectionHeader
                 eyebrow="Zuletzt gespielt"
                 title="Was gerade lief"
+                action={{ href: "/radio/playlist", label: "Die letzten Tage" }}
               />
 
               {history.length > 0 ? (
@@ -85,7 +86,7 @@ export default async function RadioPage() {
                 </div>
                 <div className={styles.infoRow}>
                   <dt>Genres</dt>
-                  <dd>{station?.genres.join(", ") || "Pop, Rock, Schlager"}</dd>
+                  <dd>{site.genres.join(", ")}</dd>
                 </div>
                 <div className={styles.infoRow}>
                   <dt>Standort</dt>

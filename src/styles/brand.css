@@ -109,6 +109,25 @@
   --player-height-mobile: 68px;
   --header-height: 68px;
 
+  /* --- Logo -------------------------------------------------------------
+     Die drei Farben der Logo-Dateien in public/logo/. Im Hellmodus gilt die
+     Vorlage "auf-weiss": alles dunkel, weil das Gelb auf Weiss kaum Kontrast
+     hat. */
+  --volt-logo-ink: #0e0f12;
+  --volt-logo-yellow: #ffd60a;
+  --volt-logo-paper: #f5f5f0;
+
+  --color-logo-mark: var(--volt-logo-ink);
+  --color-logo-word: var(--volt-logo-ink);
+  --color-logo-accent: var(--volt-logo-ink);
+
+  /* --- RadioAid ---------------------------------------------------------
+     Eigene Farbe fuer eine fremde Aktion: /radioaid und der Banner auf der
+     Startseite lesen beide hier. */
+  --color-radioaid: oklch(0.58 0.19 25);
+  --color-radioaid-soft: color-mix(in srgb, var(--color-radioaid) 12%, transparent);
+  --color-radioaid-line: color-mix(in srgb, var(--color-radioaid) 30%, transparent);
+
   /* Elevation that reads correctly on a light background. */
   --volt-shadow-soft: 0 1px 2px oklch(0.2 0.02 251 / 6%), 0 8px 24px -12px oklch(0.2 0.02 251 / 18%);
   --volt-shadow-lift: 0 2px 4px oklch(0.2 0.02 251 / 8%), 0 18px 44px -18px oklch(0.2 0.02 251 / 26%);
@@ -147,6 +166,11 @@
 
   --color-primary-hover: oklch(0.79 0.10 var(--base-hue));
   --color-primary-active: oklch(0.66 0.11 var(--base-hue));
+
+  /* Vorlage "dunkel": gelbes Icon, VOLT in Off-White, FM in Gelb. */
+  --color-logo-mark: var(--volt-logo-yellow);
+  --color-logo-word: var(--volt-logo-paper);
+  --color-logo-accent: var(--volt-logo-yellow);
 
   --color-border: oklch(0.24 0 0);
   --color-border-strong: oklch(0.36 0 0);

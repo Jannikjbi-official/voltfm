@@ -73,6 +73,21 @@
   color: var(--color-text-secondary);
 }
 
+.wayLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-6);
+  margin-top: auto;
+  font: var(--type-small);
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.wayLink:hover {
+  color: var(--color-accent);
+  gap: var(--spacing-10);
+}
+
 /* --- Events -------------------------------------------------------------- */
 
 .eventsSection {

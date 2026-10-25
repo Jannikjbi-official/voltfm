@@ -47,6 +47,7 @@ import {
   faPaperPlane,
   faChevronRight,
   faChevronDown,
+  faDownload,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { faDiscord } from "@fortawesome/free-brands-svg-icons";
@@ -128,3 +129,4 @@ export const CopyIcon = faCopy;
 export const SendIcon = faPaperPlane;
 export const ChevronRightIcon = faChevronRight;
 export const ChevronDownIcon = faChevronDown;
+export const DownloadIcon = faDownload;

@@ -1,44 +1,48 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { PageHeader } from "@/components/common/page-header";
 import { ButtonLink } from "@/components/common/button-link";
 import { EventCard } from "@/components/events/event-card";
 import { SectionHeader } from "@/components/common/section-header";
 import { EmptyState } from "@/components/common/empty-state";
-import { Icon, DiscordIcon, MicIcon, HeartIcon, SendIcon } from "@/lib/icons";
+import { Icon, ArrowRightIcon, DiscordIcon, MicIcon, HeartIcon, SendIcon } from "@/lib/icons";
 import { listEvents } from "@/services/content";
-import { site } from "@/lib/site";
+import { operator, site } from "@/lib/site";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Community",
-  description:
-    "Die VoltFM Community: Discord, Songwünsche, Community-Abende und alle Wege mitzumachen.",
+  description: "Die VoltFM-Community: unser Discord, RadioAid und wie du mitmachen kannst.",
   alternates: { canonical: "/community" },
 };
 
 export const revalidate = 600;
 
+/* Nur Wege, die es gerade wirklich gibt. Songwuensche, Live-Chat zu Sendungen
+   und Community-Abende standen hier frueher — nichts davon findet statt. */
 const WAYS = [
   {
     icon: DiscordIcon,
     title: "Im Discord mitreden",
-    text: "Der Discord ist unser Wohnzimmer. Hier laufen Songwünsche, Feedback und die Planung der nächsten Sendungen zusammen — und während der Sendungen der Live-Chat.",
+    text: "Schreib einfach rein. Neuigkeiten kündigen wir dort zuerst an, und Fragen beantworten wir dort am schnellsten.",
   },
   {
     icon: MicIcon,
-    title: "Songs vorschlagen",
-    text: "Jeder Vorschlag aus der Community landet bei Mochiko in der Musikredaktion und läuft mindestens einmal in einer Abendsendung, bevor wir über die Rotation entscheiden.",
+    title: "Selbst mitmachen",
+    text: "Wenn du selbst etwas beitragen willst: Offene Stellen stehen in unserem Bewerbungsportal.",
+    link: { href: "/mitmachen", label: "Zum Mitmachen" },
   },
   {
     icon: HeartIcon,
-    title: "Bei Events dabei sein",
-    text: "Einmal im Monat gibt es den Community-Abend: offener Sprachkanal, offene Wunschliste, und das Programm macht ihr.",
+    title: "RadioAid",
+    text: "Einmal im Jahr übertragen wir RadioAid, 24 Stunden Charity-Radio. Termin und Infos stehen auf der RadioAid-Seite.",
+    link: { href: "/radioaid", label: "Zu RadioAid" },
   },
   {
     icon: SendIcon,
     title: "Feedback schicken",
-    text: "Was nervt, was fehlt, was gut läuft: Über das Kontaktformular erreicht ihr uns direkt — und wir antworten wirklich.",
+    text: `Was nervt, was fehlt, was gut läuft: Mach ein Ticket im Discord auf oder schreib an ${operator.email}. Wir antworten, auch wenn es ein paar Tage dauert.`,
   },
 ];
 
@@ -50,7 +54,7 @@ export default async function CommunityPage() {
       <PageHeader
         eyebrow="Mitmachen"
         title="Die Community"
-        description="VoltFM ist kein Sender, der in eine Richtung sendet. Fast alles, was bei uns läuft, kommt am Ende aus der Community zurück."
+        description="Zwei Leute machen den Sender, der Rest passiert im Discord. Da erfährst du alles zuerst und erreichst uns direkt."
         breadcrumbs={[
           { href: "/", label: "Start" },
           { href: "/community", label: "Community" },
@@ -71,9 +75,8 @@ export default async function CommunityPage() {
             <Icon icon={DiscordIcon} className={styles.heroIcon} />
             <h2 className={styles.heroTitle}>Alles passiert im Discord.</h2>
             <p className={styles.heroText}>
-              Songwünsche, Live-Chat während der Sendungen, Community-Abende und
-              die ehrlichen Diskussionen darüber, was wir besser machen können.
-              Kein Konto auf dieser Website nötig — zwei Klicks, und du bist drin.
+              Hier erfährst du zuerst, was ansteht, und hier sagst du uns, was dir
+              fehlt. Zwei Klicks, kein Konto auf dieser Seite.
             </p>
             <ButtonLink href={site.discordUrl} external variant="primary" mode="filled" size="lg">
               Zum VoltFM Discord
@@ -86,7 +89,7 @@ export default async function CommunityPage() {
       <section className="section shell">
         <SectionHeader
           eyebrow="Mitmachen"
-          title="Vier Wege, Teil von VoltFM zu werden"
+          title="So bist du dabei"
         />
 
         <div className={styles.ways}>
@@ -95,6 +98,12 @@ export default async function CommunityPage() {
               <Icon icon={way.icon} className={styles.wayIcon} />
               <h3 className={styles.wayTitle}>{way.title}</h3>
               <p className={styles.wayText}>{way.text}</p>
+              {way.link && (
+                <Link href={way.link.href} className={styles.wayLink}>
+                  {way.link.label}
+                  <Icon icon={ArrowRightIcon} />
+                </Link>
+              )}
             </article>
           ))}
         </div>
@@ -131,7 +140,7 @@ export default async function CommunityPage() {
             <h2 className={styles.contactTitle}>Lieber direkt an uns?</h2>
             <p className={styles.contactText}>
               Für alles, was nicht in den Discord gehört: Feedback, Kooperationen,
-              Presseanfragen oder einfach eine Nachricht an die Redaktion.
+              Presseanfragen oder einfach eine Nachricht an uns.
             </p>
           </div>
           <ButtonLink href="/kontakt" variant="neutral" mode="stroke" size="md">
