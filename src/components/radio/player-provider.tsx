@@ -148,7 +148,8 @@ export function RadioPlayerProvider({
   }, []);
 
   const openExternal = useCallback(() => {
-    // Opening in a separate window is exactly what laut.fm's terms permit.
+    // Ein separates Fenster, nie eingebettet: Der Player laeuft auf
+    // lautstation.de (siehe radio.externalUrl), nicht hier.
     window.open(radio.externalUrl, "_blank", "noopener,noreferrer");
   }, []);
 

@@ -28,6 +28,7 @@
 /* Link-out play button, used while embedding the provider stream is not
    permitted. Styled like the filled play button it replaces. */
 .externalPlay {
+  position: relative;
   display: grid;
   place-items: center;
   flex-shrink: 0;
@@ -55,6 +56,61 @@
 .externalPlay[data-player-size="lg"] svg {
   width: 28px;
   height: 28px;
+}
+
+/* Der Pfeil am Knopf in der Sticky-Leiste. */
+.externalBadge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  display: grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  border-radius: var(--radius-circled);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.externalPlay .externalBadge svg {
+  width: 8px;
+  height: 8px;
+}
+
+/* Hero und /radio: Knopf und Text sind ein gemeinsamer Link. */
+.externalPlayLabeled {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-14);
+  color: var(--color-text);
+}
+
+.externalPlayLabeled:hover .externalPlay {
+  background: var(--color-primary-dark, var(--color-accent));
+}
+
+.externalPlayLabeled:active .externalPlay {
+  transform: scale(0.96);
+}
+
+.externalPlayText {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  font: var(--type-body-lg);
+  font-weight: 650;
+}
+
+.externalPlayLabeled:hover .externalPlayText {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.externalPlayArrow {
+  width: 0.8em;
+  height: 0.8em;
+  color: var(--color-text-secondary);
 }
 
 .volume {

@@ -106,8 +106,17 @@ export const features = {
 
 export const radio = {
   embedAllowed: process.env.NEXT_PUBLIC_RADIO_EMBED === "true",
-  /** Where "hören" sends listeners while embedding is off. */
-  externalUrl: `https://laut.fm/${station}`,
+  /**
+   * Wohin "hören" fuehrt, solange nicht eingebettet wird: der Webplayer von
+   * lautstation.de, in einem neuen Fenster. Entscheidung des Betreibers vom
+   * 25.10.2026 — vorher war es laut.fm selbst. Eingebettet wird weiterhin
+   * nichts; der Player laeuft auf lautstation.de, nicht auf voltfm.xyz.
+   */
+  externalUrl: `https://lautstation.de/?webplayer=${station}`,
+  /** Wer die Seite hinter `externalUrl` betreibt — fuer Hinweis und Datenschutz. */
+  externalName: "lautstation.de",
+  externalPrivacyUrl: "https://lautstation.de/?mode=datenschutz",
+  /** Von dort kommt der Stream selbst. */
   providerName: "laut.fm",
   providerTermsUrl: "https://laut.fm/pages/terms_and_conditions",
   providerPrivacyUrl: "https://laut.fm/pages/privacy",

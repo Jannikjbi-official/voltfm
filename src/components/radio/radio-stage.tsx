@@ -50,7 +50,7 @@ export function RadioStage() {
         </div>
 
         <div className={styles.controls}>
-          <PlayButton size="lg" />
+          <PlayButton size="lg" withLabel />
           <VolumeControl />
         </div>
 
