@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { AuthorAvatar } from "@/components/news/author-avatar";
 import { getCategoryNames, getAuthorProfiles, type ArticleDTO } from "@/services/content";
 import { formatDate, formatReadingTime } from "@/lib/format";
-import { ImagePlaceholder } from "@/components/common/image-placeholder";
+import { ArticleCover } from "@/components/news/article-cover";
 import styles from "./article-card.module.css";
 
 /**
@@ -51,9 +51,9 @@ export async function ArticleCard({
               priority={priority}
             />
           ) : (
-            // No cover art: a flat branded placeholder keeps the grid rhythm
-            // intact instead of leaving a hole.
-            <ImagePlaceholder label={article.title} ratio="16 / 10" />
+            // Kein eigenes Bild: das Titelbild der Kategorie, damit das Raster
+            // keine Luecke bekommt.
+            <ArticleCover categorySlug={article.categorySlug} categoryName={categoryName} />
           )}
         </Link>
       )}

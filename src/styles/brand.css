@@ -121,6 +121,12 @@
   --color-logo-word: var(--volt-logo-ink);
   --color-logo-accent: var(--volt-logo-ink);
 
+  /* Titelbilder ohne Foto (ArticleCover) sind in beiden Modi dunkel, wie die
+     Logo-Vorlage "dunkel" — deshalb nur hier und nicht im Dunkel-Block. */
+  --color-cover-bg: var(--volt-logo-ink);
+  --color-cover-fg: var(--volt-logo-paper);
+  --color-cover-accent: var(--volt-logo-yellow);
+
   /* --- RadioAid ---------------------------------------------------------
      Eigene Farbe fuer eine fremde Aktion: /radioaid und der Banner auf der
      Startseite lesen beide hier. */
