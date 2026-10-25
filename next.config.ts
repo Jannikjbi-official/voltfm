@@ -34,6 +34,14 @@ const nextConfig: NextConfig = {
   // Type errors must fail the build; they are never silently ignored.
   typescript: { ignoreBuildErrors: false },
 
+  async redirects() {
+    return [
+      /* Die Playlist lag kurz auf einer eigenen Seite und steht jetzt direkt
+         auf /radio. Alte Links sollen dort ankommen. */
+      { source: "/radio/playlist", destination: "/radio#playlist", permanent: true },
+    ];
+  },
+
   async headers() {
     if (isIndexable) return [];
     return [

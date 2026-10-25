@@ -121,8 +121,8 @@ export default function DatenschutzPage() {
 
           <h2>Playlist der letzten Tage (lautstation.de)</h2>
           <p>
-            Unter <a href="/radio/playlist">/radio/playlist</a> zeigen wir alle
-            Titel der letzten Tage. Die Liste stammt von lautstation.de, einem
+            Auf der <a href="/radio">Radio-Seite</a> zeigen wir unter
+            &bdquo;Was gerade lief&ldquo; alle Titel der letzten Tage. Die Liste stammt von lautstation.de, einem
             privaten Verzeichnis für laut.fm-Stationen, das weder zu VoltFM noch
             zu laut.fm gehört. Angezeigt wird sie über ein Widget von
             lautstation.de, und das lädt <strong>erst, wenn du auf

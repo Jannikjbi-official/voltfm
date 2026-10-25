@@ -13,6 +13,12 @@ export const lautstation = {
   name: "lautstation.de",
   scriptUrl: "https://cdn.lautstation.de/widget.js",
   stationUrl: `https://lautstation.de/?station=${encodeURIComponent(site.station)}`,
+  /**
+   * Welche Playlist wann laeuft, aufbereitet von lautstation.de aus der
+   * laut.fm-API. Nur verlinkt (neuer Tab): Der eigene Sendeplan unter
+   * /programm bleibt aus, siehe `features.schedule`.
+   */
+  scheduleUrl: `https://lautstation.de/?schedule=${encodeURIComponent(site.station)}`,
   privacyUrl: "https://lautstation.de/?mode=datenschutz",
   /** localStorage-Schluessel fuer "nicht jedes Mal fragen". */
   consentKey: "voltfm-lautstation-consent",

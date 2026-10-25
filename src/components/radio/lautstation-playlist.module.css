@@ -11,6 +11,14 @@
   max-width: 760px;
 }
 
+/* Ein Tag hat rund 400 Titel. Auf /radio scrollt die Liste in sich, statt
+   die Seite um Meter zu verlaengern. */
+.widget :global(.lsw-song-list) {
+  max-height: 32rem;
+  overflow-y: auto;
+  padding-right: var(--spacing-4);
+}
+
 .placeholder {
   min-height: 240px;
 }

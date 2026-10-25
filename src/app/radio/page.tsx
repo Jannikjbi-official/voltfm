@@ -5,7 +5,9 @@ import { SectionHeader } from "@/components/common/section-header";
 import { EmptyState } from "@/components/common/empty-state";
 import { ButtonLink } from "@/components/common/button-link";
 import { RadioStage } from "@/components/radio/radio-stage";
-import { Icon, DiscordIcon } from "@/lib/icons";
+import { LautstationPlaylist } from "@/components/radio/lautstation-playlist";
+import { Icon, DiscordIcon, ExternalLinkIcon } from "@/lib/icons";
+import { lautstation } from "@/lib/lautstation";
 import { getLastSongs, getStationInfo } from "@/services/radio/metadata";
 import { formatTime } from "@/lib/format";
 import { site } from "@/lib/site";
@@ -47,7 +49,6 @@ export default async function RadioPage() {
               <SectionHeader
                 eyebrow="Zuletzt gespielt"
                 title="Was gerade lief"
-                action={{ href: "/radio/playlist", label: "Die letzten Tage" }}
               />
 
               {history.length > 0 ? (
@@ -70,6 +71,26 @@ export default async function RadioPage() {
                   description="Die Metadaten von laut.fm sind gerade nicht erreichbar. Der Stream läuft trotzdem."
                 />
               )}
+
+              {/* Die ausfuehrliche Playlist direkt darunter. Sie lag kurz auf
+                  einer eigenen Seite; /radio/playlist leitet hierher um
+                  (next.config.ts). */}
+              <section id="playlist" className={styles.playlist} aria-labelledby="playlist-title">
+                <h3 id="playlist-title" className={styles.playlistTitle}>
+                  Die letzten Tage
+                </h3>
+                <p className={styles.playlistText}>Jeder Titel, mit Uhrzeit, Tag für Tag.</p>
+                <LautstationPlaylist station={site.station} />
+                <p className={styles.source}>
+                  Daten:{" "}
+                  <a href={lautstation.stationUrl} target="_blank" rel="noreferrer noopener">
+                    {lautstation.name}
+                    <Icon icon={ExternalLinkIcon} />
+                  </a>
+                  , ein privates Verzeichnis für laut.fm-Stationen. Es gehört weder zu
+                  VoltFM noch zu laut.fm.
+                </p>
+              </section>
             </div>
 
             <aside className={styles.info}>
@@ -103,7 +124,15 @@ export default async function RadioPage() {
                   <Icon icon={DiscordIcon} />
                   Discord
                 </ButtonLink>
+                <ButtonLink href={lautstation.scheduleUrl} external variant="neutral" mode="stroke" size="sm">
+                  Sendeplan
+                  <Icon icon={ExternalLinkIcon} />
+                </ButtonLink>
               </div>
+              <p className={styles.infoNote}>
+                Der Sendeplan zeigt, welche Playlist wann läuft, und öffnet sich bei{" "}
+                {lautstation.name} in einem neuen Tab.
+              </p>
             </aside>
           </div>
         </div>
