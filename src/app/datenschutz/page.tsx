@@ -112,6 +112,26 @@ export default function DatenschutzPage() {
             zurücknehmen.
           </p>
 
+          <h2>Playlist der letzten Tage (lautstation.de)</h2>
+          <p>
+            Unter <a href="/radio/playlist">/radio/playlist</a> zeigen wir alle
+            Titel der letzten Tage. Die Liste stammt von lautstation.de, einem
+            privaten Verzeichnis für laut.fm-Stationen, das weder zu VoltFM noch
+            zu laut.fm gehört. Angezeigt wird sie über ein Widget von
+            lautstation.de, und das lädt <strong>erst, wenn du auf
+            &bdquo;Playlist laden&ldquo; klickst</strong>. Ab dann lädt dein
+            Browser ein Skript und die Titelliste von cdn.lautstation.de und
+            überträgt dabei deine IP-Adresse, die Browserkennung und den
+            Zeitpunkt des Abrufs. Rechtsgrundlage ist deine Einwilligung (Art. 6
+            Abs. 1 lit. a DSGVO), die du mit dem Klick erteilst. Ohne Klick wird
+            keine Verbindung aufgebaut. Für die Verarbeitung bei lautstation.de
+            gilt deren{" "}
+            <a href="https://lautstation.de/?mode=datenschutz" target="_blank" rel="noreferrer noopener">
+              Datenschutzerklärung
+            </a>
+            .
+          </p>
+
           <h2>Cookies und lokale Speicherung</h2>
           <p>
             VoltFM setzt keine Tracking-, Analyse- oder Werbe-Cookies. Verwendet
@@ -130,6 +150,11 @@ export default function DatenschutzPage() {
             <li>
               <strong>voltfm-volume</strong> — merkt sich die eingestellte
               Lautstärke.
+            </li>
+            <li>
+              <strong>voltfm-lautstation-consent</strong> — nur wenn du beim
+              Laden der Playlist &bdquo;Nicht jedes Mal fragen&ldquo; anhakst.
+              Unter der Playlist kannst du das jederzeit zurücknehmen.
             </li>
             <li>
               <strong>Sitzungs-Cookies</strong> — nur wenn du dich anmeldest, zur

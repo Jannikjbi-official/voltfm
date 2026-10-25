@@ -1,0 +1,13 @@
+.source {
+  margin-top: var(--spacing-32);
+  font: var(--type-caption);
+  color: var(--color-text-muted);
+}
+
+.source a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  color: var(--color-text-secondary);
+  text-decoration: underline;
+}

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AuthorAvatar } from "@/components/news/author-avatar";
 import { getCategoryNames, getAuthorProfiles, type ArticleDTO } from "@/services/content";
 import { formatDate, formatReadingTime } from "@/lib/format";
 import { ImagePlaceholder } from "@/components/common/image-placeholder";
@@ -77,10 +77,7 @@ export async function ArticleCard({
         <p className={styles.excerpt}>{article.excerpt}</p>
 
         <footer className={styles.footer}>
-          <Avatar style={{ width: 22, height: 22 }}>
-            {author?.image && <AvatarImage src={author.image} alt="" />}
-            <AvatarFallback>{article.authorName.slice(0, 2).toUpperCase()}</AvatarFallback>
-          </Avatar>
+          <AuthorAvatar name={article.authorName} image={author?.image} />
           {/* Muss ueber der Titelflaeche liegen: `.link::after` deckt die
               ganze Karte ab, sonst waere dieser Verweis nicht anklickbar. */}
           {author ? (

@@ -21,7 +21,14 @@ import { config } from "dotenv";
 import { MongoClient, type Db } from "mongodb";
 
 import { renderRichText } from "../src/lib/sanitize";
-import { RELAUNCH_ARTICLE, WEBSEITE_ARTICLE } from "./artikel.mjs";
+import { radioaid, getRadioAidSchedule } from "../src/lib/radioaid";
+import { formatDayMonth, formatTime } from "../src/lib/format";
+import {
+  RELAUNCH_ARTICLE,
+  WEBSEITE_ARTICLE,
+  RADIOAID_2026_ARTICLE,
+  UPDATE_OKTOBER_2026_ARTICLE,
+} from "./artikel.mjs";
 
 // Eine bereits gesetzte Umgebungsvariable gewinnt gegen die Dateien (Vercel).
 config({ path: ".env.local" });
@@ -190,6 +197,44 @@ const HOSTS = [
     image: null,
   },
 ];
+
+/**
+ * Janniks Profil ohne Versprechen, die der Sender gerade nicht haelt: kein
+ * "steht regelmaessig am Mikrofon", keine "Sendungen", solange nur der
+ * Musikpool laeuft. Die Rolle passt sich an "Co-Founder" bei Mochiko an.
+ *
+ * `from` ist genau der Wert, den Migration 003 eingespielt hat — nur dann wird
+ * ersetzt (Regel 2).
+ */
+const JANNIK_PROFILE = {
+  bio: {
+    from: HOSTS[0].bio,
+    to: "Jannik hat 2021 bei laut.fm angefangen, mit der Station jannikjbi. Daraus wurde erst JannikjbiFM und dann, zusammen mit Mochiko, VoltFM. Die Station-ID ist geblieben, deshalb steht im Stream bis heute jannikjbi. 2026 kam der Versuch, mit AzuraCast über einen eigenen Server zu senden. Nach einem Monat war klar, dass sich die Kosten nicht lohnen. Seitdem läuft VoltFM wieder über laut.fm.",
+  },
+  role: { from: HOSTS[0].role, to: "Founder" },
+};
+
+/**
+ * RadioAid 2026 als Event. Termin und Empfaenger kommen aus src/lib/radioaid.ts,
+ * damit /radioaid, der Banner auf der Startseite und das Event nicht
+ * auseinanderlaufen koennen. Der Spendenlink ist der, auf den radioaid.de
+ * selbst verweist.
+ */
+const RADIOAID_EVENT_SOURCE = `Einmal im Jahr machen Radiostationen 24 Stunden lang gemeinsam Programm für einen guten Zweck. RadioAid kommt aus der laut.fm-Community, inzwischen kann jede Station mitmachen. Wir sind seit 2022 dabei und übertragen die Sendung auch dieses Jahr in voller Länge.
+
+## Für wen
+
+Die Spenden gehen 2026 an **${radioaid.organisation}** Der Verein schickt Kindern in schweren Lebenssituationen persönliche Post: ein kleines Überraschungsgeschenk und eine Grußkarte, adressiert an genau dieses Kind.
+
+## Wie du hilfst
+
+Einschalten, weitersagen und, wenn du kannst, spenden. Gespendet wird direkt bei RadioAid: [spende.radioaid.de](${radioaid.donateUrl}).
+
+## Du hast selbst einen Sender?
+
+Jede Station kann mitmachen, die Sendung gibt es kostenlos. Alles dazu steht auf [radioaid.de](${radioaid.website}).
+
+[Alles zu RadioAid bei VoltFM](/radioaid)`;
 
 /** Rechenschritt wie im Editor: ~200 Woerter pro Minute, mindestens eine. */
 function readingTime(html: string): number {
@@ -490,6 +535,88 @@ const MIGRATIONS: Migration[] = [
       );
 
       return `${created} von ${TIMELINE_2026.length} angelegt, ${moved.modifiedCount} umgestellt`;
+    },
+  },
+
+  {
+    name: "014-profil-jannikjbi-ohne-sendungen",
+    run: async (db, now) => {
+      const changed: string[] = [];
+      for (const [field, { from, to }] of Object.entries(JANNIK_PROFILE)) {
+        const result = await db
+          .collection("hosts")
+          .updateOne({ slug: "jannikjbi", [field]: from }, { $set: { [field]: to, updatedAt: now } });
+        if (result.modifiedCount) changed.push(field);
+      }
+      return changed.length
+        ? `jannikjbi: ${changed.join(", ")} ersetzt`
+        : "schon bearbeitet oder nicht vorhanden — nichts angefasst";
+    },
+  },
+
+  {
+    name: "015-event-radioaid-2026",
+    run: async (db, now) => {
+      const { start, end } = getRadioAidSchedule(now);
+      const event = {
+        title: "RadioAid 2026",
+        slug: "radioaid-2026",
+        description: `24 Stunden Charity-Radio für ${radioaid.organisation} VoltFM überträgt die gemeinsame Sendung vom ${formatDayMonth(start)}, ${formatTime(start)} Uhr, bis zum ${formatDayMonth(end)}, ${formatTime(end)} Uhr.`,
+        content: renderRichText(RADIOAID_EVENT_SOURCE),
+        contentSource: RADIOAID_EVENT_SOURCE,
+        startsAt: start,
+        endsAt: end,
+        location: "Im VoltFM-Stream auf laut.fm",
+        category: "Events",
+        status: "upcoming" as const,
+        url: radioaid.website,
+      };
+      /* Nur anlegen. Wer das Event im Admin schon selbst angelegt hat, behaelt
+         seine Fassung (Regel 2). */
+      const result = await db.collection("events").updateOne(
+        { slug: event.slug },
+        { $setOnInsert: { ...event, createdAt: now, updatedAt: now } },
+        { upsert: true },
+      );
+      return result.upsertedCount ? `angelegt: /events/${event.slug}` : "war schon da";
+    },
+  },
+
+  {
+    name: "016-beitraege-radioaid-und-update",
+    run: async (db, now) => {
+      const created: string[] = [];
+      /* RadioAid zuerst und eine Minute frueher: So steht das Update in der
+         Liste oben, RadioAid bleibt als einziger "featured" der Aufmacher. */
+      const items = [
+        { article: RADIOAID_2026_ARTICLE, publishedAt: new Date(now.getTime() - 60_000) },
+        { article: UPDATE_OKTOBER_2026_ARTICLE, publishedAt: now },
+      ];
+      for (const { article, publishedAt } of items) {
+        const { source, ...rest } = article;
+        const content = renderRichText(source);
+        const result = await db.collection("articles").updateOne(
+          { slug: rest.slug },
+          {
+            $setOnInsert: {
+              ...rest,
+              content,
+              contentSource: source,
+              status: "published" as const,
+              publishedAt,
+              readingTime: readingTime(content),
+              coverAlt: rest.coverAlt ?? "",
+              seoTitle: rest.title,
+              seoDescription: rest.excerpt,
+              createdAt: now,
+              updatedAt: now,
+            },
+          },
+          { upsert: true },
+        );
+        if (result.upsertedCount) created.push(`/news/${rest.slug}`);
+      }
+      return created.length ? `angelegt: ${created.join(", ")}` : "waren schon da";
     },
   },
 ];

@@ -18,6 +18,9 @@ const APPLY_URL = "https://dash.pwr.lol/website/1549922141003190324";
 
 export interface SeedArticle {
   slug: string;
+  /** Optional: ein Bild aus public/titelbilder/, samt Beschreibung. */
+  coverImage?: string;
+  coverAlt?: string;
   title: string;
   excerpt: string;
   categorySlug: string;
@@ -329,4 +332,84 @@ Solange die Mail nicht läuft, erreichst du uns über Discord im Kanal **#ticket
 Wenn dir etwas auffällt — ein Knopf, der nicht tut, eine Seite, die auf deinem Gerät komisch aussieht, ein Text, der falsch ist: Schreib es uns im [Discord](${DISCORD_URL}). Sechzehn Tage sind kurz, und eine neue Seite hat immer Ecken, die erst auffallen, wenn andere sie benutzen.
 
 Danke an alle, die in den zwei Wochen einfach abgewartet haben. Wir sind zurück — diesmal auf einem Fundament, das hält.`,
+};
+
+/**
+ * RadioAid 2026. Fakten von radioaid.de und /radioaid: Termin, Empfaenger,
+ * Spendenlink, seit 2022 dabei, die Zwecke der Vorjahre. Die Gesamtsumme von
+ * /radioaid steht bewusst nicht drin — sie liess sich nicht pruefen.
+ *
+ * featured, damit der Beitrag bis zur Sendung die News anfuehrt. Danach im
+ * Admin wieder abwaehlen.
+ */
+export const RADIOAID_2026_ARTICLE: SeedArticle = {
+  slug: "radioaid-2026",
+  title: "RadioAid 2026: 24 Stunden für Seelenpflaster e. V.",
+  excerpt:
+    "Am 6. November um 18 Uhr startet RadioAid. 24 Stunden lang läuft bei uns die gemeinsame Charity-Sendung statt des Musikpools.",
+  categorySlug: "events",
+  tags: ["RadioAid", "Charity", "Seelenpflaster"],
+  coverImage: "/titelbilder/radioaid-2026.png",
+  coverAlt: "RadioAid 2026: 24 Stunden für Seelenpflaster e. V., 6. November ab 18 Uhr",
+  authorName: "jannikjbi",
+  featured: true,
+  source: `Am **6. November um 18 Uhr** beginnt RadioAid 2026. Bis zum 7. November um 18 Uhr läuft bei VoltFM dann nicht der Musikpool, sondern die gemeinsame Charity-Sendung.
+
+## Was RadioAid ist
+
+RadioAid kommt aus der laut.fm-Community. Einmal im Jahr machen Radiostationen zusammen 24 Stunden Programm für einen guten Zweck. Inzwischen kann jede Station mitmachen und die Sendung kostenlos übertragen. Es geht nicht um Reichweite für einen Sender, sondern darum, dass möglichst viele zuhören und spenden.
+
+## Für wen dieses Jahr gesammelt wird
+
+Die Spenden gehen an **Seelenpflaster e. V.** Der Verein schickt seit August 2021 Kindern in schweren Lebenssituationen persönliche Post: ein kleines Überraschungsgeschenk und eine Grußkarte, adressiert an genau dieses Kind.
+
+## Unser fünftes Mal
+
+Wir übertragen RadioAid seit 2022. Bisher ging es um die Tafeln Deutschland, die Deutsche Depressionshilfe, das Ambulante Kinderhospiz München und die Hamburger Kinderwünsche.
+
+## Was du tun kannst
+
+Einschalten, weitersagen und, wenn du kannst, spenden: [spende.radioaid.de](https://spende.radioaid.de). Du hast selbst einen Sender? Dann mach mit, alles dazu steht auf [radioaid.de](https://radioaid.de/).
+
+[Countdown und alle Infos](/radioaid)`,
+};
+
+/** Was mit dem Update im Oktober 2026 dazukam. Nur, was tatsaechlich live ist. */
+export const UPDATE_OKTOBER_2026_ARTICLE: SeedArticle = {
+  slug: "neues-logo-und-ehrlichere-texte",
+  title: "Neues Logo, ehrlichere Texte: Was sich auf der Seite geändert hat",
+  excerpt:
+    "Ein neues Logo, eine Playlist der letzten Tage, ein Countdown für RadioAid und Texte, die nur noch versprechen, was es gibt.",
+  categorySlug: "in-eigener-sache",
+  tags: ["Webseite", "Update", "In eigener Sache"],
+  coverImage: "/titelbilder/neues-logo-und-ehrlichere-texte.png",
+  coverAlt: "Das neue VoltFM-Play-Logo mit Blitz, darunter: Neues Logo, ehrlichere Texte",
+  authorName: "jannikjbi",
+  featured: false,
+  source: `Wer heute auf voltfm.xyz vorbeischaut, sieht als Erstes das neue Logo. Geändert hat sich aber mehr. Hier das Wichtigste.
+
+## Das neue Logo
+
+Das alte Logo mit Kopfhörer und Farbverlauf ist weg. Das neue ist ein Play-Zeichen mit Blitz, daneben steht VOLTFM. Du siehst es oben auf der Seite, im Browser-Tab und als Vorschaubild, wenn jemand einen Link zu uns teilt. Wer über uns schreiben will, findet auf der [Presseseite](/presse) alle Varianten zum Herunterladen.
+
+## Texte, die stimmen
+
+Auf der Startseite standen Dinge, die es so nicht gibt: feste Sendungen, eine Redaktion, Live-Chat während der Sendungen, Community-Abende. Das ist raus. Was stimmt: Wir sind zwei Leute, VoltFM gibt es seit 2021, und gerade läuft rund um die Uhr der Musikpool von laut.fm. Wir arbeiten an mehr, ein Datum nennen wir aber erst, wenn es steht.
+
+## RadioAid auf der Startseite
+
+Am 6. November ab 18 Uhr übertragen wir 24 Stunden RadioAid, dieses Jahr für Seelenpflaster e. V. Oben auf der Startseite zählt ein Countdown bis zum Start, und [beim Event](/events/radioaid-2026) steht alles dazu. Nach der Sendung verschwindet der Countdown von selbst.
+
+## Was lief wann
+
+Auf der [Radio-Seite](/radio) gibt es jetzt einen Link zur Playlist der letzten Tage: jeder Titel mit Uhrzeit, Tag für Tag. Die Liste kommt von lautstation.de. Weil sich dein Browser dafür mit einem anderen Anbieter verbindet, lädt sie erst, wenn du auf „Playlist laden“ klickst.
+
+## Kleinigkeiten
+
+- Neben den News steht jetzt das Discord-Profilbild des Autors statt zwei Buchstaben.
+- Die Genres stimmen: Charts, Pop und Deutschrap statt Schlager, Rock und Pop.
+
+## Was als Nächstes kommt
+
+Als Nächstes passen wir die Farben der Seite an das neue Logo an. Wenn dir vorher schon etwas auffällt, das nicht stimmt, schreib es uns im [Discord](${DISCORD_URL}).`,
 };

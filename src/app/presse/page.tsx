@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import { PageHeader } from "@/components/common/page-header";
 import { ButtonLink } from "@/components/common/button-link";
-import { Icon, DiscordIcon, ExternalLinkIcon } from "@/lib/icons";
+import { Icon, DiscordIcon, DownloadIcon } from "@/lib/icons";
 import { listHosts } from "@/services/content";
 import { operator, radio, site } from "@/lib/site";
 import styles from "./page.module.css";
@@ -52,16 +52,16 @@ export default async function PressePage() {
             <h2>Kurzprofil</h2>
             <p>
               VoltFM ist ein unabhängiges, nicht-kommerzielles Webradio aus
-              Hamburg. Gestartet im Januar 2021 als Ein-Personen-Projekt im
-              Jugendzimmer, heute ein kleines Team mit eigener Redaktion,
-              Moderation und Community.
+              Hamburg. Gestartet im Januar 2021 als laut.fm-Station jannikjbi.
+              Jannik und Mochiko sind von Anfang an dabei und machen den Sender
+              bis heute zu zweit.
             </p>
             <p>
               Ausgestrahlt wird über {radio.providerName}, das die Lizenzen mit
               den Verwertungsgesellschaften hält und über Werbung im Stream
-              finanziert. VoltFM selbst verdient daran nichts: Es gibt keine
-              Bezahlschranke und keine automatisierte Dauerschleife — das
-              Programm wird von Menschen zusammengestellt.
+              finanziert. VoltFM selbst verdient daran nichts, und es gibt keine
+              Bezahlschranke. Gespielt wird derzeit der Musikpool von{" "}
+              {radio.providerName}.
             </p>
             <p>
               Einmal im Jahr überträgt VoltFM{" "}
@@ -80,20 +80,22 @@ export default async function PressePage() {
             <h2>Logo</h2>
             <p>
               Das Logo darf im Zusammenhang mit Berichterstattung über VoltFM
-              verwendet werden. Bitte nicht verzerren, einfärben oder Teile
-              davon einzeln nutzen.
+              verwendet werden. Bitte nicht verzerren oder umfärben. Im Paket
+              stecken Logo und Icon als PNG und SVG, jeweils für helle und
+              dunkle Flächen.
             </p>
             <div className={styles.logoBox}>
               <Image
-                src="/voltfm-logo.webp"
+                src="/logo/voltfm-play-logo-dunkel.png"
                 alt="Das VoltFM-Logo"
-                width={160}
-                height={160}
+                width={1600}
+                height={359}
+                sizes="280px"
                 className={styles.logo}
               />
-              <ButtonLink href="/voltfm-logo.webp" variant="neutral" mode="stroke" size="sm">
-                Logo herunterladen
-                <Icon icon={ExternalLinkIcon} />
+              <ButtonLink href="/logo/voltfm-logo.zip" external variant="neutral" mode="stroke" size="sm">
+                <Icon icon={DownloadIcon} />
+                Logo-Paket herunterladen
               </ButtonLink>
             </div>
           </article>

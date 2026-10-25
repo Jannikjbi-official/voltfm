@@ -17,34 +17,6 @@
   padding-inline: var(--shell-pad);
 }
 
-/* --- Logo ---------------------------------------------------------------- */
-
-.logo {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-10);
-  flex-shrink: 0;
-}
-
-/* Das Logo bringt seinen eigenen Verlauf mit, deshalb kein Kachelhintergrund
-   und keine Farbgebung von aussen. */
-.logoMark {
-  width: 34px;
-  height: 34px;
-  object-fit: contain;
-  flex-shrink: 0;
-}
-
-.logoText {
-  font: 700 1.25rem / 1 var(--font-display);
-  letter-spacing: -0.02em;
-  color: var(--color-text);
-}
-
-.logoAccent {
-  color: var(--color-accent);
-}
-
 /* --- Desktop navigation -------------------------------------------------- */
 
 .nav {
