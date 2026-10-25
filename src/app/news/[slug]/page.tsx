@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/common/page-header";
 import { ArticleCard } from "@/components/news/article-card";
 import { ShareButtons } from "@/components/news/share-buttons";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AuthorAvatar } from "@/components/news/author-avatar";
 import {
   getAllPublishedSlugs,
   getArticleBySlug,
@@ -113,12 +113,7 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
         <div className={styles.layout}>
           <div className={styles.main}>
             <div className={styles.byline}>
-              <Avatar style={{ width: 40, height: 40 }}>
-                {author?.image && <AvatarImage src={author.image} alt="" />}
-                <AvatarFallback>
-                  {article.authorName.slice(0, 2).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
+              <AuthorAvatar name={article.authorName} image={author?.image} size="md" />
               <div className={styles.bylineText}>
                 {/* Nur verlinken, wenn es das Profil oeffentlich gibt — sonst
                     fuehrt der Verweis auf eine 404-Seite. */}
