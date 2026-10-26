@@ -4,6 +4,7 @@ import { listHosts } from "@/services/content";
 import { EntityManager } from "@/components/admin/entity-manager";
 import type { EntityRow, FieldDef } from "@/components/admin/entity-types";
 import { saveHost, deleteHost } from "./actions";
+import { DEFAULT_PROFILE_LAYOUT, PROFILE_LAYOUTS } from "@/lib/profile-layouts";
 import styles from "../page.module.css";
 
 export const metadata: Metadata = { title: "Moderatoren · Admin", robots: { index: false } };
@@ -61,17 +62,19 @@ const FIELDS: FieldDef[] = [
   },
   {
     name: "profileLayout",
-    label: "Profil-Layout",
+    label: "Profil-Aufbau",
     type: "select",
     side: true,
-    options: [
-      { value: "spotlight", label: "Spotlight" },
-      { value: "editorial", label: "Editorial" },
-      { value: "stage", label: "Stage" },
-      { value: "zine", label: "Zine" },
-    ],
+    options: PROFILE_LAYOUTS.map((layout) => ({ value: layout.value, label: layout.label })),
+    hint: "Bühne: breites Farbband. Poster: großes Bild. Karte: wie ein Discord-Profil.",
   },
-  { name: "accentHue", label: "Akzentfarbe", type: "hue", side: true },
+  {
+    name: "accentHue",
+    label: "Akzentfarbe",
+    type: "hue",
+    side: true,
+    hint: "Leer lassen: Die Farbe kommt aus dem Profilbild.",
+  },
   {
     name: "genres",
     label: "Musikrichtungen",
@@ -116,7 +119,7 @@ export default async function Page() {
       joinedAt: item.joinedAt ? String(item.joinedAt).slice(0, 10) : "",
       image: item.image ?? "",
       discordUserId: item.discordUserId ?? "",
-      profileLayout: item.profileLayout ?? "spotlight",
+      profileLayout: item.profileLayout ?? DEFAULT_PROFILE_LAYOUT,
       accentHue: item.accentHue ?? "",
       showSlugs: item.showSlugs.join(", "),
       socials: item.socials.map((social) => `${social.label}|${social.url}`).join("\n"),

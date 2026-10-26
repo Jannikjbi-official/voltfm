@@ -16,6 +16,17 @@ export function formatDate(value: string | Date, style: "long" | "short" = "long
   }).format(date);
 }
 
+/** "Dezember 2020" — wenn der Tag nichts zur Sache tut, z. B. "Dabei seit". */
+export function formatMonthYear(value: string | Date): string {
+  const date = typeof value === "string" ? new Date(value) : value;
+  if (Number.isNaN(date.getTime())) return "";
+  return new Intl.DateTimeFormat("de-DE", {
+    timeZone: TZ,
+    month: "long",
+    year: "numeric",
+  }).format(date);
+}
+
 /** "6. November" — fuer Ankuendigungen, bei denen das Jahr klar ist. */
 export function formatDayMonth(value: string | Date): string {
   const date = typeof value === "string" ? new Date(value) : value;

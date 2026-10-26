@@ -5,6 +5,7 @@ import { ObjectId } from "mongodb";
 import { z } from "zod";
 
 import { imageUrl } from "@/lib/validation";
+import { DEFAULT_PROFILE_LAYOUT, PROFILE_LAYOUT_VALUES } from "@/lib/profile-layouts";
 
 import { hosts } from "@/db/collections";
 import { assertCan, AuthorizationError } from "@/lib/session";
@@ -28,7 +29,7 @@ const schema = z.object({
     .regex(/^\d{5,25}$/, "Discord-ID besteht nur aus Ziffern.")
     .or(z.literal(""))
     .optional(),
-  profileLayout: z.enum(["spotlight", "editorial", "stage", "zine"]),
+  profileLayout: z.enum(PROFILE_LAYOUT_VALUES),
   accentHue: z.coerce.number().int().min(0).max(360).optional(),
   showSlugs: z.string().trim().max(300).optional(),
   socials: z.string().trim().max(600).optional(),
@@ -85,7 +86,7 @@ export async function saveHost(
     bio: formData.get("bio"),
     image: formData.get("image") ?? "",
     discordUserId: formData.get("discordUserId") ?? "",
-    profileLayout: formData.get("profileLayout") ?? "spotlight",
+    profileLayout: formData.get("profileLayout") ?? DEFAULT_PROFILE_LAYOUT,
     accentHue: formData.get("accentHue") || undefined,
     showSlugs: formData.get("showSlugs") ?? "",
     socials: formData.get("socials") ?? "",
