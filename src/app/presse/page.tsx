@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 
 import { PageHeader } from "@/components/common/page-header";
+import { LogoWordmark } from "@/components/layout/logo";
 import { ButtonLink } from "@/components/common/button-link";
 import { Icon, DiscordIcon, DownloadIcon } from "@/lib/icons";
 import { listHosts } from "@/services/content";
@@ -85,14 +85,11 @@ export default async function PressePage() {
               dunkle Flächen.
             </p>
             <div className={styles.logoBox}>
-              <Image
-                src="/logo/voltfm-play-logo-dunkel.png"
-                alt="Das VoltFM-Logo"
-                width={1600}
-                height={359}
-                sizes="280px"
-                className={styles.logo}
-              />
+              {/* Inline statt als PNG: ohne eigenen Hintergrund, und die Farben
+                  folgen dem Modus wie im Header. */}
+              <span role="img" aria-label="Das VoltFM-Logo" className={styles.logo}>
+                <LogoWordmark className={styles.logoMark} />
+              </span>
               <ButtonLink href="/logo/voltfm-logo.zip" external variant="neutral" mode="stroke" size="sm">
                 <Icon icon={DownloadIcon} />
                 Logo-Paket herunterladen
