@@ -36,6 +36,8 @@ export const site = {
    */
   canonicalUrl: "https://voltfm.xyz",
   discordUrl: process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/6JzSsUTWuh",
+  /** Nur verlinkt, nichts eingebettet — es laedt also nichts von Meta. */
+  instagramUrl: "https://www.instagram.com/voltfm_radio/",
   streamUrl:
     process.env.NEXT_PUBLIC_RADIO_STREAM_URL ?? "https://stream.laut.fm/jannikjbi",
   /**

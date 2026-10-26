@@ -54,7 +54,7 @@ import {
   faListUl,
 } from "@fortawesome/free-solid-svg-icons";
 
-import { faDiscord } from "@fortawesome/free-brands-svg-icons";
+import { faDiscord, faInstagram } from "@fortawesome/free-brands-svg-icons";
 
 /**
  * The single icon system for VoltFM: Font Awesome.
@@ -120,6 +120,7 @@ export const LoadingIcon = faSpinner;
 export const SunIcon = faSun;
 export const MoonIcon = faMoon;
 export const DiscordIcon = faDiscord;
+export const InstagramIcon = faInstagram;
 export const PasskeyIcon = faFingerprint;
 export const LogoutIcon = faRightFromBracket;
 export const ClockIcon = faClock;

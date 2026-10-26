@@ -84,6 +84,7 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
       "@type": "Organization",
       name: site.name,
       url: site.url,
+      sameAs: [site.instagramUrl],
     },
     mainEntityOfPage: url,
     ...(article.coverImage ? { image: [article.coverImage] } : {}),

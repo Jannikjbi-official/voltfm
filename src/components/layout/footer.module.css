@@ -18,6 +18,12 @@
   gap: var(--spacing-16);
 }
 
+.brandLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-8);
+}
+
 .brandText {
   font: var(--type-small);
   color: var(--color-text-secondary);
