@@ -1,5 +1,7 @@
 import type { ObjectId } from "mongodb";
 
+import type { ProfileLayout } from "@/lib/profile-layouts";
+
 export type ArticleStatus = "draft" | "scheduled" | "published" | "archived";
 export type EventStatus = "upcoming" | "live" | "past" | "cancelled";
 
@@ -78,11 +80,15 @@ export interface Host {
   /** Discord snowflake, used to pull the avatar from Discord as a fallback. */
   discordUserId?: string | null;
   /**
-   * Which profile composition to render. Each host gets a visually distinct
-   * page so the roster does not read as one template repeated four times.
+   * Welcher Aufbau die Profilseite bekommt, damit nicht jedes Profil dieselbe
+   * Vorlage ist. Aeltere Datensaetze tragen noch die Werte von vor Oktober
+   * 2026; `normalizeHost` stellt sie beim Lesen um.
    */
-  profileLayout?: "spotlight" | "editorial" | "stage" | "zine";
-  /** Optional brand accent for this host, as an OKLCH hue (0-360). */
+  profileLayout?: ProfileLayout;
+  /**
+   * Eigene Farbe der Person, als OKLCH-Hue (0-360). Leer heisst: Die Seite
+   * nimmt den Farbton des Profilbilds.
+   */
   accentHue?: number | null;
   socials: { label: string; url: string }[];
   /** Slugs of shows this host presents. */

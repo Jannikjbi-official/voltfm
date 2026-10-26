@@ -171,7 +171,7 @@ const HOSTS = [
   {
     slug: "jannikjbi",
     name: "jannikjbi",
-    profileLayout: "spotlight",
+    profileLayout: "buehne",
     accentHue: 251,
     role: "Gründer & Programmchef",
     discordUserId: "810459620035657769",
@@ -185,7 +185,7 @@ const HOSTS = [
   {
     slug: "mochikotv",
     name: "mochikotv",
-    profileLayout: "stage",
+    profileLayout: "poster",
     accentHue: 320,
     role: "Co-Gründerin & EDM",
     discordUserId: "513032712240627733",

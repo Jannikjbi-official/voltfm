@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ButtonLink } from "@/components/common/button-link";
 import { footerNav, site } from "@/lib/site";
-import { Icon, DiscordIcon } from "@/lib/icons";
+import { Icon, DiscordIcon, InstagramIcon } from "@/lib/icons";
 import { Logo } from "./logo";
 import styles from "./footer.module.css";
 
@@ -15,10 +15,16 @@ export function Footer() {
             <p className={styles.brandText}>
               {site.description}
             </p>
-            <ButtonLink href={site.discordUrl} external variant="primary" mode="stroke" size="sm">
-              <Icon icon={DiscordIcon} />
-              Community auf Discord
-            </ButtonLink>
+            <div className={styles.brandLinks}>
+              <ButtonLink href={site.discordUrl} external variant="primary" mode="stroke" size="sm">
+                <Icon icon={DiscordIcon} />
+                Community auf Discord
+              </ButtonLink>
+              <ButtonLink href={site.instagramUrl} external variant="neutral" mode="stroke" size="sm">
+                <Icon icon={InstagramIcon} />
+                Instagram
+              </ButtonLink>
+            </div>
           </div>
 
           <nav className={styles.columns} aria-label="Footer-Navigation">

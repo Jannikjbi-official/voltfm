@@ -5,6 +5,7 @@ import { categories, events, hosts, shows, timeline } from "@/db/collections";
 import type { Category, Host, Show, TimelineEntry, VoltEvent } from "@/types/content";
 import { serialize, serializeAll, type Plain } from "./serialize";
 import { resolveHostImage } from "@/services/discord/avatar";
+import { normalizeProfileLayout } from "@/lib/profile-layouts";
 
 export * from "./articles";
 export * from "./serialize";
@@ -65,6 +66,7 @@ function normalizeHost(host: HostDTO): HostDTO {
     socials: host.socials ?? [],
     showSlugs: host.showSlugs ?? [],
     details: host.details ?? [],
+    profileLayout: normalizeProfileLayout(host.profileLayout),
   };
 }
 

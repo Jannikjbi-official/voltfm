@@ -6,7 +6,7 @@ import { ButtonLink } from "@/components/common/button-link";
 import { EventCard } from "@/components/events/event-card";
 import { SectionHeader } from "@/components/common/section-header";
 import { EmptyState } from "@/components/common/empty-state";
-import { Icon, ArrowRightIcon, DiscordIcon, MicIcon, HeartIcon, SendIcon } from "@/lib/icons";
+import { Icon, ArrowRightIcon, DiscordIcon, InstagramIcon, MicIcon, HeartIcon, SendIcon } from "@/lib/icons";
 import { listEvents } from "@/services/content";
 import { operator, site } from "@/lib/site";
 import styles from "./page.module.css";
@@ -61,10 +61,16 @@ export default async function CommunityPage() {
         ]}
         size="large"
         aside={
-          <ButtonLink href={site.discordUrl} external variant="primary" mode="filled" size="md">
-            <Icon icon={DiscordIcon} />
-            Discord beitreten
-          </ButtonLink>
+          <>
+            <ButtonLink href={site.discordUrl} external variant="primary" mode="filled" size="md">
+              <Icon icon={DiscordIcon} />
+              Discord beitreten
+            </ButtonLink>
+            <ButtonLink href={site.instagramUrl} external variant="neutral" mode="stroke" size="md">
+              <Icon icon={InstagramIcon} />
+              Instagram
+            </ButtonLink>
+          </>
         }
       />
 
