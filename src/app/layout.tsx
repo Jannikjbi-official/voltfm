@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Public_Sans, Source_Serif_4 } from "next/font/google";
+import { Archivo } from "next/font/google";
 import "./globals.css";
 
 import { cookies } from "next/headers";
@@ -15,24 +15,14 @@ import { getAccountAvatar } from "@/services/content/account";
 import { getStreamUrl } from "@/services/radio/stream";
 import { buildMainNav, site } from "@/lib/site";
 
-/* Editorial display face — carries headlines and the wordmark. */
-const display = Bricolage_Grotesque({
-  variable: "--font-display-voltfm",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-/* UI face — navigation, metadata, forms. */
-const sans = Public_Sans({
-  variable: "--font-sans-voltfm",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-/* Reading face — long-form article body copy only. */
-const serif = Source_Serif_4({
-  variable: "--font-serif-voltfm",
-  subsets: ["latin"],
+/* Die eine Schrift fuer alles. Variabel geladen, mit der Breitenachse dazu:
+   Ueberschriften laufen breit (wdth 112,5 bis 125), Fliesstext normal. next/font
+   legt die Datei beim Build ab und liefert sie von der eigenen Domain aus — der
+   Browser fragt Google nicht. */
+const archivo = Archivo({
+  variable: "--font-archivo",
+  subsets: ["latin", "latin-ext"],
+  axes: ["wdth"],
   display: "swap",
 });
 
@@ -87,9 +77,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       lang={site.lang}
       data-theme={theme}
       style={{ colorScheme: theme }}
-      className={`${display.variable} ${sans.variable} ${serif.variable}`}
+      className={archivo.variable}
     >
-      <body style={{ "--player-offset": "var(--player-height)" } as React.CSSProperties}>
+      <body>
         <ThemeProvider initialTheme={theme}>
           <RadioPlayerProvider streamUrl={getStreamUrl()} initialSnapshot={snapshot}>
               <a href="#main" className="skip-link">

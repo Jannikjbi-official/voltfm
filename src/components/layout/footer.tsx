@@ -1,10 +1,13 @@
 import Link from "next/link";
-import { ButtonLink } from "@/components/common/button-link";
 import { footerNav, site } from "@/lib/site";
-import { Icon, DiscordIcon, InstagramIcon } from "@/lib/icons";
+import { Icon, DiscordIcon, InstagramIcon, ExternalLinkIcon } from "@/lib/icons";
 import { Logo } from "./logo";
 import styles from "./footer.module.css";
 
+/**
+ * Der Footer traegt jetzt die zweite Reihe der Navigation (Über uns, FAQ,
+ * Presse, Mitmachen, Kontakt) — die Kopfzeile hat nur noch fuenf Punkte.
+ */
 export function Footer() {
   return (
     <footer className={styles.footer}>
@@ -12,19 +15,25 @@ export function Footer() {
         <div className={styles.top}>
           <div className={styles.brand}>
             <Logo />
-            <p className={styles.brandText}>
-              {site.description}
-            </p>
-            <div className={styles.brandLinks}>
-              <ButtonLink href={site.discordUrl} external variant="primary" mode="stroke" size="sm">
-                <Icon icon={DiscordIcon} />
-                Community auf Discord
-              </ButtonLink>
-              <ButtonLink href={site.instagramUrl} external variant="neutral" mode="stroke" size="sm">
-                <Icon icon={InstagramIcon} />
-                Instagram
-              </ButtonLink>
-            </div>
+            <p className={styles.brandText}>{site.description}</p>
+            <ul className={styles.social} role="list">
+              <li>
+                <a href={site.discordUrl} target="_blank" rel="noreferrer noopener" className={styles.socialLink}>
+                  <Icon icon={DiscordIcon} />
+                  Discord
+                  <Icon icon={ExternalLinkIcon} className={styles.externalIcon} />
+                  <span className="visually-hidden"> (öffnet einen neuen Tab)</span>
+                </a>
+              </li>
+              <li>
+                <a href={site.instagramUrl} target="_blank" rel="noreferrer noopener" className={styles.socialLink}>
+                  <Icon icon={InstagramIcon} />
+                  Instagram
+                  <Icon icon={ExternalLinkIcon} className={styles.externalIcon} />
+                  <span className="visually-hidden"> (öffnet einen neuen Tab)</span>
+                </a>
+              </li>
+            </ul>
           </div>
 
           <nav className={styles.columns} aria-label="Footer-Navigation">
@@ -71,10 +80,10 @@ export function Footer() {
             </a>
           </p>
           <div className={styles.legal}>
-            <Link href="/impressum" className={styles.columnLink}>
+            <Link href="/impressum" className={styles.legalLink}>
               Impressum
             </Link>
-            <Link href="/datenschutz" className={styles.columnLink}>
+            <Link href="/datenschutz" className={styles.legalLink}>
               Datenschutz
             </Link>
           </div>

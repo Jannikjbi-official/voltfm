@@ -79,16 +79,19 @@ export function LautstationPlaylist({ station }: { station: string }) {
         <span className={styles.gateIcon} aria-hidden="true">
           <Icon icon={MusicIcon} />
         </span>
-        <h2 className={styles.gateTitle}>Playlist von {lautstation.name} laden?</h2>
+        {/* Die Fortsetzung der Liste darueber, kein eigener Abschnitt — deshalb
+            eine h3 unter "Was gerade lief" und kein eigener Titel wie "Die
+            letzten Tage". */}
+        <h3 className={styles.gateTitle}>Die ganze Playlist der letzten Tage</h3>
         <p className={styles.gateText}>
-          Die Liste aller Titel der letzten Tage kommt von {lautstation.name}, einem
-          privaten Verzeichnis für laut.fm-Stationen. Mit dem Klick verbindet sich
-          dein Browser dorthin und überträgt dabei deine IP-Adresse und
-          Browserkennung. Vorher passiert nichts.
+          Jeder Titel, mit Uhrzeit, Tag für Tag. Die Liste kommt von{" "}
+          {lautstation.name}, einem privaten Verzeichnis für laut.fm-Stationen. Mit
+          dem Klick verbindet sich dein Browser dorthin und überträgt dabei deine
+          IP-Adresse und Browserkennung. Vorher passiert nichts.
         </p>
         <div className={styles.gateActions}>
           <Button variant="primary" mode="filled" size="md" onClick={accept}>
-            Playlist laden
+            Ganze Playlist laden
           </Button>
           <label className={styles.remember}>
             <input

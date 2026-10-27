@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { features, site } from "@/lib/site";
 import { useRadioPlayer } from "./player-provider";
-import { PlayButton, VolumeControl } from "./player-controls";
+import { LevelMeter, PlayButton, PlayerStatusLine, VolumeControl } from "./player-controls";
 import { CoverArt } from "./cover-art";
 import { LiveIndicator } from "./live-indicator";
 import styles from "./player.module.css";
@@ -12,13 +12,18 @@ import styles from "./player.module.css";
  * The persistent player.
  *
  * Rendered once in the root layout and never unmounted, so switching pages does
- * not interrupt playback. Body padding (--player-offset) reserves its height so
- * it never covers page content.
+ * not interrupt playback. Body padding (--player-height in globals.css)
+ * reserves its height so it never covers page content.
+ *
+ * Auf 375 px bleiben Knopf, Cover, Titel und der Stumm-Knopf. Laeuft etwas
+ * schief, steht die Meldung an der Stelle des Interpreten — dort, wo man nach
+ * dem Klick ohnehin hinschaut.
  */
 export function StickyPlayer() {
-  const { snapshot, status } = useRadioPlayer();
+  const { snapshot, status, error, embedAllowed } = useRadioPlayer();
   const track = snapshot?.nowPlaying;
   const show = snapshot?.currentShow;
+  const failed = status === "error" || status === "offline";
 
   return (
     <aside className={styles.bar} aria-label="VoltFM Player">
@@ -28,15 +33,15 @@ export function StickyPlayer() {
         <div className={styles.meta}>
           <CoverArt
             src={track?.coverUrl}
-            alt={track ? `Cover: ${track.title} von ${track.artist}` : "VoltFM"}
-            size={48}
+            alt={track ? `Cover: ${track.title} von ${track.artist}` : ""}
+            className={styles.barCover}
           />
           <div className={styles.text}>
             <span className={styles.title}>
-              {track?.title ?? (status === "idle" ? "VoltFM Livestream" : "VoltFM")}
+              {track?.title ?? `${site.name} Livestream`}
             </span>
-            <span className={styles.artist}>
-              {track?.artist ?? site.tagline}
+            <span className={styles.artist} data-failed={failed || undefined}>
+              {failed && error ? error : (track?.artist ?? site.tagline)}
             </span>
           </div>
         </div>
@@ -44,16 +49,27 @@ export function StickyPlayer() {
         <div className={styles.right}>
           {show && (
             /* Zeigt auf den Sendeplan, solange es einen gibt — sonst auf den
-               Player, wo die laufende Sendung ohnehin steht. */
+               Player, wo die laufende Playlist ohnehin steht. */
             <Link href={features.schedule ? "/programm" : "/radio"} className={styles.show}>
+              <span className={styles.showLabel}>Playlist</span>
               <span className={styles.showName}>{show.name}</span>
-              läuft gerade
             </Link>
           )}
-          <LiveIndicator />
+          {embedAllowed ? (
+            <LevelMeter />
+          ) : (
+            /* Auf dem Handy steht "Live" schon gross in der Buehne — in der
+               schmalen Leiste waere es nur ein zweites rotes Feld. */
+            <span className={styles.barLive}>
+              <LiveIndicator />
+            </span>
+          )}
           <VolumeControl />
         </div>
       </div>
+
+      {/* Die einzige Live-Region fuer den Wiedergabestatus — siehe PlayerStatusLine. */}
+      <PlayerStatusLine className="visually-hidden" announce />
     </aside>
   );
 }

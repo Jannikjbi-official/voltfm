@@ -10,7 +10,6 @@
   gap: var(--spacing-10);
   padding: clamp(1.25rem, 1rem + 1.5vw, 2rem);
   border-radius: var(--radius-xl);
-  border: 1px solid var(--color-border);
   background: var(--color-surface-container-low);
 }
 
@@ -83,8 +82,8 @@
   height: 28px;
   border-radius: var(--radius-circled);
   background: var(--color-primary);
-  color: var(--color-on-primary, #fff);
-  font: 700 0.9rem / 1 var(--font-display);
+  color: var(--color-on-primary);
+  font: semi-expanded 700 0.9rem / 1 var(--font-display);
 }
 
 .honest {
@@ -93,7 +92,6 @@
   gap: var(--spacing-12);
   padding: clamp(1.25rem, 1rem + 1.5vw, 2rem);
   border-radius: var(--radius-xl);
-  border: 1px solid var(--color-border);
   background: var(--color-surface-container-low);
   font: var(--type-small);
   color: var(--color-text-secondary);

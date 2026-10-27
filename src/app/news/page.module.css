@@ -53,7 +53,7 @@
 
 .title {
   font: var(--type-display-md);
-  letter-spacing: -0.035em;
+  letter-spacing: -0.02em;
   color: var(--color-text);
   text-wrap: balance;
   margin-bottom: var(--spacing-12);
@@ -118,7 +118,7 @@
 .filter[aria-current="page"] {
   background: var(--color-primary);
   border-color: var(--color-primary);
-  color: var(--color-on-primary, #fff);
+  color: var(--color-on-primary);
 }
 
 .filterCount {
@@ -134,7 +134,6 @@
   display: grid;
   grid-template-columns: 1fr;
   border-radius: var(--radius-xl);
-  border: 1px solid var(--color-border);
   background: var(--color-surface-container-low);
   overflow: hidden;
   margin-bottom: clamp(2.5rem, 2rem + 3vw, 4rem);

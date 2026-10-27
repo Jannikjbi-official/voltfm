@@ -290,7 +290,7 @@
 
 .stageName {
   font: var(--type-display-xl);
-  letter-spacing: -0.035em;
+  letter-spacing: -0.02em;
   color: var(--color-text);
   overflow-wrap: anywhere;
 }
@@ -354,7 +354,7 @@
   font: var(--type-display-xl);
   font-size: clamp(3rem, 1.5rem + 7vw, 7.5rem);
   line-height: 0.9;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.02em;
   overflow-wrap: anywhere;
 }
 
@@ -380,7 +380,6 @@
   max-width: 760px;
   margin-inline: auto;
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border);
   background: var(--color-surface-container-low);
   overflow: hidden;
 }
@@ -415,7 +414,7 @@
 
 .cardName {
   font: var(--type-h1);
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   color: var(--color-text);
   overflow-wrap: anywhere;
 }
@@ -457,7 +456,6 @@
   padding: var(--spacing-16);
   border-radius: var(--radius-md);
   background: var(--color-surface-container-low);
-  border: 1px solid var(--color-border);
   border-left: 3px solid var(--host-accent);
 }
 
@@ -536,7 +534,6 @@
   gap: var(--spacing-12);
   padding: var(--spacing-12) var(--spacing-14);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border);
   background: var(--color-surface-container-low);
   transition:
     border-color var(--transition-standard-fast-effects),

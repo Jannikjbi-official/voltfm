@@ -52,6 +52,7 @@ import {
   faBolt,
   faScrewdriverWrench,
   faListUl,
+  faRotateRight,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { faDiscord, faInstagram } from "@fortawesome/free-brands-svg-icons";
@@ -139,3 +140,4 @@ export const CommunityIcon = faUsers;
 export const BoltIcon = faBolt;
 export const ToolsIcon = faScrewdriverWrench;
 export const ListIcon = faListUl;
+export const RetryIcon = faRotateRight;

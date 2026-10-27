@@ -51,6 +51,12 @@ export default async function UeberUnsPage() {
             Kette, kein Unternehmen dahinter — ein paar Leute, die Radio machen
             wollen.
           </p>
+          {/* Stand frueher im Hero der Startseite. Dort traegt jetzt das Cover,
+              hier gehoert der Satz hin: Er erklaert, was VoltFM gerade ist. */}
+          <p className={styles.lead}>
+            Zwei Leute, ein Sender, seit 2021. Gerade läuft rund um die Uhr der
+            Musikpool von laut.fm, wir arbeiten an mehr.
+          </p>
 
           <dl className={styles.stats}>
             <div className={styles.stat}>

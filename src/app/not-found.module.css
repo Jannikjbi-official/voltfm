@@ -18,8 +18,8 @@
 
 /* Oversized, low-contrast numeral sitting behind the headline. */
 .code {
-  font: 800 clamp(5rem, 3rem + 14vw, 11rem) / 0.85 var(--font-display);
-  letter-spacing: -0.05em;
+  font: expanded 800 clamp(5rem, 3rem + 14vw, 11rem) / 0.85 var(--font-display);
+  letter-spacing: -0.02em;
   color: var(--color-primary);
   opacity: 0.14;
   margin-bottom: calc(clamp(5rem, 3rem + 14vw, 11rem) * -0.42);
@@ -28,7 +28,7 @@
 
 .title {
   font: var(--type-display-md);
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   color: var(--color-text);
   text-wrap: balance;
 }

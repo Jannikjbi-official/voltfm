@@ -73,41 +73,46 @@
   --color-live: var(--color-accent);
 
   /* --- Typography -------------------------------------------------------
-     Three families, each with a job:
-       display -> Bricolage Grotesque, editorial headlines with real character
-       sans    -> Public Sans, UI chrome and metadata
-       serif   -> Source Serif 4, long-form article body copy
-     OlyxUI reads --font-family for its component type scale. */
-  --font-family: var(--font-sans-voltfm), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-display-voltfm), Georgia, serif;
-  --font-serif: var(--font-serif-voltfm), Georgia, serif;
+     Eine Familie fuer alles: Archivo, variabel in Staerke (wght) und Breite
+     (wdth). Ueberschriften sind fett und breit, Fliesstext normal. Die Breite
+     steht direkt im font-Kurzwert (`expanded` = wdth 125, `semi-expanded` =
+     112,5) — so zieht jede Stelle, die `var(--type-h2)` benutzt, mit, ohne
+     eine zweite Eigenschaft setzen zu muessen.
 
-  /* Editorial display scale — fluid, clamped, deliberately larger than the
-     OlyxUI defaults so hero and article headlines carry the page. */
-  --type-display-xl: 700 clamp(2.75rem, 1.6rem + 5.6vw, 6rem) / 0.95 var(--font-display);
-  --type-display-lg: 700 clamp(2.25rem, 1.5rem + 3.6vw, 4.25rem) / 1.0 var(--font-display);
-  --type-display-md: 700 clamp(1.875rem, 1.35rem + 2.4vw, 3rem) / 1.05 var(--font-display);
-  --type-h1: 700 clamp(1.75rem, 1.3rem + 2vw, 2.75rem) / 1.12 var(--font-display);
-  --type-h2: 700 clamp(1.5rem, 1.2rem + 1.4vw, 2.125rem) / 1.18 var(--font-display);
-  --type-h3: 600 clamp(1.25rem, 1.1rem + 0.7vw, 1.5rem) / 1.25 var(--font-display);
-  --type-h4: 600 1.125rem / 1.35 var(--font-display);
-  --type-body-lg: 400 1.0625rem / 1.7 var(--font-family);
-  --type-body: 400 0.9375rem / 1.65 var(--font-family);
+     --font-display und --font-serif bleiben als Namen bestehen, damit Module,
+     die sie lesen, nicht angefasst werden muessen. Sie zeigen beide auf
+     Archivo. OlyxUI reads --font-family for its component type scale. */
+  --font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-family);
+  --font-serif: var(--font-family);
+
+  /* Display scale — fluid and clamped. Breite Schnitte brauchen weniger
+     Zeilenhoehe und kaum negative Laufweite. */
+  --type-display-xl: expanded 800 clamp(2.5rem, 1.2rem + 5.6vw, 6rem) / 0.92 var(--font-display);
+  --type-display-lg: expanded 800 clamp(2.125rem, 1.3rem + 3.6vw, 4.25rem) / 0.96 var(--font-display);
+  --type-display-md: expanded 800 clamp(1.75rem, 1.25rem + 2.4vw, 3rem) / 1.02 var(--font-display);
+  --type-h1: expanded 800 clamp(1.75rem, 1.25rem + 2.1vw, 2.75rem) / 1.06 var(--font-display);
+  --type-h2: expanded 800 clamp(1.4rem, 1.1rem + 1.4vw, 2.125rem) / 1.1 var(--font-display);
+  --type-h3: semi-expanded 700 clamp(1.2rem, 1.08rem + 0.6vw, 1.5rem) / 1.2 var(--font-display);
+  --type-h4: semi-expanded 700 1.125rem / 1.3 var(--font-display);
+  --type-nav: semi-expanded 600 0.9375rem / 1.2 var(--font-display);
+  --type-body-lg: 400 1.0625rem / 1.65 var(--font-family);
+  --type-body: 400 1rem / 1.6 var(--font-family);
   --type-small: 400 0.875rem / 1.5 var(--font-family);
   --type-caption: 400 0.8125rem / 1.45 var(--font-family);
-  --type-label: 600 0.6875rem / 1.2 var(--font-family);
+  --type-label: semi-expanded 700 0.6875rem / 1.2 var(--font-family);
 
-  /* Article body copy uses the serif at a comfortable reading size. */
-  --type-prose: 400 1.125rem / 1.75 var(--font-serif);
+  /* Langer Lesetext: dieselbe Schrift, etwas groesser und mit mehr Durchschuss. */
+  --type-prose: 400 1.125rem / 1.72 var(--font-serif);
 
   /* --- Layout ----------------------------------------------------------- */
   --shell-max: 1240px;
   --shell-wide: 1440px;
   --shell-pad: clamp(1rem, 0.5rem + 2vw, 2.5rem);
   --section-gap: clamp(3.5rem, 2rem + 6vw, 7rem);
-  --player-height: 84px;
+  --player-height: 80px;
   --player-height-mobile: 68px;
-  --header-height: 68px;
+  --header-height: 64px;
 
   /* --- Logo -------------------------------------------------------------
      Die drei Farben der Logo-Dateien in public/logo/. Im Hellmodus gilt die
@@ -128,15 +133,35 @@
   --color-cover-accent: var(--volt-logo-yellow);
 
   /* --- RadioAid ---------------------------------------------------------
-     Eigene Farbe fuer eine fremde Aktion: /radioaid und der Banner auf der
-     Startseite lesen beide hier. */
-  --color-radioaid: oklch(0.58 0.19 25);
-  --color-radioaid-soft: color-mix(in srgb, var(--color-radioaid) 12%, transparent);
-  --color-radioaid-line: color-mix(in srgb, var(--color-radioaid) 30%, transparent);
+     /radioaid und der Banner auf der Startseite lesen beide hier. Frueher ein
+     eigenes Rot mit eigener Toenung (das Rosa im Banner) — jetzt der
+     VoltFM-Akzent, damit die Seite bei zwei Akzentfarben bleibt: Blau und Rot.
+     Die helle Flaeche ist --color-accent-soft, also eine Toenung desselben
+     Rots, in beiden Modi. */
+  --color-radioaid: var(--color-accent);
+  --color-radioaid-soft: var(--color-accent-soft);
+  --color-radioaid-line: color-mix(in srgb, var(--color-accent) 30%, transparent);
+
+  /* --- Cover-Buehne --------------------------------------------------------
+     Der Schleier ueber dem weichgezeichneten Cover im Hero und auf /radio.
+     Er kommt aus der Seitenfarbe: im Hellmodus hellt er auf, im Dunkelmodus
+     dunkelt er ab — der Text darueber bleibt in seiner normalen Farbe lesbar,
+     egal wie bunt das Cover ist. */
+  --color-stage-scrim: color-mix(in oklab, var(--color-surface) 64%, transparent);
+  --color-stage-scrim-strong: color-mix(in oklab, var(--color-surface) 82%, transparent);
 
   /* Elevation that reads correctly on a light background. */
   --volt-shadow-soft: 0 1px 2px oklch(0.2 0.02 251 / 6%), 0 8px 24px -12px oklch(0.2 0.02 251 / 18%);
   --volt-shadow-lift: 0 2px 4px oklch(0.2 0.02 251 / 8%), 0 18px 44px -18px oklch(0.2 0.02 251 / 26%);
+}
+
+/* Die Player-Leiste ist auf dem Handy niedriger. Alles, was ihren Platz
+   freihaelt (Seitenende, Schubfach, Mindesthoehen), liest --player-height und
+   bekommt so automatisch den richtigen Wert. */
+@media (max-width: 767px) {
+  :root {
+    --player-height: var(--player-height-mobile);
+  }
 }
 
 [data-theme="dark"],

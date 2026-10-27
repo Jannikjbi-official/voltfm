@@ -1,70 +1,33 @@
-/* --- Station facts strip -------------------------------------------------- */
+/* Startseite. Keine Kacheln, keine Zahlenleiste: Abschnitte trennen sich
+   durch Luft und eine klare Ueberschrift. Farbe gibt es an zwei Stellen —
+   das Cover in der Buehne und die blaue Discord-Flaeche. */
 
-.facts {
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-surface);
-}
+/* --- Ansage links, Inhalt rechts (Titelliste, Sendeplan) ------------------- */
 
-.factsRow {
+.split {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: var(--spacing-24);
-  padding-block: var(--spacing-32);
+  gap: var(--spacing-8);
+  grid-template-columns: minmax(0, 1fr);
 }
 
-.factsItem {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-4);
-}
-
-.factsItem dt {
-  font: var(--type-label);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-}
-
-.factsItem dd {
-  font: var(--type-h3);
-  letter-spacing: -0.02em;
-  color: var(--color-text);
-}
-
-/* --- News: lead + column ------------------------------------------------- */
-
-.newsLayout {
-  display: grid;
-  gap: clamp(1.5rem, 1rem + 2vw, 2.5rem);
-  grid-template-columns: 1fr;
-}
-
-@media (min-width: 1000px) {
-  .newsLayout {
-    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+@media (min-width: 960px) {
+  .split {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+    gap: clamp(2rem, 1rem + 4vw, 5rem);
     align-items: start;
+  }
+
+  /* Neben der Liste steht die Ansage untereinander, nicht mit dem Verweis
+     rechts daneben. */
+  .split > header {
+    flex-direction: column;
+    align-items: flex-start;
+    position: sticky;
+    top: calc(var(--header-height) + var(--spacing-32));
   }
 }
 
-.newsColumn {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-16);
-}
-
-/* Last teaser in the column needs no divider. */
-.newsColumn > :last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-/* --- Programme timeline --------------------------------------------------- */
-
-.programme {
-  padding-block: var(--section-gap);
-  background: var(--color-surface-container-low);
-  border-block: 1px solid var(--color-border);
-}
+/* --- Sendeplan (abgeschaltet, siehe features.schedule) --------------------- */
 
 .timeline {
   display: flex;
@@ -73,31 +36,16 @@
 }
 
 .timelineItem {
-  position: relative;
   display: grid;
-  grid-template-columns: 76px 24px minmax(0, 1fr);
-  align-items: start;
+  grid-template-columns: 4rem minmax(0, 1fr);
+  align-items: baseline;
   gap: var(--spacing-16);
-  padding-block: var(--spacing-16);
+  padding-block: var(--spacing-14);
+  border-top: 1px solid var(--color-border);
 }
 
-/* The connecting rail, drawn between the dots. */
-.timelineItem::before {
-  content: "";
-  position: absolute;
-  left: calc(76px + var(--spacing-16) + 11px);
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: var(--color-border);
-}
-
-.timelineItem:first-child::before {
-  top: 50%;
-}
-
-.timelineItem:last-child::before {
-  bottom: 50%;
+.timelineItem:first-child {
+  border-top: 0;
 }
 
 .timelineTime {
@@ -105,19 +53,6 @@
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: var(--color-text-secondary);
-  padding-top: 2px;
-}
-
-.timelineDot {
-  position: relative;
-  z-index: 1;
-  width: 12px;
-  height: 12px;
-  margin-top: 5px;
-  margin-left: 6px;
-  border-radius: var(--radius-circled);
-  background: var(--color-accent);
-  box-shadow: 0 0 0 4px var(--color-surface-container-low);
 }
 
 .timelineBody {
@@ -137,48 +72,52 @@
   color: var(--color-text-secondary);
 }
 
-@media (max-width: 560px) {
-  .timelineItem {
-    grid-template-columns: 58px 20px minmax(0, 1fr);
-    gap: var(--spacing-10);
-  }
+/* --- News: Aufmacher + Spalte --------------------------------------------- */
 
-  .timelineItem::before {
-    left: calc(58px + var(--spacing-10) + 9px);
+.newsLayout {
+  display: grid;
+  gap: clamp(2rem, 1rem + 3vw, 3.5rem);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 1000px) {
+  .newsLayout {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    align-items: start;
   }
 }
 
-/* --- Hosts ---------------------------------------------------------------- */
+.newsColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Team ----------------------------------------------------------------- */
 
 .hostGrid {
   display: grid;
-  gap: clamp(1.25rem, 1rem + 1.5vw, 2rem);
+  gap: clamp(2rem, 1.5rem + 2vw, 3rem);
   grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr));
 }
 
-/* --- Events + community split --------------------------------------------- */
+/* --- Events + Discord ----------------------------------------------------- */
 
-.split {
-  padding-block: var(--section-gap);
-}
-
-.splitGrid {
+.eventsGrid {
   display: grid;
-  gap: clamp(2rem, 1.5rem + 3vw, 4rem);
-  grid-template-columns: 1fr;
+  gap: clamp(2.5rem, 1.5rem + 4vw, 5rem);
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
 }
 
 @media (min-width: 1000px) {
-  .splitGrid {
-    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  .eventsGrid {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
   }
 }
 
 .eventList {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-16);
 }
 
 .community {
@@ -186,21 +125,25 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--spacing-16);
-  padding: clamp(1.75rem, 1.25rem + 2vw, 2.75rem);
-  border-radius: var(--radius-xl);
+  padding: clamp(1.75rem, 1.25rem + 2.5vw, 3rem);
+  border-radius: var(--radius-lg);
   color: var(--color-on-primary);
   background: var(--color-primary);
 }
 
+.communityEyebrow {
+  font: var(--type-label);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
 .communityTitle {
   font: var(--type-h2);
-  letter-spacing: -0.025em;
   text-wrap: balance;
 }
 
 .communityText {
   font: var(--type-body);
-  opacity: 0.92;
 }
 
 .communityList {
@@ -209,22 +152,22 @@
   gap: var(--spacing-8);
   list-style: none;
   font: var(--type-small);
-  opacity: 0.94;
 }
 
 .communityList li {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: var(--spacing-10);
 }
 
+/* Ein kurzer Strich statt eines Punkts — liest sich auf Blau ruhiger. */
 .communityList li::before {
   content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: var(--radius-circled);
+  width: 12px;
+  height: 2px;
   background: currentColor;
   flex-shrink: 0;
+  translate: 0 -0.25em;
 }
 
 .communityActions {
@@ -234,7 +177,7 @@
   margin-top: var(--spacing-8);
 }
 
-/* Invert OlyxUI buttons sitting on the brand gradient. */
+/* Invert OlyxUI buttons sitting on the blue panel. */
 .communityActions :global([data-ui="button"][data-variant="primary"][data-mode="filled"]) {
   background: var(--color-surface-container-lowest);
   color: var(--color-primary);
@@ -244,104 +187,48 @@
   color: var(--color-on-primary);
 }
 
-/* --- About band ----------------------------------------------------------- */
+.communityActions :global([data-ui="button"]:focus-visible) {
+  outline-color: var(--color-on-primary);
+}
+
+/* --- Über uns ------------------------------------------------------------- */
 
 .about {
   padding-block: var(--section-gap);
-  background: var(--color-surface-container-low);
   border-top: 1px solid var(--color-border);
 }
 
 .aboutInner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-16);
-  text-align: center;
+  display: grid;
+  gap: var(--spacing-24);
+  grid-template-columns: minmax(0, 1fr);
+  align-items: end;
 }
 
-.aboutIcon {
-  color: var(--color-accent);
-  font-size: 2.25rem;
+@media (min-width: 900px) {
+  .aboutInner {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    gap: clamp(2rem, 1rem + 4vw, 5rem);
+  }
 }
 
 .aboutQuote {
   font: var(--type-display-md);
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   color: var(--color-text);
-  max-width: 20ch;
   text-wrap: balance;
+}
+
+.aboutAside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-16);
 }
 
 .aboutText {
   font: var(--type-body-lg);
   color: var(--color-text-secondary);
-  max-width: 58ch;
+  max-width: 40ch;
   text-wrap: pretty;
-}
-
-/* --- Zuletzt gespielt ----------------------------------------------------- */
-
-.tracks {
-  display: flex;
-  flex-direction: column;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.track {
-  position: relative;
-  display: grid;
-  grid-template-columns: 4rem 1.25rem minmax(0, 1fr);
-  align-items: baseline;
-  gap: var(--spacing-12);
-  padding-block: var(--spacing-14);
-  border-top: 1px solid var(--color-border);
-}
-
-.track:first-child {
-  border-top: 0;
-}
-
-.trackTime {
-  font: var(--type-small);
-  font-variant-numeric: tabular-nums;
-  color: var(--color-text-muted);
-}
-
-.trackDot {
-  width: 8px;
-  height: 8px;
-  border-radius: var(--radius-circled);
-  background: var(--color-border-strong);
-  justify-self: center;
-  transform: translateY(-2px);
-}
-
-/* Der jüngste Titel ist der, der gerade lief. */
-.track:first-child .trackDot {
-  background: var(--color-accent);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent) 20%, transparent);
-}
-
-.trackBody {
-  min-width: 0;
-}
-
-.trackTitle {
-  font: var(--type-body);
-  font-weight: 600;
-  color: var(--color-text);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.trackArtist {
-  font: var(--type-small);
-  color: var(--color-text-secondary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
