@@ -32,7 +32,6 @@
   margin: 0;
   padding: var(--spacing-12) var(--spacing-16) var(--spacing-12) var(--spacing-28);
   border-radius: var(--radius-md, 12px);
-  border: 1px solid var(--color-border);
   background: var(--color-surface-container-low);
   list-style: disc;
   font: var(--type-small);

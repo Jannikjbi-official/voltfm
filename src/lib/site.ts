@@ -150,28 +150,46 @@ export type NavItem = {
   seasonal?: boolean;
   /** Haengt an einem Schalter aus `features`. */
   feature?: keyof typeof features;
+  /** Fuehrt aus der Seite heraus (Discord) — oeffnet einen neuen Tab. */
+  external?: boolean;
 };
 
 /**
- * Wie viele Eintraege in der Desktop-Leiste direkt stehen. Alles darueber
- * wandert in ein Menue "Mehr", damit die Leiste nicht umbricht.
+ * Die Kopfzeile: fuenf Punkte, mehr nicht.
+ *
+ * Alles andere steht im Footer und im Handy-Menue unter `secondaryNav`. Fuenf
+ * passen auch auf einem Laptop in eine Zeile, deshalb gibt es kein Menue
+ * "Mehr" mehr. RadioAid steht bewusst nicht hier: Der Banner auf der
+ * Startseite und der Footer reichen fuer eine Aktion, die einmal im Jahr laeuft.
  */
-export const MAX_VISIBLE_NAV_ITEMS = 7;
-
 export const mainNav: NavItem[] = [
-  { href: "/", label: "Start" },
-  { href: "/radio", label: "Radio", hint: "Live hören, Now Playing und Stream-Infos" },
-  { href: "/programm", label: "Programm", hint: "Sendeplan für heute und die ganze Woche", feature: "schedule" },
-  { href: "/moderatoren", label: "Moderatoren", hint: "Die Stimmen hinter VoltFM" },
+  { href: "/radio", label: "Hören", hint: "Livestream, was gerade läuft und was lief" },
   { href: "/news", label: "News", hint: "Aktuelles aus Musik, Radio und Community" },
   { href: "/events", label: "Events", hint: "Livestreams, Specials und Community-Termine" },
-  /* Wird nur rund um die Sendung eingeblendet — siehe buildMainNav(). */
-  { href: "/radioaid", label: "RadioAid", hint: "24 Stunden Charity-Radio", seasonal: true },
+  { href: "/moderatoren", label: "Team", hint: "Die Stimmen hinter VoltFM" },
+  { href: site.discordUrl, label: "Discord", hint: "Ankündigungen, Feedback, Tickets", external: true },
+];
+
+/** Die zweite Reihe: im Footer und klein unter der Hauptnavigation am Handy. */
+export const secondaryNav: NavItem[] = [
+  { href: "/ueber-uns", label: "Über uns", hint: "Geschichte, Team und Mission" },
   { href: "/community", label: "Community", hint: "Discord, Social Media und Mitmachen" },
-  { href: "/ueber-uns", label: "Über VoltFM", hint: "Geschichte, Team und Mission" },
   { href: "/mitmachen", label: "Mitmachen", hint: "Moderieren, schreiben oder einfach dabei sein" },
   { href: "/faq", label: "Häufige Fragen", hint: "Antworten auf das, was am meisten gefragt wird" },
   { href: "/presse", label: "Presse", hint: "Kurzprofil, Zahlen und Logo" },
+  { href: "/kontakt", label: "Kontakt", hint: "Ticket im Discord oder E-Mail" },
+];
+
+/**
+ * Jede Seite, die man ueber die Suche oder die 404-Seite finden soll — also
+ * die beiden Leisten oben zusammen, ohne den Weg nach draussen.
+ */
+export const sitePages: NavItem[] = [
+  ...mainNav.filter((item) => !item.external),
+  { href: "/programm", label: "Programm", hint: "Sendeplan für heute und die ganze Woche", feature: "schedule" },
+  /* Nur rund um die Sendung — siehe buildPageIndex(). */
+  { href: "/radioaid", label: "RadioAid", hint: "24 Stunden Charity-Radio", seasonal: true },
+  ...secondaryNav,
 ];
 
 export const footerNav: { title: string; items: NavItem[] }[] = [
@@ -180,7 +198,7 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
     items: [
       { href: "/radio", label: "Livestream" },
       ...(features.schedule ? [{ href: "/programm", label: "Sendeplan" }] : []),
-      { href: "/moderatoren", label: "Moderatoren" },
+      { href: "/moderatoren", label: "Team" },
     ],
   },
   {
@@ -194,14 +212,7 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
   },
   {
     title: "VoltFM",
-    items: [
-      { href: "/ueber-uns", label: "Über uns" },
-      { href: "/mitmachen", label: "Mitmachen" },
-      { href: "/faq", label: "Häufige Fragen" },
-      { href: "/community", label: "Community" },
-      { href: "/presse", label: "Presse" },
-      { href: "/kontakt", label: "Kontakt" },
-    ],
+    items: secondaryNav.map(({ href, label }) => ({ href, label })),
   },
 ];
 
@@ -214,24 +225,17 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
  * schluege fehl.
  */
 export function buildMainNav(now: Date = new Date()): NavItem[] {
-  return mainNav.filter((item) => {
-    if (item.feature && !features[item.feature]) return false;
-    if (!item.seasonal) return true;
-    if (item.href === "/radioaid") return getRadioAidSchedule(now).showInNav;
-    return true;
-  });
+  return mainNav.filter((item) => isAvailable(item, now));
 }
 
-/**
- * Teilt die Navigation in die sichtbare Leiste und das Menue "Mehr".
- *
- * Das Menue lohnt sich erst ab zwei ausgelagerten Eintraegen. Bliebe nur einer
- * uebrig, waere "Mehr" genauso breit wie der Eintrag selbst — man klickt dann
- * auf einen Knopf, um genau einen Punkt zu sehen. In dem Fall passt alles in
- * die Leiste.
- */
-export function splitNav(items: NavItem[]): { primary: NavItem[]; overflow: NavItem[] } {
-  const overflow = items.slice(MAX_VISIBLE_NAV_ITEMS);
-  if (overflow.length < 2) return { primary: items, overflow: [] };
-  return { primary: items.slice(0, MAX_VISIBLE_NAV_ITEMS), overflow };
+/** Alle Seiten fuer Suche und 404, ohne abgeschaltete und ausserhalb ihrer Zeit. */
+export function buildPageIndex(now: Date = new Date()): NavItem[] {
+  return sitePages.filter((item) => isAvailable(item, now));
+}
+
+function isAvailable(item: NavItem, now: Date): boolean {
+  if (item.feature && !features[item.feature]) return false;
+  if (!item.seasonal) return true;
+  if (item.href === "/radioaid") return getRadioAidSchedule(now).showInNav;
+  return true;
 }

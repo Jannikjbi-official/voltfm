@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ButtonLink } from "@/components/common/button-link";
 import { Icon, ArrowRightIcon, SearchIcon, RadioIcon } from "@/lib/icons";
-import { mainNav } from "@/lib/site";
+import { buildPageIndex } from "@/lib/site";
 import styles from "./not-found.module.css";
 
 export const metadata: Metadata = {
@@ -44,21 +44,14 @@ export default function NotFound() {
           <nav className={styles.nav} aria-label="Weitere Bereiche">
             <p className={styles.navLabel}>Oder weiter zu</p>
             <ul className={styles.navList} role="list">
-              {mainNav
-                .filter((item) => item.href !== "/")
-                .map((item) => (
-                  <li key={item.href}>
-                    <ButtonLink
-                      href={item.href}
-                      variant="neutral"
-                      mode="ghost"
-                      size="sm"
-                    >
-                      {item.label}
-                      <Icon icon={ArrowRightIcon} />
-                    </ButtonLink>
-                  </li>
-                ))}
+              {buildPageIndex().map((item) => (
+                <li key={item.href}>
+                  <ButtonLink href={item.href} variant="neutral" mode="ghost" size="sm">
+                    {item.label}
+                    <Icon icon={ArrowRightIcon} />
+                  </ButtonLink>
+                </li>
+              ))}
             </ul>
           </nav>
         </div>

@@ -9,7 +9,7 @@
 
 .title {
   font: var(--type-h2);
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   color: var(--color-text);
 }
 
@@ -52,7 +52,7 @@
 }
 
 .statValue {
-  font: 700 clamp(1.5rem, 1.25rem + 1vw, 2rem) / 1 var(--font-display);
+  font: expanded 800 clamp(1.5rem, 1.25rem + 1vw, 2rem) / 1 var(--font-display);
   font-variant-numeric: tabular-nums;
   color: var(--color-text);
 }

@@ -11,6 +11,12 @@ import { parseStationTime } from "@/lib/format";
  * die Navigation lesen alle hier, damit sie nicht auseinanderlaufen koennen.
  */
 export const radioaid = {
+  /**
+   * Der Banner oben auf der Startseite. Er verschwindet nach dem Sendeende
+   * ohnehin von selbst; mit false ist er sofort weg, auch vorher. Die Seite
+   * /radioaid bleibt davon unberuehrt.
+   */
+  bannerEnabled: true,
   /** Sendestart als Senderzeit (Europe/Berlin). */
   startsAt: "2026-11-06T18:00",
   /** Die Show laeuft 24 Stunden am Stueck. */

@@ -2,8 +2,8 @@
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: var(--spacing-24);
-  margin-bottom: clamp(1.75rem, 1rem + 2vw, 3rem);
+  gap: var(--spacing-16) var(--spacing-24);
+  margin-bottom: clamp(1.5rem, 1rem + 2vw, 2.75rem);
 }
 
 .header[data-align="center"] {
@@ -28,7 +28,7 @@
 
 .title {
   font: var(--type-h2);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.015em;
   color: var(--color-text);
   text-wrap: balance;
 }
@@ -40,7 +40,28 @@
 }
 
 .action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  min-height: 44px;
   flex-shrink: 0;
+  font: var(--type-nav);
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.actionIcon {
+  font-size: 0.8em;
+  color: var(--color-primary);
+  transition: translate var(--transition-standard-fast-spatial);
+}
+
+.action:hover {
+  color: var(--color-primary);
+}
+
+.action:hover .actionIcon {
+  translate: 3px 0;
 }
 
 @media (max-width: 640px) {

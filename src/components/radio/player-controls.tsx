@@ -12,20 +12,22 @@ import {
   VolumeMuteIcon,
   LoadingIcon,
   ExternalLinkIcon,
+  RetryIcon,
 } from "@/lib/icons";
 import { radio } from "@/lib/site";
 import { useRadioPlayer } from "./player-provider";
 import styles from "./player.module.css";
 
 /**
- * Play / pause / retry, sized for either the sticky bar or the radio hero.
+ * Play / pause / retry, sized for either the sticky bar ("md") or the stage
+ * in the hero and on /radio ("lg").
  *
  * While `radio.embedAllowed` is false this is a link to the provider rather
  * than a transport control — laut.fm's terms allow linking, not embedding.
  * Das Ziel ist der Webplayer von lautstation.de (siehe `radio.externalUrl`).
  * Damit vor dem Klick klar ist, dass ein neues Fenster aufgeht, steht dann
- * "Jetzt hören" mit dem Extern-Pfeil daneben (`withLabel`, Hero und /radio)
- * bzw. ein kleiner Pfeil am Knopf (Sticky-Leiste, ohne Platz fuer Text).
+ * "Jetzt hören" mit dem Extern-Pfeil daneben (`withLabel`, Buehne) bzw. ein
+ * kleiner Pfeil am Knopf (Sticky-Leiste, ohne Platz fuer Text).
  */
 export function PlayButton({
   size = "md",
@@ -101,40 +103,49 @@ export function PlayButton({
     );
   }
 
+  /* Nach einem Fehler wird aus dem Knopf "Erneut versuchen" — gleiche Stelle,
+     gleiche Groesse, damit die Leiste nicht springt. */
   if (status === "error" || status === "offline") {
     return (
-      <Button variant="error" mode="filled" size={size === "lg" ? "lg" : "md"} onClick={retry}>
-        Erneut versuchen
+      <Button
+        variant="error"
+        mode="filled"
+        size={size}
+        asIcon
+        onClick={retry}
+        aria-label="Erneut versuchen"
+        data-player-size={size}
+        className={styles.playButton}
+      >
+        <Icon icon={RetryIcon} />
       </Button>
     );
   }
 
   const connecting = status === "connecting";
-  const label = isPlaying ? "Wiedergabe pausieren" : "Livestream abspielen";
+  const label = connecting
+    ? "Verbindet … zum Abbrechen klicken"
+    : isPlaying
+      ? "Wiedergabe pausieren"
+      : "Livestream abspielen";
 
   return (
-    <Tooltip>
-      <TooltipTrigger
-        render={
-          <Button
-            variant="primary"
-            mode="filled"
-            size={size === "lg" ? "lg" : "md"}
-            asIcon
-            onClick={toggle}
-            aria-label={label}
-            data-player-size={size}
-            className={styles.playButton}
-          >
-            <Icon
-              icon={connecting ? LoadingIcon : isPlaying ? PauseIcon : PlayIcon}
-              className={connecting ? styles.spin : undefined}
-            />
-          </Button>
-        }
+    <Button
+      variant="primary"
+      mode="filled"
+      size={size}
+      asIcon
+      onClick={toggle}
+      aria-label={label}
+      data-player-size={size}
+      data-state={connecting ? "connecting" : isPlaying ? "playing" : "idle"}
+      className={styles.playButton}
+    >
+      <Icon
+        icon={connecting ? LoadingIcon : isPlaying ? PauseIcon : PlayIcon}
+        className={connecting ? styles.spin : undefined}
       />
-      <TooltipContent>{label}</TooltipContent>
-    </Tooltip>
+    </Button>
   );
 }
 
@@ -142,10 +153,12 @@ export function PlayButton({
  * Mute toggle plus volume slider.
  *
  * Renders nothing while playback happens on the provider's site — there is no
- * audio here whose volume could be changed.
+ * audio here whose volume could be changed. Auf iPhone und iPad gibt es nur
+ * den Stumm-Knopf: Dort bestimmt allein das Geraet die Lautstaerke.
  */
 export function VolumeControl() {
-  const { volume, muted, setVolume, toggleMute, embedAllowed } = useRadioPlayer();
+  const { volume, muted, volumeSupported, setVolume, toggleMute, embedAllowed } =
+    useRadioPlayer();
 
   if (!embedAllowed) return null;
 
@@ -167,65 +180,132 @@ export function VolumeControl() {
       >
         <Icon icon={icon} />
       </Button>
-      <Slider
-        value={Math.round(effective * 100)}
-        onValueChange={(value) => setVolume((value as number) / 100)}
-        min={0}
-        max={100}
-        step={1}
-        aria-label="Lautstärke"
-        className={styles.volumeSlider}
-      />
+      {volumeSupported && (
+        <Slider
+          value={Math.round(effective * 100)}
+          onValueChange={(value) => setVolume((value as number) / 100)}
+          min={0}
+          max={100}
+          step={1}
+          aria-label="Lautstärke"
+          className={styles.volumeSlider}
+        />
+      )}
     </div>
   );
 }
 
-/** Human-readable playback state for screen readers and the error surface. */
-export function PlayerStatusLine() {
+/**
+ * Human-readable playback state for screen readers and the error surface.
+ *
+ * Angesagt (`announce`) wird nur aus der Sticky-Leiste, die es auf jeder Seite
+ * gibt. Steht die Zeile zusaetzlich sichtbar auf der Buehne, waeren es sonst
+ * zwei Live-Regionen, und der Screenreader saehe jede Meldung doppelt.
+ */
+export function PlayerStatusLine({
+  className,
+  announce = false,
+}: {
+  className?: string;
+  announce?: boolean;
+}) {
   const { status, error, embedAllowed, consent } = useRadioPlayer();
 
   /* Ohne eingebetteten Player gibt es keinen Wiedergabestatus zu melden — und
      <StreamNotice> darunter sagt ohnehin schon, wo abgespielt wird. */
   if (!embedAllowed) return null;
 
+  const failed = status === "error" || status === "offline";
   const text =
     status === "connecting"
       ? "Verbinde mit dem Livestream …"
       : status === "playing"
-        ? "Livestream läuft"
+        ? "Läuft live"
         : status === "paused"
-          ? "Wiedergabe pausiert"
-          : status === "offline"
-            ? "Keine Internetverbindung"
+          ? "Pausiert. Weiter geht es live, nicht an der Stelle von eben."
+          : failed
+            ? (error ?? "Der Stream lässt sich gerade nicht abspielen.")
             : consent === false
-              ? `Der Stream wird erst nach deiner Zustimmung von ${radio.providerName} geladen.`
-              : (error ?? "");
+              ? `Beim ersten Abspielen fragen wir einmal, ob dein Browser sich mit ${radio.providerName} verbinden darf.`
+              : "Bereit. Ein Klick, und es läuft.";
 
   return (
-    <p className={styles.statusLine} role="status" aria-live="polite">
+    <p
+      className={`${styles.statusLine} ${className ?? ""}`}
+      data-failed={failed || undefined}
+      role={announce ? "status" : undefined}
+      aria-live={announce ? "polite" : undefined}
+    >
       {text}
     </p>
   );
 }
 
 /**
- * Why there is no player here, plus the way to withdraw a given consent.
+ * Die Pegelanzeige: vier Balken, die sich bewegen, solange Musik laeuft.
  *
- * Shown on /radio and in the hero, where there is room to explain — the sticky
- * bar only gets the button.
+ * Reine Gestaltung, keine Messung. Ein echter Pegel braeuchte die Web Audio
+ * API, und die liefert bei einem fremden Stream ohne CORS-Freigabe nur Stille —
+ * laut.fm schickt keinen `Access-Control-Allow-Origin`, der Ton waere also weg.
+ * Deshalb tanzen die Balken per CSS, und nur dann, wenn wirklich etwas spielt.
+ * Bei `prefers-reduced-motion` stehen sie still.
+ */
+export function LevelMeter({ className }: { className?: string }) {
+  const { status, embedAllowed } = useRadioPlayer();
+  if (!embedAllowed) return null;
+
+  return (
+    <span
+      className={`${styles.meter} ${className ?? ""}`}
+      data-active={status === "playing" || undefined}
+      aria-hidden="true"
+    >
+      <span />
+      <span />
+      <span />
+      <span />
+    </span>
+  );
+}
+
+/**
+ * Der zweite Weg zum Hoeren, klein unter dem Play-Knopf. Er fuehrt zum
+ * Webplayer von lautstation.de (ein privates Verzeichnis, nicht laut.fm
+ * selbst) — deshalb steht der Name im Text, nicht "laut.fm-Player".
+ */
+export function AlsoListenLink({ className }: { className?: string }) {
+  const { embedAllowed } = useRadioPlayer();
+  /* Ohne eingebetteten Player fuehrt schon der grosse Knopf dorthin. */
+  if (!embedAllowed) return null;
+
+  return (
+    <a
+      href={radio.externalUrl}
+      target="_blank"
+      rel="noreferrer noopener"
+      className={`${styles.alsoListen} ${className ?? ""}`}
+    >
+      Auch im Webplayer von {radio.externalName} hören
+      <Icon icon={ExternalLinkIcon} />
+      <span className="visually-hidden"> (öffnet einen neuen Tab)</span>
+    </a>
+  );
+}
+
+/**
+ * Der Weg, eine gegebene Einwilligung zurueckzunehmen — nur mit eingebettetem
+ * Player, denn nur dann gibt es eine Verbindung, die sie erlaubt hat.
+ *
+ * Shown on the stage, where there is room to explain — the sticky bar only
+ * gets the button.
  */
 export function StreamNotice() {
   const { embedAllowed, consent, revokeConsent } = useRadioPlayer();
 
-  /* Alles zur Weiterleitung steht im Hinweis, der vor dem Verlassen der Seite
-     erscheint — hier reicht die Ansage, was einen erwartet. */
-  if (!embedAllowed) {
-    return (
-      <p className={styles.notice}>
-        Läuft rund um die Uhr, im Moment mit dem {radio.providerName}-Musikpool.
-      </p>
-    );
-  }
+  /* Ohne eingebetteten Player gibt es keine Einwilligung zurueckzunehmen. Was
+     beim Klick passiert, sagt der Hinweis unter dem Knopf, und alles zur
+     Weiterleitung der Dialog davor. */
+  if (!embedAllowed) return null;
 
   if (consent !== true) return null;
 

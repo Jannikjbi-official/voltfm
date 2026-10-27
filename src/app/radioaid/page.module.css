@@ -2,16 +2,15 @@
    RadioAid — eigene Gestaltung
    -------------------------------------------------------------------------
    Die Seite gehoert thematisch nicht VoltFM, sondern einer fremden Aktion.
-   Deshalb bekommt sie eine eigene Farbwelt: ein warmes Rot statt des
-   Senderblaus, gesetzt als Tokens auf `.page`. Alles darunter erbt sie, ohne
-   dass irgendwo eine Farbe hart im Stylesheet steht.
+   Deshalb fuehrt hier das Rot statt des Senderblaus, gesetzt als Tokens auf
+   `.page`. Es ist der VoltFM-Akzent (--color-radioaid zeigt darauf) — die Seite
+   bekommt eine eigene Gewichtung, aber keine dritte Farbe.
    ========================================================================= */
 
 .page {
   --ra-accent: var(--color-radioaid);
   --ra-accent-soft: color-mix(in srgb, var(--ra-accent) 14%, transparent);
   --ra-accent-line: color-mix(in srgb, var(--ra-accent) 34%, transparent);
-  --ra-warm: oklch(0.72 0.15 55);
 
   padding-bottom: var(--section-gap);
 }
@@ -23,9 +22,7 @@
   overflow: hidden;
   padding-block: clamp(2.5rem, 2rem + 5vw, 5.5rem);
   border-bottom: 1px solid var(--color-border);
-  background:
-    radial-gradient(90rem 40rem at 15% -30%, var(--ra-accent-soft), transparent 60%),
-    var(--color-surface-container-low);
+  background: var(--color-radioaid-soft);
 }
 
 .crumbs {
@@ -68,25 +65,21 @@
   height: 24px;
   border-radius: var(--radius-circled);
   background: var(--ra-accent);
-  color: #fff;
+  color: var(--color-on-accent);
   font-size: 0.7em;
 }
 
 .mastheadTitle {
   font: var(--type-display-lg);
-  letter-spacing: -0.035em;
+  letter-spacing: -0.02em;
   color: var(--color-text);
   text-wrap: balance;
   margin-bottom: var(--spacing-20);
 }
 
-/* Der Verlauf traegt die zweite Zeile — das ist der Wiedererkennungswert
-   dieser Seite gegenueber dem Rest von VoltFM. */
+/* Die zweite Zeile in Rot — flaechig statt als Verlauf. */
 .mastheadAccent {
-  background: linear-gradient(100deg, var(--ra-accent), var(--ra-warm));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--ra-accent);
 }
 
 .mastheadLead {
@@ -102,7 +95,6 @@
   gap: clamp(1.5rem, 1rem + 3vw, 3rem);
   padding: clamp(1.5rem, 1rem + 3vw, 3rem);
   border-radius: var(--radius-xl);
-  border: 1px solid var(--color-border);
   background: var(--color-surface-container-low);
   grid-template-columns: 1fr;
   align-items: center;
@@ -147,7 +139,7 @@
 }
 
 .unitValue {
-  font: 700 clamp(1.75rem, 1.2rem + 3vw, 3rem) / 1 var(--font-display);
+  font: expanded 800 clamp(1.75rem, 1.2rem + 3vw, 3rem) / 1 var(--font-display);
   color: var(--color-text);
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
@@ -308,7 +300,6 @@
   gap: var(--spacing-10);
   padding: var(--spacing-20);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border);
   background: var(--color-surface-container-low);
 }
 
@@ -337,7 +328,7 @@
 }
 
 .factValue {
-  font: 700 1.5rem / 1 var(--font-display);
+  font: expanded 800 1.5rem / 1 var(--font-display);
   color: var(--ra-accent);
   letter-spacing: -0.02em;
 }
@@ -411,7 +402,7 @@
   grid-column: 1;
   /* Rechtsbuendig, damit alle Jahreszahlen an der Linie stehen. */
   text-align: right;
-  font: 700 1.05rem / 1.4 var(--font-display);
+  font: semi-expanded 700 1.05rem / 1.4 var(--font-display);
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
 }
@@ -470,7 +461,6 @@
   gap: var(--spacing-10);
   padding: var(--spacing-20);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border);
   background: var(--color-surface-container);
 }
 
@@ -487,7 +477,5 @@
 
 /* Laeuft die Sendung, darf der Kopfbereich das auch zeigen. */
 .page[data-phase="live"] .masthead {
-  background:
-    radial-gradient(90rem 40rem at 15% -30%, color-mix(in srgb, var(--ra-accent) 26%, transparent), transparent 60%),
-    var(--color-surface-container-low);
+  background: color-mix(in srgb, var(--ra-accent) 18%, var(--color-surface));
 }

@@ -39,8 +39,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  /* Reserve room for the persistent player so content is never hidden. */
-  padding-bottom: var(--player-offset, 0px);
+  /* Reserve room for the persistent player so content is never hidden —
+     including the iOS home indicator it sits above. */
+  padding-bottom: calc(var(--player-height) + env(safe-area-inset-bottom, 0px));
 }
 
 img,

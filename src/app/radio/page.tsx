@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
 
-import { PageHeader } from "@/components/common/page-header";
 import { SectionHeader } from "@/components/common/section-header";
-import { EmptyState } from "@/components/common/empty-state";
 import { ButtonLink } from "@/components/common/button-link";
-import { RadioStage } from "@/components/radio/radio-stage";
+import { CoverStage } from "@/components/radio/cover-stage";
+import { RecentTracks } from "@/components/radio/recent-tracks";
 import { LautstationPlaylist } from "@/components/radio/lautstation-playlist";
 import { Icon, DiscordIcon, ExternalLinkIcon } from "@/lib/icons";
 import { lautstation } from "@/lib/lautstation";
-import { getLastSongs } from "@/services/radio/metadata";
-import { formatTime } from "@/lib/format";
 import { site } from "@/lib/site";
 import styles from "./page.module.css";
 
@@ -22,64 +19,30 @@ export const metadata: Metadata = {
 
 export const revalidate = 60;
 
-export default async function RadioPage() {
-  const history = await getLastSongs(10);
-
+export default function RadioPage() {
   return (
     <>
-      <PageHeader
-        eyebrow="Livestream"
-        title="VoltFM hören"
-        description="Ein Klick, kein Konto — gesendet wird rund um die Uhr über laut.fm."
-        breadcrumbs={[
-          { href: "/", label: "Start" },
-          { href: "/radio", label: "Radio" },
-        ]}
-        size="large"
-      />
+      {/* Dieselbe Buehne wie auf der Startseite — die Seite ist der Player. */}
+      <CoverStage heading="VoltFM hören" />
 
-      <section className="section shell">
-        <RadioStage />
-      </section>
-
-      <section className={styles.lower}>
+      <section className="section">
         <div className="shell">
           <div className={styles.grid}>
             <div>
-              <SectionHeader
-                eyebrow="Zuletzt gespielt"
-                title="Was gerade lief"
+              <SectionHeader eyebrow="Zuletzt gespielt" title="Was gerade lief" />
+
+              {/* Ein Abschnitt, eine Liste: oben die letzten zehn Titel live aus
+                  dem Metadaten-Abruf, darunter als Fortsetzung die ganze Playlist
+                  der letzten Tage. Zwei Listen mit eigenen Ueberschriften
+                  untereinander sahen aus wie zwei verschiedene Dinge. */}
+              <RecentTracks
+                limit={10}
+                emptyText="Die Metadaten von laut.fm sind gerade nicht erreichbar. Der Stream läuft trotzdem."
               />
 
-              {history.length > 0 ? (
-                <ol className={styles.history} role="list">
-                  {history.map((track) => (
-                    <li key={`${track.id}-${track.startedAt}`} className={styles.historyItem}>
-                      <span className={styles.historyTime}>
-                        {track.startedAt ? formatTime(track.startedAt) : "—"}
-                      </span>
-                      <span className={styles.historyText}>
-                        <span className={styles.historyTitle}>{track.title}</span>
-                        <span className={styles.historyArtist}>{track.artist}</span>
-                      </span>
-                    </li>
-                  ))}
-                </ol>
-              ) : (
-                <EmptyState
-                  title="Keine Titelhistorie verfügbar"
-                  description="Die Metadaten von laut.fm sind gerade nicht erreichbar. Der Stream läuft trotzdem."
-                />
-              )}
-
-              {/* Die ausfuehrliche Playlist direkt darunter. Sie lag kurz auf
-                  einer eigenen Seite; /radio/playlist leitet hierher um
-                  (next.config.ts). */}
-              <section id="playlist" className={styles.playlist} aria-labelledby="playlist-title">
-                <h3 id="playlist-title" className={styles.playlistTitle}>
-                  Die letzten Tage
-                </h3>
-                <p className={styles.playlistText}>Jeder Titel, mit Uhrzeit, Tag für Tag.</p>
+              {/* Lag kurz auf einer eigenen Seite; /radio/playlist leitet
+                  hierher um (next.config.ts). */}
+              <div id="playlist" className={styles.playlist}>
                 <LautstationPlaylist station={site.station} />
                 <p className={styles.source}>
                   Daten:{" "}
@@ -90,7 +53,7 @@ export default async function RadioPage() {
                   , ein privates Verzeichnis für laut.fm-Stationen. Es gehört weder zu
                   VoltFM noch zu laut.fm.
                 </p>
-              </section>
+              </div>
             </div>
 
             <aside className={styles.info}>

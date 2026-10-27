@@ -11,13 +11,7 @@
   overflow: hidden;
   container-type: size;
   color: var(--color-cover-fg);
-  background:
-    radial-gradient(
-      120% 90% at 85% 0%,
-      color-mix(in srgb, var(--color-cover-accent) 13%, transparent),
-      transparent 65%
-    ),
-    var(--color-cover-bg);
+  background: var(--color-cover-bg);
 }
 
 .icon {
@@ -41,7 +35,7 @@
 }
 
 .name {
-  font: 800 clamp(1rem, 7.5cqw, 2.6rem) / 1.05 var(--font-display);
+  font: semi-expanded 700 clamp(1rem, 7.5cqw, 2.6rem) / 1.05 var(--font-display);
   letter-spacing: -0.02em;
   overflow-wrap: anywhere;
 }

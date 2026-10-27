@@ -71,14 +71,31 @@ export async function getNowPlaying(): Promise<NowPlaying | null> {
   return mapSong(raw, cover);
 }
 
-export async function getLastSongs(limit = 8): Promise<TrackHistoryItem[]> {
+/**
+ * Die zuletzt gespielten Titel.
+ *
+ * Mit `withCovers` wird zu jedem Titel das Cover gesucht. Das sind bis zu
+ * `limit` Anfragen an iTunes, aber jede liegt einen Tag im fetch-Cache — ein
+ * Titel wird also einmal am Tag gesucht, nicht bei jedem Abruf.
+ */
+export async function getLastSongs(
+  limit = 8,
+  { withCovers = false }: { withCovers?: boolean } = {},
+): Promise<TrackHistoryItem[]> {
   const raw = await fetchJson<RawSong[]>("/last_songs", 30);
   if (!Array.isArray(raw)) return [];
-  return raw.slice(0, limit).map((song) => ({
+  const songs = raw.slice(0, limit);
+  const covers = withCovers
+    ? await Promise.all(
+        songs.map((song) => getCoverArt(song.artist?.name ?? "", song.title ?? "")),
+      )
+    : [];
+  return songs.map((song, index) => ({
     id: song.id,
     title: song.title?.trim() || "Unbekannter Titel",
     artist: song.artist?.name?.trim() || "Unbekannter Interpret",
     startedAt: toIso(song.started_at),
+    coverUrl: covers[index] ?? null,
   }));
 }
 

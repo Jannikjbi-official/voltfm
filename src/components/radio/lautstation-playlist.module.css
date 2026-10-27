@@ -33,8 +33,7 @@
   max-width: 640px;
   padding: clamp(1.5rem, 1.25rem + 1vw, 2rem);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border);
-  background: var(--color-surface-container-lowest);
+  background: var(--color-surface-container-low);
 }
 
 .gateIcon {
@@ -48,8 +47,7 @@
 }
 
 .gateTitle {
-  font: var(--type-h3);
-  letter-spacing: -0.02em;
+  font: var(--type-h4);
   color: var(--color-text);
 }
 

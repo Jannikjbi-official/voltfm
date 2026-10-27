@@ -1,11 +1,12 @@
+/* Kein farbiges Band mehr: Die Seite beginnt mit Luft und einer grossen,
+   breiten Ueberschrift. Die Linie unten trennt Kopf und Inhalt. */
 .header {
-  padding-block: clamp(2rem, 1.5rem + 2.5vw, 3.5rem) clamp(1.75rem, 1.25rem + 2vw, 2.75rem);
-  background: var(--color-surface-container-low);
+  padding-block: clamp(2rem, 1.5rem + 3vw, 4rem) clamp(1.75rem, 1.25rem + 2vw, 3rem);
   border-bottom: 1px solid var(--color-border);
 }
 
 .header[data-size="large"] {
-  padding-block: clamp(2.5rem, 1.75rem + 4vw, 5rem) clamp(2.25rem, 1.5rem + 3vw, 4rem);
+  padding-block: clamp(2.5rem, 1.75rem + 5vw, 6rem) clamp(2.25rem, 1.5rem + 3vw, 4rem);
 }
 
 /* --- Breadcrumbs --------------------------------------------------------- */
@@ -31,7 +32,7 @@
 }
 
 .breadcrumbs a:hover {
-  color: var(--color-accent);
+  color: var(--color-primary);
 }
 
 .breadcrumbs [aria-current="page"] {
@@ -73,7 +74,7 @@
 
 .title {
   font: var(--type-h1);
-  letter-spacing: -0.035em;
+  letter-spacing: -0.02em;
   color: var(--color-text);
   text-wrap: balance;
   /* "Datenschutzerklaerung" passt auf ein 280-px-Display in keine Zeile.
@@ -84,8 +85,8 @@
 }
 
 .header[data-size="large"] .title {
-  font: var(--type-display-md);
-  letter-spacing: -0.035em;
+  font: var(--type-display-lg);
+  letter-spacing: -0.02em;
 }
 
 .description {

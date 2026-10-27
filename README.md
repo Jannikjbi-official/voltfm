@@ -211,8 +211,9 @@ Das Theme liegt in einem **Cookie** (`voltfm-theme`), nicht in `localStorage` �
 so kennt der Server es schon beim Rendern: kein Flash, kein Hydration-Mismatch.
 Standard ist **Light**.
 
-Schriften: Bricolage Grotesque (Display), Public Sans (UI), Source Serif 4
-(Artikeltext).
+Schrift: Archivo für alles, variabel in Stärke und Breite. Überschriften laufen
+fett und breit (`expanded` bzw. `semi-expanded` im `font`-Token), Fließtext in
+normaler Breite. Die Tokens stehen in `src/styles/brand.css`.
 
 ### OlyxUI-Regeln
 
