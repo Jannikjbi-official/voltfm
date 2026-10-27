@@ -1,0 +1,215 @@
+/* =========================================================================
+   Die Buehne — "Das Cover ist die Buehne"
+   -------------------------------------------------------------------------
+   Keine Karte, kein Rahmen: Die ganze Breite gehoert dem aktuellen Cover. Es
+   steht gross und scharf links, dahinter liegt es noch einmal, stark
+   weichgezeichnet. Dadurch faerbt jeder Song die Seite ein bisschen ein — die
+   Musik traegt die Gestaltung, nicht ein festes Farbfeld.
+   ========================================================================= */
+
+.stage {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-container-low);
+}
+
+/* --- Hintergrund ---------------------------------------------------------- */
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+
+/* Groesser als die Flaeche: Weichzeichnen laesst die Raender sonst hell
+   auslaufen. */
+.backdropImage {
+  position: absolute;
+  inset: -12%;
+  width: 124%;
+  height: 124%;
+  /* Die globale Regel `img { max-width: 100% }` wuerde das Bild sonst auf die
+     Flaechenbreite kappen, und rechts bliebe ein heller Streifen. */
+  max-width: none;
+  object-fit: cover;
+  filter: blur(56px);
+  opacity: 0;
+  transition: opacity 1400ms ease;
+}
+
+.backdropImage[data-loaded] {
+  opacity: 1;
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--color-stage-scrim);
+}
+
+/* --- Aufbau --------------------------------------------------------------- */
+
+.inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacing-32);
+  padding-block: clamp(2rem, 1.25rem + 4vw, 6rem);
+}
+
+.artwork {
+  min-width: 0;
+}
+
+/* Auf dem Handy nicht die ganze Breite: Sonst rutscht alles andere unter den
+   Rand. Ab Tablet steht das Cover neben dem Text und darf richtig gross sein. */
+.cover {
+  width: clamp(200px, 58vw, 340px);
+  height: auto;
+  border-radius: var(--radius-lg);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-24);
+  min-width: 0;
+}
+
+@media (min-width: 860px) {
+  .inner {
+    grid-template-columns: minmax(0, 440px) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(2.5rem, 1rem + 4vw, 5rem);
+    min-height: 560px;
+  }
+
+  .cover {
+    width: 100%;
+  }
+}
+
+/* --- Text ----------------------------------------------------------------- */
+
+.topline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-8) var(--spacing-12);
+}
+
+/* Die h1 der Seite, bewusst klein: der Slogan bzw. "VoltFM hören". Gross ist
+   der Titel, der gerade laeuft. */
+.heading {
+  font: var(--type-label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.now {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.nowLabel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--spacing-6);
+  font: var(--type-small);
+  color: var(--color-text-secondary);
+}
+
+.dot {
+  color: var(--color-text-muted);
+}
+
+.playlist {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.title {
+  font: var(--type-display-lg);
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.artist {
+  font: var(--type-h3);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.album {
+  font: var(--type-small);
+  color: var(--color-text-secondary);
+}
+
+/* --- Bedienung ------------------------------------------------------------ */
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-16);
+}
+
+.controlText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  min-width: 0;
+}
+
+.controlLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-10);
+  font: var(--type-h4);
+  color: var(--color-text);
+}
+
+.hint {
+  font: var(--type-caption);
+  color: var(--color-text-secondary);
+  /* Buendig unter "Jetzt hören", nicht unter dem runden Knopf. */
+  padding-left: calc(76px + var(--spacing-16));
+}
+
+.lead {
+  font: var(--type-body-lg);
+  color: var(--color-text-secondary);
+  max-width: 46ch;
+}
+
+.extras {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-12);
+  width: 100%;
+  max-width: 420px;
+}
+
+.volumeRow {
+  display: flex;
+  width: min(100%, 240px);
+}
+
+.volumeRow:empty {
+  display: none;
+}
+
+.degraded {
+  font: var(--type-caption);
+  color: var(--color-text-secondary);
+}

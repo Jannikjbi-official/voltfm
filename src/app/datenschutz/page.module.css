@@ -47,7 +47,6 @@
   font-style: normal;
   padding: var(--spacing-16);
   border-radius: var(--radius-md, 12px);
-  border: 1px solid var(--color-border);
   background: var(--color-surface-container-low);
   line-height: 1.7;
 }

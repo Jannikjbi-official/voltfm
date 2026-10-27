@@ -6,7 +6,7 @@ import { EmptyState } from "@/components/common/empty-state";
 import { ArticleCard } from "@/components/news/article-card";
 import { SearchForm } from "./search-form";
 import { searchArticles, listEvents, listHosts } from "@/services/content";
-import { mainNav } from "@/lib/site";
+import { buildPageIndex } from "@/lib/site";
 import { formatDate } from "@/lib/format";
 import styles from "./page.module.css";
 
@@ -44,7 +44,7 @@ export default async function SuchePage({
       host.bio.toLowerCase().includes(needle),
   );
   const matchedPages = query
-    ? mainNav.filter(
+    ? buildPageIndex().filter(
         (item) =>
           item.label.toLowerCase().includes(needle) ||
           item.hint?.toLowerCase().includes(needle),

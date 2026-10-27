@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/common/page-header";
-import { operator, site } from "@/lib/site";
+import { operator, radio, site } from "@/lib/site";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -70,13 +70,24 @@ export default function DatenschutzPage() {
           </p>
 
           <h2>Livestream und Sendedaten (laut.fm)</h2>
-          <p>
-            Das Programm von VoltFM wird von der laut.fm GmbH ausgestrahlt. Auf
-            dieser Website ist der Stream <strong>nicht eingebettet</strong> — wir
-            verlinken auf den Webplayer von lautstation.de, und die Wiedergabe
-            findet dort statt. Für den Datenschutz sind dabei zwei Vorgänge zu
-            unterscheiden:
-          </p>
+          {/* Folgt dem Schalter radio.embedAllowed: Die Erklaerung muss
+              beschreiben, was die Seite gerade tatsaechlich tut. */}
+          {radio.embedAllowed ? (
+            <p>
+              Das Programm von VoltFM wird von der laut.fm GmbH ausgestrahlt.
+              Abgespielt wird es <strong>direkt auf dieser Website</strong>, in
+              einem Player, der beim Seitenwechsel weiterläuft. Für den
+              Datenschutz sind dabei zwei Vorgänge zu unterscheiden:
+            </p>
+          ) : (
+            <p>
+              Das Programm von VoltFM wird von der laut.fm GmbH ausgestrahlt. Auf
+              dieser Website ist der Stream <strong>nicht eingebettet</strong> — wir
+              verlinken auf den Webplayer von lautstation.de, und die Wiedergabe
+              findet dort statt. Für den Datenschutz sind dabei zwei Vorgänge zu
+              unterscheiden:
+            </p>
+          )}
 
           <h3>1. Titel- und Sendungsinformationen (Server-zu-Server)</h3>
           <p>
@@ -88,36 +99,80 @@ export default function DatenschutzPage() {
             <strong>keine personenbezogenen Daten von dir</strong> an laut.fm
             übermittelt, und es wird dabei nichts auf deinem Gerät gespeichert.
           </p>
+          <p>
+            <strong>Cover:</strong> Die Bilder zu den Titeln sucht ebenfalls
+            unser Server, über die öffentliche Suchschnittstelle von Apple
+            (iTunes Search API), und holt sie dort ab. Dein Browser lädt sie über
+            den Bildoptimierer unserer Website von voltfm.xyz, nicht von Apple.
+            Apple erfährt dabei nicht, dass du die Seite besuchst.
+          </p>
 
-          <h3>2. Der Klick auf &bdquo;hören&ldquo; (Weiterleitung)</h3>
-          <p>
-            Klickst du auf den Play-Button, verlässt du unsere Website, und in
-            einem neuen Fenster öffnet sich der Webplayer von lautstation.de,
-            einem privaten Verzeichnis für laut.fm-Stationen. Dein Browser lädt
-            dann die Seite von lautstation.de und den Stream von laut.fm und
-            überträgt dabei an beide deine IP-Adresse und Browserkennung —
-            technisch geht das nicht ohne. Das passiert ausschließlich, weil du
-            den Link bewusst anklickst; ohne diesen Klick wird nichts übertragen.
-            Wir öffnen den Link mit <code>noreferrer</code>, lautstation.de
-            erfährt also nicht, von welcher Seite du kommst. Ab dem Klick gelten
-            die Datenschutzerklärungen von{" "}
-            <a href="https://lautstation.de/?mode=datenschutz" target="_blank" rel="noreferrer noopener">
-              lautstation.de
-            </a>{" "}
-            und{" "}
-            <a href="https://laut.fm/pages/privacy" target="_blank" rel="noreferrer noopener">
-              laut.fm
-            </a>
-            , auf deren Inhalt wir keinen Einfluss haben.
-          </p>
-          <p>
-            Sollte die Wiedergabe künftig direkt auf dieser Seite stattfinden,
-            würde dein Browser die Verbindung schon beim Abspielen aufbauen. Dafür
-            ist in der Website bereits ein Einwilligungsdialog vorgesehen: Ohne
-            deine ausdrückliche Zustimmung (Art. 6 Abs. 1 lit. a DSGVO) wird keine
-            Verbindung hergestellt, und du kannst sie im Player jederzeit wieder
-            zurücknehmen.
-          </p>
+          {radio.embedAllowed ? (
+            <>
+              <h3>2. Das Abspielen (Verbindung zu laut.fm)</h3>
+              <p>
+                Drückst du auf Play, verbindet sich dein Browser direkt mit dem
+                Streamserver von laut.fm und überträgt dabei deine IP-Adresse
+                und Browserkennung — ohne das geht ein Livestream technisch nicht.
+                Deshalb fragen wir beim ersten Abspielen ausdrücklich nach deiner
+                Einwilligung (Art. 6 Abs. 1 lit. a DSGVO). Ohne Zustimmung wird
+                keine Verbindung hergestellt. Du kannst sie im Player jederzeit
+                mit &bdquo;Verbindung trennen&ldquo; zurücknehmen, die Verbindung
+                endet dann sofort. Pausierst du, trennen wir sie spätestens nach
+                einer Minute. Für die Verarbeitung bei laut.fm gilt deren{" "}
+                <a href="https://laut.fm/pages/privacy" target="_blank" rel="noreferrer noopener">
+                  Datenschutzerklärung
+                </a>
+                .
+              </p>
+              <p>
+                Titel, Interpret und Cover geben wir an die Mediensteuerung deines
+                Geräts weiter, damit sie auf dem Sperrbildschirm erscheinen. Das
+                passiert nur auf deinem Gerät, übertragen wird dabei nichts.
+              </p>
+              <p>
+                Der Link &bdquo;Auch im Webplayer von lautstation.de hören&ldquo;
+                öffnet lautstation.de in einem neuen Fenster, mit{" "}
+                <code>noreferrer</code>. Ab dem Klick gilt die{" "}
+                <a href="https://lautstation.de/?mode=datenschutz" target="_blank" rel="noreferrer noopener">
+                  Datenschutzerklärung von lautstation.de
+                </a>
+                .
+              </p>
+            </>
+          ) : (
+            <>
+              <h3>2. Der Klick auf &bdquo;hören&ldquo; (Weiterleitung)</h3>
+              <p>
+                Klickst du auf den Play-Button, verlässt du unsere Website, und in
+                einem neuen Fenster öffnet sich der Webplayer von lautstation.de,
+                einem privaten Verzeichnis für laut.fm-Stationen. Dein Browser lädt
+                dann die Seite von lautstation.de und den Stream von laut.fm und
+                überträgt dabei an beide deine IP-Adresse und Browserkennung —
+                technisch geht das nicht ohne. Das passiert ausschließlich, weil du
+                den Link bewusst anklickst; ohne diesen Klick wird nichts übertragen.
+                Wir öffnen den Link mit <code>noreferrer</code>, lautstation.de
+                erfährt also nicht, von welcher Seite du kommst. Ab dem Klick gelten
+                die Datenschutzerklärungen von{" "}
+                <a href="https://lautstation.de/?mode=datenschutz" target="_blank" rel="noreferrer noopener">
+                  lautstation.de
+                </a>{" "}
+                und{" "}
+                <a href="https://laut.fm/pages/privacy" target="_blank" rel="noreferrer noopener">
+                  laut.fm
+                </a>
+                , auf deren Inhalt wir keinen Einfluss haben.
+              </p>
+              <p>
+                Sollte die Wiedergabe künftig direkt auf dieser Seite stattfinden,
+                würde dein Browser die Verbindung schon beim Abspielen aufbauen. Dafür
+                ist in der Website bereits ein Einwilligungsdialog vorgesehen: Ohne
+                deine ausdrückliche Zustimmung (Art. 6 Abs. 1 lit. a DSGVO) wird keine
+                Verbindung hergestellt, und du kannst sie im Player jederzeit wieder
+                zurücknehmen.
+              </p>
+            </>
+          )}
 
           <h2>Playlist der letzten Tage (lautstation.de)</h2>
           <p>
@@ -126,7 +181,7 @@ export default function DatenschutzPage() {
             privaten Verzeichnis für laut.fm-Stationen, das weder zu VoltFM noch
             zu laut.fm gehört. Angezeigt wird sie über ein Widget von
             lautstation.de, und das lädt <strong>erst, wenn du auf
-            &bdquo;Playlist laden&ldquo; klickst</strong>. Ab dann lädt dein
+            &bdquo;Ganze Playlist laden&ldquo; klickst</strong>. Ab dann lädt dein
             Browser ein Skript und die Titelliste von cdn.lautstation.de und
             überträgt dabei deine IP-Adresse, die Browserkennung und den
             Zeitpunkt des Abrufs. Rechtsgrundlage ist deine Einwilligung (Art. 6
@@ -155,8 +210,14 @@ export default function DatenschutzPage() {
               du bei jedem Seitenaufruf erneut zustimmen.
             </li>
             <li>
-              <strong>voltfm-volume</strong> — merkt sich die eingestellte
-              Lautstärke.
+              <strong>voltfm-volume</strong> und <strong>voltfm-muted</strong> —
+              merken sich die eingestellte Lautstärke und ob du stummgeschaltet
+              hast.
+            </li>
+            <li>
+              <strong>voltfm-stream-redirect-ack</strong> — nur wenn du im
+              Hinweis vor dem Webplayer von lautstation.de &bdquo;Nicht mehr
+              fragen&ldquo; anhakst.
             </li>
             <li>
               <strong>voltfm-lautstation-consent</strong> — nur wenn du beim

@@ -65,7 +65,7 @@ export default function Error({
             <p className={styles.navLabel}>Oder weiter zu</p>
             <ul className={styles.navList} role="list">
               {nav
-                .filter((item) => item.href !== "/")
+                .filter((item) => !item.external)
                 .map((item) => (
                   <li key={item.href}>
                     <ButtonLink href={item.href} variant="neutral" mode="ghost" size="sm">

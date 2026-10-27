@@ -48,7 +48,7 @@ export async function ArticleCard({
               fill
               sizes={variant === "wide" ? "(max-width: 900px) 100vw, 50vw" : "(max-width: 900px) 100vw, 33vw"}
               className={styles.image}
-              priority={priority}
+              preload={priority}
             />
           ) : (
             // Kein eigenes Bild: das Titelbild der Kategorie, damit das Raster

@@ -38,7 +38,7 @@
 
 .title {
   font: var(--type-display-md);
-  letter-spacing: -0.035em;
+  letter-spacing: -0.02em;
   color: var(--color-text);
   text-wrap: balance;
   margin-bottom: var(--spacing-16);
@@ -52,6 +52,10 @@
   font: var(--type-body-lg, var(--type-body));
   color: var(--color-text-secondary);
   max-width: 58ch;
+}
+
+.lead + .lead {
+  margin-top: var(--spacing-12);
 }
 
 .stats {
@@ -77,9 +81,9 @@
 }
 
 .stat dd {
-  font: 700 clamp(1.6rem, 1.4rem + 1.4vw, 2.5rem) / 1 var(--font-display);
+  font: expanded 800 clamp(1.6rem, 1.4rem + 1.4vw, 2.5rem) / 1 var(--font-display);
   color: var(--color-text);
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
 }
 
@@ -100,7 +104,7 @@
 
 .missionQuote {
   font: var(--type-display-md);
-  letter-spacing: -0.035em;
+  letter-spacing: -0.02em;
   color: var(--color-primary);
   text-wrap: balance;
   /* Optically aligns the large quote with the body text next to it. */
@@ -165,13 +169,11 @@
 
 .entry:first-child::before {
   top: var(--spacing-24);
-  background: linear-gradient(to bottom, transparent, var(--color-border) 2rem);
 }
 
 .entry:last-child::before {
   bottom: auto;
   height: var(--spacing-32);
-  background: linear-gradient(to bottom, var(--color-border), transparent);
 }
 
 /* Der Punkt auf der Schiene, auf Hoehe der ersten Textzeile. */
@@ -201,7 +203,7 @@
 }
 
 .entryYearValue {
-  font: 700 clamp(1rem, 0.9rem + 0.5vw, 1.35rem) / 1.25 var(--font-display);
+  font: semi-expanded 700 clamp(1rem, 0.9rem + 0.5vw, 1.35rem) / 1.25 var(--font-display);
   font-variant-numeric: tabular-nums;
   color: var(--color-text-muted);
   letter-spacing: -0.02em;
@@ -221,9 +223,8 @@
   gap: var(--spacing-8);
   min-width: 0;
   padding: clamp(1.25rem, 1rem + 1vw, 1.75rem);
-  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  background: var(--color-surface-container-lowest);
+  background: var(--color-surface-container-low);
   transition:
     border-color var(--transition-standard-fast-effects),
     transform var(--transition-standard-fast-effects);
@@ -236,11 +237,7 @@
 /* Der aktuelle Abschnitt hebt sich ab, ohne zu schreien. */
 .entry[data-current] .entryBody {
   border-color: color-mix(in srgb, var(--color-accent) 45%, var(--color-border));
-  background: linear-gradient(
-    140deg,
-    color-mix(in srgb, var(--color-accent) 7%, var(--color-surface-container-lowest)),
-    var(--color-surface-container-lowest) 60%
-  );
+  background: color-mix(in srgb, var(--color-accent) 6%, var(--color-surface-container-lowest));
 }
 
 .entryKicker {
@@ -349,7 +346,7 @@
 
 .outlookTitle {
   font: var(--type-h2);
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   color: var(--color-text);
   text-wrap: balance;
 }

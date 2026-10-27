@@ -1,10 +1,14 @@
-import { ButtonLink } from "@/components/common/button-link";
+import Link from "next/link";
 import { Icon, ArrowRightIcon } from "@/lib/icons";
 import styles from "./section-header.module.css";
 
 /**
  * The recurring section lead-in: an eyebrow label, a display heading, an
  * optional standfirst and an optional "see all" action.
+ *
+ * Der Verweis ist ein Textlink mit Pfeil, kein umrandeter Knopf: Auf einer
+ * Seite mit sechs Abschnitten waeren das sechs Kaesten mehr, und die Knoepfe
+ * sollen fuer das bleiben, was man tatsaechlich tut (hoeren, beitreten).
  */
 export function SectionHeader({
   eyebrow,
@@ -28,16 +32,10 @@ export function SectionHeader({
       </div>
 
       {action && (
-        <ButtonLink
-          href={action.href}
-          variant="neutral"
-          mode="stroke"
-          size="sm"
-          className={styles.action}
-        >
+        <Link href={action.href} className={styles.action}>
           {action.label}
-          <Icon icon={ArrowRightIcon} />
-        </ButtonLink>
+          <Icon icon={ArrowRightIcon} className={styles.actionIcon} />
+        </Link>
       )}
     </header>
   );

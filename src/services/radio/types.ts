@@ -66,6 +66,8 @@ export interface TrackHistoryItem {
   title: string;
   artist: string;
   startedAt: string | null;
+  /** Cover from the iTunes Search API; null when not found or not requested. */
+  coverUrl: string | null;
 }
 
 /** Everything the player needs in one request. */
@@ -74,6 +76,12 @@ export interface RadioSnapshot {
   listeners: number | null;
   currentShow: CurrentShow | null;
   nextShow: CurrentShow | null;
+  /**
+   * Die zuletzt gespielten Titel, neueste zuerst. Kommt mit jedem Abruf mit,
+   * damit "Was gerade lief" so aktuell ist wie "Läuft gerade" — und nicht so
+   * alt wie die zuletzt neu gebaute Seite.
+   */
+  history: TrackHistoryItem[];
   /** True when metadata could not be reached. The stream still plays. */
   degraded: boolean;
 }

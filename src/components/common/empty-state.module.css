@@ -3,9 +3,8 @@
   flex-direction: column;
   align-items: center;
   gap: var(--spacing-10);
-  padding: clamp(2.5rem, 2rem + 3vw, 4rem) var(--spacing-24);
+  padding: clamp(2rem, 1.5rem + 3vw, 3.5rem) var(--spacing-24);
   text-align: center;
-  border: 1px dashed var(--color-border-strong);
   border-radius: var(--radius-lg);
   background: var(--color-surface-container-low);
 }

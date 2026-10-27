@@ -20,9 +20,9 @@
 /* Oversized initial sitting behind the bolt, very low contrast. */
 .initial {
   position: absolute;
-  font: 800 clamp(3rem, 18vw, 7rem) / 1 var(--font-display);
+  font: expanded 800 clamp(3rem, 18vw, 7rem) / 1 var(--font-display);
   color: var(--color-text);
   opacity: 0.1;
   user-select: none;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.02em;
 }

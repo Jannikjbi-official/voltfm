@@ -10,15 +10,16 @@ import {
   useState,
 } from "react";
 import type { PlayerStatus, RadioSnapshot } from "@/services/radio/types";
-import { radio } from "@/lib/site";
+import { radio, site } from "@/lib/site";
 import { StreamConsentDialog } from "./stream-consent";
+import { COVER_PIXELS, coverSrc } from "./cover-url";
 
 /**
  * Owns the one and only <audio> element in the app.
  *
  * It is mounted in the root layout, so client-side navigation never unmounts it
  * and playback continues uninterrupted between pages. Every player surface
- * (sticky bar, /radio hero, mobile sheet) is a view over this single state.
+ * (sticky bar, home stage, /radio) is a view over this single state.
  *
  * Two things gate playback:
  *
@@ -26,6 +27,10 @@ import { StreamConsentDialog } from "./stream-consent";
  *    while it is false nothing is ever connected and "play" becomes a link-out.
  * 2. The listener's consent — connecting sends their IP address to a third
  *    party, so the first play asks first and remembers the answer.
+ *
+ * Mit eingeschaltetem Player kommt dazu die Media Session: Titel, Interpret,
+ * Playlist und Cover stehen auf dem Sperrbildschirm und in den Mediensteuerungen
+ * des Systems, Play und Pause funktionieren von dort aus.
  */
 
 const VOLUME_KEY = "voltfm-volume";
@@ -35,12 +40,56 @@ const CONSENT_KEY = "voltfm-stream-consent";
 const REDIRECT_ACK_KEY = "voltfm-stream-redirect-ack";
 /** How often to re-poll laut.fm for track/show metadata. */
 const METADATA_INTERVAL_MS = 20_000;
+/**
+ * So lange darf das Verbinden dauern, bevor es als gescheitert gilt. Ohne
+ * Grenze dreht sich der Ladekreis ewig, wenn laut.fm nicht antwortet.
+ */
+const CONNECT_TIMEOUT_MS = 15_000;
+/**
+ * Nach so langer Pause wird die Verbindung ganz getrennt. Bis dahin bleibt sie
+ * stehen, damit die Steuerung auf dem Sperrbildschirm nicht verschwindet —
+ * wer kurz pausiert, soll dort auch wieder auf Play tippen koennen.
+ */
+const PAUSE_DISCONNECT_MS = 60_000;
+/** Fallback-Bild fuer den Sperrbildschirm, wenn es zum Titel kein Cover gibt. */
+const FALLBACK_ARTWORK = { src: "/logo/voltfm-play-icon-dunkel.png", sizes: "1024x1024", type: "image/png" };
+
+const MESSAGES = {
+  offline: "Du bist offline. Sobald die Verbindung zurück ist, kannst du es noch einmal versuchen.",
+  blocked: "Dein Browser hat die Wiedergabe blockiert. Tipp noch einmal auf Play.",
+  timeout: "Der Stream antwortet gerade nicht. Versuch es in einem Moment noch einmal.",
+  network: "Die Verbindung zum Stream ist abgebrochen. Versuch es noch einmal.",
+  decode: "Der Stream kam beschädigt an. Ein neuer Versuch hilft meistens.",
+  unreachable: `Der Stream ist gerade nicht erreichbar. Das liegt meist an ${radio.providerName} und ist nach ein paar Minuten vorbei.`,
+  unknown: "Der Stream lässt sich gerade nicht abspielen. Versuch es noch einmal.",
+} as const;
+
+/** Uebersetzt den Fehler des <audio>-Elements in einen Satz, mit dem man etwas anfangen kann. */
+function describeMediaError(audio: HTMLAudioElement | null): string {
+  if (typeof navigator !== "undefined" && !navigator.onLine) return MESSAGES.offline;
+  switch (audio?.error?.code) {
+    case MediaError.MEDIA_ERR_NETWORK:
+      return MESSAGES.network;
+    case MediaError.MEDIA_ERR_DECODE:
+      return MESSAGES.decode;
+    case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
+      // So meldet der Browser auch einen Stream, der gar nicht antwortet.
+      return MESSAGES.unreachable;
+    default:
+      return MESSAGES.unknown;
+  }
+}
 
 interface PlayerContextValue {
   status: PlayerStatus;
   isPlaying: boolean;
   volume: number;
   muted: boolean;
+  /**
+   * False auf iPhone und iPad: Dort laesst sich die Lautstaerke einer Webseite
+   * nicht setzen, nur stummschalten. Der Regler waere dort ohne Wirkung.
+   */
+  volumeSupported: boolean;
   snapshot: RadioSnapshot | null;
   error: string | null;
   /** False while laut.fm's terms forbid on-site playback. */
@@ -76,6 +125,7 @@ export function RadioPlayerProvider({
   const [status, setStatus] = useState<PlayerStatus>("idle");
   const [volume, setVolumeState] = useState(0.8);
   const [muted, setMuted] = useState(false);
+  const [volumeSupported, setVolumeSupported] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [snapshot, setSnapshot] = useState<RadioSnapshot | null>(initialSnapshot);
   const [consent, setConsent] = useState<boolean | null>(null);
@@ -85,6 +135,7 @@ export function RadioPlayerProvider({
   /* Set when the listener pressed play before consenting, so accepting starts
      playback instead of making them press play a second time. */
   const playAfterConsent = useRef(false);
+  const disconnectTimer = useRef<number | null>(null);
 
   /* Restore the listener's preferences from localStorage.
      This is a one-shot read of a browser-only store on mount: it cannot run
@@ -107,6 +158,12 @@ export function RadioPlayerProvider({
       // we ask again, which is the safe direction.
       setConsent(false);
     }
+
+    /* iOS ignoriert das Setzen der Lautstaerke und liest danach 1 zurueck.
+       Ein Probe-Element verraet das, ohne eine Verbindung aufzubauen. */
+    const probe = document.createElement("audio");
+    probe.volume = 0.5;
+    setVolumeSupported(probe.volume === 0.5);
   }, []);
   /* eslint-enable react-hooks/set-state-in-effect */
 
@@ -117,35 +174,79 @@ export function RadioPlayerProvider({
     audio.muted = muted;
   }, [volume, muted]);
 
+  const clearDisconnectTimer = useCallback(() => {
+    if (disconnectTimer.current !== null) {
+      window.clearTimeout(disconnectTimer.current);
+      disconnectTimer.current = null;
+    }
+  }, []);
+
+  /** Drop the connection entirely rather than buffering a stream nobody hears. */
+  const disconnect = useCallback(() => {
+    clearDisconnectTimer();
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.pause();
+    audio.removeAttribute("src");
+    audio.load();
+  }, [clearDisconnectTimer]);
+
   /**
    * A live stream has no seekable buffer: on error or re-play we must reassign
    * src to force a fresh connection, otherwise the element replays a stale
-   * buffer or refuses to reconnect at all.
+   * buffer or refuses to reconnect at all. Das gilt auch nach einer Pause:
+   * Weiter geht es immer live, nicht dort, wo pausiert wurde.
    */
   const connect = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
+    clearDisconnectTimer();
+    if (!navigator.onLine) {
+      setStatus("offline");
+      setError(MESSAGES.offline);
+      return;
+    }
     setError(null);
     setStatus("connecting");
     audio.src = `${streamUrl}${streamUrl.includes("?") ? "&" : "?"}_=${Date.now().toString(36)}`;
     audio.load();
-    audio.play().catch(() => {
-      // Autoplay policy or a genuinely unreachable stream.
+    audio.play().catch((reason: unknown) => {
+      const name = reason instanceof DOMException ? reason.name : "";
+      // Ein Pause-Klick oder ein neuer Versuch hat den Start abgebrochen — kein Fehler.
+      if (name === "AbortError") return;
       setStatus("error");
-      setError("Wiedergabe konnte nicht gestartet werden. Bitte erneut versuchen.");
+      setError(name === "NotAllowedError" ? MESSAGES.blocked : describeMediaError(audio));
     });
-  }, [streamUrl]);
+  }, [clearDisconnectTimer, streamUrl]);
 
-  const stop = useCallback(() => {
+  const pauseAudio = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
     audio.pause();
-    // Drop the connection entirely rather than buffering a live stream we are
-    // not listening to.
-    audio.removeAttribute("src");
-    audio.load();
     setStatus("paused");
-  }, []);
+    clearDisconnectTimer();
+    disconnectTimer.current = window.setTimeout(disconnect, PAUSE_DISCONNECT_MS);
+  }, [clearDisconnectTimer, disconnect]);
+
+  useEffect(() => clearDisconnectTimer, [clearDisconnectTimer]);
+
+  /* Haengt das Verbinden fest, gibt es nach CONNECT_TIMEOUT_MS eine Meldung
+     statt eines ewigen Ladekreises. `stalled` feuert bei Streams auch mitten im
+     Spielen; laeuft der Ton tatsaechlich, wird nur der Status korrigiert. */
+  useEffect(() => {
+    if (status !== "connecting") return;
+    const id = window.setTimeout(() => {
+      const audio = audioRef.current;
+      if (audio && !audio.paused && audio.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
+        setStatus("playing");
+        return;
+      }
+      disconnect();
+      setStatus("error");
+      setError(navigator.onLine ? MESSAGES.timeout : MESSAGES.offline);
+    }, CONNECT_TIMEOUT_MS);
+    return () => window.clearTimeout(id);
+  }, [status, disconnect]);
 
   const openExternal = useCallback(() => {
     // Ein separates Fenster, nie eingebettet: Der Player laeuft auf
@@ -178,7 +279,7 @@ export function RadioPlayerProvider({
     connect();
   }, [connect, consent, openStream]);
 
-  const pause = useCallback(() => stop(), [stop]);
+  const pause = useCallback(() => pauseAudio(), [pauseAudio]);
 
   const isPlaying = status === "playing" || status === "connecting";
 
@@ -211,9 +312,9 @@ export function RadioPlayerProvider({
     } catch {
       /* ignore */
     }
-    stop();
+    disconnect();
     setStatus("idle");
-  }, [stop]);
+  }, [disconnect]);
 
   const setVolume = useCallback((value: number) => {
     const clamped = Math.min(1, Math.max(0, value));
@@ -274,10 +375,78 @@ export function RadioPlayerProvider({
 
   // Reflect the browser's own offline state.
   useEffect(() => {
-    const onOffline = () => setStatus((s) => (s === "playing" ? "offline" : s));
+    const onOffline = () => {
+      // Nur wer gerade hoert, bekommt die Meldung — ein pausierter Player
+      // hat nichts zu verlieren.
+      const audio = audioRef.current;
+      if (!audio || audio.paused) return;
+      setStatus("offline");
+      setError(MESSAGES.offline);
+    };
     window.addEventListener("offline", onOffline);
     return () => window.removeEventListener("offline", onOffline);
   }, []);
+
+  /* --- Media Session -------------------------------------------------------
+     Nur mit eingeschaltetem Player: Ohne <audio> gibt es nichts, was das
+     System steuern koennte. Das Cover laeuft ueber /_next/image wie ueberall,
+     auch der Sperrbildschirm laedt es also von voltfm.xyz und nicht von Apple. */
+  const track = snapshot?.nowPlaying ?? null;
+  const showName = snapshot?.currentShow?.name ?? null;
+
+  useEffect(() => {
+    if (!radio.embedAllowed || !("mediaSession" in navigator)) return;
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: track?.title ?? `${site.name} Livestream`,
+      artist: track?.artist ?? site.tagline,
+      album: showName ? `${site.name} · ${showName}` : site.name,
+      artwork: track?.coverUrl
+        ? (["thumb", "large"] as const).map((size) => ({
+            src: coverSrc(track.coverUrl as string, size),
+            sizes: `${COVER_PIXELS[size]}x${COVER_PIXELS[size]}`,
+          }))
+        : [FALLBACK_ARTWORK],
+    });
+  }, [track?.title, track?.artist, track?.coverUrl, showName]);
+
+  useEffect(() => {
+    if (!radio.embedAllowed || !("mediaSession" in navigator)) return;
+    navigator.mediaSession.playbackState =
+      status === "playing" || status === "connecting" ? "playing" : status === "paused" ? "paused" : "none";
+  }, [status]);
+
+  useEffect(() => {
+    if (!radio.embedAllowed || !("mediaSession" in navigator)) return;
+    const session = navigator.mediaSession;
+    const handlers: [MediaSessionAction, MediaSessionActionHandler | null][] = [
+      ["play", () => play()],
+      ["pause", () => pause()],
+      ["stop", () => disconnect()],
+      // Ein Livestream laesst sich nicht spulen und hat keinen naechsten Titel.
+      // Ohne Handler blendet das System diese Knoepfe aus.
+      ["seekbackward", null],
+      ["seekforward", null],
+      ["seekto", null],
+      ["previoustrack", null],
+      ["nexttrack", null],
+    ];
+    for (const [action, handler] of handlers) {
+      try {
+        session.setActionHandler(action, handler);
+      } catch {
+        /* Nicht jeder Browser kennt jede Aktion. */
+      }
+    }
+    return () => {
+      for (const [action] of handlers) {
+        try {
+          session.setActionHandler(action, null);
+        } catch {
+          /* ignore */
+        }
+      }
+    };
+  }, [play, pause, disconnect]);
 
   const value = useMemo<PlayerContextValue>(
     () => ({
@@ -285,6 +454,7 @@ export function RadioPlayerProvider({
       isPlaying,
       volume,
       muted,
+      volumeSupported,
       snapshot,
       error,
       embedAllowed: radio.embedAllowed,
@@ -305,6 +475,7 @@ export function RadioPlayerProvider({
       isPlaying,
       volume,
       muted,
+      volumeSupported,
       snapshot,
       error,
       consent,
@@ -332,14 +503,15 @@ export function RadioPlayerProvider({
           // basic courtesy, and the consent gate above.
           onPlaying={() => setStatus("playing")}
           onWaiting={() => setStatus("connecting")}
-          onPause={() => setStatus((s) => (s === "error" ? s : "paused"))}
-          onStalled={() => setStatus("connecting")}
+          onPause={() => setStatus((s) => (s === "error" || s === "offline" ? s : "paused"))}
+          onStalled={() => setStatus((s) => (s === "paused" ? s : "connecting"))}
           onError={() => {
-            // Clearing src during pause() fires a synthetic error; ignore it.
+            // Clearing src during disconnect() fires a synthetic error; ignore it.
             const audio = audioRef.current;
             if (!audio?.getAttribute("src")) return;
+            clearDisconnectTimer();
             setStatus("error");
-            setError("Stream nicht erreichbar. Bitte erneut versuchen.");
+            setError(describeMediaError(audio));
           }}
         >
           <track kind="captions" />
