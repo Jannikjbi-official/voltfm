@@ -67,6 +67,14 @@
   letter-spacing: 0.01em;
 }
 
+/* Die kleinen Badges (Kategorie, Schlagwoerter) setzt OlyxUI in 11 px — am
+   Handy zu klein zum Lesen. */
+@media (max-width: 767px) {
+  [data-ui="badge"][data-size="sm"] {
+    font-size: 0.75rem;
+  }
+}
+
 /* --- Inputs --------------------------------------------------------------
    Matched to the new button heights so a field and the button next to it line
    up in a row. */

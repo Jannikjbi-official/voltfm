@@ -4,12 +4,20 @@
   display: inline-flex;
   align-items: center;
   flex-shrink: 0;
+  /* Zum Antippen hoeher als die Wortmarke selbst. */
+  min-height: 44px;
 }
 
 .wordmark {
   display: block;
   height: 26px;
   width: auto;
+}
+
+@media (max-width: 379px) {
+  .wordmark {
+    height: 22px;
+  }
 }
 
 .icon {

@@ -53,6 +53,15 @@
   z-index: 1;
 }
 
+/* Kategorie und Autor sind klein gesetzt; zum Antippen reicht das nicht.
+   Die Flaeche waechst unsichtbar auf mindestens 24 px. */
+.meta > :first-child::before,
+.authorLink::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+}
+
 .title {
   font: var(--type-h4);
   color: var(--color-text);
