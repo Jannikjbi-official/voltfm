@@ -3,6 +3,7 @@ import { Archivo } from "next/font/google";
 import "./globals.css";
 
 import { cookies } from "next/headers";
+import { after } from "next/server";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { THEME_COOKIE, normalizeTheme } from "@/lib/theme";
 import { Toaster } from "@/components/common/toaster";
@@ -13,6 +14,7 @@ import { StickyPlayer } from "@/components/radio/sticky-player";
 import { getRadioSnapshot } from "@/services/radio";
 import { getAccountAvatar } from "@/services/content/account";
 import { getStreamUrl } from "@/services/radio/stream";
+import { announceDueArticles } from "@/services/discord/news";
 import { buildMainNav, site } from "@/lib/site";
 
 /* Die eine Schrift fuer alles. Variabel geladen, mit der Breitenachse dazu:
@@ -71,6 +73,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     getAccountAvatar(),
   ]);
   const theme = normalizeTheme(cookieStore.get(THEME_COOKIE)?.value);
+
+  /* Neue Beitraege im Discord ankuendigen — nach der Antwort, und hoechstens
+     einmal pro Minute. So gehen auch Beitraege mit spaeterem Datum raus,
+     sobald sie live sind, ohne dass es dafuer einen Cronjob braucht. */
+  after(() => announceDueArticles());
 
   return (
     <html

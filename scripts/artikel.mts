@@ -14,7 +14,7 @@
  */
 
 const DISCORD_URL = process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/6JzSsUTWuh";
-const APPLY_URL = "https://dash.pwr.lol/website/1549922141003190324";
+const APPLY_URL = "https://bewerbung.voltfm.xyz/";
 
 export interface SeedArticle {
   slug: string;

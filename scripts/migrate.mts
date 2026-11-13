@@ -381,6 +381,31 @@ const NAME_FIXES: SentenceFix[] = [
   },
 ];
 
+/**
+ * Das Bewerbungsportal ist umgezogen: von dash.pwr.lol auf die eigene
+ * Adresse bewerbung.voltfm.xyz. Nur der Link im Relaunch-Beitrag, der Text
+ * drumherum ("Bewerbungen laufen über unser Portal") stimmt weiter.
+ */
+const APPLY_LINK_FIXES: SentenceFix[] = [
+  {
+    slug: "voltfm-geht-weiter-neue-webseite",
+    sentences: [
+      ["](https://dash.pwr.lol/website/1549922141003190324)", "](https://bewerbung.voltfm.xyz/)"],
+    ],
+  },
+];
+
+/**
+ * Was beim Start der Discord-Ankuendigung (13.11.2026) noch nachgepostet
+ * wird: die letzten Beitraege, die noch aktuell sind. "RadioAid 2026" fehlt
+ * bewusst — er kuendigt den Start am 6. November an, und der ist vorbei.
+ */
+const DISCORD_BACKFILL = [
+  "neues-logo-und-ehrlichere-texte",
+  "ueber-1000-hoerer-danke",
+  "voltfm-weihnachten-playlist",
+];
+
 /** Rechenschritt wie im Editor: ~200 Woerter pro Minute, mindestens eine. */
 function readingTime(html: string): number {
   const words = html.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
@@ -884,6 +909,32 @@ const MIGRATIONS: Migration[] = [
   {
     name: "020-relaunch-beitrag-namensfolge",
     run: (db, now) => applySentenceFixes(db, now, NAME_FIXES),
+  },
+
+  {
+    name: "021-discord-ankuendigung-bestand",
+    run: async (db, now) => {
+      /* Ab jetzt kuendigt der Bot neue Beitraege im Discord an. Von dem, was
+         schon online ist, gehen nur die letzten noch aktuellen raus
+         (DISCORD_BACKFILL). Der Rest bekommt den Haken "ankuendigen" auf aus;
+         im Admin laesst er sich wieder setzen. Beitraege mit Datum in der
+         Zukunft bleiben unberuehrt und gehen raus, sobald sie online sind. */
+      const result = await db.collection("articles").updateMany(
+        {
+          status: "published",
+          publishedAt: { $lte: now },
+          announceOnDiscord: { $exists: false },
+          slug: { $nin: DISCORD_BACKFILL },
+        },
+        { $set: { announceOnDiscord: false } },
+      );
+      return `${result.modifiedCount} ältere Beiträge nicht ankündigen; nachgepostet werden: ${DISCORD_BACKFILL.join(", ")}`;
+    },
+  },
+
+  {
+    name: "022-bewerbungsportal-eigene-adresse",
+    run: (db, now) => applySentenceFixes(db, now, APPLY_LINK_FIXES),
   },
 ];
 

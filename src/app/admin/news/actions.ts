@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { redirect } from "next/navigation";
 import { ObjectId } from "mongodb";
 import { z } from "zod";
@@ -12,6 +13,7 @@ import { assertCan, AuthorizationError } from "@/lib/session";
 import { slugify } from "@/lib/format";
 import { renderRichText, findImageWithoutAlt } from "@/lib/sanitize";
 import type { ArticleStatus } from "@/types/content";
+import { announceDueArticles } from "@/services/discord/news";
 
 /**
  * Article create / update / delete.
@@ -133,6 +135,7 @@ export async function saveArticle(
       .filter(Boolean),
     status: data.status,
     featured: formData.get("featured") === "on",
+    announceOnDiscord: formData.get("announceOnDiscord") === "on",
     publishedAt: resolvePublishedAt(data.status, data.publishedAt),
     readingTime: readingTimeOf(content),
     updatedAt: now,
@@ -161,6 +164,9 @@ export async function saveArticle(
   revalidatePath("/news");
   revalidatePath(`/news/${slug}`);
   revalidatePath("/");
+
+  // Ist der Beitrag jetzt live, geht die Discord-Ankuendigung gleich raus.
+  after(() => announceDueArticles({ force: true }));
 
   redirect("/admin/news");
 }

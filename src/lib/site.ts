@@ -36,6 +36,8 @@ export const site = {
    */
   canonicalUrl: "https://voltfm.xyz",
   discordUrl: process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/6JzSsUTWuh",
+  /** Hier kuendigt der Bot neue Beitraege an (src/services/discord/news.ts). */
+  discordNewsChannelId: process.env.DISCORD_NEWS_CHANNEL_ID ?? "1570831941182161056",
   /** Nur verlinkt, nichts eingebettet — es laedt also nichts von Meta. */
   instagramUrl: "https://www.instagram.com/voltfm_radio/",
   streamUrl:
@@ -70,8 +72,11 @@ export const site = {
   contactFormEnabled: false,
   /** Wo im Discord das Ticket aufgemacht wird. */
   supportChannelHint: "Kanal #ticket-erstellen",
-  /** Bewerbungsportal: dort werden offene Stellen ausgeschrieben. */
-  applyUrl: "https://dash.pwr.lol/website/1549922141003190324",
+  /**
+   * Bewerbungsportal: dort werden offene Stellen ausgeschrieben. Seit
+   * November 2026 das eigene unter bewerbung.voltfm.xyz, vorher dash.pwr.lol.
+   */
+  applyUrl: "https://bewerbung.voltfm.xyz/",
   /** laut.fm station slug — drives every metadata endpoint. */
   station: process.env.NEXT_PUBLIC_RADIO_STATION ?? "jannikjbi",
 } as const;
