@@ -413,3 +413,36 @@ Auf der [Radio-Seite](/radio) findest du jetzt die Playlist der letzten Tage: je
 
 Als Nächstes passen wir die Farben der Seite an das neue Logo an. Wenn dir vorher schon etwas auffällt, das nicht stimmt, schreib es uns im [Discord](${DISCORD_URL}).`,
 };
+
+export const BEWERBUNGSPORTAL_ARTICLE: SeedArticle = {
+  slug: "eigenes-bewerbungsportal",
+  title: "Unser eigenes Bewerbungsportal ist online",
+  excerpt:
+    "Moderation, Playlists, Social Media oder eine eigene Sendung: Auf bewerbung.voltfm.xyz bewirbst du dich mit deinem Discord-Konto und siehst jederzeit, wie es steht.",
+  categorySlug: "in-eigener-sache",
+  tags: ["Mitmachen", "Bewerbung", "In eigener Sache"],
+  coverImage: "/titelbilder/eigenes-bewerbungsportal.png",
+  coverAlt: "Das VoltFM-Logo, darunter: Unser eigenes Bewerbungsportal, bewerbung.voltfm.xyz",
+  authorName: "jannikjbi",
+  featured: true,
+  source: `Bewerbungen bei VoltFM liefen bisher über ein fremdes Portal. Jetzt haben wir ein eigenes: [bewerbung.voltfm.xyz](${APPLY_URL}).
+
+## Zwei Wege rein
+
+Entweder du bewirbst dich auf eine Rolle im Team: Moderation, Playlists, Social Media & Content, Event-Team oder Webentwicklung. Oder du schlägst eine eigene Sendung vor, mit Name, Idee, Wunschtermin und ein paar Songs als Beispiel. Passt es, probieren wir es mit einer Probesendung aus.
+
+## In vier Schritten
+
+1. Mit Discord anmelden. Wir sehen nur deinen Namen und dein Profilbild.
+2. In Ruhe ausfüllen. Der Entwurf speichert sich von selbst.
+3. Wir melden uns. Die Bestätigung kommt per Nachricht vom Bot, den Stand siehst du im Portal.
+4. Kennenlernen. Passt es, quatschen wir kurz im Discord oder probieren eine Sendung aus.
+
+## Was wir versprechen – und was nicht
+
+VoltFM ist ehrenamtlich: kein Geld, keine Pflichtstunden, aber auch keine Garantie, dass jede Idee sofort läuft. Jede Bewerbung lesen und hören wir selbst. Eine KI hilft uns höchstens beim Sortieren, entscheiden tut sie nie.
+
+Als Nächstes kommen im Portal das Einreichen von Musik, Wünsche und Grüße für Live-Events und Bewerbungen von Partnern, zum Beispiel für RadioAid.
+
+Mitmachen kannst du ab 16.`,
+};

@@ -28,6 +28,7 @@ import {
   WEBSEITE_ARTICLE,
   RADIOAID_2026_ARTICLE,
   UPDATE_OKTOBER_2026_ARTICLE,
+  BEWERBUNGSPORTAL_ARTICLE,
 } from "./artikel.mjs";
 
 // Eine bereits gesetzte Umgebungsvariable gewinnt gegen die Dateien (Vercel).
@@ -39,6 +40,14 @@ const DISCORD_URL = process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/6
 interface Migration {
   name: string;
   run: (db: Db, now: Date) => Promise<string>;
+  /**
+   * Nur im Production-Build ausfuehren. Fuer Inhalte, die Dateien aus diesem
+   * Stand brauchen, etwa ein Titelbild aus public/: Vorschau-Builds teilen
+   * sich die Datenbank mit voltfm.xyz, und dort stuende der Beitrag sonst
+   * mit kaputtem Bild, bis der Code nachkommt. Lokal (ohne VERCEL_ENV)
+   * laeuft sie normal.
+   */
+  productionOnly?: boolean;
 }
 
 /* --- Hilfen --------------------------------------------------------------- */
@@ -936,6 +945,37 @@ const MIGRATIONS: Migration[] = [
     name: "022-bewerbungsportal-eigene-adresse",
     run: (db, now) => applySentenceFixes(db, now, APPLY_LINK_FIXES),
   },
+
+  {
+    name: "023-beitrag-eigenes-bewerbungsportal",
+    /* Das Titelbild liegt in public/titelbilder und kommt erst mit dem
+       Production-Deploy auf voltfm.xyz. */
+    productionOnly: true,
+    run: async (db, now) => {
+      const { source, ...rest } = BEWERBUNGSPORTAL_ARTICLE;
+      const content = renderRichText(source);
+      const result = await db.collection("articles").updateOne(
+        { slug: rest.slug },
+        {
+          $setOnInsert: {
+            ...rest,
+            content,
+            contentSource: source,
+            status: "published" as const,
+            publishedAt: now,
+            readingTime: readingTime(content),
+            coverAlt: rest.coverAlt ?? "",
+            seoTitle: rest.title,
+            seoDescription: rest.excerpt,
+            createdAt: now,
+            updatedAt: now,
+          },
+        },
+        { upsert: true },
+      );
+      return result.upsertedCount ? `angelegt: /news/${rest.slug}` : "war schon da";
+    },
+  },
 ];
 
 /* --- Der Lauf ------------------------------------------------------------- */
@@ -963,6 +1003,11 @@ try {
 
   for (const migration of MIGRATIONS) {
     if (done.has(migration.name)) continue;
+    if (migration.productionOnly && process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "production") {
+      // Nicht vermerkt: Der Production-Build holt sie nach.
+      console.log(`[migrate] ${migration.name}: wartet auf den Production-Build`);
+      continue;
+    }
 
     const started = Date.now();
     try {
