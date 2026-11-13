@@ -49,6 +49,16 @@ export interface Article {
   updatedAt: Date;
   createdAt: Date;
   readingTime: number;
+  /**
+   * Im Discord ankuendigen, sobald der Beitrag live ist. Fehlt = ja. Was vor
+   * November 2026 schon online war, steht auf false (Migration 021), damit es
+   * nicht nachtraeglich gepostet wird. Siehe src/services/discord/news.ts.
+   */
+  announceOnDiscord?: boolean;
+  /** Wann der Bot den Beitrag im Discord angekuendigt hat. */
+  discordAnnouncedAt?: Date | null;
+  discordMessageId?: string;
+  discordAnnounceAttempts?: number;
   seoTitle?: string;
   seoDescription?: string;
   ogImage?: string;

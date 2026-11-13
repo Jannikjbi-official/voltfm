@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { requireAdmin, requireCan } from "@/lib/session";
 import { serverEnv } from "@/lib/env";
 import { site } from "@/lib/site";
+import { discordNewsEnabled } from "@/services/discord/news";
 import styles from "../page.module.css";
 
 export const metadata: Metadata = { title: "Einstellungen · Admin", robots: { index: false } };
@@ -29,6 +30,12 @@ export default async function AdminSettingsPage() {
     {
       label: "Discord-Bot (Avatare)",
       value: process.env.DISCORD_BOT_TOKEN ? "konfiguriert" : "nicht konfiguriert",
+    },
+    {
+      label: "News im Discord",
+      value: discordNewsEnabled()
+        ? `aktiv, Kanal ${site.discordNewsChannelId}`
+        : "aus (nur auf voltfm.xyz mit Bot-Token)",
     },
   ];
 

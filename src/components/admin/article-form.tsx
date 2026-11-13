@@ -8,6 +8,7 @@ import { Field, FieldLabel, FieldDescription } from "@/components/ui/field";
 import { CheckBox } from "@/components/ui/checkbox";
 import { Alert, AlertContent, AlertDescription } from "@/components/ui/alert";
 import { Icon, LoadingIcon, CheckIcon } from "@/lib/icons";
+import { formatDate } from "@/lib/format";
 import { ImageUpload } from "./image-upload";
 import { RichTextEditor } from "./rich-text-editor";
 import { useActionFeedback } from "./use-action-feedback";
@@ -140,6 +141,17 @@ export function ArticleForm({
               <CheckBox name="featured" defaultChecked={article?.featured} />
               <span>Als Aufmacher hervorheben</span>
             </label>
+
+            {/* Fehlt der Wert (neuer Beitrag), ist der Haken gesetzt. */}
+            <label className={styles.checkboxRow}>
+              <CheckBox name="announceOnDiscord" defaultChecked={article?.announceOnDiscord !== false} />
+              <span>Im Discord ankündigen, sobald er online ist</span>
+            </label>
+            {article?.discordAnnouncedAt && (
+              <p className={styles.hint}>
+                Schon angekündigt am {formatDate(article.discordAnnouncedAt)}. Ein zweites Mal geht er nicht raus.
+              </p>
+            )}
           </section>
 
           <section className={styles.section}>

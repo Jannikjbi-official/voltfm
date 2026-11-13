@@ -63,7 +63,8 @@ Alle Variablen stehen in `.env.example`. `.env.local` ist gitignored und wird
 | `ADMIN_USER_IDS`               | nein    | Bootstrap der ersten Admins (kommagetrennt)      |
 | `DISCORD_CLIENT_ID`            | nein    | Discord-Login                                    |
 | `DISCORD_CLIENT_SECRET`        | nein    | Discord-Login                                    |
-| `DISCORD_BOT_TOKEN`            | nein    | Discord-Avatare per User-ID laden                |
+| `DISCORD_BOT_TOKEN`            | nein    | Discord-Avatare laden, News im Discord ankündigen |
+| `DISCORD_NEWS_CHANNEL_ID`      | nein    | Kanal für News, Standard `1570831941182161056`   |
 | `UPLOADTHING_TOKEN`            | nein    | Bild-Uploads im Admin                            |
 | `NEXT_PUBLIC_RADIO_STREAM_URL` | nein    | Stream-URL                                       |
 | `NEXT_PUBLIC_RADIO_STATION`    | nein    | laut.fm Slug, steuert alle Metadaten             |
