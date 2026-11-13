@@ -51,6 +51,12 @@
   gap: var(--spacing-8);
 }
 
+.crumbs a {
+  display: inline-block;
+  padding-block: var(--spacing-4);
+  margin-block: calc(-1 * var(--spacing-4));
+}
+
 .crumbs a:hover {
   color: var(--host-ink);
 }

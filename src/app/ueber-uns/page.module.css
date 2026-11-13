@@ -23,6 +23,13 @@
   margin-bottom: var(--spacing-24);
 }
 
+/* Mindestens 24 px hoch zum Antippen, ohne dass die Zeile waechst. */
+.crumbs a {
+  display: inline-block;
+  padding-block: var(--spacing-4);
+  margin-block: calc(-1 * var(--spacing-4));
+}
+
 .crumbs a:hover {
   color: var(--color-primary);
 }
@@ -269,6 +276,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-6);
+  min-height: 24px;
   margin-top: var(--spacing-4);
   font: var(--type-small);
   font-weight: 600;

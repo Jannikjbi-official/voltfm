@@ -161,6 +161,9 @@
 @media (max-width: 767px) {
   :root {
     --player-height: var(--player-height-mobile);
+    /* Die Etiketten in Grossbuchstaben (Rubriken, "Live", Datumsmonate) sind
+       mit 11 px am Handy zu klein zum Lesen. */
+    --type-label: semi-expanded 700 0.75rem / 1.2 var(--font-family);
   }
 }
 

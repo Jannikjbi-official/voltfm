@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/sheet";
 import { secondaryNav, type NavItem } from "@/lib/site";
 import type { AccountAvatar } from "@/services/content/account";
-import { Icon, MenuIcon, SearchIcon, ExternalLinkIcon } from "@/lib/icons";
+import { Icon, MenuIcon, CloseIcon, SearchIcon, ExternalLinkIcon } from "@/lib/icons";
 import { Logo } from "./logo";
 import { ThemeToggle } from "./theme-toggle";
 import { AccountMenu } from "./account-menu";
@@ -79,9 +79,11 @@ export function Header({ nav, account }: { nav: NavItem[]; account: AccountAvata
                   size="sm"
                   asIcon
                   className={styles.mobileOnly}
-                  aria-label="Menü öffnen"
+                  aria-label={mobileOpen ? "Menü schließen" : "Menü öffnen"}
                 >
-                  <Icon icon={MenuIcon} />
+                  {/* Offen zeigt der Knopf ein X — sonst sieht niemand, wie
+                      das Menue wieder zugeht. */}
+                  <Icon icon={mobileOpen ? CloseIcon : MenuIcon} />
                 </Button>
               }
             />

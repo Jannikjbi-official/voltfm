@@ -31,6 +31,13 @@
   gap: var(--spacing-8);
 }
 
+/* Mindestens 24 px hoch zum Antippen, ohne dass die Zeile waechst. */
+.breadcrumbs a {
+  display: inline-block;
+  padding-block: var(--spacing-4);
+  margin-block: calc(-1 * var(--spacing-4));
+}
+
 .breadcrumbs a:hover {
   color: var(--color-primary);
 }
@@ -98,6 +105,7 @@
 .aside {
   flex-shrink: 0;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--spacing-10);
 }
