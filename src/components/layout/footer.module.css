@@ -113,25 +113,40 @@
   color: var(--color-primary);
 }
 
-.credit {
+.credits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-8);
+  list-style: none;
+  padding: 0;
+}
+
+.creditBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-4) var(--spacing-14) var(--spacing-4) var(--spacing-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-rounded);
+  background: var(--color-surface-container-low);
   font: var(--type-caption);
-  color: var(--color-text-muted);
-}
-
-.creditLink {
-  color: var(--color-text-secondary);
   font-weight: 600;
-  text-decoration: underline;
-  text-decoration-color: var(--color-border-strong);
-  text-underline-offset: 3px;
+  color: var(--color-text-secondary);
   transition:
-    color var(--transition-standard-fast-effects),
-    text-decoration-color var(--transition-standard-fast-effects);
+    border-color var(--transition-standard-fast-effects),
+    background var(--transition-standard-fast-effects),
+    color var(--transition-standard-fast-effects);
 }
 
-.creditLink:hover {
-  color: var(--color-primary);
-  text-decoration-color: currentColor;
+.creditBadge:hover {
+  border-color: var(--color-border-strong);
+  background: var(--color-surface-container);
+  color: var(--color-text);
+}
+
+.creditImage {
+  flex-shrink: 0;
+  border-radius: var(--radius-circled);
 }
 
 @media (min-width: 640px) {
