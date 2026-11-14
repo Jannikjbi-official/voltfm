@@ -15,6 +15,7 @@ import {
   anniversaryText,
   monthlySwitchOnsText,
   simultaneousRecordText,
+  snapshotText,
   type MilestoneText,
 } from "./texts";
 
@@ -31,6 +32,7 @@ import {
  *     VoltFM vorher eingeschaltet wurde, weiss niemand, also kann er nicht
  *     "zum ersten Mal" ueber einer Marke liegen.
  *  4. Jahrestag im Januar (seit Januar 2021).
+ *  5. Einmal ein Startbeitrag mit den letzten 14 Tagen, sobald die da sind.
  *
  * Jede Marke gibt es genau einmal (Sammlung `milestones`). Was beim ersten
  * Abruf schon erreicht war, wird nur vermerkt, nicht gefeiert: Der Text sagt
@@ -78,6 +80,7 @@ export async function runMilestones(now = new Date()): Promise<MilestoneRun> {
       const firstCollection = await collect(now, run);
       await checkSimultaneous(now, firstCollection, run);
       await checkMonthly(now, run);
+      await checkStartPost(now, run);
     } else {
       run.skipped = "LAUTFM_RADIOADMIN_TOKEN fehlt, nur der Jahrestag läuft.";
     }
@@ -283,6 +286,39 @@ async function checkAnniversary(now: Date, run: MilestoneRun): Promise<void> {
   const key = `jahrestag-${year}`;
   if ((await unreached([key])).length === 0) return;
   await publish(anniversaryText({ years }), [key], now, run);
+}
+
+/* --- 5. Startbeitrag ------------------------------------------------------------ */
+
+async function checkStartPost(now: Date, run: MilestoneRun): Promise<void> {
+  if ((await unreached(["startbeitrag"])).length === 0) return;
+
+  // Die 14 abgeschlossenen Tage vor heute — dieselben, fuer die collect()
+  // die Tagesspitzen holt.
+  const dates = Array.from({ length: PEAK_LOOKBACK_DAYS }, (_, i) =>
+    stationDate(new Date(now.getTime() - (i + 1) * 86_400_000)),
+  );
+  const days = await stationDays()
+    .find({ date: { $in: dates }, switchOns: { $exists: true } })
+    .toArray();
+  // Nur mit allen 14 Tagen, sonst stimmt "in den letzten 14 Tagen" nicht.
+  if (days.length < dates.length) return;
+
+  const best = days
+    .filter((day) => day.peak && day.peak.listeners > 0)
+    .sort((a, b) => b.peak!.listeners - a.peak!.listeners || a.date.localeCompare(b.date))[0];
+
+  await publish(
+    snapshotText({
+      date: stationDate(now),
+      switchOns: days.reduce((sum, day) => sum + (day.switchOns ?? 0), 0),
+      listeningHours: days.reduce((sum, day) => sum + (day.listeningHours ?? 0), 0),
+      peak: best?.peak ? { ...best.peak, date: best.date } : null,
+    }),
+    ["startbeitrag"],
+    now,
+    run,
+  );
 }
 
 /* --- Hilfen -------------------------------------------------------------------- */
