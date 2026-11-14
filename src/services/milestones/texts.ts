@@ -1,4 +1,4 @@
-import { formatDate, formatTime } from "@/lib/format";
+import { formatTime } from "@/lib/format";
 
 /**
  * Die Texte der automatischen Beitraege — vom Betreiber am 14.11.2026
@@ -19,6 +19,25 @@ export interface MilestoneText {
 
 const number = new Intl.NumberFormat("de-DE");
 const monthName = new Intl.DateTimeFormat("de-DE", { month: "long", timeZone: "UTC" });
+/** "8. November 2026" — ohne fuehrende Null, wie man es im Satz schreibt. */
+const dayName = new Intl.DateTimeFormat("de-DE", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+  timeZone: "Europe/Berlin",
+});
+
+/** "Am 8. November 2026 um 20:15 Uhr", ohne Uhrzeit nur der Tag. */
+function when(at: Date | null, date: string): string {
+  // Ohne Uhrzeit von laut.fm bleibt es beim Tag — erfunden wird keine.
+  return at
+    ? `am ${dayName.format(at)} um ${formatTime(at)} Uhr`
+    : `am ${dayName.format(new Date(`${date}T12:00:00Z`))}`;
+}
+
+function song(title: string, artist: string): string {
+  return title && artist ? ` Gerade lief „${title}“ von ${artist}.` : "";
+}
 
 /** "November 2026" fuer einen Monat im Format yyyy-mm. */
 function monthLabel(month: string): { name: string; year: string } {
@@ -35,7 +54,7 @@ export function monthlySwitchOnsText(input: {
   const { name, year } = monthLabel(input.month);
   const marke = number.format(input.threshold);
   const zahl = number.format(input.switchOns);
-  const stunden = number.format(input.listeningHours);
+  const stunden = number.format(Math.round(input.listeningHours));
   return {
     slug: `ueber-${input.threshold}-einschaltungen-${input.month}`,
     title: `Über ${marke} Einschaltungen im ${name}`,
@@ -56,17 +75,41 @@ export function simultaneousRecordText(input: {
   artist: string;
 }): MilestoneText {
   const zahl = number.format(input.listeners);
-  // Ohne Uhrzeit von laut.fm bleibt es beim Tag — erfunden wird keine.
-  const when = input.at
-    ? `Am ${formatDate(input.at)} um ${formatTime(input.at)} Uhr`
-    : `Am ${formatDate(`${input.date}T12:00:00Z`)}`;
-  const song = input.title && input.artist ? ` Gerade lief „${input.title}“ von ${input.artist}.` : "";
-  const lead = `${when} haben ${zahl} Leute gleichzeitig VoltFM gehört, so viele wie noch nie, seit die Seite mitzählt.`;
+  const at = when(input.at, input.date);
+  const lead = `${at[0].toUpperCase()}${at.slice(1)} haben ${zahl} Leute gleichzeitig VoltFM gehört, so viele wie noch nie, seit die Seite mitzählt.`;
   return {
     slug: `${input.listeners}-leute-gleichzeitig-${input.date}`,
     title: `${zahl} Leute gleichzeitig`,
     excerpt: lead,
-    source: `${lead}${song}`,
+    source: `${lead}${song(input.title, input.artist)}`,
+    coverLabel: zahl,
+  };
+}
+
+/**
+ * Der einmalige Startbeitrag mit den letzten 14 Tagen — vom Betreiber am
+ * 14.11.2026 freigegeben (Variante A, "Zahlen zuerst").
+ */
+export function snapshotText(input: {
+  /** Senderdatum des Beitrags, yyyy-mm-dd. */
+  date: string;
+  switchOns: number;
+  listeningHours: number;
+  peak: { listeners: number; at: Date | null; date: string; title: string; artist: string } | null;
+}): MilestoneText {
+  const zahl = number.format(input.switchOns);
+  const stunden = number.format(Math.round(input.listeningHours));
+  const lead = `In den letzten 14 Tagen wurde VoltFM ${zahl}-mal eingeschaltet.`;
+  const peak = input.peak
+    ? ` Am meisten Leute gleichzeitig waren es ${when(input.peak.at, input.peak.date)}: ${number.format(input.peak.listeners)}.${song(input.peak.title, input.peak.artist)}`
+    : "";
+  return {
+    slug: `voltfm-in-zahlen-${input.date}`,
+    title: "Zwei Wochen VoltFM in Zahlen",
+    excerpt: lead,
+    source: `${lead} Zusammen waren das ${stunden} Stunden Radio.${peak}
+
+Ab jetzt zählt die Seite jeden Tag mit. Wenn eine Marke fällt, steht es hier.`,
     coverLabel: zahl,
   };
 }
