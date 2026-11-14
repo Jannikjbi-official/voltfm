@@ -47,6 +47,14 @@
   border-radius: var(--radius-lg);
 }
 
+/* Dasselbe Format wie ein Foto (1200 × 675), damit der Text nicht springt. */
+.generatedCover {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+
 /* --- Article body -------------------------------------------------------
    The serif reading face, sized for sustained reading rather than scanning. */
 

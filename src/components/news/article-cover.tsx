@@ -35,19 +35,35 @@ const ICONS: Record<string, typeof NewsIcon> = {
  * Logo-Farben, das Symbol der Kategorie, ihr Name und die Wortmarke. Fuellt
  * den Bildbereich der Karte aus, der Groesse und Seitenverhaeltnis vorgibt.
  * Rein dekorativ — Titel und Kategorie stehen ohnehin neben dem Bild.
+ *
+ * Mit `label` (z. B. "2.500" bei einem Meilenstein) steht statt des Symbols
+ * diese Zeile gross in Gelb.
  */
 export function ArticleCover({
   categorySlug,
   categoryName,
+  label,
 }: {
   categorySlug: string;
   categoryName: string;
+  label?: string;
 }) {
   const icon = ICONS[categorySlug];
 
   return (
     <div className={styles.cover} aria-hidden="true">
-      {icon ? <Icon icon={icon} className={styles.icon} /> : <LogoIcon className={styles.icon} />}
+      {label ? (
+        <span
+          className={styles.label}
+          data-length={label.length <= 3 ? "short" : label.length <= 5 ? "medium" : "long"}
+        >
+          {label}
+        </span>
+      ) : icon ? (
+        <Icon icon={icon} className={styles.icon} />
+      ) : (
+        <LogoIcon className={styles.icon} />
+      )}
       <div className={styles.foot}>
         <span className={styles.name}>{categoryName}</span>
         <LogoWordmark className={styles.wordmark} />

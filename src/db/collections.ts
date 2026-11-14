@@ -6,8 +6,10 @@ import type {
   ContactMessage,
   Host,
   MediaAsset,
+  Milestone,
   SettingsDoc,
   Show,
+  StationDay,
   TimelineEntry,
   VoltEvent,
 } from "@/types/content";
@@ -28,6 +30,8 @@ export const timeline = (): Collection<TimelineEntry> =>
 export const contactMessages = (): Collection<ContactMessage> =>
   getDb().collection<ContactMessage>("contactMessages");
 export const settings = (): Collection<SettingsDoc> => getDb().collection<SettingsDoc>("settings");
+export const stationDays = (): Collection<StationDay> => getDb().collection<StationDay>("stationDays");
+export const milestones = (): Collection<Milestone> => getDb().collection<Milestone>("milestones");
 
 /**
  * Index creation is idempotent, so this is safe to run from the seed script or
@@ -55,5 +59,7 @@ export async function ensureIndexes(): Promise<void> {
     media().createIndex({ createdAt: -1 }),
     timeline().createIndex({ key: 1 }, { unique: true }),
     timeline().createIndex({ order: 1 }),
+    stationDays().createIndex({ date: 1 }, { unique: true }),
+    milestones().createIndex({ key: 1 }, { unique: true }),
   ]);
 }

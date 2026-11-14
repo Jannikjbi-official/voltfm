@@ -57,6 +57,11 @@ export interface Article {
   announceOnDiscord?: boolean;
   /** Wann der Bot den Beitrag im Discord angekuendigt hat. */
   discordAnnouncedAt?: Date | null;
+  /**
+   * Grosse Zeile auf dem erzeugten Titelbild, z. B. "2.500" — fuer Beitraege
+   * ohne Foto, die eine Zahl feiern (src/services/milestones).
+   */
+  coverLabel?: string;
   discordMessageId?: string;
   discordAnnounceAttempts?: number;
   seoTitle?: string;
@@ -197,6 +202,35 @@ export interface ContactMessage {
   message: string;
   handled: boolean;
   createdAt: Date;
+}
+
+/**
+ * Tageszahlen der Station aus der laut.fm-Radioadmin-API. Die API gibt nur
+ * die letzten 15 Tage heraus; was laenger zurueckliegt, gibt es nur hier.
+ */
+export interface StationDay {
+  _id?: ObjectId;
+  /** Kalendertag, wie laut.fm ihn fuehrt: yyyy-mm-dd. */
+  date: string;
+  switchOns?: number;
+  listeningHours?: number;
+  /**
+   * Die meisten Hoerer beim Start eines Songs an diesem Tag. null: geprueft,
+   * aber keine Daten. Fehlt: noch nicht geprueft.
+   */
+  peak?: { listeners: number; at: Date | null; title: string; artist: string } | null;
+  updatedAt: Date;
+}
+
+/** Eine erreichte Marke — jede gibt es genau einmal. */
+export interface Milestone {
+  _id?: ObjectId;
+  /** z. B. "monat-2500", "gleichzeitig-25", "jahrestag-2027", "start". */
+  key: string;
+  reachedAt: Date;
+  /** Der Beitrag dazu. Fehlt bei Marken, die beim Start schon erreicht waren. */
+  articleSlug?: string;
+  note?: string;
 }
 
 export interface SettingsDoc {
