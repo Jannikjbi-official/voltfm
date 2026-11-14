@@ -70,10 +70,31 @@ Alle Variablen stehen in `.env.example`. `.env.local` ist gitignored und wird
 | `NEXT_PUBLIC_RADIO_STATION`    | nein    | laut.fm Slug, steuert alle Metadaten             |
 | `NEXT_PUBLIC_SITE_URL`         | ja      | Öffentliche URL (Canonicals, OG, Sitemap)        |
 | `NEXT_PUBLIC_DISCORD_URL`      | nein    | Discord-Einladung                                |
+| `LAUTFM_RADIOADMIN_TOKEN`      | nein    | Meilensteine — **Admin-Schlüssel**, nur geheim   |
+| `LAUTFM_RADIOADMIN_ORIGIN`     | nein    | Origin des Tokens, Standard `https://www.voltfm.xyz` |
+| `CRON_SECRET`                  | nein    | Schützt `/api/cron/meilensteine`                 |
 
 Fehlt eine optionale Variable, verschwindet nur das jeweilige Feature — die
 Seite läuft weiter. Ohne `DISCORD_CLIENT_ID` wird der Discord-Login schlicht
 nicht angeboten.
+
+### Meilensteine
+
+Einmal am Tag (04:15 UTC, `vercel.json`) ruft Vercel
+`/api/cron/meilensteine` auf. Die Route holt die Tageszahlen aus der
+laut.fm-Radioadmin-API, speichert sie in `stationDays` und schreibt einen
+Beitrag, wenn eine Marke fällt: Einschaltungen im Monat, Hörer gleichzeitig,
+Jahrestag. Die Texte stehen in `src/services/milestones/texts.ts`.
+
+- Token holen: <https://radioadmin.laut.fm/login?callback_url=https%3A%2F%2Fwww.voltfm.xyz%2F>
+  — nach dem Login steht es in der Adresse hinter `#lautfm_radioadmin_token=`.
+- Das Token kann Playlists ändern und das Live-Passwort zurücksetzen. Es gehört
+  nur als Sensitive-Variable nach Vercel (Production), nie in den Code oder
+  einen Chat. Die Anwendung ruft damit ausschließlich lesend auf.
+- Ohne Token läuft nur der Jahrestag. Der Stand steht im Admin unter
+  Einstellungen.
+- Vercel ruft Cron-Routen nur in Production auf; die Route lehnt jede andere
+  Umgebung ab.
 
 ---
 
@@ -84,7 +105,7 @@ selbst an, und die Inhalts-Collections entstehen beim ersten Schreiben.
 `npm run seed` legt zusätzlich alle Indexes an (`src/db/collections.ts`).
 
 Collections: `articles`, `categories`, `hosts`, `shows`, `events`, `media`,
-`contactMessages`, `settings` — dazu die Better-Auth-Collections (`user`,
+`contactMessages`, `settings`, `stationDays`, `milestones` — dazu die Better-Auth-Collections (`user`,
 `session`, `account`, `verification`, `passkey`).
 
 Lokal startet `npm run db` eine echte MongoDB (via `mongodb-memory-server`) auf

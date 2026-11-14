@@ -5,6 +5,7 @@ import Image from "next/image";
 
 import { PageHeader } from "@/components/common/page-header";
 import { ArticleCard } from "@/components/news/article-card";
+import { ArticleCover } from "@/components/news/article-cover";
 import { ShareButtons } from "@/components/news/share-buttons";
 import { Badge } from "@/components/ui/badge";
 import { AuthorAvatar } from "@/components/news/author-avatar";
@@ -136,7 +137,7 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
               </div>
             </div>
 
-            {article.coverImage && (
+            {article.coverImage ? (
               <figure className={styles.cover}>
                 <Image
                   src={article.coverImage}
@@ -147,6 +148,18 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
                   className={styles.coverImage}
                 />
               </figure>
+            ) : (
+              // Meilensteine haben kein Foto, aber eine Zahl — die steht gross
+              // auf dem erzeugten Titelbild.
+              article.coverLabel && (
+                <div className={`${styles.cover} ${styles.generatedCover}`}>
+                  <ArticleCover
+                    categorySlug={article.categorySlug}
+                    categoryName={(await getCategoryNames())[article.categorySlug] ?? article.categorySlug}
+                    label={article.coverLabel}
+                  />
+                </div>
+              )
             )}
 
             {/* Editor output. Sanitised on write in the admin action, never here. */}

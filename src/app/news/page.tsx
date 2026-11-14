@@ -157,6 +157,7 @@ export default async function NewsPage({
                     <ArticleCover
                       categorySlug={featured.categorySlug}
                       categoryName={categoryNames[featured.categorySlug] ?? featured.categorySlug}
+                      label={featured.coverLabel}
                     />
                   )}
                 </Link>

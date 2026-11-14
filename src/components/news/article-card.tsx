@@ -53,7 +53,11 @@ export async function ArticleCard({
           ) : (
             // Kein eigenes Bild: das Titelbild der Kategorie, damit das Raster
             // keine Luecke bekommt.
-            <ArticleCover categorySlug={article.categorySlug} categoryName={categoryName} />
+            <ArticleCover
+              categorySlug={article.categorySlug}
+              categoryName={categoryName}
+              label={article.coverLabel}
+            />
           )}
         </Link>
       )}

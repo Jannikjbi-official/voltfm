@@ -23,6 +23,28 @@
   color: var(--color-cover-accent);
 }
 
+/* Die Zahl eines Meilensteins: so gross, wie die Flaeche hergibt — je
+   laenger die Zeile, desto kleiner, damit sie nie umbricht und unten den
+   Kategorienamen ueberdeckt. */
+.label {
+  position: absolute;
+  left: 7cqw;
+  right: 7cqw;
+  top: 12cqh;
+  font: expanded 800 24cqw / 0.9 var(--font-display);
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  color: var(--color-cover-accent);
+}
+
+.label[data-length="medium"] {
+  font-size: 18cqw;
+}
+
+.label[data-length="long"] {
+  font-size: 12cqw;
+}
+
 .foot {
   position: absolute;
   left: 7cqw;
