@@ -33,19 +33,39 @@ export function radioadminConfigured(): boolean {
   return Boolean(process.env.LAUTFM_RADIOADMIN_TOKEN);
 }
 
+/** laut.fm ist manchmal langsam: pro Versuch so lange warten, dann einmal neu. */
+const TIMEOUT_MS = 15_000;
+const ATTEMPTS = 2;
+
 async function get<T>(path: string): Promise<T> {
-  const res = await fetch(`${API}${path}`, {
-    headers: {
-      Authorization: `Bearer ${process.env.LAUTFM_RADIOADMIN_TOKEN}`,
-      Origin: process.env.LAUTFM_RADIOADMIN_ORIGIN ?? "https://www.voltfm.xyz",
-    },
-    cache: "no-store",
-    signal: AbortSignal.timeout(10_000),
-  });
-  if (!res.ok) {
-    throw new RadioadminError(res.status, `laut.fm antwortet ${res.status}: ${(await res.text()).slice(0, 300)}`);
+  for (let attempt = 1; ; attempt++) {
+    try {
+      const res = await fetch(`${API}${path}`, {
+        headers: {
+          Authorization: `Bearer ${process.env.LAUTFM_RADIOADMIN_TOKEN}`,
+          Origin: process.env.LAUTFM_RADIOADMIN_ORIGIN ?? "https://www.voltfm.xyz",
+        },
+        cache: "no-store",
+        signal: AbortSignal.timeout(TIMEOUT_MS),
+      });
+      if (res.status >= 500 && attempt < ATTEMPTS) {
+        await res.body?.cancel();
+        continue;
+      }
+      if (!res.ok) {
+        throw new RadioadminError(res.status, `laut.fm antwortet ${res.status}: ${(await res.text()).slice(0, 300)}`);
+      }
+      return (await res.json()) as T;
+    } catch (error) {
+      // 4xx gilt sofort; Zeitueberschreitung und Netzfehler bekommen einen zweiten Versuch.
+      if (error instanceof RadioadminError) throw error;
+      if (attempt < ATTEMPTS) continue;
+      throw new RadioadminError(
+        0,
+        `laut.fm antwortet nicht (${path}, ${ATTEMPTS} Versuche): ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   }
-  return (await res.json()) as T;
 }
 
 let stationId: number | null = null;
