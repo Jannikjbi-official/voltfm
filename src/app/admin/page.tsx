@@ -52,7 +52,7 @@ export default async function AdminDashboard() {
     <>
       <AdminPageHeader
         title="Übersicht"
-        description="Redaktion, Termine und Sendebetrieb auf einen Blick."
+        description="Was ansteht und was gerade läuft."
         actions={
           <ButtonLink href="/admin/news/new" variant="primary">
             <Icon icon={PlusIcon} />

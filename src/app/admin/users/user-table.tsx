@@ -286,7 +286,7 @@ export function UserTable({
               label="Rolle"
               defaultValue={roles.includes(roleUser.role) ? roleUser.role : "user"}
               options={roles.map((role) => ({ value: role, label: roleLabels[role] ?? role }))}
-              description="Wer gerade angemeldet ist, wird dabei abgemeldet — sonst gälte die alte Rolle noch einige Minuten."
+              description="Die Person wird abgemeldet, damit die neue Rolle sofort gilt."
             />
             {roleUser.bootstrapAdmin && (
               <p className="rounded-xl bg-surface-secondary px-3 py-2 text-xs text-muted">
