@@ -1,0 +1,157 @@
+/*
+ * Lesetext fuer HTML aus der Datenbank (Artikel, Events, Vorschau im Editor).
+ *
+ * Global, weil das HTML bereinigt aus `renderRichText` kommt und keine
+ * Klassen der Seite traegt. Was der Editor an eigenen Klassen setzen darf
+ * (vfm-figure, vfm-callout …), steht in editor-content.css.
+ *
+ * `.vfm-prose--compact` ist die kleine Fassung fuer das Admin (Vorschau,
+ * Spickzettel).
+ */
+
+@layer components {
+  .vfm-prose {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: var(--foreground);
+    overflow-wrap: break-word;
+
+    @media (min-width: 48rem) {
+      font-size: 1.125rem;
+    }
+
+    & > * + * {
+      margin-top: 1.25em;
+    }
+
+    & h2,
+    & h3,
+    & h4 {
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+      text-wrap: balance;
+      color: var(--foreground);
+    }
+
+    & h2 {
+      margin-top: 2em;
+      font-size: 1.6em;
+      font-stretch: 125%;
+    }
+
+    & h3 {
+      margin-top: 1.75em;
+      font-size: 1.25em;
+      font-stretch: 112.5%;
+    }
+
+    & h4 {
+      margin-top: 1.5em;
+      font-size: 1.05em;
+    }
+
+    & a {
+      color: var(--foreground);
+      text-decoration: underline;
+      text-decoration-color: var(--accent-text);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
+    }
+
+    & a:hover {
+      text-decoration-color: var(--foreground);
+    }
+
+    & strong {
+      font-weight: 700;
+    }
+
+    & ul,
+    & ol {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5em;
+      padding-left: 1.4em;
+    }
+
+    & ul {
+      list-style: disc;
+    }
+
+    & ol {
+      list-style: decimal;
+    }
+
+    & li::marker {
+      color: var(--muted);
+    }
+
+    & blockquote {
+      margin-inline: 0;
+      padding: 0.25em 0 0.25em 1.25em;
+      border-left: 4px solid var(--volt);
+      font-size: 1.15em;
+      font-style: italic;
+      color: var(--foreground);
+    }
+
+    & blockquote p {
+      margin: 0;
+    }
+
+    & code {
+      padding: 0.15em 0.4em;
+      border-radius: calc(var(--radius) * 0.5);
+      background: var(--surface-secondary);
+      font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+      font-size: 0.875em;
+    }
+
+    & pre {
+      padding: 1rem;
+      border-radius: var(--radius);
+      background: var(--surface-secondary);
+      overflow-x: auto;
+    }
+
+    & pre code {
+      padding: 0;
+      background: none;
+    }
+
+    & img {
+      width: 100%;
+      height: auto;
+      border-radius: var(--radius);
+    }
+
+    & hr {
+      border: 0;
+      border-top: 1px solid var(--separator);
+    }
+  }
+
+  .vfm-prose--compact {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+
+    @media (min-width: 48rem) {
+      font-size: 0.9375rem;
+    }
+
+    & > * + * {
+      margin-top: 0.75em;
+    }
+
+    & h2 {
+      margin-top: 1.25em;
+      font-size: 1.25em;
+    }
+
+    & h3 {
+      margin-top: 1em;
+      font-size: 1.1em;
+    }
+  }
+}

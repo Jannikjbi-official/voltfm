@@ -1,43 +1,48 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { buttonVariants, cn } from "@heroui/react";
 
-type ButtonProps = React.ComponentProps<typeof Button>;
+type Variant = "primary" | "secondary" | "tertiary" | "outline" | "ghost" | "danger";
 
 /**
- * A button-shaped link.
+ * Ein Link, der wie ein HeroUI-Knopf aussieht.
  *
- * OlyxUI's Button renders a real <button> by default, and Base UI (correctly)
- * warns when you hand it a non-button through `render` without also setting
- * `nativeButton={false}` — the element would keep button semantics it cannot
- * honour. Rather than repeating that flag at every call site, VoltFM composes
- * it once here.
- *
- * OlyxUI's own LinkButton is a text link style, not a button-shaped CTA, so it
- * is not a substitute for this.
+ * Bewusst ein echter Link (Next-<Link> bzw. <a>) mit den Klassen aus
+ * `buttonVariants` — so funktionieren Mittelklick, "Adresse kopieren" und
+ * Vorabladen, und ein Screenreader sagt "Link", nicht "Taste".
  */
 export function ButtonLink({
   href,
   external = false,
+  variant = "primary",
+  size = "md",
+  isIconOnly = false,
+  fullWidth = false,
+  className,
   children,
-  ...buttonProps
-}: Omit<ButtonProps, "render" | "nativeButton"> & {
+  ...rest
+}: Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href"> & {
   href: string;
-  /** Opens in a new tab with the usual rel hardening. */
+  /** Oeffnet in einem neuen Tab, mit dem ueblichen rel-Schutz. */
   external?: boolean;
+  variant?: Variant;
+  size?: "sm" | "md" | "lg";
+  isIconOnly?: boolean;
+  fullWidth?: boolean;
 }) {
+  const classes = cn(buttonVariants({ variant, size, isIconOnly, fullWidth }), className);
+
+  if (external) {
+    return (
+      <a href={href} target="_blank" rel="noreferrer noopener" className={classes} {...rest}>
+        {children}
+        <span className="sr-only"> (öffnet einen neuen Tab)</span>
+      </a>
+    );
+  }
+
   return (
-    <Button
-      {...buttonProps}
-      nativeButton={false}
-      render={
-        external ? (
-          <a href={href} target="_blank" rel="noreferrer noopener" />
-        ) : (
-          <Link href={href} />
-        )
-      }
-    >
+    <Link href={href} className={classes} {...rest}>
       {children}
-    </Button>
+    </Link>
   );
 }

@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 import { after } from "next/server";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { THEME_COOKIE, normalizeTheme } from "@/lib/theme";
-import { Toaster } from "@/components/common/toaster";
+import { Providers } from "@/components/layout/providers";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { RadioPlayerProvider } from "@/components/radio/player-provider";
@@ -54,10 +54,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#456990" },
-    { media: "(prefers-color-scheme: dark)", color: "#15181c" },
-  ],
+  // Tinte — die Farbe der Kopfzeile im Standard (dunkel).
+  themeColor: "#0e0f12",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
@@ -80,15 +78,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   after(() => announceDueArticles());
 
   return (
-    <html
-      lang={site.lang}
-      data-theme={theme}
-      style={{ colorScheme: theme }}
-      className={archivo.variable}
-    >
-      <body>
+    /* HeroUI liest beides: die Klasse und data-theme. Beides kommt aus dem
+       Cookie, also stimmt schon das erste HTML — ohne Skript, ohne Flackern. */
+    <html lang={site.lang} data-theme={theme} className={`${archivo.variable} ${theme}`}>
+      <body className="bg-background text-foreground">
         <ThemeProvider initialTheme={theme}>
-          <RadioPlayerProvider streamUrl={getStreamUrl()} initialSnapshot={snapshot}>
+          <Providers>
+            <RadioPlayerProvider streamUrl={getStreamUrl()} initialSnapshot={snapshot}>
               <a href="#main" className="skip-link">
                 Zum Inhalt springen
               </a>
@@ -96,8 +92,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <main id="main">{children}</main>
               <Footer />
               <StickyPlayer />
-              <Toaster />
             </RadioPlayerProvider>
+          </Providers>
         </ThemeProvider>
       </body>
     </html>

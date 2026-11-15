@@ -1,5 +1,6 @@
 /**
  * Layout classes the article editor may put into stored HTML.
+ * (Farben aus src/styles/theme.css.)
  *
  * These are global on purpose: the editor writes plain HTML into the database,
  * so the class names it emits must survive CSS Modules' hashing. Everything an
@@ -17,22 +18,23 @@
   display: block;
   width: 100%;
   height: auto;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius);
 }
 
 .vfm-figure figcaption {
-  font: var(--type-caption);
-  color: var(--color-text-muted);
-  margin-top: var(--spacing-8);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--muted);
+  margin-top: 0.5rem;
   text-align: left;
-  border-left: 2px solid var(--color-accent);
-  padding-left: var(--spacing-10);
+  border-left: 2px solid var(--volt);
+  padding-left: 0.625rem;
 }
 
 /* Breaks out of the reading measure — for images that deserve the room. */
 .vfm-figure--wide {
-  width: min(100vw - 2 * var(--shell-pad, 1rem), 56rem);
-  margin-inline: calc(50% - min(50vw - var(--shell-pad, 1rem), 28rem));
+  width: min(100vw - 2 * 1rem, 56rem);
+  margin-inline: calc(50% - min(50vw - 1rem, 28rem));
 }
 
 /* Half-width, text wraps alongside. Collapses to full width on phones. */
@@ -63,10 +65,10 @@
 
 .vfm-callout {
   margin-block: 2em;
-  padding: var(--spacing-16) var(--spacing-20);
-  border-radius: var(--radius-md);
-  border-left: 3px solid var(--color-primary);
-  background: var(--color-surface-container-low);
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius);
+  border-left: 3px solid var(--volt);
+  background: var(--surface-secondary);
   font-size: 0.95em;
 }
 
@@ -75,11 +77,11 @@
 }
 
 .vfm-callout--warning {
-  border-left-color: var(--color-warning, var(--color-accent));
+  border-left-color: var(--warning);
 }
 
 .vfm-callout--success {
-  border-left-color: var(--color-success, var(--color-primary));
+  border-left-color: var(--success);
 }
 
 /* --- Lead paragraph ------------------------------------------------------- */
@@ -87,7 +89,7 @@
 .vfm-lead {
   font-size: 1.2em;
   line-height: 1.55;
-  color: var(--color-text);
+  color: var(--foreground);
 }
 
 /* --- Two-column pull ------------------------------------------------------ */
@@ -120,15 +122,15 @@
 
 .vfm-table th,
 .vfm-table td {
-  padding: var(--spacing-10) var(--spacing-12);
-  border-bottom: 1px solid var(--color-border);
+  padding: 0.625rem 0.75rem;
+  border-bottom: 1px solid var(--border);
   text-align: left;
 }
 
 .vfm-table th {
   font-weight: 700;
-  color: var(--color-text);
-  background: var(--color-surface-container-low);
+  color: var(--foreground);
+  background: var(--surface-secondary);
 }
 
 /* --- Clears --------------------------------------------------------------- */

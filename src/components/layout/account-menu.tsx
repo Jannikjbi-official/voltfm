@@ -1,42 +1,37 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { Avatar, Button, Dropdown, Label, Separator, Skeleton } from "@heroui/react";
 import { ButtonLink } from "@/components/common/button-link";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Skeleton } from "@/components/ui/skeleton";
 import { authClient, useSession } from "@/lib/auth-client";
 import type { AccountAvatar } from "@/services/content/account";
-import {
-  Icon,
-  UserIcon,
-  SettingsIcon,
-  LogoutIcon,
-  DashboardIcon,
-} from "@/lib/icons";
+import { Icon, UserIcon, SettingsIcon, LogoutIcon, DashboardIcon } from "@/lib/icons";
 
 /**
- * Account entry point. This is a convenience surface only — it decides what to
- * *show*. Whether a user may actually reach /admin is re-checked server-side in
- * the admin layout, so hiding the link here is never the security boundary.
+ * Der Einstieg ins Konto. Das ist nur Bequemlichkeit — es entscheidet, was
+ * *angezeigt* wird. Ob jemand /admin wirklich erreicht, prueft das
+ * Admin-Layout auf dem Server noch einmal.
+ *
+ * Die Sitzung kennt nur der Browser. Bis sie geladen ist (auch beim ersten
+ * Rendern auf dem Server), steht ein Platzhalter da — so sehen Server und
+ * Browser beim Hydrieren dasselbe.
  */
-export function AccountMenu({ account }: { account: AccountAvatar }) {
+export function AccountMenu({
+  account,
+  onNavigate,
+}: {
+  account: AccountAvatar;
+  /** Schliesst z. B. den Handy-Drawer, wenn ein Eintrag gewaehlt wird. */
+  onNavigate?: () => void;
+}) {
   const { data: session, isPending } = useSession();
   const router = useRouter();
 
-  if (isPending) return <Skeleton style={{ width: 84, height: 34, borderRadius: 999 }} />;
+  if (isPending) return <Skeleton className="h-9 w-24 rounded-full" />;
 
   if (!session?.user) {
     return (
-      <ButtonLink href="/login" variant="primary" mode="filled" size="sm">
+      <ButtonLink href="/login" variant="primary" size="sm" onClick={onNavigate}>
         Anmelden
       </ButtonLink>
     );
@@ -50,54 +45,59 @@ export function AccountMenu({ account }: { account: AccountAvatar }) {
   const displayName = user.name || user.username || "Profil";
 
   /* Ein oeffentliches Profil gibt es nur fuer Moderatorinnen und Moderatoren.
-     Alle anderen landen in den Kontoeinstellungen — vorher zeigte der Punkt
-     auf /profil/<username>, eine Route, die es nie gab. */
+     Alle anderen landen in den Kontoeinstellungen. */
   const profileHref = account.hostSlug ? `/moderatoren/${account.hostSlug}` : "/konto";
   const avatar = user.image || account.image;
 
   async function handleSignOut() {
+    onNavigate?.();
     await authClient.signOut();
     router.push("/");
     router.refresh();
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <Button variant="neutral" mode="ghost" size="sm" aria-label="Konto-Menü öffnen">
-            <Avatar style={{ width: 26, height: 26 }}>
-              {avatar && <AvatarImage src={avatar} alt="" />}
-              <AvatarFallback>{displayName.slice(0, 2).toUpperCase()}</AvatarFallback>
-            </Avatar>
-            {displayName}
-          </Button>
-        }
-      />
-      <DropdownMenuContent>
-        <DropdownMenuItem render={<Link href={profileHref} />}>
-          <Icon icon={UserIcon} />
-          {account.hostSlug ? "Mein Profil" : "Konto"}
-        </DropdownMenuItem>
-        <DropdownMenuItem render={<Link href="/konto" />}>
-          <Icon icon={SettingsIcon} />
-          Kontoeinstellungen
-        </DropdownMenuItem>
-        {account.isAdmin && (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem render={<Link href="/admin" />}>
-              <Icon icon={DashboardIcon} />
-              Admin
-            </DropdownMenuItem>
-          </>
-        )}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleSignOut}>
-          <Icon icon={LogoutIcon} />
-          Abmelden
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Dropdown>
+      <Button variant="ghost" size="sm" className="gap-2 pl-1" aria-label="Konto-Menü öffnen">
+        <Avatar size="sm" className="size-7">
+          {avatar && <Avatar.Image src={avatar} alt="" />}
+          <Avatar.Fallback className="text-xs">{displayName.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+        </Avatar>
+        <span className="max-w-[10rem] truncate">{displayName}</span>
+      </Button>
+      <Dropdown.Popover placement="bottom end" className="min-w-56">
+        <div className="px-3 pt-3 pb-2">
+          <p className="truncate text-sm font-semibold text-foreground">{displayName}</p>
+          {user.username && <p className="truncate text-xs text-muted">@{user.username}</p>}
+        </div>
+        <Separator />
+        <Dropdown.Menu
+          aria-label="Konto"
+          onAction={(key) => {
+            if (key === "logout") void handleSignOut();
+            else onNavigate?.();
+          }}
+        >
+          <Dropdown.Item id="profile" href={profileHref} textValue="Profil">
+            <Icon icon={UserIcon} className="size-4 text-muted" />
+            <Label>{account.hostSlug ? "Mein Profil" : "Konto"}</Label>
+          </Dropdown.Item>
+          <Dropdown.Item id="settings" href="/konto" textValue="Kontoeinstellungen">
+            <Icon icon={SettingsIcon} className="size-4 text-muted" />
+            <Label>Kontoeinstellungen</Label>
+          </Dropdown.Item>
+          {account.isAdmin ? (
+            <Dropdown.Item id="admin" href="/admin" textValue="Admin">
+              <Icon icon={DashboardIcon} className="size-4 text-muted" />
+              <Label>Admin</Label>
+            </Dropdown.Item>
+          ) : null}
+          <Dropdown.Item id="logout" textValue="Abmelden" variant="danger">
+            <Icon icon={LogoutIcon} className="size-4" />
+            <Label>Abmelden</Label>
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown.Popover>
+    </Dropdown>
   );
 }

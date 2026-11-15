@@ -31,9 +31,12 @@ export function ThemeProvider({
   const setTheme = useCallback((next: Theme) => {
     setThemeState(next);
 
-    // Drive the DOM directly: every colour token keys off this attribute.
-    document.documentElement.setAttribute("data-theme", next);
-    document.documentElement.style.colorScheme = next;
+    // Drive the DOM directly: HeroUI's colour tokens key off the attribute
+    // and the class, and the server renders both from the cookie.
+    const root = document.documentElement;
+    root.setAttribute("data-theme", next);
+    root.classList.remove("light", "dark");
+    root.classList.add(next);
 
     // `SameSite=Lax` is enough — this is a display preference, not a credential.
     document.cookie = `${THEME_COOKIE}=${next}; path=/; max-age=${THEME_MAX_AGE}; SameSite=Lax`;

@@ -27,6 +27,8 @@
     "@fortawesome/free-regular-svg-icons": "^7.3.1",
     "@fortawesome/free-solid-svg-icons": "^7.3.1",
     "@fortawesome/react-fontawesome": "^3.5.0",
+    "@heroui/react": "^3.2.7",
+    "@heroui/styles": "^3.2.7",
     "@hugeicons/core-free-icons": "^4.3.3",
     "@hugeicons/react": "^1.1.10",
     "@uploadthing/react": "^7.3.3",
@@ -43,6 +45,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.5",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -51,6 +54,8 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.5",
     "mongodb-memory-server": "^11.2.0",
+    "postcss": "^8.5.33",
+    "tailwindcss": "^4.3.5",
     "tsx": "^4.23.13",
     "typescript": "^5"
   },
