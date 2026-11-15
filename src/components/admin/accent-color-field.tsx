@@ -94,7 +94,7 @@ export function AccentColorField({
         {label}
       </span>
 
-      <ul className="grid grid-cols-6 gap-2">
+      <ul className="grid grid-cols-6 gap-2.5">
         {PRESETS.map((preset) => (
           <li key={preset.hue}>
             <button
@@ -103,7 +103,7 @@ export function AccentColorField({
                  Variable gesetzt, das Aussehen kommt aus den Klassen. */
               style={{ "--swatch": swatch(preset.hue) } as React.CSSProperties}
               className={cn(
-                "block aspect-square w-full rounded-lg bg-[var(--swatch)] ring-offset-2 ring-offset-[var(--surface-secondary)] transition-transform hover:scale-105 motion-reduce:transition-none",
+                "block aspect-square w-full rounded-full bg-[var(--swatch)] ring-offset-2 ring-offset-[var(--surface-secondary)] transition-transform hover:scale-105 motion-reduce:transition-none",
                 current === preset.hue && "ring-2 ring-foreground",
               )}
               aria-label={preset.label}
@@ -134,13 +134,13 @@ export function AccentColorField({
         {current !== null && (
           <span
             style={{ "--swatch": swatch(current) } as React.CSSProperties}
-            className="size-9 shrink-0 rounded-lg bg-[var(--swatch)] ring-1 ring-border"
+            className="size-9 shrink-0 rounded-full bg-[var(--swatch)] ring-1 ring-border"
             aria-hidden="true"
           />
         )}
         <button
           type="button"
-          className="shrink-0 rounded-sm px-1 text-sm font-medium text-muted underline underline-offset-4 hover:text-foreground"
+          className="h-9 shrink-0 rounded-full bg-default px-3.5 text-sm font-medium text-foreground transition-colors hover:bg-surface-tertiary"
           onClick={() => {
             setHue("");
             setHex("");

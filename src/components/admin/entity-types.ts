@@ -53,6 +53,10 @@ export interface EntityRow {
   title: string;
   meta?: string;
   badge?: string;
+  /** Farbe des Punkts vor dem Status (Standard: grau). */
+  tone?: "default" | "accent" | "success" | "warning" | "danger";
+  /** Kleines Vorschaubild vor dem Titel (Profil-, Sendungs-, Eventbild). */
+  image?: string | null;
   /** Raw values used to populate the form when editing. */
   values: Record<string, string | number | boolean | null | undefined>;
 }

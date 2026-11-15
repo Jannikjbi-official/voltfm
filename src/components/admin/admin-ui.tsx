@@ -100,22 +100,21 @@ export function StatCard({
         <span
           aria-hidden="true"
           className={cn(
-            "grid size-9 place-items-center rounded-xl text-xs",
+            "grid size-9 shrink-0 place-items-center rounded-xl text-xs max-[420px]:hidden",
             accent ? "bg-ink text-volt" : "bg-surface-secondary text-muted",
           )}
         >
           <Icon icon={icon} />
         </span>
       </div>
-      <span className="mt-4 block font-display text-[2.75rem] tabular-nums">
-        {value}
-      </span>
+      {/* Grosse Einzelzahl: proportionale Ziffern, tabellarische nur in Spalten. */}
+      <span className="mt-3 block font-display text-[2.25rem] sm:mt-4 sm:text-[2.75rem]">{value}</span>
       {hint && <span className={cn("mt-1 block text-xs", accent ? "text-ink/70" : "text-muted")}>{hint}</span>}
     </>
   );
 
   const className = cn(
-    "block rounded-2xl p-5",
+    "block h-full rounded-2xl p-4 sm:p-5",
     accent ? "bg-volt text-ink" : "surface-card text-foreground",
     href && "hover-lift",
   );
@@ -150,7 +149,7 @@ export function DataList({ rows }: { rows: { label: string; value: React.ReactNo
 
 type ChipColor = "default" | "accent" | "success" | "warning" | "danger";
 
-const DOT: Record<ChipColor, string> = {
+export const DOT: Record<ChipColor, string> = {
   default: "bg-muted",
   accent: "bg-volt",
   success: "bg-success",
@@ -181,7 +180,7 @@ export function StatusBadge({
   );
 }
 
-const ARTICLE_STATUS: Record<ArticleStatus, { label: string; color: ChipColor }> = {
+export const ARTICLE_STATUS: Record<ArticleStatus, { label: string; color: ChipColor }> = {
   published: { label: "Veröffentlicht", color: "success" },
   draft: { label: "Entwurf", color: "default" },
   scheduled: { label: "Geplant", color: "accent" },
@@ -217,16 +216,44 @@ export function AdminNotice({
   );
 }
 
+/* --- Filter-Pillen ---------------------------------------------------------
+   Gleiche Optik fuer Links (News-Status ueber searchParams) und Knoepfe
+   (Filter im Browser, z. B. Benutzer und Medien). */
+
+export function filterPillClass(active: boolean) {
+  return cn(
+    "inline-flex shrink-0 items-center gap-2 rounded-full py-1.5 pr-1.5 pl-3.5 text-sm font-medium transition-colors",
+    active ? "bg-foreground text-background" : "bg-default text-foreground hover:bg-surface-tertiary",
+  );
+}
+
+/** Die Zahl rechts in der Pille. */
+export function PillCount({ active, children }: { active: boolean; children: React.ReactNode }) {
+  return (
+    <span
+      className={cn(
+        "min-w-6 rounded-full px-1.5 py-0.5 text-center font-mono text-xs tabular-nums",
+        active ? "bg-background/15" : "bg-surface text-muted",
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
 /* --- Tabellen -------------------------------------------------------------
    Native <table> mit Tailwind: liest sich als Tabelle fuer Screenreader,
    bleibt Server-Komponente, und scrollt am Handy waagerecht in sich. */
 
+/* Am Handy blenden die Tabellen Nebenspalten aus (`hidden sm:table-cell`)
+   und zeigen das Wichtigste unter dem Titel — so passt alles ohne seitliches
+   Scrollen. Der Rahmen scrollt trotzdem in sich, falls es einmal eng wird. */
 export function AdminTable({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     /* relative: sonst entkommen absolut positionierte Kinder (sr-only)
        dem scrollenden Rahmen und verbreitern am Handy die ganze Seite. */
     <div className={cn("surface-card relative overflow-x-auto rounded-2xl", className)}>
-      <table className="w-full min-w-[36rem] border-collapse text-left text-sm">{children}</table>
+      <table className="w-full border-collapse text-left text-sm">{children}</table>
     </div>
   );
 }

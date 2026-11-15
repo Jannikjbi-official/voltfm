@@ -27,7 +27,7 @@ export default async function Page() {
     <>
       <AdminPageHeader
         title="Medien"
-        description={`${items.length} über UploadThing hochgeladene Bilder. Löschen entfernt die Datei auch dort.`}
+        description="Über UploadThing hochgeladene Bilder. Löschen entfernt die Datei auch dort."
       />
 
       <MediaGrid items={items} deleteAction={deleteMedia} altAction={updateMediaAlt} />

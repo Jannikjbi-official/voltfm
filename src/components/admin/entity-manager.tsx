@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useId, useRef, useState } from "react";
+import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Button, Drawer, buttonVariants, cn } from "@heroui/react";
 import {
@@ -121,6 +122,9 @@ export function EntityManager({
   const sideFields = fields.filter((field) => field.side);
   const formOpen = creating || editing !== null;
   const showBadges = rows.some((row) => row.badge);
+  /* Vorschaubilder nur, wenn die Sammlung ueberhaupt Bilder hat (Moderatoren,
+     Sendungen, Events) — sonst bliebe vor jedem Titel ein leerer Platz. */
+  const showImages = fields.some((field) => field.type === "image");
 
   const needle = fold(query.trim());
   const visible = needle
@@ -144,7 +148,8 @@ export function EntityManager({
 
   return (
     <div className="flex flex-col gap-5">
-      {message && !formOpen && <FormMessage status={messageStatus}>{message}</FormMessage>}
+      {/* Erfolg meldet der Toast; ein Fehler bleibt zusaetzlich stehen. */}
+      {message && !formOpen && messageStatus === "error" && <FormMessage status="error">{message}</FormMessage>}
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full sm:max-w-xs">
@@ -196,7 +201,7 @@ export function EntityManager({
           <thead>
             <tr>
               <Th>{singular}</Th>
-              {showBadges && <Th className="w-0">Status</Th>}
+              {showBadges && <Th className="hidden w-0 sm:table-cell">Status</Th>}
               <Th className="w-0 text-right">
                 <span className="sr-only">Aktionen</span>
               </Th>
@@ -205,17 +210,31 @@ export function EntityManager({
           <tbody>
             {visible.map((row) => (
               <tr key={row.id} className={cn(trClass, editing?.id === row.id && "bg-accent-soft")}>
-                <Td>
-                  <button
-                    type="button"
-                    onClick={() => openEdit(row)}
-                    className="block max-w-full text-left font-semibold text-foreground transition-colors hover:text-accent-text"
-                  >
-                    {row.title}
-                  </button>
-                  {row.meta && <span className="mt-0.5 block text-xs text-muted">{row.meta}</span>}
+                <Td className="w-full max-w-0">
+                  <div className="flex items-center gap-3">
+                    {showImages && <Thumb src={row.image} title={row.title} />}
+                    <div className="min-w-0">
+                      <button
+                        type="button"
+                        onClick={() => openEdit(row)}
+                        className="block max-w-full text-left font-semibold text-foreground transition-colors hover:text-accent-text"
+                      >
+                        {row.title}
+                      </button>
+                      {row.meta && <span className="mt-0.5 block text-xs text-muted">{row.meta}</span>}
+                      {row.badge && (
+                        <StatusBadge color={row.tone} className="mt-1.5 sm:hidden">
+                          {row.badge}
+                        </StatusBadge>
+                      )}
+                    </div>
+                  </div>
                 </Td>
-                {showBadges && <Td>{row.badge && <StatusBadge>{row.badge}</StatusBadge>}</Td>}
+                {showBadges && (
+                  <Td className="hidden sm:table-cell">
+                    {row.badge && <StatusBadge color={row.tone}>{row.badge}</StatusBadge>}
+                  </Td>
+                )}
                 <Td className="text-right whitespace-nowrap">
                   <div className="inline-flex gap-1">
                     <Button
@@ -314,6 +333,32 @@ export function EntityManager({
         pending={deleting}
       />
     </div>
+  );
+}
+
+/** Vorschaubild in der Tabelle; laedt es nicht, steht der Anfangsbuchstabe da. */
+function Thumb({ src, title }: { src?: string | null; title: string }) {
+  const [failed, setFailed] = useState<string | null>(null);
+  const show = src && failed !== src;
+  return (
+    <span
+      aria-hidden="true"
+      className="relative grid size-10 shrink-0 place-items-center overflow-hidden rounded-xl bg-surface-secondary text-xs font-bold text-muted"
+    >
+      {show ? (
+        <Image
+          src={src}
+          alt=""
+          fill
+          sizes="40px"
+          className="object-cover"
+          unoptimized
+          onError={() => setFailed(src)}
+        />
+      ) : (
+        title.trim().slice(0, 1).toUpperCase()
+      )}
+    </span>
   );
 }
 

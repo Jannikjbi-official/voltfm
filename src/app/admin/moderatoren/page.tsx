@@ -107,6 +107,8 @@ export default async function Page() {
     title: item.name,
     meta: item.role,
     badge: item.active ? "Aktiv" : "Versteckt",
+    tone: item.active ? "success" : "default",
+    image: item.image,
     values: {
       name: item.name,
       slug: item.slug,
