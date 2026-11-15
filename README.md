@@ -236,14 +236,24 @@ Bernstein (`text-accent-text`). Die HeroUI-Variablen (`--background`,
 `--surface`, `--accent`, `--muted` …) setzt `src/styles/theme.css` für hell
 und dunkel.
 
+Look: wie eine aktuelle App — Flächen in Ebenen (`surface-card`), feine
+Kanten, runde Karten und Pillen-Knöpfe, Schatten nur, wo etwas schwebt,
+leichte Bewegung (`hover-lift`, Laufband) mit Rücksicht auf
+`prefers-reduced-motion`. Kein Glow, keine Farbverläufe.
+
 **Dunkel ist Standard.** Das Theme liegt in einem **Cookie** (`voltfm-theme`),
 nicht in `localStorage` — so kennt der Server es beim Rendern und setzt
 `data-theme` und die Klasse `dark`/`light` schon im HTML: kein Flash, kein
-Hydration-Mismatch. Die Bühne auf Startseite und `/radio`, die Player-Leiste
-und die Fehlerseiten sind immer dunkel (`class="dark"` am Abschnitt).
+Hydration-Mismatch. Player-Leiste, Footer und Fehlerseiten sind immer dunkel
+(`class="dark"` am Abschnitt), die Bühne ist eine gelbe Karte.
 
-Schrift: Archivo, variabel in Stärke und Breite. Große Überschriften
-`font-display` (Breite 125 %, Stärke 800), kleinere `font-wide`.
+Schrift: Archivo (große Überschriften `font-display`: sehr fett, eng
+gesetzt) und IBM Plex Mono für Uhrzeiten, Daten und Zähler (`font-mono`).
+Beide liefert `next/font` von der eigenen Domain aus.
+
+Das Admin ist eine eigene App ohne Website-Kopf, Footer und Player: Seitenleiste,
+Kopfleiste mit „Neu“, Befehlspalette (Strg+K / ⌘K), Tabellen und ein
+Seitenpanel zum Bearbeiten (`src/components/admin/shell/`, `admin-ui.tsx`).
 
 Bausteine:
 
