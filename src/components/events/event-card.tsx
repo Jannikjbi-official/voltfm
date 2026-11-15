@@ -3,6 +3,7 @@ import { cn } from "@heroui/react";
 import type { EventDTO } from "@/services/content";
 import { formatTime } from "@/lib/format";
 import { Icon, LocationIcon, ClockIcon } from "@/lib/icons";
+import { eventDateParts } from "./event-date";
 
 /**
  * Ein Termin als Zeile: Datum als Kalenderblatt links, Inhalt rechts, eine
@@ -10,19 +11,10 @@ import { Icon, LocationIcon, ClockIcon } from "@/lib/icons";
  * nicht wie ein Stapel Kaesten. Die ganze Zeile ist ueber den Titel klickbar.
  */
 export function EventCard({ event }: { event: EventDTO }) {
-  const start = new Date(event.startsAt);
   // Aus dem gespeicherten Status statt aus der Uhr: Die Uhrzeit beim Rendern
   // zu lesen waere unrein und machte die Ausgabe vom Zeitpunkt abhaengig.
   const isPast = event.status === "past";
-
-  const day = new Intl.DateTimeFormat("de-DE", {
-    timeZone: "Europe/Berlin",
-    day: "2-digit",
-  }).format(start);
-  const month = new Intl.DateTimeFormat("de-DE", {
-    timeZone: "Europe/Berlin",
-    month: "short",
-  }).format(start);
+  const { day, month } = eventDateParts(event.startsAt);
 
   return (
     <article
@@ -44,8 +36,8 @@ export function EventCard({ event }: { event: EventDTO }) {
           <span className="rounded-full bg-default px-2.5 py-0.5 text-xs font-semibold text-foreground">
             {event.category}
           </span>
-          <span className="inline-flex items-center gap-1.5">
-            <Icon icon={ClockIcon} className="text-xs" />
+          <span className="inline-flex items-center gap-1.5 font-mono text-xs">
+            <Icon icon={ClockIcon} />
             {formatTime(event.startsAt)} Uhr
           </span>
           <span className="inline-flex min-w-0 items-center gap-1.5">

@@ -37,14 +37,16 @@ export function ShareButtons({ url, title }: { url: string; title: string }) {
   }
 
   return (
-    <div className="mt-12 flex flex-wrap items-center justify-between gap-3 border-t border-separator pt-6">
-      <span className="font-wide text-sm font-semibold text-foreground">Artikel teilen</span>
-      <div className="flex flex-wrap gap-2">
-        <Button variant="outline" size="sm" onPress={handleShare}>
+    /* relative: die sr-only-Meldung bleibt in der Karte und kann am Handy
+       die Seite nicht verbreitern. */
+    <div className="surface-card relative rounded-3xl p-5">
+      <h2 className="text-sm font-bold text-foreground">Artikel teilen</h2>
+      <div className="mt-4 grid grid-cols-2 gap-2 lg:grid-cols-1">
+        <Button variant="primary" size="sm" fullWidth onPress={handleShare}>
           <Icon icon={ShareIcon} />
           Teilen
         </Button>
-        <Button variant="ghost" size="sm" onPress={handleCopy}>
+        <Button variant="secondary" size="sm" fullWidth onPress={handleCopy}>
           <Icon icon={copied ? CheckIcon : CopyIcon} />
           {copied ? "Link kopiert" : "Link kopieren"}
         </Button>

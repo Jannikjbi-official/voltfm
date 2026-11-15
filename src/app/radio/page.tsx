@@ -39,9 +39,9 @@ export default function RadioPage() {
 
             {/* Lag kurz auf einer eigenen Seite; /radio/playlist leitet
                 hierher um (next.config.ts). */}
-            <div id="playlist" className="mt-12 flex flex-col gap-4">
+            <div id="playlist" className="relative mt-12 flex flex-col gap-4">
               <LautstationPlaylist station={site.station} />
-              <p className="text-sm text-muted">
+              <p className="px-1 text-xs leading-relaxed text-muted">
                 Daten:{" "}
                 <a
                   href={lautstation.stationUrl}
@@ -58,41 +58,84 @@ export default function RadioPage() {
             </div>
           </div>
 
-          <aside className="flex flex-col gap-5 self-start rounded-2xl border border-border bg-surface p-6 lg:sticky lg:top-[calc(var(--header-height)+1.5rem)]">
-            <h2 className="font-wide text-lg font-bold text-foreground">Stream-Informationen</h2>
+          <aside
+            aria-labelledby="stream-info-title"
+            className="self-start lg:sticky lg:top-[calc(var(--header-height)+1.5rem)]"
+          >
+            <div className="surface-card flex flex-col gap-5 rounded-3xl p-5 sm:p-6">
+              <h2 id="stream-info-title" className="text-lg font-bold tracking-tight text-foreground">
+                Stream-Informationen
+              </h2>
 
-            <dl className="flex flex-col divide-y divide-separator text-sm">
-              {[
-                ["Sender", site.name],
-                ["Motto", site.tagline],
-                ["Genres", site.genres.join(", ")],
-                ["Standort", "Hamburg"],
-                ["Verfügbarkeit", "24 / 7"],
-              ].map(([term, value]) => (
-                <div key={term} className="flex items-baseline justify-between gap-4 py-2.5">
-                  <dt className="text-muted">{term}</dt>
-                  <dd className="text-right font-semibold text-foreground">{value}</dd>
+              {/* Angaben als Kacheln; die eine, die zaehlt, gelb. */}
+              <dl className="grid grid-cols-2 gap-2">
+                <InfoTile term="Sender" wide>
+                  {site.name}
+                </InfoTile>
+                <InfoTile term="Motto" wide>
+                  {site.tagline}
+                </InfoTile>
+                <InfoTile term="Genres" wide>
+                  <span className="mt-1.5 flex flex-wrap gap-1.5">
+                    {site.genres.map((genre) => (
+                      <span
+                        key={genre}
+                        className="rounded-full bg-default px-2.5 py-0.5 text-xs font-medium text-foreground"
+                      >
+                        {genre}
+                      </span>
+                    ))}
+                  </span>
+                </InfoTile>
+                <InfoTile term="Standort">Hamburg</InfoTile>
+                <div className="flex min-w-0 flex-col gap-0.5 rounded-2xl bg-volt px-4 py-3 text-ink">
+                  <dt className="text-xs text-ink/70">Verfügbarkeit</dt>
+                  <dd className="font-mono text-lg font-semibold">24 / 7</dd>
                 </div>
-              ))}
-            </dl>
+              </dl>
 
-            <div className="flex flex-wrap gap-2">
-              <ButtonLink href={site.discordUrl} external size="sm">
-                <Icon icon={DiscordIcon} />
-                Discord
-              </ButtonLink>
-              <ButtonLink href={lautstation.scheduleUrl} external variant="outline" size="sm">
-                Sendeplan
-                <Icon icon={ExternalLinkIcon} />
-              </ButtonLink>
+              <div className="grid grid-cols-2 gap-2">
+                <ButtonLink href={site.discordUrl} external size="sm" fullWidth>
+                  <Icon icon={DiscordIcon} />
+                  Discord
+                </ButtonLink>
+                <ButtonLink href={lautstation.scheduleUrl} external variant="secondary" size="sm" fullWidth>
+                  Sendeplan
+                  <Icon icon={ExternalLinkIcon} />
+                </ButtonLink>
+              </div>
+              <p className="text-xs leading-relaxed text-muted">
+                Der Sendeplan zeigt, welche Playlist wann läuft, und öffnet sich bei{" "}
+                {lautstation.name} in einem neuen Tab.
+              </p>
             </div>
-            <p className="text-xs leading-relaxed text-muted">
-              Der Sendeplan zeigt, welche Playlist wann läuft, und öffnet sich bei{" "}
-              {lautstation.name} in einem neuen Tab.
-            </p>
           </aside>
         </div>
       </section>
     </>
+  );
+}
+
+/** Eine Angabe im Kasten rechts: Bezeichnung klein, Wert darunter. */
+function InfoTile({
+  term,
+  wide = false,
+  children,
+}: {
+  term: string;
+  wide?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className={
+        wide
+          ? "col-span-2 flex min-w-0 flex-col gap-0.5 rounded-2xl bg-surface-secondary px-4 py-3"
+          : "flex min-w-0 flex-col gap-0.5 rounded-2xl bg-surface-secondary px-4 py-3"
+      }
+    >
+      <dt className="text-xs text-muted">{term}</dt>
+      <dd className="font-semibold break-words text-foreground">{children}</dd>
+    </div>
   );
 }

@@ -58,6 +58,11 @@ export function ArticleCover({
       aria-hidden="true"
       className="absolute inset-0 overflow-hidden bg-ink text-paper [container-type:size] [--logo-accent:var(--volt)] [--logo-mark:var(--volt)] [--logo-word:var(--paper)]"
     >
+      {/* Drei feine Kreise oben rechts — Funkwellen, kein Verlauf. */}
+      <span className="absolute top-0 right-0 size-[70cqh] translate-x-1/2 -translate-y-1/2 rounded-full border border-paper/10" />
+      <span className="absolute top-0 right-0 size-[120cqh] translate-x-1/2 -translate-y-1/2 rounded-full border border-paper/[0.07]" />
+      <span className="absolute top-0 right-0 size-[170cqh] translate-x-1/2 -translate-y-1/2 rounded-full border border-paper/[0.05]" />
+
       {label ? (
         <span
           className={cn(
@@ -69,13 +74,18 @@ export function ArticleCover({
         >
           {label}
         </span>
-      ) : icon ? (
-        <Icon icon={icon} className="absolute top-[9cqh] left-[7cqw] !h-[24cqh] w-auto text-volt" />
       ) : (
-        <LogoIcon className="absolute top-[9cqh] left-[7cqw] h-[24cqh] w-auto" />
+        /* Das Symbol als gelbe Kachel mit Tinte darauf, wie ein App-Icon. */
+        <span className="absolute top-[10cqh] left-[7cqw] grid size-[30cqh] place-items-center rounded-[26%] bg-volt text-ink [--logo-mark:var(--ink)]">
+          {icon ? (
+            <Icon icon={icon} className="!h-[13cqh] w-auto" />
+          ) : (
+            <LogoIcon className="h-[14cqh] w-auto" />
+          )}
+        </span>
       )}
       <div className="absolute right-[7cqw] bottom-[8cqh] left-[7cqw] flex items-end justify-between gap-3">
-        <span className="font-wide text-[clamp(1rem,7.5cqw,2.6rem)] leading-[1.05] font-bold tracking-[-0.02em] [overflow-wrap:anywhere]">
+        <span className="text-[clamp(1rem,7.5cqw,2.6rem)] leading-[1.05] font-extrabold tracking-[-0.03em] [overflow-wrap:anywhere]">
           {categoryName}
         </span>
         <LogoWordmark className="h-[clamp(9px,5cqh,20px)] w-auto shrink-0 opacity-85" />
