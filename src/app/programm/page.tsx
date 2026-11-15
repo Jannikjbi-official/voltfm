@@ -47,7 +47,7 @@ function SchedulePaused() {
       />
 
       <section className="shell">
-        <div className="grid gap-3 lg:grid-cols-12">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-3 lg:grid-cols-12">
           <div
             data-theme="dark"
             className="dark flex flex-col items-start gap-5 rounded-[2rem] border border-border bg-surface p-7 text-foreground shadow-[var(--lift-shadow)] sm:p-12 lg:col-span-7"
@@ -89,7 +89,13 @@ function SchedulePaused() {
               <ButtonLink href="/radio" variant="primary">
                 Jetzt live hören
               </ButtonLink>
-              <ButtonLink href={site.discordUrl} external variant="tertiary">
+              {/* Langer Text: am Handy darf der Knopf umbrechen statt die Seite zu verbreitern. */}
+              <ButtonLink
+                href={site.discordUrl}
+                external
+                variant="tertiary"
+                className="h-auto min-h-10 max-w-full py-2 whitespace-normal"
+              >
                 <Icon icon={DiscordIcon} />
                 Im Discord auf dem Laufenden bleiben
               </ButtonLink>
