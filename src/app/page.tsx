@@ -64,8 +64,8 @@ export default async function HomePage() {
       <CoverStage heading={site.tagline} />
 
       {/* --- Zuletzt gespielt bzw. Sendeplan ------------------------------
-          Direkt unter dem Plakat: Wer wissen will, was lief, schaut hier
-          zuerst. Gesetzt wie ein Fahrplan: Uhrzeit links, Titel rechts. */}
+          Direkt unter der Buehne: Wer wissen will, was lief, schaut hier
+          zuerst. */}
       <section className="shell pt-16 sm:pt-24" aria-labelledby="home-recent">
         {features.schedule ? (
           <>
@@ -76,17 +76,17 @@ export default async function HomePage() {
               action={{ href: "/programm", label: "Ganze Woche" }}
             />
             {todaySlots.length > 0 ? (
-              <ol className="grid border-t-2 border-border md:grid-cols-2 md:gap-x-10">
+              <ol className="grid gap-2 md:grid-cols-2 md:gap-x-4">
                 {todaySlots.map((slot) => (
                   <li
                     key={`${slot.id}-${slot.startHour}`}
-                    className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-4 border-b border-separator py-4"
+                    className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-4 rounded-2xl bg-surface p-4"
                   >
                     <span className="font-mono text-sm font-semibold tabular-nums text-foreground">
                       {String(slot.startHour).padStart(2, "0")}:00
                     </span>
                     <div className="min-w-0">
-                      <h3 className="font-wide font-bold text-foreground">{slot.name}</h3>
+                      <h3 className="font-bold text-foreground">{slot.name}</h3>
                       {slot.description && (
                         <p className="mt-1 text-sm text-muted">{slot.description}</p>
                       )}
@@ -127,11 +127,9 @@ export default async function HomePage() {
         />
 
         {featured ? (
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-0">
-            <div className="lg:pr-10">
-              <ArticleCard article={featured} variant="wide" priority />
-            </div>
-            <div className="flex flex-col border-t-2 border-border pt-6 lg:border-t-0 lg:border-l-2 lg:pt-0 lg:pl-10">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+            <ArticleCard article={featured} variant="wide" priority />
+            <div className="surface-card flex flex-col rounded-3xl p-6">
               {gridArticles.map((article) => (
                 <ArticleCard key={article.id} article={article} variant="compact" />
               ))}
@@ -175,7 +173,7 @@ export default async function HomePage() {
               action={{ href: "/events", label: "Alle Events" }}
             />
             {events.length > 0 ? (
-              <div className="flex flex-col">
+              <div className="-mx-3 flex flex-col gap-1">
                 {events.slice(0, 3).map((event) => (
                   <EventCard key={event.id} event={event} />
                 ))}
@@ -188,29 +186,29 @@ export default async function HomePage() {
             )}
           </div>
 
-          {/* Der eine Weg zu uns: ein Block aus Tinte, die Ansage in Gelb. */}
+          {/* Der eine Weg zu uns: eine dunkle Karte, die Ansage in Gelb. */}
           <aside
             aria-labelledby="community-title"
             data-theme="dark"
-            className="dark flex flex-col items-start gap-5 self-start border-2 border-ink bg-ink p-7 text-paper sm:p-9"
+            className="dark flex flex-col items-start gap-5 self-start rounded-[2rem] border border-border bg-surface p-7 text-paper shadow-[var(--lift-shadow)] sm:p-9"
           >
-            <span aria-hidden="true" className="grid size-12 place-items-center bg-volt text-xl text-ink">
+            <span aria-hidden="true" className="grid size-12 place-items-center rounded-2xl bg-volt text-xl text-ink">
               <Icon icon={DiscordIcon} />
             </span>
-            <h2 id="community-title" className="font-display text-[2.6rem] text-balance text-volt sm:text-5xl">
+            <h2 id="community-title" className="font-display text-[2.2rem] text-balance text-volt sm:text-4xl">
               Am schnellsten erreichst du uns im Discord.
             </h2>
             <p className="text-base leading-relaxed text-paper/80">
               Da kündigen wir alles zuerst an, und da lesen wir, was dir gefällt
               oder fehlt. Zwei Klicks, kein Konto auf dieser Seite.
             </p>
-            <ul className="flex w-full flex-col border-t border-white/20 text-sm">
+            <ul className="flex w-full flex-col gap-2 text-sm">
               {[
                 "Ankündigungen, bevor sie hier stehen",
                 "Feedback direkt an uns zwei",
                 "Ein Ticket statt einer E-Mail",
               ].map((item) => (
-                <li key={item} className="flex items-baseline gap-2.5 border-b border-white/20 py-2.5">
+                <li key={item} className="flex items-center gap-3 rounded-xl bg-default px-3 py-2.5">
                   <Icon icon={CheckIcon} className="text-xs text-volt" />
                   {item}
                 </li>
@@ -223,7 +221,7 @@ export default async function HomePage() {
               </ButtonLink>
               <Link
                 href="/community"
-                className="font-wide text-sm font-bold underline decoration-2 underline-offset-4 hover:text-volt"
+                className="text-sm font-semibold text-paper/80 underline-offset-4 hover:text-volt hover:underline"
               >
                 Mehr zur Community
               </Link>
@@ -234,12 +232,12 @@ export default async function HomePage() {
 
       {/* --- Über uns: ein Satz, ein Verweis ------------------------------- */}
       <section className="shell pt-16 sm:pt-24">
-        <div className="border-t-4 border-border pt-6">
-          {/* Kein Slogan hier: Der steht schon im Plakat. */}
-          <p className="font-display text-[3rem] text-balance text-foreground sm:text-8xl lg:text-[9rem]">
+        <div className="surface-card rounded-[2rem] p-7 sm:p-12">
+          {/* Kein Slogan hier: Der steht schon auf der Buehne. */}
+          <p className="font-display text-[2.4rem] text-balance text-foreground sm:text-6xl lg:text-7xl">
             2021 eine laut.fm-Station, ein paar Namen später VoltFM.
           </p>
-          <div className="mt-8 flex flex-col items-start gap-5 border-t-2 border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-8 flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:justify-between">
             <p className="max-w-xl text-lg leading-relaxed text-muted">
               Kein festes Programm, keine Redaktion, dafür zwei Leute, die
               weitermachen.

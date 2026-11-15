@@ -15,8 +15,8 @@ import { LiveIndicator } from "./live-indicator";
  * die Wiedergabe nicht unterbricht. Das Padding am <body>
  * (--player-height) haelt ihr den Platz frei.
  *
- * Sie ist immer ein Streifen aus Tinte mit gelber Kante oben, wie ein
- * Laufband: Der gelbe Knopf steht so in beiden Modi auf Tinte.
+ * Sie schwebt unten als dunkle Leiste mit runden Ecken, in beiden Modi —
+ * der gelbe Knopf steht so immer auf Tinte.
  *
  * Auf 375 px bleiben Knopf, Cover und Titel. Laeuft etwas schief, steht die
  * Meldung an der Stelle des Interpreten — dort schaut man nach dem Klick hin.
@@ -31,16 +31,16 @@ export function StickyPlayer() {
     <aside
       aria-label="VoltFM Player"
       data-theme="dark"
-      className="dark fixed inset-x-0 bottom-0 z-40 border-t-2 border-volt bg-ink pb-[env(safe-area-inset-bottom,0px)] text-foreground"
+      className="dark fixed inset-x-2 bottom-[calc(0.5rem+env(safe-area-inset-bottom,0px))] z-40 mx-auto max-w-[80rem] rounded-2xl border border-border bg-[color-mix(in_oklab,#141519_92%,transparent)] text-foreground shadow-[var(--overlay-shadow)] backdrop-blur-xl sm:inset-x-4"
     >
-      <div className="shell flex h-[var(--player-height)] items-center gap-3 sm:gap-4">
+      <div className="flex h-[var(--player-height)] items-center gap-3 px-3 sm:gap-4 sm:px-4">
         <PlayButton />
 
         <div className="flex min-w-0 flex-1 items-center gap-3">
           <CoverArt
             src={track?.coverUrl}
             alt={track ? `Cover: ${track.title} von ${track.artist}` : ""}
-            className="size-11 border border-white/20"
+            className="size-11 rounded-lg"
           />
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold text-foreground">
@@ -68,7 +68,7 @@ export function StickyPlayer() {
             <LevelMeter />
           ) : (
             /* Am Handy steht "Live" schon gross auf der Buehne. */
-            <LiveIndicator className="hidden bg-volt text-ink sm:inline-flex" />
+            <LiveIndicator className="hidden sm:inline-flex" />
           )}
           <VolumeControl />
         </div>

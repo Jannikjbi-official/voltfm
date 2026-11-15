@@ -11,7 +11,7 @@ export function Breadcrumbs({ items }: { items: { href: string; label: string }[
   return (
     /* Umbrechen statt ueberlaufen: Ein langer Artikeltitel als letzter
        Eintrag machte die Seite am Handy sonst breiter als den Bildschirm. */
-    <HeroBreadcrumbs aria-label="Brotkrumen" className="flex-wrap font-mono text-xs">
+    <HeroBreadcrumbs aria-label="Brotkrumen" className="flex-wrap text-sm">
       {items.map((crumb, index) => (
         <HeroBreadcrumbs.Item
           key={crumb.href}

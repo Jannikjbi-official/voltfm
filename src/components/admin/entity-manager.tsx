@@ -163,7 +163,7 @@ export function EntityManager({
         </div>
 
         <div className="flex items-center gap-4">
-          <span className="font-mono text-xs text-muted">
+          <span className="text-xs text-muted">
             {visible.length === rows.length ? `${rows.length} vorhanden` : `${visible.length} von ${rows.length}`}
           </span>
           {canCreate && (
@@ -182,15 +182,15 @@ export function EntityManager({
       </div>
 
       {!canCreate && createBlockedText && (
-        <p className="border-2 border-dashed border-border p-4 text-sm text-muted">{createBlockedText}</p>
+        <p className="rounded-2xl border border-dashed border-[color-mix(in_oklab,var(--foreground)_18%,transparent)] p-4 text-sm text-muted">{createBlockedText}</p>
       )}
 
       {rows.length === 0 ? (
-        <div className="border-2 border-dashed border-border px-6 py-12">
-          <p className="font-display text-3xl text-foreground">{emptyText}</p>
+        <div className="rounded-2xl border border-dashed border-[color-mix(in_oklab,var(--foreground)_18%,transparent)] px-6 py-12 text-center">
+          <p className="text-lg font-bold text-foreground">{emptyText}</p>
         </div>
       ) : visible.length === 0 ? (
-        <p className="border-2 border-dashed border-border px-6 py-8 text-sm text-muted">Nichts gefunden.</p>
+        <p className="rounded-2xl border border-dashed border-[color-mix(in_oklab,var(--foreground)_18%,transparent)] px-6 py-8 text-center text-sm text-muted">Nichts gefunden.</p>
       ) : (
         <AdminTable>
           <thead>
@@ -204,16 +204,16 @@ export function EntityManager({
           </thead>
           <tbody>
             {visible.map((row) => (
-              <tr key={row.id} className={cn(trClass, editing?.id === row.id && "bg-volt/25")}>
+              <tr key={row.id} className={cn(trClass, editing?.id === row.id && "bg-accent-soft")}>
                 <Td>
                   <button
                     type="button"
                     onClick={() => openEdit(row)}
-                    className="block max-w-full text-left font-wide font-bold text-foreground hover:underline hover:decoration-2 hover:underline-offset-4"
+                    className="block max-w-full text-left font-semibold text-foreground transition-colors hover:text-accent-text"
                   >
                     {row.title}
                   </button>
-                  {row.meta && <span className="mt-0.5 block font-mono text-xs text-muted">{row.meta}</span>}
+                  {row.meta && <span className="mt-0.5 block text-xs text-muted">{row.meta}</span>}
                 </Td>
                 {showBadges && <Td>{row.badge && <StatusBadge>{row.badge}</StatusBadge>}</Td>}
                 <Td className="text-right whitespace-nowrap">
@@ -249,9 +249,9 @@ export function EntityManager({
         <Drawer.Content placement="right" className="w-[min(44rem,100vw)]">
           <Drawer.Dialog aria-label={editing ? `${singular} bearbeiten` : addLabel} className="flex h-full flex-col p-0">
             <Drawer.CloseTrigger aria-label="Schließen" className="top-4 right-4" />
-            <Drawer.Header className="border-b-2 border-border px-6 pt-5 pb-4">
-              <p className="font-mono text-xs text-muted">{editing ? "Bearbeiten" : "Neu"}</p>
-              <Drawer.Heading className="mt-1 pr-10 font-display text-4xl">
+            <Drawer.Header className="border-b border-separator px-6 pt-5 pb-4">
+              <p className="text-xs font-medium text-muted">{editing ? "Bearbeiten" : "Neu"}</p>
+              <Drawer.Heading className="mt-1 pr-10 font-display text-3xl">
                 {editing ? editing.title : addLabel}
               </Drawer.Heading>
             </Drawer.Header>
@@ -274,7 +274,7 @@ export function EntityManager({
                   <FormField key={field.name} field={field} row={editing} />
                 ))}
                 {sideFields.length > 0 && (
-                  <div className="flex flex-col gap-5 border-t-2 border-border pt-5">
+                  <div className="flex flex-col gap-5 rounded-2xl bg-surface-secondary p-4">
                     {sideFields.map((field) => (
                       <FormField key={field.name} field={field} row={editing} />
                     ))}
@@ -283,7 +283,7 @@ export function EntityManager({
               </form>
             </Drawer.Body>
 
-            <Drawer.Footer className="flex justify-end gap-2 border-t-2 border-border px-6 py-4">
+            <Drawer.Footer className="flex justify-end gap-2 border-t border-separator px-6 py-4">
               <Button variant="tertiary" onPress={closeForm}>
                 Abbrechen
               </Button>

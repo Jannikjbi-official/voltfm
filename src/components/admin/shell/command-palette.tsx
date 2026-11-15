@@ -96,7 +96,7 @@ export function CommandPalette({
     >
       <Modal.Container placement="top" size="md">
         <Modal.Dialog aria-label="Befehle" className="gap-0 overflow-hidden p-0 sm:mt-[12vh]">
-          <div className="flex items-center gap-3 border-b-2 border-border px-4">
+          <div className="flex items-center gap-3 border-b border-separator px-4">
             <Icon icon={SearchIcon} className="shrink-0 text-sm text-muted" />
             <input
               autoFocus
@@ -123,7 +123,7 @@ export function CommandPalette({
             ) : (
               groups.map(([group, items]) => (
                 <div key={group} role="group" aria-label={group} className="py-1">
-                  <p className="px-3 pt-2 pb-1 font-mono text-[0.7rem] text-muted">{group}</p>
+                  <p className="px-3 pt-2 pb-1 text-xs font-medium text-muted">{group}</p>
                   {items.map(({ entry, index }) => (
                     <div
                       key={entry.id}
@@ -133,15 +133,15 @@ export function CommandPalette({
                       onMouseMove={() => setActive(index)}
                       onClick={() => execute(entry)}
                       className={cn(
-                        "flex cursor-pointer items-center gap-3 px-3 py-2.5 text-sm text-foreground",
-                        index === active && "bg-volt font-semibold text-ink",
+                        "flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-foreground",
+                        index === active && "bg-default font-semibold",
                       )}
                     >
                       <span
                         aria-hidden="true"
                         className={cn(
-                          "grid size-7 shrink-0 place-items-center text-xs",
-                          index === active ? "bg-ink text-volt" : "bg-surface-secondary text-muted",
+                          "grid size-7 shrink-0 place-items-center rounded-lg text-xs",
+                          index === active ? "bg-volt text-ink" : "bg-surface-secondary text-muted",
                         )}
                       >
                         <Icon icon={entry.icon} />

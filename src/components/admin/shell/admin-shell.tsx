@@ -113,22 +113,22 @@ export function AdminShell({
 
   const sidebar = (onNavigate?: () => void) => (
     <div className="flex h-full flex-col">
-      <div className="flex h-16 shrink-0 items-center gap-2.5 border-b-2 border-border px-5">
+      <div className="flex h-16 shrink-0 items-center gap-2.5 px-5">
         <Link href="/admin" onClick={onNavigate} className="flex items-center gap-2.5 rounded-md" aria-label="Admin-Übersicht">
           <LogoIcon className="h-7 w-auto" />
-          <span className="font-display text-2xl text-foreground">VoltFM</span>
+          <span className="text-[1.05rem] font-extrabold tracking-tight text-foreground">VoltFM</span>
         </Link>
-        <span className="bg-volt px-1.5 py-0.5 font-mono text-[0.7rem] font-semibold text-ink">Admin</span>
+        <span className="rounded-full bg-volt px-2 py-0.5 text-[0.7rem] font-bold text-ink">Admin</span>
       </div>
 
-      <div className="px-3 pt-4">
+      <div className="px-3 pt-1">
         <button
           type="button"
           onClick={() => {
             onNavigate?.();
             setPaletteOpen(true);
           }}
-          className="flex h-10 w-full items-center gap-2.5 border-2 border-border bg-field px-3 text-sm text-muted transition-colors hover:text-foreground"
+          className="flex h-10 w-full items-center gap-2.5 rounded-xl bg-default px-3 text-sm text-muted transition-colors hover:text-foreground"
         >
           <Icon icon={SearchIcon} className="text-xs" />
           <span className="flex-1 text-left">Suchen</span>
@@ -140,7 +140,7 @@ export function AdminShell({
         <NavItem entry={overview} active={isActive(pathname, overview.href)} onNavigate={onNavigate} />
         {groups.map((group) => (
           <div key={group.label} className="mt-5">
-            <p className="border-b border-separator px-3 pb-1.5 font-mono text-[0.7rem] text-muted">{group.label}</p>
+            <p className="px-3 pb-1.5 text-xs font-medium text-muted">{group.label}</p>
             <ul className="mt-1 flex flex-col gap-0.5">
               {group.items.map((entry) => (
                 <li key={entry.href}>
@@ -152,11 +152,11 @@ export function AdminShell({
         ))}
       </nav>
 
-      <div className="shrink-0 border-t-2 border-border p-3">
+      <div className="shrink-0 border-t border-separator p-3">
         <Link
           href="/"
           onClick={onNavigate}
-          className="mb-1 flex h-9 items-center gap-3 px-3 text-sm text-muted transition-colors hover:bg-default hover:text-foreground"
+          className="mb-1 flex h-10 items-center gap-3 rounded-xl px-3 text-sm text-muted transition-colors hover:bg-default hover:text-foreground"
         >
           <Icon icon={HomeIcon} className="w-4 text-xs" />
           Zur Website
@@ -168,12 +168,12 @@ export function AdminShell({
 
   return (
     <div data-admin-shell className="min-h-dvh bg-background lg:grid lg:grid-cols-[16.5rem_minmax(0,1fr)]">
-      <aside className="sticky top-0 hidden h-dvh border-r-2 border-border bg-surface lg:block">
+      <aside className="sticky top-0 hidden h-dvh border-r border-border bg-surface lg:block">
         {sidebar()}
       </aside>
 
       <div className="flex min-w-0 flex-col">
-        <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b-2 border-border bg-background px-4 sm:px-6 lg:px-10">
+        <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-separator bg-[color-mix(in_oklab,var(--background)_82%,transparent)] px-4 backdrop-blur-xl sm:px-6 lg:px-10">
           <Button
             variant="ghost"
             size="sm"
@@ -185,7 +185,7 @@ export function AdminShell({
             <Icon icon={MenuIcon} />
           </Button>
 
-          <Breadcrumbs aria-label="Brotkrumen" className="min-w-0 flex-1 font-mono text-xs">
+          <Breadcrumbs aria-label="Brotkrumen" className="min-w-0 flex-1 text-sm">
             {crumbs.map((crumb, index) => (
               <Breadcrumbs.Item
                 key={`${crumb.label}-${index}`}
@@ -262,10 +262,10 @@ function NavItem({
       onClick={onNavigate}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "group relative flex h-9 items-center gap-3 px-3 text-sm transition-colors",
+        "group relative flex h-10 items-center gap-3 rounded-xl px-3 text-sm transition-colors",
         active
-          ? "bg-volt font-bold text-ink"
-          : "text-foreground/80 hover:bg-default hover:text-foreground",
+          ? "bg-volt font-semibold text-ink"
+          : "text-muted hover:bg-default hover:text-foreground",
       )}
     >
       <Icon
@@ -274,7 +274,7 @@ function NavItem({
       />
       <span className="flex-1 truncate">{entry.label}</span>
       {entry.off && (
-        <span className="border border-current px-1 font-mono text-[0.65rem]">aus</span>
+        <span className="rounded-full bg-surface-secondary px-1.5 py-0.5 text-[0.65rem] font-medium">aus</span>
       )}
     </Link>
   );
@@ -295,10 +295,10 @@ function UserMenu({
     <Dropdown>
       <Button
         variant="ghost"
-        className="h-auto w-full justify-start gap-3 px-2 py-2 text-left"
+        className="h-auto w-full justify-start gap-3 rounded-xl px-2 py-2 text-left"
         aria-label="Konto-Menü öffnen"
       >
-        <Avatar size="sm" className="size-8 shrink-0 rounded-none">
+        <Avatar size="sm" className="size-8 shrink-0">
           {user.image && <Avatar.Image src={user.image} alt="" />}
           <Avatar.Fallback className="bg-volt text-xs font-bold text-ink">
             {user.name.slice(0, 2).toUpperCase()}

@@ -3,10 +3,8 @@ import { Breadcrumbs } from "./breadcrumbs";
 export type Crumb = { href: string; label: string };
 
 /**
- * Der Kopf jeder Unterseite wie der Kopf eines Plakats: Brotkrumen in
- * Monospace, die Ueberschrift sehr gross, schmal und schwer, ein Satz
- * darunter, rechts optional etwas daneben (Knopf, Zahl). Unten eine Linie
- * aus Tinte.
+ * Der Kopf jeder Unterseite: Brotkrumen, die Ueberschrift gross und eng
+ * gesetzt, ein Satz darunter, rechts optional etwas daneben (Knopf, Zahl).
  *
  * Kein Etikett ueber der Ueberschrift — die Brotkrumen sagen schon, wo man ist.
  */
@@ -27,19 +25,19 @@ export function PageHeader({
   children?: React.ReactNode;
 }) {
   return (
-    <header className="border-b-2 border-border">
-      <div className="shell pt-6 pb-10 sm:pt-8 sm:pb-14">
+    <header>
+      <div className="shell pt-10 pb-10 sm:pt-14 sm:pb-14">
         {breadcrumbs && breadcrumbs.length > 0 && <Breadcrumbs items={breadcrumbs} />}
 
-        <div className="mt-8 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <div className="mt-6 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="min-w-0 max-w-4xl">
             <h1
               className={
                 /* Lange deutsche Woerter ("Datenschutzerklärung") passen
                    am Handy nicht immer in eine Zeile. */
                 size === "large"
-                  ? "font-display text-[3.4rem] text-balance break-words hyphens-auto text-foreground sm:text-8xl lg:text-[8.5rem]"
-                  : "font-display text-[2.75rem] text-balance break-words hyphens-auto text-foreground sm:text-7xl"
+                  ? "font-display text-[2.9rem] text-balance break-words hyphens-auto text-foreground sm:text-7xl lg:text-8xl"
+                  : "font-display text-[2.4rem] text-balance break-words hyphens-auto text-foreground sm:text-6xl"
               }
             >
               {title}

@@ -63,8 +63,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  // Papier — die Farbe der Kopfzeile im Standard (hell).
-  themeColor: "#f5f5f0",
+  // Tinte — die Farbe der Kopfzeile im Standard (dunkel).
+  themeColor: "#0e0f12",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {

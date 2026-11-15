@@ -52,18 +52,18 @@
   }
 }
 
-/* Ueberschriften: Archivo schmal (wdth 75) und schwer — wie auf einem Plakat. */
+/* Ueberschriften: Archivo in normaler Breite, sehr fett und eng gesetzt. */
 @utility font-display {
   font-family: var(--font-sans);
-  font-stretch: 75%;
+  font-stretch: 100%;
   font-weight: 800;
-  letter-spacing: -0.01em;
-  line-height: 0.92;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
 }
 
-/* Halb schmal, fuer kleinere Ueberschriften, Navigation und Knoepfe. */
+/* Fuer kleinere Ueberschriften, Navigation und Knoepfe: etwas enger. */
 @utility font-wide {
-  font-stretch: 87.5%;
+  letter-spacing: -0.012em;
 }
 
 /* Kleine Zeile in Monospace: Uhrzeiten, Daten, Zaehler. */
@@ -90,10 +90,30 @@
   }
 }
 
-/* Harte Kante plus harter Schatten — fuer Flaechen, die "aufgeklebt" sind. */
-@utility print-box {
-  border: 2px solid var(--border);
-  box-shadow: 6px 6px 0 0 var(--hard-shadow);
+/* Eine Karte: Flaeche, feine Kante, Tiefe. */
+@utility surface-card {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--surface-shadow);
+}
+
+/* Hebt sich beim Ueberfahren leicht an — bei reduzierter Bewegung nur der Schatten. */
+@utility hover-lift {
+  transition:
+    transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 220ms ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--lift-shadow);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:hover {
+      transform: none;
+    }
+  }
 }
 
 @layer components {
@@ -104,7 +124,7 @@
     left: 0.5rem;
     z-index: 200;
     padding: 0.75rem 1.25rem;
-    border: 2px solid var(--ink);
+    border-radius: 999px;
     background: var(--volt);
     color: var(--ink);
     font-weight: 700;
@@ -115,93 +135,17 @@
     transform: translateY(0);
   }
 
-  /* --- HeroUI im Plakat-Look ------------------------------------------- */
-
-  /* Knoepfe: eckig, mit Kante, halb schmale fette Schrift. Gedrueckt kein
-     Schrumpfen, sondern der Druck nach unten rechts. */
+  /* Knoepfe: fett, leicht eng gesetzt. */
   .button {
-    border: 2px solid transparent;
-    font-stretch: 87.5%;
     font-weight: 700;
-    letter-spacing: 0.01em;
+    letter-spacing: -0.01em;
   }
 
-  .button:active,
-  .button[data-pressed="true"] {
-    transform: translate(1px, 1px);
-  }
-
-  .button--primary,
-  .button--outline,
-  .button--secondary,
-  .button--tertiary,
-  .button--danger {
-    border-color: var(--border);
-  }
-
-  .button--primary {
-    --button-bg-hover: var(--volt);
-  }
-
-  @media (hover: hover) {
-    .button--primary:hover,
-    .button--primary[data-hovered="true"] {
-      box-shadow: 3px 3px 0 0 var(--hard-shadow);
-      transform: translate(-1px, -1px);
-    }
-  }
-
-  .button--secondary {
-    --button-fg: var(--foreground);
-  }
-
-  /* Felder: weisser Grund, Kante in Tinte. */
-  .input,
-  .textarea {
-    border-color: var(--field-border);
-  }
-
-  /* Overlays schweben mit Kante und hartem Schatten. */
+  /* Overlays mit feiner Kante. */
   .popover,
   .dropdown__popover,
-  .tooltip,
-  .toast {
-    border: 2px solid var(--border);
-  }
-
-  .alert-dialog__dialog,
-  .modal__dialog {
-    border: 2px solid var(--border);
-    box-shadow: var(--overlay-shadow);
-  }
-
-  .drawer__content {
-    border: 0 solid var(--border);
-  }
-
-  .drawer__content--right {
-    border-left-width: 2px;
-  }
-
-  .drawer__content--left {
-    border-right-width: 2px;
-  }
-
-  .chip {
-    border: 1.5px solid currentColor;
-  }
-
-  .kbd {
-    border: 1.5px solid var(--border);
-    font-family: var(--font-mono);
-  }
-
-  .alert {
-    border: 2px solid var(--border);
-  }
-
-  .card {
-    border: 2px solid var(--border);
+  .tooltip {
+    border: 1px solid var(--border);
   }
 }
 
@@ -240,6 +184,16 @@
   }
   100% {
     transform: scaleY(1);
+  }
+}
+
+/* Laufband: der Inhalt steht zweimal hintereinander, -50 % ist nahtlos. */
+@keyframes vfm-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
   }
 }
 

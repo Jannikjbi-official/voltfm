@@ -1,7 +1,7 @@
 import { cn } from "@heroui/react";
 
 /**
- * Der Live-Stempel: ein kleiner Block in Monospace mit blinkendem Punkt.
+ * Der Live-Punkt: eine gelbe Pille mit pulsierendem Punkt.
  *
  * Die Hoererzahl stand hier frueher daneben. Bei einem kleinen Sender sagt
  * eine einstellige Momentaufnahme nichts ueber das Programm. Der Wert bleibt
@@ -11,7 +11,7 @@ export function LiveIndicator({ label = "Live", className }: { label?: string; c
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-2 bg-ink px-2 py-1 font-mono text-[0.7rem] font-semibold text-volt",
+        "inline-flex items-center gap-2 rounded-full bg-volt px-2.5 py-1 text-xs font-bold text-ink",
         className,
       )}
     >

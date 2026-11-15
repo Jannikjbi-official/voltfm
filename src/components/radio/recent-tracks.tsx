@@ -32,20 +32,20 @@ export function RecentTracks({
   }
 
   return (
-    <ol className={cn("grid border-t-2 border-border", columns && "md:grid-cols-2 md:gap-x-10")}>
+    <ol className={cn("grid gap-2", columns && "md:grid-cols-2 md:gap-x-4")}>
       {tracks.map((track) => (
         <li
           key={`${track.id}-${track.startedAt}`}
-          className="grid grid-cols-[3.25rem_2.75rem_minmax(0,1fr)] items-center gap-3 border-b border-separator py-3 sm:gap-4"
+          className="grid grid-cols-[3rem_minmax(0,1fr)_auto] items-center gap-4 rounded-2xl p-2 transition-colors hover:bg-surface"
         >
-          <time className="font-mono text-sm tabular-nums text-muted" dateTime={track.startedAt ?? undefined}>
-            {track.startedAt ? formatTime(track.startedAt) : "–"}
-          </time>
-          <CoverArt src={track.coverUrl} alt="" className="size-11 border border-border" />
+          <CoverArt src={track.coverUrl} alt="" className="size-12 rounded-xl" />
           <span className="min-w-0">
-            <span className="block truncate font-wide font-bold text-foreground">{track.title}</span>
+            <span className="block truncate font-semibold text-foreground">{track.title}</span>
             <span className="block truncate text-sm text-muted">{track.artist}</span>
           </span>
+          <time className="font-mono text-xs tabular-nums text-muted" dateTime={track.startedAt ?? undefined}>
+            {track.startedAt ? formatTime(track.startedAt) : "–"}
+          </time>
         </li>
       ))}
     </ol>

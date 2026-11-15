@@ -23,9 +23,9 @@ export function AdminPageHeader({
   actions?: React.ReactNode;
 }) {
   return (
-    <header className="mb-8 flex flex-col gap-4 border-b-2 border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
+    <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div className="min-w-0">
-        <h1 className="font-display text-[2.6rem] text-balance text-foreground sm:text-6xl">
+        <h1 className="font-display text-[2.25rem] text-balance text-foreground sm:text-5xl">
           {title}
         </h1>
         {description && <p className="mt-1.5 max-w-2xl text-pretty text-sm text-muted">{description}</p>}
@@ -56,13 +56,13 @@ export function AdminPanel({
   return (
     <section
       aria-labelledby={title ? titleId : undefined}
-      className={cn("overflow-hidden border-2 border-border bg-surface", className)}
+      className={cn("surface-card overflow-hidden rounded-2xl", className)}
     >
       {(title || action) && (
-        <div className="flex min-h-14 items-center justify-between gap-4 border-b-2 border-border px-5 py-3">
+        <div className="flex min-h-14 items-center justify-between gap-4 border-b border-separator px-5 py-3">
           <div className="min-w-0">
             {title && (
-              <h2 id={titleId} className="font-wide text-base font-bold text-foreground">
+              <h2 id={titleId} className="text-sm font-bold text-foreground">
                 {title}
               </h2>
             )}
@@ -96,18 +96,18 @@ export function StatCard({
   const body = (
     <>
       <div className="flex items-center justify-between gap-3">
-        <span className={cn("font-mono text-xs", accent ? "text-ink/75" : "text-muted")}>{label}</span>
+        <span className={cn("text-sm", accent ? "text-ink/75" : "text-muted")}>{label}</span>
         <span
           aria-hidden="true"
           className={cn(
-            "grid size-8 place-items-center text-xs",
+            "grid size-9 place-items-center rounded-xl text-xs",
             accent ? "bg-ink text-volt" : "bg-surface-secondary text-muted",
           )}
         >
           <Icon icon={icon} />
         </span>
       </div>
-      <span className="mt-3 block font-display text-5xl tabular-nums">
+      <span className="mt-4 block font-display text-[2.75rem] tabular-nums">
         {value}
       </span>
       {hint && <span className={cn("mt-1 block text-xs", accent ? "text-ink/70" : "text-muted")}>{hint}</span>}
@@ -115,9 +115,9 @@ export function StatCard({
   );
 
   const className = cn(
-    "block border-2 p-4 transition-[transform,box-shadow]",
-    accent ? "border-ink bg-volt text-ink" : "border-border bg-surface text-foreground",
-    href && "hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_var(--hard-shadow)] motion-reduce:hover:translate-x-0 motion-reduce:hover:translate-y-0",
+    "block rounded-2xl p-5",
+    accent ? "bg-volt text-ink" : "surface-card text-foreground",
+    href && "hover-lift",
   );
 
   return href ? (
@@ -171,11 +171,11 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center gap-1.5 border-[1.5px] border-foreground px-1.5 py-0.5 font-mono text-[0.7rem] font-semibold whitespace-nowrap text-foreground",
+        "inline-flex shrink-0 items-center gap-1.5 rounded-full bg-default px-2.5 py-0.5 text-xs font-medium whitespace-nowrap text-foreground",
         className,
       )}
     >
-      <span aria-hidden="true" className={cn("size-1.5", DOT[color])} />
+      <span aria-hidden="true" className={cn("size-1.5 rounded-full", DOT[color])} />
       {children}
     </span>
   );
@@ -204,9 +204,9 @@ export function AdminNotice({
   return (
     <div
       role="status"
-      className="mb-6 flex gap-3 border-2 border-border bg-[color-mix(in_oklab,var(--warning)_14%,transparent)] p-4 text-sm leading-relaxed text-foreground"
+      className="mb-6 flex gap-3 rounded-2xl border border-[color-mix(in_oklab,var(--warning)_35%,transparent)] bg-[color-mix(in_oklab,var(--warning)_10%,transparent)] p-4 text-sm leading-relaxed text-foreground"
     >
-      <span aria-hidden="true" className="mt-1.5 size-2 shrink-0 bg-warning" />
+      <span aria-hidden="true" className="mt-1.5 size-2 shrink-0 rounded-full bg-warning" />
       <div className="min-w-0">
         {title && <p className="mb-1 font-semibold">{title}</p>}
         <div className="text-foreground/85 [&_code]:rounded [&_code]:bg-surface-secondary [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.85em]">
@@ -225,7 +225,7 @@ export function AdminTable({ children, className }: { children: React.ReactNode;
   return (
     /* relative: sonst entkommen absolut positionierte Kinder (sr-only)
        dem scrollenden Rahmen und verbreitern am Handy die ganze Seite. */
-    <div className={cn("relative overflow-x-auto border-2 border-border bg-surface", className)}>
+    <div className={cn("surface-card relative overflow-x-auto rounded-2xl", className)}>
       <table className="w-full min-w-[36rem] border-collapse text-left text-sm">{children}</table>
     </div>
   );
@@ -236,7 +236,7 @@ export function Th({ children, className }: { children?: React.ReactNode; classN
     <th
       scope="col"
       className={cn(
-        "border-b-2 border-border bg-surface-secondary px-4 py-2.5 font-mono text-[0.7rem] font-medium whitespace-nowrap text-muted",
+        "border-b border-separator px-4 py-3 text-xs font-medium whitespace-nowrap text-muted",
         className,
       )}
     >

@@ -13,8 +13,8 @@ import { ThemeToggle } from "./theme-toggle";
 import { AccountMenu } from "./account-menu";
 
 /**
- * Die Kopfzeile wie der Kopf einer Zeitung: Papier, darunter eine Linie aus
- * Tinte, der aktive Bereich als gelber Block. Sie klebt oben.
+ * Die Kopfzeile als schwebende Leiste: Sie klebt oben, laesst den Inhalt
+ * leicht durchscheinen, und der aktive Bereich steht als gelbe Pille darin.
  *
  * Die Navigation kommt als Prop vom Server. Sie haengt vom Zeitpunkt ab
  * (`buildMainNav` filtert zeitweise Eintraege). Wuerde dieser Client-Baustein
@@ -32,44 +32,46 @@ export function Header({ nav, account }: { nav: NavItem[]; account: AccountAvata
     !item.external && (item.href === "/" ? pathname === "/" : pathname.startsWith(item.href));
 
   return (
-    <header className="sticky top-0 z-50 border-b-2 border-border bg-background">
-      <div className="shell flex h-[var(--header-height)] items-center gap-6">
-        <Logo />
+    <header className="sticky top-0 z-50 pt-3">
+      <div className="shell">
+        <div className="flex h-16 items-center gap-6 rounded-2xl border border-border bg-[color-mix(in_oklab,var(--surface)_80%,transparent)] px-3 shadow-[var(--surface-shadow)] backdrop-blur-xl sm:px-4">
+          <Logo />
 
-        <nav aria-label="Hauptnavigation" className="hidden flex-1 items-center gap-0.5 lg:flex">
-          {nav.map((item) => (
-            <NavLink key={item.href} item={item} active={isActive(item)} variant="bar" />
-          ))}
-        </nav>
+          <nav aria-label="Hauptnavigation" className="hidden flex-1 items-center gap-0.5 lg:flex">
+            {nav.map((item) => (
+              <NavLink key={item.href} item={item} active={isActive(item)} variant="bar" />
+            ))}
+          </nav>
 
-        <div className="ml-auto flex items-center gap-1.5 lg:ml-0">
-          <ButtonLink
-            href="/suche"
-            variant="ghost"
-            size="sm"
-            isIconOnly
-            aria-label="Suche öffnen"
-          >
-            <Icon icon={SearchIcon} />
-          </ButtonLink>
+          <div className="ml-auto flex items-center gap-1.5 lg:ml-0">
+            <ButtonLink
+              href="/suche"
+              variant="ghost"
+              size="sm"
+              isIconOnly
+              aria-label="Suche öffnen"
+            >
+              <Icon icon={SearchIcon} />
+            </ButtonLink>
 
-          <ThemeToggle />
+            <ThemeToggle />
 
-          <div className="ml-2 hidden lg:block">
-            <AccountMenu account={account} />
+            <div className="ml-2 hidden lg:block">
+              <AccountMenu account={account} />
+            </div>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              isIconOnly
+              className="lg:hidden"
+              aria-label="Menü öffnen"
+              aria-expanded={mobileOpen}
+              onPress={() => setMobileOpen(true)}
+            >
+              <Icon icon={MenuIcon} />
+            </Button>
           </div>
-
-          <Button
-            variant="ghost"
-            size="sm"
-            isIconOnly
-            className="lg:hidden"
-            aria-label="Menü öffnen"
-            aria-expanded={mobileOpen}
-            onPress={() => setMobileOpen(true)}
-          >
-            <Icon icon={MenuIcon} />
-          </Button>
         </div>
       </div>
 
@@ -82,9 +84,9 @@ export function Header({ nav, account }: { nav: NavItem[]; account: AccountAvata
             </Drawer.Header>
             <Drawer.Body className="flex flex-col gap-8 pt-6">
               <nav aria-label="Mobile Navigation">
-                <ul className="flex flex-col border-t-2 border-border">
+                <ul className="flex flex-col">
                   {nav.map((item) => (
-                    <li key={item.href} className="border-b-2 border-border">
+                    <li key={item.href}>
                       <NavLink
                         item={item}
                         active={isActive(item)}
@@ -113,7 +115,7 @@ export function Header({ nav, account }: { nav: NavItem[]; account: AccountAvata
                 </ul>
               </nav>
             </Drawer.Body>
-            <Drawer.Footer className="justify-start border-t-2 border-border pt-4">
+            <Drawer.Footer className="justify-start border-t border-separator pt-4">
               <AccountMenu account={account} onNavigate={() => setMobileOpen(false)} />
             </Drawer.Footer>
           </Drawer.Dialog>
@@ -139,21 +141,16 @@ function NavLink({
     "inline-flex items-center gap-1.5 transition-colors",
     variant === "bar" &&
       cn(
-        "px-2.5 py-1.5 font-wide text-[0.95rem] font-bold",
-        active
-          ? "bg-volt text-ink"
-          : "text-foreground underline-offset-[6px] decoration-2 hover:underline",
+        "rounded-full px-3.5 py-1.5 text-[0.95rem] font-semibold",
+        active ? "bg-volt text-ink" : "text-muted hover:bg-default hover:text-foreground",
       ),
     variant === "large" &&
       cn(
-        "w-full py-3 font-display text-[2.6rem] leading-none",
-        active ? "text-foreground" : "text-foreground/70 hover:text-foreground",
+        "w-full py-2 font-display text-[2.4rem]",
+        active ? "text-foreground" : "text-muted hover:text-foreground",
       ),
     variant === "small" &&
-      cn(
-        "py-1 font-wide text-sm font-semibold",
-        active ? "text-foreground underline decoration-2 underline-offset-4" : "text-muted hover:text-foreground",
-      ),
+      cn("py-1 text-sm font-medium", active ? "text-foreground" : "text-muted hover:text-foreground"),
   );
 
   if (item.external) {

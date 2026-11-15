@@ -53,18 +53,16 @@ export function PlayButton({
           target="_blank"
           rel="noreferrer noopener"
           onClick={onClick}
-          className="group inline-flex h-16 items-stretch border-2 border-ink bg-ink text-paper transition-[transform,box-shadow] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_var(--paper)] active:translate-x-0 active:translate-y-0 active:shadow-none motion-reduce:transition-none sm:h-[4.5rem]"
+          className="group inline-flex h-16 items-center gap-4 rounded-full bg-ink py-2 pr-7 pl-2 text-paper shadow-[0_16px_32px_-16px_rgba(14,15,18,0.7)] transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-0 motion-reduce:transition-none sm:h-[4.5rem]"
         >
           <span
             aria-hidden="true"
-            className="grid aspect-square h-full place-items-center bg-volt text-xl text-ink"
+            className="grid size-12 place-items-center rounded-full bg-volt text-lg text-ink transition-transform duration-200 group-hover:scale-105 motion-reduce:transition-none sm:size-14"
           >
             <Icon icon={PlayIcon} className="translate-x-px" />
           </span>
-          <span className="flex items-center gap-3 px-5 font-display text-[1.75rem] sm:text-[2.1rem]">
-            Jetzt hören
-            <Icon icon={ExternalLinkIcon} className="text-sm text-volt" aria-hidden />
-          </span>
+          <span className="font-display text-xl sm:text-2xl">Jetzt hören</span>
+          <Icon icon={ExternalLinkIcon} className="text-xs text-volt" aria-hidden />
           <span className="sr-only">
             {" "}im Webplayer von {radio.externalName} (öffnet ein neues Fenster)
           </span>
@@ -81,7 +79,7 @@ export function PlayButton({
         title={label}
         onClick={onClick}
         className={cn(
-          "relative grid shrink-0 place-items-center border-2 border-volt bg-volt text-ink transition-colors hover:bg-paper hover:border-paper",
+          "relative grid shrink-0 place-items-center rounded-full bg-volt text-ink transition-transform duration-200 hover:scale-105 active:scale-95 motion-reduce:transition-none",
           size === "lg" ? "size-16 text-xl" : "size-11 text-base",
         )}
       >
@@ -89,7 +87,7 @@ export function PlayButton({
         {/* Ohne Text: der kleine Pfeil sagt, dass ein neues Fenster aufgeht. */}
         <span
           aria-hidden="true"
-          className="absolute -top-1.5 -right-1.5 grid size-4 place-items-center bg-ink text-[0.5rem] text-volt"
+          className="absolute -top-0.5 -right-0.5 grid size-4 place-items-center rounded-full bg-ink text-[0.5rem] text-volt ring-2 ring-[#141519]"
         >
           <Icon icon={ExternalLinkIcon} />
         </span>
@@ -106,7 +104,7 @@ export function PlayButton({
         isIconOnly
         onPress={retry}
         aria-label="Erneut versuchen"
-        className={cn(size === "lg" ? "size-16 text-xl" : "size-11")}
+        className={cn("rounded-full", size === "lg" ? "size-16 text-xl" : "size-11")}
       >
         <Icon icon={RetryIcon} />
       </Button>
@@ -127,7 +125,7 @@ export function PlayButton({
       onPress={toggle}
       aria-label={label}
       data-state={connecting ? "connecting" : isPlaying ? "playing" : "idle"}
-      className={cn(size === "lg" ? "size-16 text-xl" : "size-11")}
+      className={cn("rounded-full", size === "lg" ? "size-16 text-xl" : "size-11")}
     >
       <Icon icon={connecting ? LoadingIcon : isPlaying ? PauseIcon : PlayIcon} spin={connecting} />
     </Button>
