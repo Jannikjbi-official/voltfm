@@ -6,7 +6,7 @@ import { EntityManager } from "@/components/admin/entity-manager";
 import type { EntityRow, FieldDef } from "@/components/admin/entity-types";
 import { saveShow, deleteShow } from "./actions";
 import { features } from "@/lib/site";
-import styles from "../page.module.css";
+import { AdminPageHeader, AdminNotice } from "@/components/admin/admin-ui";
 
 export const metadata: Metadata = { title: "Programm · Admin", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -70,27 +70,21 @@ export default async function Page() {
 
   return (
     <>
-      <header className={styles.header}>
-        <div>
-          <h1 className={styles.title}>Programm</h1>
-          <p className={styles.subtitle}>
-            Sendungen aus dem CMS. Die tatsächlich laufende Sendung meldet laut.fm.
-          </p>
-        </div>
-      </header>
+      <AdminPageHeader
+        title="Programm"
+        description="Sendungen aus dem CMS. Die tatsächlich laufende Sendung meldet laut.fm."
+      />
 
       {/* Der Bereich bleibt bedienbar, damit vorhandene Sendungen erhalten
           bleiben und neue vorbereitet werden koennen — aber niemand soll
           glauben, hier Gepflegtes sei oeffentlich sichtbar. */}
       {!features.schedule && (
-        <div className={styles.notice} role="status">
-          <strong>Der Sendeplan ist öffentlich abgeschaltet.</strong> Was du hier
-          anlegst, wird gespeichert, erscheint aber nicht auf der Website: Die
-          Seite <code>/programm</code> zeigt stattdessen einen Hinweis, und der
-          Menüpunkt ist ausgeblendet. Wieder einschalten lässt sich das über{" "}
-          <code>features.schedule</code> in <code>src/lib/site.ts</code> — sinnvoll,
-          sobald ein eigener Sendeserver läuft.
-        </div>
+        <AdminNotice title="Der Sendeplan ist öffentlich abgeschaltet.">
+          Was du hier anlegst, wird gespeichert, erscheint aber nicht auf der Website: Die
+          Seite <code>/programm</code> zeigt stattdessen einen Hinweis, und der Menüpunkt ist
+          ausgeblendet. Wieder einschalten lässt sich das über <code>features.schedule</code> in{" "}
+          <code>src/lib/site.ts</code> — sinnvoll, sobald ein eigener Sendeserver läuft.
+        </AdminNotice>
       )}
 
       <EntityManager
