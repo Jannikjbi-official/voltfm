@@ -7,7 +7,6 @@ import { PageHeader } from "@/components/common/page-header";
 import { ArticleCard } from "@/components/news/article-card";
 import { ArticleCover } from "@/components/news/article-cover";
 import { ShareButtons } from "@/components/news/share-buttons";
-import { Badge } from "@/components/ui/badge";
 import { AuthorAvatar } from "@/components/news/author-avatar";
 import {
   getArticleBySlug,
@@ -17,7 +16,8 @@ import {
 } from "@/services/content";
 import { formatDate, formatReadingTime } from "@/lib/format";
 import { site } from "@/lib/site";
-import styles from "./page.module.css";
+import { SectionHeader } from "@/components/common/section-header";
+import { chipVariants } from "@heroui/react";
 
 type Params = { slug: string };
 
@@ -68,6 +68,7 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
   if (!article) notFound();
 
   const author = (await getAuthorProfiles())[article.authorName];
+  const categoryName = (await getCategoryNames())[article.categorySlug] ?? article.categorySlug;
 
   const related = await getRelatedArticles(article);
   const url = `${site.url}/news/${article.slug}`;
@@ -100,7 +101,6 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
       />
 
       <PageHeader
-        eyebrow={(await getCategoryNames())[article.categorySlug] ?? article.categorySlug}
         title={article.title}
         description={article.excerpt}
         breadcrumbs={[
@@ -108,95 +108,101 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
           { href: "/news", label: "News" },
           { href: `/news/${article.slug}`, label: article.title },
         ]}
-      />
-
-      <article className="section shell">
-        <div className={styles.layout}>
-          <div className={styles.main}>
-            <div className={styles.byline}>
-              <AuthorAvatar name={article.authorName} image={author?.image} size="md" />
-              <div className={styles.bylineText}>
-                {/* Nur verlinken, wenn es das Profil oeffentlich gibt — sonst
-                    fuehrt der Verweis auf eine 404-Seite. */}
-                {author ? (
-                  <Link href={`/moderatoren/${author.slug}`} className={styles.authorLink}>
-                    {article.authorName}
-                  </Link>
-                ) : (
-                  <span className={styles.author}>{article.authorName}</span>
+      >
+        <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+          <div className="flex items-center gap-3">
+            <AuthorAvatar name={article.authorName} image={author?.image} size="md" />
+            <div className="flex flex-col">
+              {/* Nur verlinken, wenn es das Profil oeffentlich gibt — sonst
+                  fuehrt der Verweis auf eine 404-Seite. */}
+              {author ? (
+                <Link
+                  href={`/moderatoren/${author.slug}`}
+                  className="rounded-sm font-semibold text-foreground hover:underline"
+                >
+                  {article.authorName}
+                </Link>
+              ) : (
+                <span className="font-semibold text-foreground">{article.authorName}</span>
+              )}
+              <span className="flex flex-wrap gap-x-3 text-sm text-muted">
+                {article.publishedAt && (
+                  <time dateTime={article.publishedAt}>{formatDate(article.publishedAt)}</time>
                 )}
-                <span className={styles.meta}>
-                  {article.publishedAt && (
-                    <time dateTime={article.publishedAt}>
-                      {formatDate(article.publishedAt)}
-                    </time>
-                  )}
-                  {" · "}
-                  {formatReadingTime(article.readingTime)}
-                </span>
-              </div>
+                <span>{formatReadingTime(article.readingTime)}</span>
+              </span>
             </div>
-
-            {article.coverImage ? (
-              <figure className={styles.cover}>
-                <Image
-                  src={article.coverImage}
-                  alt={article.coverAlt ?? ""}
-                  width={1200}
-                  height={675}
-                  priority
-                  className={styles.coverImage}
-                />
-              </figure>
-            ) : (
-              // Meilensteine haben kein Foto, aber eine Zahl — die steht gross
-              // auf dem erzeugten Titelbild.
-              article.coverLabel && (
-                <div className={`${styles.cover} ${styles.generatedCover}`}>
-                  <ArticleCover
-                    categorySlug={article.categorySlug}
-                    categoryName={(await getCategoryNames())[article.categorySlug] ?? article.categorySlug}
-                    label={article.coverLabel}
-                  />
-                </div>
-              )
-            )}
-
-            {/* Editor output. Sanitised on write in the admin action, never here. */}
-            <div
-              className={styles.prose}
-              dangerouslySetInnerHTML={{ __html: article.content }}
-            />
-
-            {article.tags.length > 0 && (
-              <div className={styles.tags}>
-                {article.tags.map((tag) => (
-                  <Link key={tag} href={`/suche?q=${encodeURIComponent(tag)}`}>
-                    <Badge mode="lighter" size="sm">
-                      {tag}
-                    </Badge>
-                  </Link>
-                ))}
-              </div>
-            )}
-
-            <ShareButtons url={url} title={article.title} />
           </div>
+          <Link
+            href={`/news?kategorie=${article.categorySlug}`}
+            className={`${chipVariants({ color: "accent", variant: "soft", size: "md" }).base()} font-semibold hover:underline`}
+          >
+            {categoryName}
+          </Link>
         </div>
+      </PageHeader>
 
-        {related.length > 0 && (
-          <section className={styles.related} aria-labelledby="related-title">
-            <h2 id="related-title" className={styles.relatedTitle}>
-              Weiterlesen
-            </h2>
-            <div className={styles.relatedGrid}>
-              {related.map((item) => (
-                <ArticleCard key={item.id} article={item} />
-              ))}
+      <article className="shell pt-10 pb-4 sm:pt-14">
+        {article.coverImage ? (
+          <figure className="mx-auto max-w-4xl">
+            <Image
+              src={article.coverImage}
+              alt={article.coverAlt ?? ""}
+              width={1200}
+              height={675}
+              priority
+              className="h-auto w-full rounded-2xl"
+            />
+          </figure>
+        ) : (
+          // Meilensteine haben kein Foto, aber eine Zahl — die steht gross
+          // auf dem erzeugten Titelbild. Dasselbe Format wie ein Foto
+          // (1200 × 675), damit der Text nicht springt.
+          article.coverLabel && (
+            <div className="relative mx-auto aspect-video max-w-4xl overflow-hidden rounded-2xl">
+              <ArticleCover
+                categorySlug={article.categorySlug}
+                categoryName={categoryName}
+                label={article.coverLabel}
+              />
             </div>
-          </section>
+          )
         )}
+
+        <div className="mx-auto mt-10 max-w-[68ch] sm:mt-14">
+          {/* Ausgabe des Editors. Bereinigt beim Speichern in der
+              Admin-Action, nie hier. */}
+          <div className="vfm-prose" dangerouslySetInnerHTML={{ __html: article.content }} />
+
+          {article.tags.length > 0 && (
+            <ul className="mt-10 flex flex-wrap gap-2" aria-label="Schlagwörter">
+              {article.tags.map((tag) => (
+                <li key={tag}>
+                  <Link
+                    href={`/suche?q=${encodeURIComponent(tag)}`}
+                    className={`${chipVariants({ variant: "soft", size: "md" }).base()} hover:underline`}
+                  >
+                    {tag}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <ShareButtons url={url} title={article.title} />
+        </div>
       </article>
+
+      {related.length > 0 && (
+        <section aria-labelledby="related-title" className="shell mt-16 border-t border-separator pt-14 sm:mt-20">
+          <SectionHeader id="related-title" title="Weiterlesen" />
+          <div className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+            {related.map((item) => (
+              <ArticleCard key={item.id} article={item} />
+            ))}
+          </div>
+        </section>
+      )}
     </>
   );
 }
