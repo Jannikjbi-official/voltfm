@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/common/page-header";
 import { requireUser, effectiveRoleLabel } from "@/lib/session";
 import { serverEnv } from "@/lib/env";
+import { Icon, LinkIcon, PasskeyIcon, LogoutIcon, type IconDefinition } from "@/lib/icons";
 import { PasskeyManager } from "./passkey-manager";
 import { ConnectedAccounts } from "./connected-accounts";
 import { SignOutButton } from "./sign-out-button";
@@ -37,10 +38,27 @@ export default async function KontoPage(props: PageProps<"/konto">) {
         ]}
       />
 
-      <div className="shell py-12 sm:py-16">
-        <div className="grid gap-6 lg:grid-cols-2">
-          <AccountBlock id="profile-title" title="Profil">
-            <dl className="flex flex-col divide-y divide-separator text-sm">
+      <div className="shell">
+        <div className="grid items-start gap-3 lg:grid-cols-12">
+          {/* Das Profil als dunkle Karte, daneben die Einstellungen als Liste
+              von Karten — wie die Kontoseite einer App. */}
+          <section
+            aria-labelledby="profile-title"
+            data-theme="dark"
+            className="dark flex flex-col gap-6 rounded-[2rem] border border-border bg-surface p-6 text-foreground shadow-[var(--lift-shadow)] sm:p-8 lg:sticky lg:top-[calc(var(--header-height)+1.75rem)] lg:col-span-5"
+          >
+            <div className="flex items-center gap-4">
+              <span
+                aria-hidden="true"
+                className="grid size-16 shrink-0 place-items-center rounded-2xl bg-volt font-display text-3xl text-ink"
+              >
+                {(profile.name || profile.username || "?").trim().charAt(0).toUpperCase()}
+              </span>
+              <h2 id="profile-title" className="font-display text-[2rem] text-foreground">
+                Profil
+              </h2>
+            </div>
+            <dl className="flex flex-col gap-2 text-sm">
               {[
                 ["Username", profile.username ?? "—"],
                 ["Anzeigename", profile.name || "—"],
@@ -49,53 +67,63 @@ export default async function KontoPage(props: PageProps<"/konto">) {
                    hinterlegte Betreiber tragen in der Datenbank "user". */
                 ["Rolle", effectiveRoleLabel(user)],
               ].map(([term, value]) => (
-                <div key={term} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-3">
+                <div
+                  key={term}
+                  className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 rounded-2xl bg-default px-4 py-3"
+                >
                   <dt className="text-muted">{term}</dt>
                   <dd className="min-w-0 break-all font-semibold text-foreground">{value}</dd>
                 </div>
               ))}
             </dl>
-          </AccountBlock>
+          </section>
 
-          <AccountBlock
-            id="accounts-title"
-            title="Verknüpfte Konten"
-            description="Verknüpfe Discord, um dich künftig mit einem Klick anzumelden — ohne Username und Passwort."
-          >
-            <ConnectedAccounts discordEnabled={serverEnv.discordEnabled} notice={linkNotice} />
-          </AccountBlock>
+          <div className="flex flex-col gap-3 lg:col-span-7">
+            <AccountBlock
+              id="accounts-title"
+              icon={LinkIcon}
+              title="Verknüpfte Konten"
+              description="Verknüpfe Discord, um dich künftig mit einem Klick anzumelden — ohne Username und Passwort."
+            >
+              <ConnectedAccounts discordEnabled={serverEnv.discordEnabled} notice={linkNotice} />
+            </AccountBlock>
 
-          <AccountBlock
-            id="passkeys-title"
-            title="Passkeys"
-            description="Mit einem Passkey meldest du dich ohne Passwort an — per Fingerabdruck, Gesicht oder Geräte-PIN. Du kannst mehrere hinterlegen, zum Beispiel einen pro Gerät."
-          >
-            <PasskeyManager />
-          </AccountBlock>
+            <AccountBlock
+              id="passkeys-title"
+              icon={PasskeyIcon}
+              title="Passkeys"
+              description="Mit einem Passkey meldest du dich ohne Passwort an — per Fingerabdruck, Gesicht oder Geräte-PIN. Du kannst mehrere hinterlegen, zum Beispiel einen pro Gerät."
+            >
+              <PasskeyManager />
+            </AccountBlock>
 
-          <AccountBlock
-            id="session-title"
-            title="Sitzung"
-            description="Du bist auf diesem Gerät angemeldet. Beim Abmelden wird die Sitzung serverseitig beendet."
-          >
-            <div>
-              <SignOutButton />
-            </div>
-          </AccountBlock>
+            <AccountBlock
+              id="session-title"
+              icon={LogoutIcon}
+              title="Sitzung"
+              description="Du bist auf diesem Gerät angemeldet. Beim Abmelden wird die Sitzung serverseitig beendet."
+            >
+              <div>
+                <SignOutButton />
+              </div>
+            </AccountBlock>
+          </div>
         </div>
       </div>
     </>
   );
 }
 
-/** Ein Kasten auf der Kontoseite: Ueberschrift, ein Satz, Inhalt. */
+/** Eine Karte auf der Kontoseite: Symbol, Ueberschrift, ein Satz, Inhalt. */
 function AccountBlock({
   id,
+  icon,
   title,
   description,
   children,
 }: {
   id: string;
+  icon: IconDefinition;
   title: string;
   description?: string;
   children: React.ReactNode;
@@ -103,13 +131,21 @@ function AccountBlock({
   return (
     <section
       aria-labelledby={id}
-      className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-6"
+      className="surface-card flex flex-col gap-5 rounded-3xl p-6 sm:p-7"
     >
-      <div>
-        <h2 id={id} className="font-wide text-lg font-bold text-foreground">
-          {title}
-        </h2>
-        {description && <p className="mt-1.5 text-sm leading-relaxed text-muted">{description}</p>}
+      <div className="flex items-start gap-4">
+        <span
+          aria-hidden="true"
+          className="grid size-11 shrink-0 place-items-center rounded-2xl bg-default text-foreground"
+        >
+          <Icon icon={icon} />
+        </span>
+        <div className="min-w-0">
+          <h2 id={id} className="text-xl font-bold tracking-tight text-foreground">
+            {title}
+          </h2>
+          {description && <p className="mt-1 text-sm leading-relaxed text-muted">{description}</p>}
+        </div>
       </div>
       {children}
     </section>

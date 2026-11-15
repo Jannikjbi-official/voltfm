@@ -129,22 +129,30 @@ export default function FaqPage() {
         size="large"
       />
 
-      <section className="shell py-14 sm:py-20">
-        <div className="max-w-3xl">
-          <FaqList items={FAQ} />
-        </div>
+      <section className="shell">
+        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,8fr)_minmax(0,4fr)]">
+          <div>
+            <FaqList items={FAQ} />
+          </div>
 
-        <div className="mt-14 flex max-w-3xl flex-col items-start gap-4 rounded-3xl border border-border bg-surface p-6 sm:mt-20 sm:p-10">
-          <h2 className="font-display text-2xl text-foreground sm:text-3xl">
-            Deine Frage war nicht dabei?
-          </h2>
-          <p className="text-muted">
-            Dann frag einfach. Im Discord ist meistens jemand von uns online.
-          </p>
-          <ButtonLink href={site.discordUrl} external variant="primary">
-            <Icon icon={DiscordIcon} />
-            Im Discord fragen
-          </ButtonLink>
+          <div
+            data-theme="dark"
+            className="dark flex flex-col items-start gap-4 rounded-[2rem] border border-border bg-surface p-7 text-foreground shadow-[var(--lift-shadow)] sm:p-9 lg:sticky lg:top-[calc(var(--header-height)+1.75rem)]"
+          >
+            <span aria-hidden="true" className="grid size-12 place-items-center rounded-2xl bg-volt text-xl text-ink">
+              <Icon icon={DiscordIcon} />
+            </span>
+            <h2 className="font-display text-[2rem] text-volt sm:text-4xl">
+              Deine Frage war nicht dabei?
+            </h2>
+            <p className="text-muted">
+              Dann frag einfach. Im Discord ist meistens jemand von uns online.
+            </p>
+            <ButtonLink href={site.discordUrl} external variant="primary">
+              <Icon icon={DiscordIcon} />
+              Im Discord fragen
+            </ButtonLink>
+          </div>
         </div>
       </section>
     </>

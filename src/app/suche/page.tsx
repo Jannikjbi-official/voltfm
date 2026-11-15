@@ -68,7 +68,7 @@ export default async function SuchePage({
         ]}
       />
 
-      <section className="shell py-10 sm:py-14">
+      <section className="shell">
         <SearchForm initialQuery={query} />
 
         <div className="mt-10">
@@ -83,13 +83,13 @@ export default async function SuchePage({
               description="Versuch es mit einem anderen Begriff oder schau direkt in den News vorbei."
             />
           ) : (
-            <div className="flex flex-col gap-14">
+            <div className="flex flex-col gap-12 sm:gap-16">
               {articles.length > 0 && (
                 <section aria-labelledby="results-news">
                   <GroupTitle id="results-news" count={articles.length}>
                     News
                   </GroupTitle>
-                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                     {articles.map((article) => (
                       <ArticleCard key={article.id} article={article} />
                     ))}
@@ -160,9 +160,9 @@ export default async function SuchePage({
 
 function GroupTitle({ id, count, children }: { id: string; count: number; children: string }) {
   return (
-    <h2 id={id} className="mb-5 flex items-center gap-3 font-wide text-xl font-bold text-foreground">
+    <h2 id={id} className="mb-5 flex items-center gap-3 font-display text-[1.75rem] text-foreground sm:text-4xl">
       {children}
-      <span className="rounded-full bg-surface-secondary px-2.5 py-0.5 text-sm font-semibold text-muted">
+      <span className="rounded-full bg-default px-3 py-1 font-mono text-sm font-semibold tracking-normal text-foreground">
         {count}
       </span>
     </h2>
@@ -171,7 +171,7 @@ function GroupTitle({ id, count, children }: { id: string; count: number; childr
 
 function ResultList({ children }: { children: React.ReactNode }) {
   return (
-    <ul className="flex flex-col divide-y divide-separator overflow-hidden rounded-2xl border border-border bg-surface">
+    <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {children}
     </ul>
   );
@@ -183,9 +183,9 @@ function ResultLink({ href, title, meta }: { href: string; title: string; meta: 
     <li>
       <Link
         href={href}
-        className="flex flex-col gap-1 px-5 py-4 transition-colors hover:bg-surface-secondary focus-visible:-outline-offset-2"
+        className="surface-card hover-lift flex h-full flex-col gap-1.5 rounded-3xl p-5 sm:p-6"
       >
-        <span className="font-semibold text-foreground">{title}</span>
+        <span className="text-lg font-bold tracking-tight text-foreground">{title}</span>
         {meta.filter(Boolean).length > 0 && (
           <span className="flex flex-wrap gap-x-4 gap-y-0.5 text-sm text-muted">
             {meta.filter(Boolean).map((part) => (

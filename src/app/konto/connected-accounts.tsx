@@ -111,11 +111,11 @@ export function ConnectedAccounts({
       {loading ? (
         <p className="text-sm text-muted">Verknüpfungen werden geladen …</p>
       ) : (
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border px-4 py-3">
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-surface-secondary px-4 py-3">
           <div className="flex items-center gap-3">
             <span
               aria-hidden="true"
-              className="grid size-9 place-items-center rounded-full bg-surface-secondary text-foreground"
+              className="grid size-9 place-items-center rounded-xl bg-surface text-foreground"
             >
               <Icon icon={DiscordIcon} />
             </span>

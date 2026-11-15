@@ -37,18 +37,19 @@ export function StreamConsentDialog({
   return (
     <AlertDialog.Backdrop isOpen={open} onOpenChange={(next) => !next && onDecline()}>
       <AlertDialog.Container>
-        <AlertDialog.Dialog className="sm:max-w-[30rem]">
+        <AlertDialog.Dialog className="rounded-[2rem] p-6 sm:max-w-[32rem] sm:p-8">
           <AlertDialog.Header>
-            <AlertDialog.Icon status="accent">
+            {/* Gelbe Kachel mit Tinte, wie die Symbole auf den Seiten. */}
+            <AlertDialog.Icon status="accent" className="size-12 rounded-2xl bg-volt text-lg text-ink">
               <Icon icon={isRedirect ? ExternalLinkIcon : RadioIcon} />
             </AlertDialog.Icon>
-            <AlertDialog.Heading className="font-wide">
+            <AlertDialog.Heading className="mt-1 font-display text-[1.75rem] leading-[1.05] text-balance text-foreground">
               {isRedirect ? "Weiter zum Webplayer" : `Livestream von ${radio.providerName} laden?`}
             </AlertDialog.Heading>
           </AlertDialog.Header>
 
-          <AlertDialog.Body className="flex flex-col gap-4 text-sm leading-relaxed">
-            <p>
+          <AlertDialog.Body className="mt-3 flex flex-col gap-4 text-sm leading-relaxed">
+            <p className="text-base text-foreground">
               {isRedirect ? (
                 <>
                   Gehört wird im Webplayer von {radio.externalName}, einem privaten
@@ -66,7 +67,7 @@ export function StreamConsentDialog({
               )}
             </p>
 
-            <ul className="flex list-disc flex-col gap-1.5 pl-5 text-muted">
+            <ul className="flex list-disc flex-col gap-1.5 rounded-2xl bg-surface-secondary py-4 pr-4 pl-9 text-muted marker:text-accent-text">
               {isRedirect ? (
                 <>
                   <li>
@@ -86,8 +87,8 @@ export function StreamConsentDialog({
               )}
             </ul>
 
-            <p className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
-              <Link href="/datenschutz" className="rounded-sm underline underline-offset-4">
+            <p className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
+              <Link href="/datenschutz" className="rounded-sm underline underline-offset-4 hover:text-foreground">
                 Unsere Datenschutzerklärung
               </Link>
               {isRedirect && (
@@ -95,7 +96,7 @@ export function StreamConsentDialog({
                   href={radio.externalPrivacyUrl}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="inline-flex items-center gap-1 rounded-sm underline underline-offset-4"
+                  className="inline-flex items-center gap-1 rounded-sm underline underline-offset-4 hover:text-foreground"
                 >
                   Datenschutz bei {radio.externalName}
                   <Icon icon={ExternalLinkIcon} className="text-[0.7em]" />
@@ -105,7 +106,7 @@ export function StreamConsentDialog({
                 href={radio.providerPrivacyUrl}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="inline-flex items-center gap-1 rounded-sm underline underline-offset-4"
+                className="inline-flex items-center gap-1 rounded-sm underline underline-offset-4 hover:text-foreground"
               >
                 Datenschutz bei {radio.providerName}
                 <Icon icon={ExternalLinkIcon} className="text-[0.7em]" />
@@ -121,7 +122,7 @@ export function StreamConsentDialog({
             )}
           </AlertDialog.Body>
 
-          <AlertDialog.Footer>
+          <AlertDialog.Footer className="mt-6">
             <Button variant="tertiary" onPress={onDecline}>
               Abbrechen
             </Button>

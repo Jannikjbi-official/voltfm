@@ -33,29 +33,25 @@ export function SearchForm({ initialQuery }: { initialQuery: string }) {
   }, []);
 
   return (
-    <form action="/suche" method="get" role="search" className="max-w-2xl">
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <div className="relative min-w-0 flex-1">
-          <Icon
-            icon={SearchIcon}
-            className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-sm text-muted"
-          />
-          <input
-            ref={inputRef}
-            type="search"
-            name="q"
-            defaultValue={initialQuery}
-            placeholder="News, Events, Moderatoren …"
-            aria-label="Suchbegriff"
-            autoFocus={!initialQuery}
-            className="input h-12 w-full pl-10 text-base"
-          />
-        </div>
-        <Button type="submit" variant="primary" size="lg" className="h-12">
+    <form action="/suche" method="get" role="search" className="max-w-3xl">
+      {/* Eine Suchleiste wie in einer App: Feld und Knopf in einer Pille. */}
+      <div className="surface-card flex items-center gap-2 rounded-full p-1.5 pl-5 transition-shadow focus-within:shadow-[var(--lift-shadow)] focus-within:ring-2 focus-within:ring-[var(--focus)]">
+        <Icon icon={SearchIcon} className="pointer-events-none shrink-0 text-base text-muted" />
+        <input
+          ref={inputRef}
+          type="search"
+          name="q"
+          defaultValue={initialQuery}
+          placeholder="News, Events, Moderatoren …"
+          aria-label="Suchbegriff"
+          autoFocus={!initialQuery}
+          className="h-12 min-w-0 flex-1 bg-transparent text-base text-foreground outline-none placeholder:text-field-placeholder sm:h-14 sm:text-lg"
+        />
+        <Button type="submit" variant="primary" size="lg" className="h-12 shrink-0 sm:h-14 sm:px-7">
           Suchen
         </Button>
       </div>
-      <p className="mt-3 hidden text-sm text-muted sm:block">
+      <p className="mt-3 hidden pl-5 text-sm text-muted sm:block">
         Tipp: Drück{" "}
         <Kbd>
           <Kbd.Content>/</Kbd.Content>

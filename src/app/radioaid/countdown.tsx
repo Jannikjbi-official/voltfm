@@ -51,7 +51,7 @@ export function Countdown({
           className="mt-2 size-3.5 shrink-0 rounded-full bg-volt animate-[vfm-pulse_2s_ease-in-out_infinite] motion-reduce:animate-none"
         />
         <div className="flex flex-col items-start gap-3">
-          <p className="font-display text-3xl leading-tight text-foreground sm:text-4xl">
+          <p className="font-display text-[2.1rem] text-balance text-foreground sm:text-5xl">
             Die Sendung läuft
           </p>
           <p className="leading-relaxed text-muted">
@@ -71,13 +71,13 @@ export function Countdown({
 
   if (phase === "over") {
     return (
-      <div className="flex flex-col items-start gap-3">
-        <p className="font-display text-3xl leading-tight text-foreground">Die Sendung ist vorbei</p>
-        <p className="leading-relaxed text-muted">
+      <div className="flex flex-col items-start gap-4">
+        <p className="font-display text-[2.1rem] text-balance text-foreground sm:text-5xl">Die Sendung ist vorbei</p>
+        <p className="max-w-xl text-lg leading-relaxed text-muted">
           Danke an alle, die zugehört und gespendet haben. Die nächste Ausgabe
           kommt in einem Jahr — sobald der Termin steht, findest du ihn hier.
         </p>
-        <Button variant="outline" onPress={openStream}>
+        <Button variant="tertiary" onPress={openStream} className="mt-2">
           <Icon icon={PlayIcon} />
           Jetzt hören
           <Icon icon={ExternalLinkIcon} />
@@ -108,15 +108,15 @@ export function Countdown({
 
   return (
     <div className="flex min-w-0 flex-col gap-4">
-      <p className="font-wide text-base font-bold text-foreground">{label}</p>
+      <p className="text-sm font-semibold text-muted">{label}</p>
       {/* Ziffern ohne Animation: Sie zaehlen still herunter. */}
       <div className="grid grid-cols-4 gap-2 sm:gap-3" role="timer" aria-live="off">
         {units.map((unit) => (
           <div
             key={unit.label}
-            className="flex flex-col items-center gap-1 rounded-2xl bg-surface-secondary px-1 py-4 sm:py-5"
+            className="flex flex-col items-center gap-2 rounded-2xl bg-default px-1 py-5 sm:py-7"
           >
-            <span className="font-display text-3xl leading-none tabular-nums text-foreground sm:text-5xl">
+            <span className="font-display text-3xl leading-none tabular-nums text-foreground sm:text-6xl">
               {unit.value}
             </span>
             <span className="text-xs text-muted sm:text-sm">{unit.label}</span>

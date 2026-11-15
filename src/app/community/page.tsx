@@ -64,7 +64,7 @@ export default async function CommunityPage() {
               <Icon icon={DiscordIcon} />
               Discord beitreten
             </ButtonLink>
-            <ButtonLink href={site.instagramUrl} external variant="outline">
+            <ButtonLink href={site.instagramUrl} external variant="tertiary">
               <Icon icon={InstagramIcon} />
               Instagram
             </ButtonLink>
@@ -72,11 +72,11 @@ export default async function CommunityPage() {
         }
       />
 
-      {/* --- Discord: ein deutliches Band, keine Karte ---------------------- */}
-      <section className="shell pt-14 sm:pt-20">
+      {/* --- Discord: die grosse dunkle Karte ------------------------------- */}
+      <section className="shell">
         <div
           data-theme="dark"
-          className="dark relative overflow-hidden rounded-3xl border border-border bg-ink px-6 py-10 text-foreground sm:px-12 sm:py-14"
+          className="dark relative overflow-hidden rounded-[2rem] border border-border bg-surface px-7 py-10 text-foreground shadow-[var(--lift-shadow)] sm:px-12 sm:py-14"
         >
           <span
             aria-hidden="true"
@@ -84,7 +84,7 @@ export default async function CommunityPage() {
           >
             <Icon icon={DiscordIcon} />
           </span>
-          <h2 className="mt-6 max-w-2xl font-display text-3xl leading-[1.02] text-balance sm:text-5xl">
+          <h2 className="mt-6 max-w-2xl font-display text-[2.2rem] text-balance text-volt sm:text-6xl">
             Alles passiert im Discord.
           </h2>
           <p className="mt-4 max-w-xl text-lg leading-relaxed text-paper/75">
@@ -100,27 +100,27 @@ export default async function CommunityPage() {
       </section>
 
       {/* --- Wege, dabei zu sein --------------------------------------------- */}
-      <section className="shell py-14 sm:py-20">
+      <section className="shell pt-16 sm:pt-24">
         <SectionHeader title="So bist du dabei" />
 
         <ul className="grid gap-4 sm:grid-cols-2">
           {WAYS.map((way) => (
             <li
               key={way.title}
-              className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-6 sm:p-7"
+              className="surface-card hover-lift flex flex-col gap-3 rounded-3xl p-6 sm:p-8"
             >
               <span
                 aria-hidden="true"
-                className="grid size-11 place-items-center rounded-full bg-surface-secondary text-lg text-foreground"
+                className="grid size-12 place-items-center rounded-2xl bg-default text-lg text-foreground"
               >
                 <Icon icon={way.icon} />
               </span>
-              <h3 className="mt-2 font-wide text-xl font-bold text-foreground">{way.title}</h3>
+              <h3 className="mt-2 text-xl font-bold tracking-tight text-foreground sm:text-2xl">{way.title}</h3>
               <p className="text-pretty leading-relaxed text-muted">{way.text}</p>
               {way.link && (
                 <Link
                   href={way.link.href}
-                  className="mt-auto self-start rounded-sm pt-2 text-sm font-semibold text-foreground underline decoration-accent-text decoration-2 underline-offset-4 hover:decoration-foreground"
+                  className="mt-auto self-start rounded-full bg-default px-4 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-volt hover:text-ink"
                 >
                   {way.link.label}
                 </Link>
@@ -131,36 +131,34 @@ export default async function CommunityPage() {
       </section>
 
       {/* --- Termine --------------------------------------------------------- */}
-      <section className="border-y border-separator bg-surface-secondary/50">
-        <div className="shell py-14 sm:py-20">
-          <SectionHeader title="Als Nächstes" action={{ href: "/events", label: "Alle Events" }} />
+      <section className="shell pt-16 sm:pt-24">
+        <SectionHeader title="Als Nächstes" action={{ href: "/events", label: "Alle Events" }} />
 
-          {events.length > 0 ? (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {events.slice(0, 3).map((event) => (
-                <EventCard key={event.id} event={event} />
-              ))}
-            </div>
-          ) : (
-            <EmptyState
-              title="Gerade ist nichts geplant"
-              description="Neue Termine kündigen wir zuerst im Discord an."
-            />
-          )}
-        </div>
+        {events.length > 0 ? (
+          <div className="-mx-3 grid gap-2 md:grid-cols-2 lg:grid-cols-3">
+            {events.slice(0, 3).map((event) => (
+              <EventCard key={event.id} event={event} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            title="Gerade ist nichts geplant"
+            description="Neue Termine kündigen wir zuerst im Discord an."
+          />
+        )}
       </section>
 
       {/* --- Direkt an uns --------------------------------------------------- */}
-      <section className="shell pt-14 sm:pt-20">
-        <div className="flex flex-col gap-6 rounded-3xl border border-border bg-surface p-6 sm:flex-row sm:items-center sm:justify-between sm:p-10">
+      <section className="shell pt-16 sm:pt-24">
+        <div className="surface-card flex flex-col gap-6 rounded-[2rem] p-7 sm:flex-row sm:items-center sm:justify-between sm:p-10">
           <div className="max-w-xl">
-            <h2 className="font-wide text-2xl font-bold text-foreground">Lieber direkt an uns?</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-foreground">Lieber direkt an uns?</h2>
             <p className="mt-2 leading-relaxed text-muted">
               Für alles, was nicht in den Discord gehört: Feedback, Kooperationen,
               Presseanfragen oder einfach eine Nachricht an uns.
             </p>
           </div>
-          <ButtonLink href="/kontakt" variant="outline" className="shrink-0">
+          <ButtonLink href="/kontakt" variant="tertiary" className="shrink-0">
             Kontakt aufnehmen
           </ButtonLink>
         </div>

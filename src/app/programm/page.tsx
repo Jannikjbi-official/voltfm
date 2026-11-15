@@ -16,7 +16,7 @@ import {
 import { listHosts, listShows } from "@/services/content";
 import { formatTime } from "@/lib/format";
 import { features, site } from "@/lib/site";
-import { Icon, DiscordIcon, ClockIcon } from "@/lib/icons";
+import { Icon, DiscordIcon, ClockIcon, BoltIcon } from "@/lib/icons";
 
 export const metadata: Metadata = {
   title: "Programm",
@@ -46,40 +46,54 @@ function SchedulePaused() {
         size="large"
       />
 
-      <section className="shell py-14 sm:py-20">
-        <div className="flex max-w-3xl flex-col items-start gap-5 rounded-3xl border border-border bg-surface p-6 sm:p-10">
-          <span
-            className="grid size-12 place-items-center rounded-full bg-surface-secondary text-xl text-foreground"
-            aria-hidden="true"
+      <section className="shell">
+        <div className="grid gap-3 lg:grid-cols-12">
+          <div
+            data-theme="dark"
+            className="dark flex flex-col items-start gap-5 rounded-[2rem] border border-border bg-surface p-7 text-foreground shadow-[var(--lift-shadow)] sm:p-12 lg:col-span-7"
           >
-            <Icon icon={ClockIcon} />
-          </span>
+            <span
+              className="grid size-12 place-items-center rounded-2xl bg-volt text-xl text-ink"
+              aria-hidden="true"
+            >
+              <Icon icon={ClockIcon} />
+            </span>
 
-          <h2 className="font-display text-2xl leading-tight text-foreground sm:text-3xl">
-            Warum gerade kein Sendeplan?
-          </h2>
+            <h2 className="font-display text-[2.1rem] text-balance text-foreground sm:text-5xl">
+              Warum gerade kein Sendeplan?
+            </h2>
 
-          <p className="text-lg leading-relaxed text-muted">
-            Unser Programm liegt derzeit als eine durchlaufende Playlist bei
-            laut.fm. Damit lassen sich feste Sendezeiten nicht verlässlich
-            zusagen — und ein Sendeplan, der nicht stimmt, ist schlechter als
-            gar keiner.
-          </p>
+            <p className="text-lg leading-relaxed text-muted">
+              Unser Programm liegt derzeit als eine durchlaufende Playlist bei
+              laut.fm. Damit lassen sich feste Sendezeiten nicht verlässlich
+              zusagen — und ein Sendeplan, der nicht stimmt, ist schlechter als
+              gar keiner.
+            </p>
+          </div>
 
-          <p className="text-lg leading-relaxed text-muted">
-            Sobald wir einen eigenen Sendeserver haben, kommt er zurück: mit
-            festen Sendungen, Moderation zu festen Zeiten und Songwünschen, die
-            tatsächlich in der laufenden Sendung landen.
-          </p>
+          <div className="surface-card flex flex-col items-start gap-5 rounded-[2rem] p-7 sm:p-10 lg:col-span-5">
+            <span
+              className="grid size-12 place-items-center rounded-2xl bg-default text-xl text-foreground"
+              aria-hidden="true"
+            >
+              <Icon icon={BoltIcon} />
+            </span>
 
-          <div className="mt-2 flex flex-wrap gap-3">
-            <ButtonLink href="/radio" variant="primary">
-              Jetzt live hören
-            </ButtonLink>
-            <ButtonLink href={site.discordUrl} external variant="outline">
-              <Icon icon={DiscordIcon} />
-              Im Discord auf dem Laufenden bleiben
-            </ButtonLink>
+            <p className="text-lg leading-relaxed text-foreground">
+              Sobald wir einen eigenen Sendeserver haben, kommt er zurück: mit
+              festen Sendungen, Moderation zu festen Zeiten und Songwünschen, die
+              tatsächlich in der laufenden Sendung landen.
+            </p>
+
+            <div className="mt-auto flex flex-wrap gap-3 pt-2">
+              <ButtonLink href="/radio" variant="primary">
+                Jetzt live hören
+              </ButtonLink>
+              <ButtonLink href={site.discordUrl} external variant="tertiary">
+                <Icon icon={DiscordIcon} />
+                Im Discord auf dem Laufenden bleiben
+              </ButtonLink>
+            </div>
           </div>
         </div>
       </section>
@@ -126,7 +140,7 @@ export default async function ProgrammPage() {
         }
       />
 
-      <section className="shell py-14 sm:py-20">
+      <section className="shell">
         {!hasSchedule ? (
           <EmptyState
             title="Der Sendeplan ist gerade nicht abrufbar"
@@ -138,7 +152,7 @@ export default async function ProgrammPage() {
             }
           />
         ) : (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3">
             {WEEK_ORDER.map((weekday) => {
               const day = grouped.find((d) => d.weekday === weekday);
               const slots = day?.slots ?? [];
@@ -149,12 +163,12 @@ export default async function ProgrammPage() {
                   key={weekday}
                   aria-labelledby={`day-${weekday}`}
                   className={cn(
-                    "grid gap-4 rounded-2xl border bg-surface p-5 sm:p-6 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-8",
-                    isToday ? "border-accent-text/50" : "border-border",
+                    "surface-card grid gap-4 rounded-3xl p-5 sm:p-7 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-8",
+                    isToday && "ring-2 ring-volt",
                   )}
                 >
                   <div className="flex items-center gap-3 md:flex-col md:items-start">
-                    <h2 id={`day-${weekday}`} className="font-wide text-xl font-bold text-foreground">
+                    <h2 id={`day-${weekday}`} className="text-xl font-bold tracking-tight text-foreground">
                       {WEEKDAY_LABELS[weekday]}
                     </h2>
                     {isToday && (
@@ -178,15 +192,15 @@ export default async function ProgrammPage() {
                             className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-4 py-4 first:pt-0 last:pb-0"
                           >
                             <div className="flex flex-col tabular-nums">
-                              <span className="font-wide text-lg font-bold text-foreground">
+                              <span className="font-mono text-base font-semibold text-foreground">
                                 {formatSlotStart(slot)}
                               </span>
-                              <span className="text-sm text-muted">{formatSlotEnd(slot)}</span>
+                              <span className="font-mono text-xs text-muted">{formatSlotEnd(slot)}</span>
                             </div>
 
                             <div className="flex min-w-0 flex-col gap-2">
                               <div className="flex flex-wrap items-center gap-3">
-                                <h3 className="font-wide text-lg font-bold text-foreground">
+                                <h3 className="text-lg font-bold tracking-tight text-foreground">
                                   {show?.title ?? slot.name}
                                 </h3>
                                 {onAir && (
