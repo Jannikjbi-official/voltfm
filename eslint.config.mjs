@@ -11,10 +11,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // Vendored OlyxUI component sources. These are installed verbatim from the
-    // OlyxUI registry and deliberately left unmodified, so linting them would
-    // only produce warnings we must not "fix".
-    "src/components/ui/**",
+    // Die HeroUI-Doku fuer Agenten (heroui agents-md) mit ihren Demo-Dateien.
+    ".heroui-docs/**",
   ]),
 ]);
 

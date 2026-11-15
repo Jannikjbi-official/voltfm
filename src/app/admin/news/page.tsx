@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { requireCan } from "@/lib/session";
 import Link from "next/link";
+import { cn } from "@heroui/react";
+import { requireCan } from "@/lib/session";
 
 import { ButtonLink } from "@/components/common/button-link";
 import { Icon, PlusIcon, EditIcon } from "@/lib/icons";
 import { adminListArticles } from "@/services/content";
 import { formatRelative } from "@/lib/format";
 import type { ArticleStatus } from "@/types/content";
-import styles from "../page.module.css";
-import listStyles from "./list.module.css";
+import { AdminPageHeader, ArticleStatusBadge } from "@/components/admin/admin-ui";
 
 export const metadata: Metadata = { title: "News · Admin", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -38,61 +38,70 @@ export default async function AdminNewsPage({
 
   return (
     <>
-      <header className={styles.header}>
-        <div>
-          <h1 className={styles.title}>News</h1>
-          <p className={styles.subtitle}>{items.length} Artikel</p>
-        </div>
-        <ButtonLink href="/admin/news/new" variant="primary" mode="filled" size="md">
-          <Icon icon={PlusIcon} />
-          Neuer Artikel
-        </ButtonLink>
-      </header>
+      <AdminPageHeader
+        title="News"
+        description={`${items.length} Artikel`}
+        actions={
+          <ButtonLink href="/admin/news/new" variant="primary">
+            <Icon icon={PlusIcon} />
+            Neuer Artikel
+          </ButtonLink>
+        }
+      />
 
-      <nav className={listStyles.filters} aria-label="Status filtern">
-        {FILTERS.map((filter) => (
-          <Link
-            key={filter.value}
-            href={filter.value === "all" ? "/admin/news" : `/admin/news?status=${filter.value}`}
-            className={listStyles.filter}
-            aria-current={
-              (filter.value === "all" && !active) || filter.value === active ? "page" : undefined
-            }
-          >
-            {filter.label}
-          </Link>
-        ))}
+      <nav aria-label="Status filtern" className="-mx-1 mb-6 flex gap-1.5 overflow-x-auto px-1 pb-1">
+        {FILTERS.map((filter) => {
+          const current = (filter.value === "all" && !active) || filter.value === active;
+          return (
+            <Link
+              key={filter.value}
+              href={filter.value === "all" ? "/admin/news" : `/admin/news?status=${filter.value}`}
+              aria-current={current ? "page" : undefined}
+              className={cn(
+                "shrink-0 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors",
+                current
+                  ? "border-transparent bg-foreground text-background"
+                  : "border-border text-muted hover:bg-default hover:text-foreground",
+              )}
+            >
+              {filter.label}
+            </Link>
+          );
+        })}
       </nav>
 
       {items.length === 0 ? (
-        <p className={styles.empty}>Keine Artikel in dieser Ansicht.</p>
+        <p className="rounded-2xl border border-dashed border-border px-6 py-10 text-center text-sm text-muted">
+          Keine Artikel in dieser Ansicht.
+        </p>
       ) : (
-        <ul className={listStyles.list} role="list">
+        <ul className="divide-y divide-separator rounded-2xl border border-border bg-surface">
           {items.map((article) => (
-            <li key={article.id} className={listStyles.row}>
-              <div className={listStyles.rowMain}>
-                <Link href={`/admin/news/${article.id}`} className={listStyles.rowTitle}>
+            <li
+              key={article.id}
+              className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:gap-4 sm:px-6"
+            >
+              <div className="min-w-0 flex-1">
+                <Link
+                  href={`/admin/news/${article.id}`}
+                  className="block truncate rounded-sm text-sm font-semibold text-foreground hover:underline hover:underline-offset-4"
+                >
                   {article.title}
                 </Link>
-                <span className={listStyles.rowMeta}>
-                  {article.categorySlug} · {article.authorName} ·{" "}
-                  {formatRelative(article.updatedAt)}
-                </span>
+                <p className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted">
+                  <span>{article.categorySlug}</span>
+                  <span>{article.authorName}</span>
+                  <span>{formatRelative(article.updatedAt)}</span>
+                </p>
               </div>
 
-              <span className={styles.status} data-status={article.status}>
-                {article.status}
-              </span>
-
-              <ButtonLink
-                href={`/admin/news/${article.id}`}
-                variant="neutral"
-                mode="ghost"
-                size="sm"
-              >
-                <Icon icon={EditIcon} />
-                Bearbeiten
-              </ButtonLink>
+              <div className="flex shrink-0 items-center gap-2">
+                <ArticleStatusBadge status={article.status} />
+                <ButtonLink href={`/admin/news/${article.id}`} variant="ghost" size="sm">
+                  <Icon icon={EditIcon} />
+                  Bearbeiten
+                </ButtonLink>
+              </div>
             </li>
           ))}
         </ul>

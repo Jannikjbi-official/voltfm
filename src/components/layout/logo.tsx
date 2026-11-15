@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { useId } from "react";
-import styles from "./logo.module.css";
 
 /*
  * Die Formen stammen unveraendert aus public/logo/voltfm-play-logo-*.svg. Sie
- * stehen hier inline statt als <img>, damit die Farben aus den Tokens kommen:
+ * stehen hier inline statt als <img>, damit die Farben aus den Tokens kommen
+ * (--logo-* in src/styles/theme.css):
  * im Dunkelmodus Gelb und Off-White wie in der Vorlage "dunkel", im Hellmodus
  * durchgehend dunkel wie in "auf-weiss".
  */
@@ -37,7 +37,7 @@ function PlayMark() {
           />
         </mask>
       </defs>
-      <path mask={`url(#${mask})`} d={PLAY} className={styles.mark} />
+      <path mask={`url(#${mask})`} d={PLAY} className="fill-[var(--logo-mark)]" />
     </>
   );
 }
@@ -58,8 +58,8 @@ export function LogoWordmark({ className }: { className?: string }) {
       <g transform="translate(-67.3828125,0) scale(0.44921875)">
         <PlayMark />
       </g>
-      <path d={VOLT} className={styles.word} />
-      <path d={FM} className={styles.accent} />
+      <path d={VOLT} className="fill-[var(--logo-word)]" />
+      <path d={FM} className="fill-[var(--logo-accent)]" />
     </svg>
   );
 }
@@ -70,8 +70,17 @@ export function LogoWordmark({ className }: { className?: string }) {
  */
 export function Logo({ compact = false }: { compact?: boolean }) {
   return (
-    <Link href="/" className={styles.logo} aria-label="VoltFM — zur Startseite">
-      {compact ? <LogoIcon className={styles.icon} /> : <LogoWordmark className={styles.wordmark} />}
+    <Link
+      href="/"
+      /* Zum Antippen hoeher als die Wortmarke selbst. */
+      className="inline-flex min-h-11 shrink-0 items-center rounded-md"
+      aria-label="VoltFM — zur Startseite"
+    >
+      {compact ? (
+        <LogoIcon className="block h-8 w-auto" />
+      ) : (
+        <LogoWordmark className="block h-[22px] w-auto min-[380px]:h-[26px]" />
+      )}
     </Link>
   );
 }

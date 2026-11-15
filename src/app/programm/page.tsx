@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/common/page-header";
 import { EmptyState } from "@/components/common/empty-state";
 import { ButtonLink } from "@/components/common/button-link";
-import { Badge } from "@/components/ui/badge";
+import { Chip, cn } from "@heroui/react";
 import { HostChip } from "@/components/common/host-card";
 import {
   getSchedule,
@@ -17,7 +17,6 @@ import { listHosts, listShows } from "@/services/content";
 import { formatTime } from "@/lib/format";
 import { features, site } from "@/lib/site";
 import { Icon, DiscordIcon, ClockIcon } from "@/lib/icons";
-import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Programm",
@@ -38,7 +37,6 @@ function SchedulePaused() {
   return (
     <>
       <PageHeader
-        eyebrow="Programm"
         title="Der Sendeplan macht gerade Pause"
         description="Wir senden weiter rund um die Uhr — nur eben ohne festen Plan."
         breadcrumbs={[
@@ -48,32 +46,37 @@ function SchedulePaused() {
         size="large"
       />
 
-      <section className="section shell">
-        <div className={styles.paused}>
-          <span className={styles.pausedIcon} aria-hidden="true">
+      <section className="shell py-14 sm:py-20">
+        <div className="flex max-w-3xl flex-col items-start gap-5 rounded-3xl border border-border bg-surface p-6 sm:p-10">
+          <span
+            className="grid size-12 place-items-center rounded-full bg-surface-secondary text-xl text-foreground"
+            aria-hidden="true"
+          >
             <Icon icon={ClockIcon} />
           </span>
 
-          <h2 className={styles.pausedTitle}>Warum gerade kein Sendeplan?</h2>
+          <h2 className="font-display text-2xl leading-tight text-foreground sm:text-3xl">
+            Warum gerade kein Sendeplan?
+          </h2>
 
-          <p className={styles.pausedText}>
+          <p className="text-lg leading-relaxed text-muted">
             Unser Programm liegt derzeit als eine durchlaufende Playlist bei
             laut.fm. Damit lassen sich feste Sendezeiten nicht verlässlich
             zusagen — und ein Sendeplan, der nicht stimmt, ist schlechter als
             gar keiner.
           </p>
 
-          <p className={styles.pausedText}>
+          <p className="text-lg leading-relaxed text-muted">
             Sobald wir einen eigenen Sendeserver haben, kommt er zurück: mit
             festen Sendungen, Moderation zu festen Zeiten und Songwünschen, die
             tatsächlich in der laufenden Sendung landen.
           </p>
 
-          <div className={styles.pausedActions}>
-            <ButtonLink href="/radio" variant="primary" mode="filled" size="md">
+          <div className="mt-2 flex flex-wrap gap-3">
+            <ButtonLink href="/radio" variant="primary">
               Jetzt live hören
             </ButtonLink>
-            <ButtonLink href={site.discordUrl} external variant="neutral" mode="stroke" size="md">
+            <ButtonLink href={site.discordUrl} external variant="outline">
               <Icon icon={DiscordIcon} />
               Im Discord auf dem Laufenden bleiben
             </ButtonLink>
@@ -109,7 +112,6 @@ export default async function ProgrammPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Sendeplan"
         title="Das Programm"
         description="Der Sendeplan kommt direkt aus unserem Sendesystem und ist damit immer aktuell. Zwischen den Sendungen läuft durchgehend Musik."
         breadcrumbs={[
@@ -118,25 +120,25 @@ export default async function ProgrammPage() {
         ]}
         size="large"
         aside={
-          <ButtonLink href="/radio" variant="primary" mode="filled" size="md">
+          <ButtonLink href="/radio" variant="primary">
             Jetzt live hören
           </ButtonLink>
         }
       />
 
-      <section className="section shell">
+      <section className="shell py-14 sm:py-20">
         {!hasSchedule ? (
           <EmptyState
             title="Der Sendeplan ist gerade nicht abrufbar"
             description="Die Verbindung zu unserem Sendesystem steht kurzzeitig nicht. Der Livestream läuft davon unabhängig weiter."
             action={
-              <ButtonLink href="/radio" variant="primary" mode="filled" size="sm">
+              <ButtonLink href="/radio" variant="primary" size="sm">
                 Zum Player
               </ButtonLink>
             }
           />
         ) : (
-          <div className={styles.week}>
+          <div className="flex flex-col gap-4">
             {WEEK_ORDER.map((weekday) => {
               const day = grouped.find((d) => d.weekday === weekday);
               const slots = day?.slots ?? [];
@@ -145,27 +147,27 @@ export default async function ProgrammPage() {
               return (
                 <section
                   key={weekday}
-                  className={styles.day}
-                  data-today={isToday}
                   aria-labelledby={`day-${weekday}`}
+                  className={cn(
+                    "grid gap-4 rounded-2xl border bg-surface p-5 sm:p-6 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-8",
+                    isToday ? "border-accent-text/50" : "border-border",
+                  )}
                 >
-                  <div className={styles.dayHead}>
-                    <h2 id={`day-${weekday}`} className={styles.dayTitle}>
+                  <div className="flex items-center gap-3 md:flex-col md:items-start">
+                    <h2 id={`day-${weekday}`} className="font-wide text-xl font-bold text-foreground">
                       {WEEKDAY_LABELS[weekday]}
                     </h2>
                     {isToday && (
-                      <Badge mode="filled" size="sm">
+                      <Chip color="accent" variant="primary" size="sm">
                         Heute
-                      </Badge>
+                      </Chip>
                     )}
                   </div>
 
                   {slots.length === 0 ? (
-                    <p className={styles.dayEmpty}>
-                      Durchgehend Musik — keine moderierte Sendung.
-                    </p>
+                    <p className="text-muted">Durchgehend Musik — keine moderierte Sendung.</p>
                   ) : (
-                    <ol className={styles.slots} role="list">
+                    <ol className="flex flex-col divide-y divide-separator">
                       {slots.map((slot) => {
                         const show = showByName.get(slot.name.toLowerCase());
                         const onAir = isToday && current?.name === slot.name;
@@ -173,37 +175,39 @@ export default async function ProgrammPage() {
                         return (
                           <li
                             key={`${slot.id}-${slot.startHour}`}
-                            className={styles.slot}
-                            data-onair={onAir}
+                            className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-4 py-4 first:pt-0 last:pb-0"
                           >
-                            <div className={styles.slotTime}>
-                              <span className={styles.slotStart}>
+                            <div className="flex flex-col tabular-nums">
+                              <span className="font-wide text-lg font-bold text-foreground">
                                 {formatSlotStart(slot)}
                               </span>
-                              <span className={styles.slotEnd}>{formatSlotEnd(slot)}</span>
+                              <span className="text-sm text-muted">{formatSlotEnd(slot)}</span>
                             </div>
 
-                            <div className={styles.slotBody}>
-                              <div className={styles.slotTitleRow}>
-                                <h3 className={styles.slotTitle}>
+                            <div className="flex min-w-0 flex-col gap-2">
+                              <div className="flex flex-wrap items-center gap-3">
+                                <h3 className="font-wide text-lg font-bold text-foreground">
                                   {show?.title ?? slot.name}
                                 </h3>
                                 {onAir && (
-                                  <span className={styles.onAir}>
-                                    <span className={styles.onAirDot} aria-hidden="true" />
+                                  <span className="inline-flex items-center gap-2 rounded-full bg-volt px-2.5 py-0.5 text-xs font-bold text-ink">
+                                    <span
+                                      aria-hidden="true"
+                                      className="size-1.5 rounded-full bg-ink animate-[vfm-pulse_2s_ease-in-out_infinite] motion-reduce:animate-none"
+                                    />
                                     Auf Sendung
                                   </span>
                                 )}
                               </div>
 
                               {(show?.description || slot.description) && (
-                                <p className={styles.slotDescription}>
+                                <p className="leading-relaxed text-muted">
                                   {show?.description ?? slot.description}
                                 </p>
                               )}
 
                               {show && show.hostSlugs.length > 0 && (
-                                <div className={styles.slotHosts}>
+                                <div className="flex flex-wrap gap-2">
                                   {show.hostSlugs
                                     .map((hostSlug) => hostBySlug.get(hostSlug))
                                     .filter((host) => host !== undefined)
@@ -226,7 +230,7 @@ export default async function ProgrammPage() {
       </section>
 
       {current?.endsAt && (
-        <p className="visually-hidden" role="status">
+        <p className="sr-only" role="status">
           Aktuell läuft {current.name} bis {formatTime(current.endsAt)} Uhr.
         </p>
       )}

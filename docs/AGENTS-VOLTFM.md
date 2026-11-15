@@ -15,7 +15,7 @@ Nutzer — aber sag ihm vorher, welche Regel du dafür brichst.
 | --- | --- |
 | Framework | Next.js 16 (App Router, React 19, Server Actions) |
 | Sprache | TypeScript, `strict` |
-| UI | OlyxUI auf Base UI (`src/components/ui/**`) + CSS Modules |
+| UI | HeroUI v3 (`@heroui/react`) + Tailwind CSS 4, Theme in `src/styles/theme.css` |
 | Auth | Better Auth (Admin-, Username-, Passkey-, Discord-Plugin) |
 | Datenbank | MongoDB (Atlas), Zugriff nur über `src/db/collections.ts` |
 | Uploads | UploadThing, ausgeliefert über `/api/bilder/<kennung>` |
@@ -72,8 +72,8 @@ zwei Stellen zusammen:
 
 1. `RICH_TEXT_SANITIZE_OPTIONS` — `allowedTags`, `allowedAttributes`,
    `allowedClasses`
-2. `src/styles/editor-content.css` — wie es aussieht (global, weil CSS Modules
-   die Klassennamen sonst hashen würden)
+2. `src/styles/editor-content.css` — wie es aussieht (global, weil das HTML
+   aus der Datenbank keine Klassen der Seite kennt)
 
 Fehlt Schritt 1, verschwindet die Formatierung beim Speichern kommentarlos.
 
@@ -137,6 +137,10 @@ Nutzer darum bittet, weise auf § 6 Abs. 9 hin und biete den Schalter an.
 | Markdown → HTML → bereinigt | `src/lib/sanitize.ts`, `src/lib/markdown.ts` |
 | Bild als `<figure>` einfügen | `src/components/admin/image-dialog.tsx` |
 | Einzelnes Bildfeld (Upload) | `src/components/admin/image-upload.tsx` |
+| Link in Knopfoptik | `src/components/common/button-link.tsx` |
+| Seitenkopf, Abschnittskopf, leere Liste | `src/components/common/{page-header,section-header,empty-state}.tsx` |
+| Formularfelder für Server Actions | `src/components/common/form-field.tsx` |
+| Farben, Hell/Dunkel | `src/styles/theme.css` |
 | Typisierte Collection-Zugriffe | `src/db/collections.ts` |
 | Lesen für die öffentliche Seite | `src/services/content/**` |
 | Datum/Zeit formatieren | `src/lib/format.ts` |
@@ -184,17 +188,41 @@ definieren, `<EntityManager />` rendern. Kein eigenes Formular.
 
 ## 7. UI-Konventionen
 
-- **Keine Inline-Styles und keine Utility-Klassen.** CSS Modules neben der
-  Komponente, Werte aus den Design-Tokens (`var(--color-…)`, `var(--spacing-…)`,
-  `var(--type-…)`, `var(--radius-…)`).
-- Komponenten aus `src/components/ui/**` sind die OlyxUI-Bausteine. Sie werden
-  benutzt, nicht editiert, solange es nicht ausdrücklich darum geht.
-- Media Queries in einem CSS Module gelten für das **ganze Modul**. Wenn eine
-  Regel nur für eine Ansicht gilt, muss sie entsprechend verschachtelt werden.
-  (Genau das war der Fehler, durch den der Lautstärkeregler auch auf `/radio`
-  verschwand, obwohl nur die Sticky-Leiste gemeint war.)
-- Licht- und Dunkelmodus laufen über `data-theme` am `<html>`. Neue Farben
-  immer als Token, nie als Literal.
+- **HeroUI v3 + Tailwind CSS 4.** Komponenten aus `@heroui/react` mit der
+  Compound-API (`Card.Header`, `Drawer.Content`, `Modal.Backdrop` …). Die
+  Doku liegt lokal: Index in `docs/AGENTS-HEROUI.md`, Dateien unter
+  `.heroui-docs/react` (fehlen sie, `npx heroui-cli@latest agents-md --react
+  --output docs/AGENTS-HEROUI.md`). Lies die Doku, bevor du eine Komponente
+  benutzt — HeroUI v3 ist nicht HeroUI v2 aus deinem Trainingsstand.
+- **Gestaltet wird mit Tailwind-Klassen**, nicht mit CSS Modules. Farben,
+  Radien und Schatten kommen aus den Tokens in `src/styles/theme.css`
+  (`bg-surface`, `text-muted`, `border-border`, `bg-volt`, `text-accent-text`
+  …), nie als Literal. Inline-Styles nur, um eine dynamische CSS-Variable zu
+  setzen.
+- **Gelb ist eine Fläche mit Tinte darauf** (`bg-volt text-ink`). Gelbe Schrift
+  auf hellem Grund ist verboten; für Text in Senderfarbe gibt es
+  `text-accent-text` (hell: Bernstein, dunkel: Gelb). Auf der Startseite ist
+  die Discord-Fläche die einzige große gelbe Fläche.
+- Licht- und Dunkelmodus: `data-theme` **und** Klasse `dark`/`light` am
+  `<html>`, beide aus dem Cookie `voltfm-theme`. Dunkel ist Standard. Ein
+  Abschnitt mit `class="dark" data-theme="dark"` ist immer dunkel (Bühne,
+  Player-Leiste, Fehlerseiten).
+- Überschriften: `font-display` (Archivo breit 125 %, 800), kleinere
+  `font-wide`. Seitenbreite über die Utility `shell`.
+- **Nichts Templatehaftes:** keine Etiketten in Großbuchstaben über
+  Überschriften, keine „→“ an Links, keine Mittelpunkte zwischen
+  Metaangaben. Bewegung sparsam und mit `motion-reduce`.
+- **Formulare mit Server Actions** benutzen native Felder aus
+  `src/components/common/form-field.tsx` — sie landen im `FormData`, Label
+  und Hinweis hängen über eine gemeinsame ID am Feld.
+- Links, die wie Knöpfe aussehen: `ButtonLink` (echter Link mit
+  `buttonVariants`). React-Aria-Links (Brotkrumen, Menüeinträge mit `href`)
+  laufen über den `RouterProvider` in `src/components/layout/providers.tsx`.
+- HTML aus der Datenbank bekommt `className="vfm-prose"` (global in
+  `src/styles/prose.css`); die Editor-Klassen stehen in
+  `src/styles/editor-content.css`.
+- Was nur der Browser weiß (Sitzung, localStorage), wird erst nach dem
+  Hydrieren angezeigt — vorher ein Platzhalter.
 - Texte sind deutsch, Du-Form, ohne Ausrufezeichen-Ton. Typografische
   Anführungszeichen im JSX als `&bdquo;` / `&ldquo;` — ESLint
   (`react/no-unescaped-entities`) besteht darauf.

@@ -1,16 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@heroui/react";
 import { Icon, ShareIcon, CopyIcon, CheckIcon } from "@/lib/icons";
-import styles from "./share-buttons.module.css";
 
 /**
- * Share row for an article.
+ * Teilen-Zeile unter einem Artikel.
  *
- * Prefers the native share sheet where the browser offers one (that is what
- * people expect on a phone), and falls back to copying the link everywhere
- * else. No third-party share widgets, so no tracking scripts.
+ * Nimmt das Teilen-Menue des Geraets, wo der Browser eines anbietet (das
+ * erwartet man am Handy), und kopiert sonst den Link. Keine fremden
+ * Teilen-Knoepfe, also keine Tracking-Skripte.
  */
 export function ShareButtons({ url, title }: { url: string; title: string }) {
   const [copied, setCopied] = useState(false);
@@ -21,7 +20,7 @@ export function ShareButtons({ url, title }: { url: string; title: string }) {
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Clipboard blocked — the URL is in the address bar anyway.
+      // Zwischenablage gesperrt — die Adresse steht ohnehin oben im Browser.
     }
   }
 
@@ -33,23 +32,26 @@ export function ShareButtons({ url, title }: { url: string; title: string }) {
     try {
       await navigator.share({ title, url });
     } catch {
-      // The user dismissed the sheet; nothing to report.
+      // Menue geschlossen, nichts zu melden.
     }
   }
 
   return (
-    <div className={styles.share}>
-      <span className={styles.label}>Artikel teilen</span>
-      <div className={styles.actions}>
-        <Button variant="neutral" mode="stroke" size="sm" onClick={handleShare}>
+    <div className="mt-12 flex flex-wrap items-center justify-between gap-3 border-t border-separator pt-6">
+      <span className="font-wide text-sm font-semibold text-foreground">Artikel teilen</span>
+      <div className="flex flex-wrap gap-2">
+        <Button variant="outline" size="sm" onPress={handleShare}>
           <Icon icon={ShareIcon} />
           Teilen
         </Button>
-        <Button variant="neutral" mode="ghost" size="sm" onClick={handleCopy}>
+        <Button variant="ghost" size="sm" onPress={handleCopy}>
           <Icon icon={copied ? CheckIcon : CopyIcon} />
           {copied ? "Link kopiert" : "Link kopieren"}
         </Button>
       </div>
+      <span className="sr-only" role="status" aria-live="polite">
+        {copied ? "Link kopiert" : ""}
+      </span>
     </div>
   );
 }

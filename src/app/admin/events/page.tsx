@@ -5,7 +5,7 @@ import { formatDateTime, toStationTimeInput } from "@/lib/format";
 import { EntityManager } from "@/components/admin/entity-manager";
 import type { EntityRow, FieldDef } from "@/components/admin/entity-types";
 import { saveEvent, deleteEvent } from "./actions";
-import styles from "../page.module.css";
+import { AdminPageHeader } from "@/components/admin/admin-ui";
 
 export const metadata: Metadata = { title: "Events · Admin", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -73,7 +73,7 @@ export default async function Page() {
   const rows: EntityRow[] = items.map((item) => ({
     id: item.id,
     title: item.title,
-    meta: `${formatDateTime(item.startsAt)} · ${item.location}`,
+    meta: `${formatDateTime(item.startsAt)}, ${item.location}`,
     badge: STATUS_LABELS[item.status] ?? item.status,
     values: {
       title: item.title,
@@ -93,12 +93,10 @@ export default async function Page() {
 
   return (
     <>
-      <header className={styles.header}>
-        <div>
-          <h1 className={styles.title}>Events</h1>
-          <p className={styles.subtitle}>Alle Termine, kommende und vergangene.</p>
-        </div>
-      </header>
+      <AdminPageHeader
+        title="Events"
+        description="Alle Termine, kommende und vergangene."
+      />
 
       <EntityManager
         rows={rows}

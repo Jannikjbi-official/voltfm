@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/common/page-header";
 import { operator, site } from "@/lib/site";
-import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Impressum",
@@ -20,15 +19,15 @@ export default function ImpressumPage() {
         ]}
       />
 
-      <section className="section shell">
-        <div className={styles.prose}>
+      <section className="shell py-14 sm:py-20">
+        <div className="vfm-prose max-w-[68ch]">
           <h2>Angaben gemäß § 5 DDG</h2>
           <p>
             VoltFM ist ein nicht-kommerzielles, privates Webradio-Projekt.
             <br />
             Es wird betrieben von:
           </p>
-          <address className={styles.address}>
+          <address className="rounded-2xl bg-surface-secondary px-5 py-4 not-italic leading-relaxed">
             {operator.name}
             <br />
             {operator.street}
@@ -47,7 +46,7 @@ export default function ImpressumPage() {
             Discord: <a href={site.discordUrl}>{site.discordUrl}</a>
           </p>
           {site.mailOutage && (
-            <p className={styles.note}>
+            <p className="rounded-2xl border border-border bg-surface px-5 py-4 text-[0.9375rem] leading-relaxed">
               <strong>Hinweis zur Erreichbarkeit:</strong> Unser Mailserver für die
               Adressen auf den Domains voltfm.xyz und jannikjbi.de ist derzeit
               ausgefallen. Nachrichten an {site.stationEmail} oder{" "}
@@ -58,7 +57,7 @@ export default function ImpressumPage() {
           )}
 
           <h2>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
-          <address className={styles.address}>
+          <address className="rounded-2xl bg-surface-secondary px-5 py-4 not-italic leading-relaxed">
             {operator.name}
             <br />
             {operator.street}

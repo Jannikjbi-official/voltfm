@@ -5,7 +5,9 @@ import Image from "next/image";
 
 import { ButtonLink } from "@/components/common/button-link";
 import { LogoIcon } from "@/components/layout/logo";
-import { Icon, ChevronRightIcon, ClockIcon, ExternalLinkIcon } from "@/lib/icons";
+import { Chip, cn } from "@heroui/react";
+import { Breadcrumbs } from "@/components/common/breadcrumbs";
+import { Icon, ClockIcon, ExternalLinkIcon } from "@/lib/icons";
 import {
   getHostBySlug,
   getShowsBySlugs,
@@ -21,7 +23,6 @@ import { imageHue } from "@/services/images/hue";
 import { WEEKDAY_LABELS } from "@/services/radio/schedule";
 import { formatDate, formatMonthYear, formatReadingTime } from "@/lib/format";
 import { site } from "@/lib/site";
-import styles from "./page.module.css";
 
 type Params = { slug: string };
 
@@ -63,6 +64,42 @@ export const revalidate = 3600;
  * Profilbild gelesen. Der Inhalt ist in allen Aufbauten derselbe und kommt
  * vollstaendig aus dem Profil — was dort leer ist, erscheint hier nicht.
  */
+/**
+ * Die Personenfarbe. Die Seite setzt nur den Farbton (--host-hue, inline als
+ * Variable); Helligkeit und Buntheit stehen hier fest, damit jede Schrift auf
+ * jeder Flaeche den WCAG-AA-Kontrast haelt — egal, welchen Ton jemand waehlt.
+ * Ohne eigenen Ton gilt 95, der Farbton des Sendergelbs.
+ *
+ *   --host-accent   Linien und Kanten
+ *   --host-ink      Schrift in Personenfarbe auf dem Seitengrund
+ *   --host-soft     getoenter Grund hinter normaler Schrift
+ *   --host-deep     kraeftige Flaeche hinter heller Schrift (--host-on-deep)
+ */
+const HOST_TOKENS = cn(
+  "[--host-hue:95]",
+  "[--host-accent:oklch(0.56_0.11_var(--host-hue))]",
+  "[--host-ink:oklch(0.45_0.1_var(--host-hue))]",
+  "[--host-soft:oklch(0.94_0.025_var(--host-hue))]",
+  "[--host-deep:oklch(0.36_0.08_var(--host-hue))]",
+  "[--host-on-deep:oklch(0.98_0.01_var(--host-hue))]",
+  "dark:[--host-accent:oklch(0.68_0.1_var(--host-hue))]",
+  "dark:[--host-ink:oklch(0.8_0.08_var(--host-hue))]",
+  "dark:[--host-soft:oklch(0.19_0.025_var(--host-hue))]",
+  "dark:[--host-deep:oklch(0.32_0.07_var(--host-hue))]",
+);
+
+/**
+ * Ein Moderatorenprofil.
+ *
+ * Jede Person bekommt ihren eigenen Aufbau (`profileLayout`, im Admin
+ * waehlbar) und ihre eigene Farbe: entweder im Admin gesetzt oder aus dem
+ * Profilbild gelesen. Der Inhalt ist in allen Aufbauten derselbe und kommt
+ * vollstaendig aus dem Profil — was dort leer ist, erscheint hier nicht.
+ *
+ *   buehne — getoentes Band, grosses rundes Bild, Name daneben
+ *   poster — Bild randlos neben einer Flaeche in Personenfarbe
+ *   karte  — wie ein Discord-Profil: Banner, Bild darueber, alles auf einer Karte
+ */
 export default async function HostPage({ params }: { params: Promise<Params> }) {
   const { slug } = await params;
   const host = await getHostBySlug(slug);
@@ -94,7 +131,7 @@ export default async function HostPage({ params }: { params: Promise<Params> }) 
   const layout = host.profileLayout ?? "buehne";
 
   return (
-    <div className={styles.page} data-layout={layout} style={hueStyle}>
+    <div data-layout={layout} style={hueStyle} className={cn(HOST_TOKENS, "pb-4")}>
       {layout === "karte" ? (
         <ProfileCard host={host} image={image} facts={facts} />
       ) : (
@@ -104,9 +141,14 @@ export default async function HostPage({ params }: { params: Promise<Params> }) 
           ) : (
             <StageHero host={host} image={image} />
           )}
-          <section className={`shell ${styles.block}`}>
+          <section className="shell pt-12 sm:pt-16">
             {/* Ohne Steckbrief keine zweite Spalte, die leer bliebe. */}
-            <div className={hasProfile ? `${styles.body} ${styles.bodySplit}` : styles.body}>
+            <div
+              className={cn(
+                "grid gap-10",
+                hasProfile && "lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-16",
+              )}
+            >
               <About host={host} />
               <Profile host={host} facts={facts} />
             </div>
@@ -166,21 +208,13 @@ function buildFacts(host: HostDTO, shows: ShowDTO[], articleCount: number): Fact
 
 function Crumbs({ host }: { host: HostDTO }) {
   return (
-    <nav aria-label="Breadcrumb" className={styles.crumbs}>
-      <ol role="list">
-        <li>
-          <Link href="/">Start</Link>
-        </li>
-        <li>
-          <Icon icon={ChevronRightIcon} className={styles.crumbIcon} aria-hidden />
-          <Link href="/moderatoren">Moderatoren</Link>
-        </li>
-        <li>
-          <Icon icon={ChevronRightIcon} className={styles.crumbIcon} aria-hidden />
-          <span aria-current="page">{host.name}</span>
-        </li>
-      </ol>
-    </nav>
+    <Breadcrumbs
+      items={[
+        { href: "/", label: "Start" },
+        { href: "/moderatoren", label: "Moderatoren" },
+        { href: `/moderatoren/${host.slug}`, label: host.name },
+      ]}
+    />
   );
 }
 
@@ -197,37 +231,48 @@ function Avatar({
   className?: string;
 }) {
   return (
-    <div className={`${styles.avatar} ${className ?? ""}`}>
+    <div
+      className={cn(
+        "relative aspect-square shrink-0 overflow-hidden rounded-full bg-surface-secondary",
+        className,
+      )}
+    >
       {image ? (
-        <Image
-          src={image}
-          alt={host.name}
-          fill
-          sizes={`${size}px`}
-          className={styles.avatarImage}
-          priority
-        />
+        <Image src={image} alt={host.name} fill sizes={`${size}px`} className="object-cover" priority />
       ) : (
-        <span className={styles.avatarFallback} aria-hidden="true">
-          <LogoIcon className={styles.avatarLogo} />
-        </span>
+        <LogoFallback />
       )}
     </div>
   );
 }
 
-function Socials({ host }: { host: HostDTO }) {
+function LogoFallback() {
+  return (
+    <span
+      aria-hidden="true"
+      className="grid size-full place-items-center bg-ink [--logo-mark:var(--volt)]"
+    >
+      <LogoIcon className="h-auto w-[42%]" />
+    </span>
+  );
+}
+
+function Socials({ host, onDeep = false }: { host: HostDTO; onDeep?: boolean }) {
   if (host.socials.length === 0) return null;
   return (
-    <div className={styles.socials}>
+    <div className="flex flex-wrap gap-2">
       {host.socials.map((social) => (
         <ButtonLink
           key={social.url}
           href={social.url}
           external
-          variant="neutral"
-          mode="stroke"
+          variant="outline"
           size="sm"
+          className={
+            onDeep
+              ? "border-[color-mix(in_oklch,var(--host-on-deep)_45%,transparent)] text-[var(--host-on-deep)] hover:bg-[color-mix(in_oklch,var(--host-on-deep)_12%,transparent)]"
+              : undefined
+          }
         >
           {social.label}
           <Icon icon={ExternalLinkIcon} />
@@ -237,23 +282,38 @@ function Socials({ host }: { host: HostDTO }) {
   );
 }
 
+/** Ueberschrift eines Profilabschnitts, mit einer Linie in Personenfarbe. */
+function SectionTitle({ id, children }: { id?: string; children: React.ReactNode }) {
+  return (
+    <h2
+      id={id}
+      className="mb-5 border-b-2 border-[var(--host-accent)] pb-2.5 font-wide text-xl font-bold text-foreground sm:text-2xl"
+    >
+      {children}
+    </h2>
+  );
+}
+
 function Bio({ bio }: { bio: string }) {
   return (
-    <div className={styles.bio}>
-      {bio.split("\n").filter(Boolean).map((paragraph, index) => (
-        <p key={index}>{paragraph}</p>
-      ))}
+    <div className="flex max-w-[65ch] flex-col gap-4 text-lg leading-relaxed text-pretty text-foreground">
+      {bio
+        .split("\n")
+        .filter(Boolean)
+        .map((paragraph, index) => (
+          <p key={index}>{paragraph}</p>
+        ))}
     </div>
   );
 }
 
 function About({ host }: { host: HostDTO }) {
   return (
-    <div className={styles.about}>
-      <h2 className={styles.sectionTitle}>Über {host.name}</h2>
+    <div className="min-w-0">
+      <SectionTitle>Über {host.name}</SectionTitle>
       <Bio bio={host.bio} />
       {host.quote && (
-        <blockquote className={styles.quote}>
+        <blockquote className="mt-8 border-l-4 border-[var(--host-accent)] py-1 pl-5 font-wide text-xl leading-snug text-balance text-foreground italic">
           <p>{host.quote}</p>
         </blockquote>
       )}
@@ -266,25 +326,27 @@ function Profile({ host, facts }: { host: HostDTO; facts: Fact[] }) {
   if (facts.length === 0 && host.genres.length === 0) return null;
 
   return (
-    <aside className={styles.profile} aria-label={`Steckbrief ${host.name}`}>
-      <h2 className={styles.sectionTitle}>Steckbrief</h2>
+    <aside aria-label={`Steckbrief ${host.name}`} className="min-w-0">
+      <SectionTitle>Steckbrief</SectionTitle>
       {facts.length > 0 && (
-        <dl className={styles.facts}>
+        <dl className="flex flex-col divide-y divide-separator">
           {facts.map((fact) => (
-            <div key={fact.label} className={styles.fact}>
-              <dt>{fact.label}</dt>
-              <dd>{fact.value}</dd>
+            <div key={fact.label} className="flex items-baseline justify-between gap-4 py-2.5">
+              <dt className="text-sm text-muted">{fact.label}</dt>
+              <dd className="text-right font-semibold break-words text-foreground">{fact.value}</dd>
             </div>
           ))}
         </dl>
       )}
       {host.genres.length > 0 && (
-        <div className={styles.genres}>
-          <p className={styles.genresLabel}>Musik</p>
-          <ul className={styles.genreList} role="list">
+        <div className="mt-5">
+          <p className="mb-2 text-sm text-muted">Musik</p>
+          <ul className="flex flex-wrap gap-1.5" aria-label="Musikrichtungen">
             {host.genres.map((genre) => (
-              <li key={genre} className={styles.genre}>
-                {genre}
+              <li key={genre}>
+                <Chip size="sm" variant="soft">
+                  {genre}
+                </Chip>
               </li>
             ))}
           </ul>
@@ -295,20 +357,26 @@ function Profile({ host, facts }: { host: HostDTO; facts: Fact[] }) {
 }
 
 /* ------------------------------------------------------------------------ */
-/* Aufbau "Bühne": breites Farbband, grosses rundes Bild                     */
+/* Aufbau "Bühne": getoentes Band, grosses rundes Bild                       */
 /* ------------------------------------------------------------------------ */
 
 function StageHero({ host, image }: { host: HostDTO; image: string | null }) {
   return (
-    <header className={styles.stage}>
-      <div className="shell">
+    <header className="border-b-4 border-[var(--host-accent)] bg-[var(--host-soft)]">
+      <div className="shell pt-8 pb-12 sm:pb-16">
         <Crumbs host={host} />
-        <div className={styles.stageInner}>
-          <Avatar host={host} image={image} size={240} className={styles.stageAvatar} />
-          <div className={styles.stageText}>
-            <p className={styles.role}>{host.role}</p>
-            <h1 className={styles.stageName}>{host.name}</h1>
-            {host.tagline && <p className={styles.tagline}>{host.tagline}</p>}
+        <div className="mt-8 flex flex-col items-start gap-8 sm:flex-row sm:items-center sm:gap-12">
+          <Avatar host={host} image={image} size={240} className="w-40 sm:w-52 lg:w-60" />
+          <div className="flex w-full min-w-0 flex-col gap-4 @container">
+            <p className="font-semibold text-[var(--host-ink)]">{host.role}</p>
+            {/* Groesse nach Spaltenbreite: Auch ein langer Name in einem Wort
+                bricht nicht mitten im Wort um. */}
+            <h1 className="font-display text-[clamp(2.25rem,12cqw,4.5rem)] leading-[0.92] text-balance break-words text-foreground">
+              {host.name}
+            </h1>
+            {host.tagline && (
+              <p className="max-w-[52ch] text-lg text-pretty text-muted">{host.tagline}</p>
+            )}
             <Socials host={host} />
           </div>
         </div>
@@ -323,29 +391,33 @@ function StageHero({ host, image }: { host: HostDTO; image: string | null }) {
 
 function PosterHero({ host, image }: { host: HostDTO; image: string | null }) {
   return (
-    <header className={styles.poster}>
-      <div className={styles.posterImage}>
-        {image ? (
-          <Image
-            src={image}
-            alt={host.name}
-            fill
-            sizes="(max-width: 900px) 100vw, 50vw"
-            className={styles.avatarImage}
-            priority
-          />
-        ) : (
-          <span className={styles.avatarFallback} aria-hidden="true">
-            <LogoIcon className={styles.avatarLogo} />
-          </span>
-        )}
-      </div>
-      <div className={styles.posterPanel}>
+    <header>
+      <div className="shell py-5">
         <Crumbs host={host} />
-        <p className={styles.role}>{host.role}</p>
-        <h1 className={styles.posterName}>{host.name}</h1>
-        {host.tagline && <p className={styles.tagline}>{host.tagline}</p>}
-        <Socials host={host} />
+      </div>
+      <div className="grid bg-[var(--host-deep)] text-[var(--host-on-deep)] md:min-h-[min(78vh,720px)] md:grid-cols-2">
+        <div className="relative aspect-square md:aspect-auto">
+          {image ? (
+            <Image
+              src={image}
+              alt={host.name}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
+              priority
+            />
+          ) : (
+            <LogoFallback />
+          )}
+        </div>
+        <div className="flex min-w-0 flex-col justify-end gap-5 px-4 py-10 @container sm:px-8 md:px-12 md:py-14 lg:px-16">
+          <p className="font-semibold opacity-85">{host.role}</p>
+          <h1 className="font-display text-[clamp(2.5rem,14cqw,6rem)] leading-[0.88] break-words">
+            {host.name}
+          </h1>
+          {host.tagline && <p className="max-w-[44ch] text-lg text-pretty opacity-85">{host.tagline}</p>}
+          <Socials host={host} onDeep />
+        </div>
       </div>
     </header>
   );
@@ -365,26 +437,37 @@ function ProfileCard({
   facts: Fact[];
 }) {
   return (
-    <section className={styles.cardSection}>
-      <div className="shell">
-        <Crumbs host={host} />
-        <article className={styles.card}>
-          <div className={styles.cardBanner} aria-hidden="true" />
-          <div className={styles.cardHead}>
-            <Avatar host={host} image={image} size={136} className={styles.cardAvatar} />
-            <div className={styles.cardHeadText}>
-              <h1 className={styles.cardName}>{host.name}</h1>
-              <p className={styles.cardRole}>{host.role}</p>
+    <section className="shell pt-8">
+      <Crumbs host={host} />
+      <article className="mx-auto mt-8 max-w-3xl overflow-hidden rounded-3xl border border-border bg-surface">
+        <div aria-hidden="true" className="h-28 bg-[var(--host-deep)] sm:h-40" />
+        <div className="px-5 pb-8 sm:px-10">
+          <div className="-mt-14 flex flex-col gap-4 sm:-mt-16">
+            <Avatar
+              host={host}
+              image={image}
+              size={136}
+              className="w-28 ring-[6px] ring-[var(--surface)] sm:w-[8.5rem]"
+            />
+            <div className="min-w-0 @container">
+              <h1 className="font-display text-[clamp(2rem,9cqw,3.25rem)] leading-[0.95] break-words text-foreground">
+                {host.name}
+              </h1>
+              <p className="mt-2 font-semibold text-[var(--host-ink)]">{host.role}</p>
             </div>
           </div>
-          {host.tagline && <p className={`${styles.tagline} ${styles.cardTagline}`}>{host.tagline}</p>}
-          <div className={styles.cardBody}>
+          {host.tagline && (
+            <p className="mt-6 rounded-xl bg-[var(--host-soft)] px-4 py-3 text-pretty text-foreground">
+              {host.tagline}
+            </p>
+          )}
+          <div className="mt-8 flex flex-col gap-10">
             <About host={host} />
             <Profile host={host} facts={facts} />
             <Socials host={host} />
           </div>
-        </article>
-      </div>
+        </div>
+      </article>
     </section>
   );
 }
@@ -397,21 +480,20 @@ function ShowList({ shows }: { shows: ShowDTO[] }) {
   if (shows.length === 0) return null;
 
   return (
-    <section className={`shell ${styles.block}`} aria-labelledby="shows-title">
-      <h2 id="shows-title" className={styles.sectionTitle}>
-        Sendungen
-      </h2>
-      <ul className={styles.showList} role="list">
+    <section className="shell pt-14 sm:pt-16" aria-labelledby="shows-title">
+      <SectionTitle id="shows-title">Sendungen</SectionTitle>
+      <ul className="grid gap-4 md:grid-cols-2">
         {shows.map((show) => (
-          <li key={show.id} className={styles.show}>
-            <div className={styles.showHead}>
-              <h3 className={styles.showTitle}>{show.title}</h3>
-              <span className={styles.showTime}>
-                <Icon icon={ClockIcon} />
-                {WEEKDAY_LABELS[show.weekday]}, {show.startTime}–{show.endTime} Uhr
-              </span>
-            </div>
-            <p className={styles.showDescription}>{show.description}</p>
+          <li
+            key={show.id}
+            className="rounded-2xl border border-border border-l-4 border-l-[var(--host-accent)] bg-surface p-5"
+          >
+            <h3 className="font-wide text-lg font-bold text-foreground">{show.title}</h3>
+            <p className="mt-1 inline-flex items-center gap-2 text-sm text-muted">
+              <Icon icon={ClockIcon} className="text-xs" />
+              {WEEKDAY_LABELS[show.weekday]}, {show.startTime}–{show.endTime} Uhr
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-pretty text-muted">{show.description}</p>
           </li>
         ))}
       </ul>
@@ -424,16 +506,21 @@ function AuthorArticles({ host, articles }: { host: HostDTO; articles: ArticleDT
   if (articles.length === 0) return null;
 
   return (
-    <section className={`shell ${styles.block}`}>
-      <h2 className={styles.sectionTitle}>Beiträge von {host.name}</h2>
-      <ul className={styles.articleList} role="list">
+    <section className="shell pt-14 sm:pt-16">
+      <SectionTitle>Beiträge von {host.name}</SectionTitle>
+      <ul className="flex flex-col divide-y divide-separator">
         {articles.map((article) => (
           <li key={article.id}>
-            <Link href={`/news/${article.slug}`} className={styles.articleLink}>
-              <span className={styles.articleTitle}>{article.title}</span>
-              <span className={styles.articleMeta}>
-                {article.publishedAt ? formatDate(article.publishedAt) : ""} ·{" "}
-                {formatReadingTime(article.readingTime)}
+            <Link
+              href={`/news/${article.slug}`}
+              className="group flex flex-col gap-1 rounded-md py-4 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
+            >
+              <span className="font-semibold text-foreground decoration-[var(--host-accent)] decoration-2 underline-offset-4 group-hover:underline">
+                {article.title}
+              </span>
+              <span className="flex shrink-0 gap-3 text-sm text-muted">
+                {article.publishedAt && <span>{formatDate(article.publishedAt)}</span>}
+                <span>{formatReadingTime(article.readingTime)}</span>
               </span>
             </Link>
           </li>
@@ -448,9 +535,9 @@ function Team({ title, hosts }: { title: string; hosts: HostDTO[] }) {
   if (hosts.length === 0) return null;
 
   return (
-    <section className={`shell ${styles.block}`}>
-      <h2 className={styles.sectionTitle}>{title}</h2>
-      <ul className={styles.teamList} role="list">
+    <section className="shell pt-14 sm:pt-16">
+      <SectionTitle>{title}</SectionTitle>
+      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {hosts.map((other) => (
           <li key={other.id}>
             <TeamLink host={other} />
@@ -464,17 +551,20 @@ function Team({ title, hosts }: { title: string; hosts: HostDTO[] }) {
 async function TeamLink({ host }: { host: HostDTO }) {
   const image = await resolveHostImage(host);
   return (
-    <Link href={`/moderatoren/${host.slug}`} className={styles.teamLink}>
-      <span className={styles.teamAvatar}>
+    <Link
+      href={`/moderatoren/${host.slug}`}
+      className="flex items-center gap-3 rounded-2xl border border-border bg-surface p-3 transition-colors hover:border-[var(--host-accent)]"
+    >
+      <span className="relative grid size-12 shrink-0 place-items-center overflow-hidden rounded-full bg-surface-secondary">
         {image ? (
-          <Image src={image} alt="" fill sizes="48px" className={styles.avatarImage} />
+          <Image src={image} alt="" fill sizes="48px" className="object-cover" />
         ) : (
-          <LogoIcon className={styles.teamLogo} />
+          <LogoFallback />
         )}
       </span>
-      <span className={styles.teamText}>
-        <span className={styles.teamName}>{host.name}</span>
-        <span className={styles.teamRole}>{host.role}</span>
+      <span className="flex min-w-0 flex-col">
+        <span className="truncate font-semibold text-foreground">{host.name}</span>
+        <span className="truncate text-sm text-muted">{host.role}</span>
       </span>
     </Link>
   );

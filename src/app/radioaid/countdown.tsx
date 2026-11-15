@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@heroui/react";
 import { Icon, PlayIcon, ExternalLinkIcon } from "@/lib/icons";
 import { useRadioPlayer } from "@/components/radio/player-provider";
 import type { RadioAidPhase } from "@/lib/radioaid";
-import styles from "./page.module.css";
 
 /**
  * Countdown bis zum Sendestart — und danach der Weg zum Hören.
@@ -46,16 +45,21 @@ export function Countdown({
 
   if (phase === "live") {
     return (
-      <div className={styles.countdownLive} role="status">
-        <span className={styles.livePulse} aria-hidden="true" />
-        <div className={styles.liveBody}>
-          <p className={styles.liveTitle}>Die Sendung läuft</p>
-          <p className={styles.liveText}>
+      <div className="flex items-start gap-4" role="status">
+        <span
+          aria-hidden="true"
+          className="mt-2 size-3.5 shrink-0 rounded-full bg-volt animate-[vfm-pulse_2s_ease-in-out_infinite] motion-reduce:animate-none"
+        />
+        <div className="flex flex-col items-start gap-3">
+          <p className="font-display text-3xl leading-tight text-foreground sm:text-4xl">
+            Die Sendung läuft
+          </p>
+          <p className="leading-relaxed text-muted">
             24 Stunden Charity-Radio — jetzt einschalten und mitspenden.
           </p>
-          {/* Führt über denselben Hinweis wie der Player: Die Wiedergabe
+          {/* Fuehrt ueber denselben Hinweis wie der Player: Die Wiedergabe
               findet im Webplayer von lautstation.de statt, nicht hier. */}
-          <Button variant="primary" mode="filled" size="lg" onClick={openStream}>
+          <Button variant="primary" size="lg" onPress={openStream}>
             <Icon icon={PlayIcon} />
             Jetzt hören
             <Icon icon={ExternalLinkIcon} />
@@ -67,13 +71,13 @@ export function Countdown({
 
   if (phase === "over") {
     return (
-      <div className={styles.countdownOver}>
-        <p className={styles.overTitle}>Die Sendung ist vorbei</p>
-        <p className={styles.overText}>
+      <div className="flex flex-col items-start gap-3">
+        <p className="font-display text-3xl leading-tight text-foreground">Die Sendung ist vorbei</p>
+        <p className="leading-relaxed text-muted">
           Danke an alle, die zugehört und gespendet haben. Die nächste Ausgabe
           kommt in einem Jahr — sobald der Termin steht, findest du ihn hier.
         </p>
-        <Button variant="neutral" mode="stroke" size="md" onClick={openStream}>
+        <Button variant="outline" onPress={openStream}>
           <Icon icon={PlayIcon} />
           Jetzt hören
           <Icon icon={ExternalLinkIcon} />
@@ -103,19 +107,25 @@ export function Countdown({
   })();
 
   return (
-    <div className={styles.countdown}>
-      <p className={styles.countdownLabel}>{label}</p>
-      <div className={styles.units} role="timer" aria-live="off">
+    <div className="flex min-w-0 flex-col gap-4">
+      <p className="font-wide text-base font-bold text-foreground">{label}</p>
+      {/* Ziffern ohne Animation: Sie zaehlen still herunter. */}
+      <div className="grid grid-cols-4 gap-2 sm:gap-3" role="timer" aria-live="off">
         {units.map((unit) => (
-          <div key={unit.label} className={styles.unit}>
-            <span className={styles.unitValue}>{unit.value}</span>
-            <span className={styles.unitLabel}>{unit.label}</span>
+          <div
+            key={unit.label}
+            className="flex flex-col items-center gap-1 rounded-2xl bg-surface-secondary px-1 py-4 sm:py-5"
+          >
+            <span className="font-display text-3xl leading-none tabular-nums text-foreground sm:text-5xl">
+              {unit.value}
+            </span>
+            <span className="text-xs text-muted sm:text-sm">{unit.label}</span>
           </div>
         ))}
       </div>
-      {/* Für Screenreader reicht die Angabe einmal — eine sekündlich
-          aktualisierte Live-Region wäre unbenutzbar. */}
-      <p className="visually-hidden">
+      {/* Fuer Screenreader reicht die Angabe einmal — eine sekuendlich
+          aktualisierte Live-Region waere unbenutzbar. */}
+      <p className="sr-only">
         {remaining === null
           ? "Countdown wird geladen."
           : `Noch ${units[0].value} Tage, ${units[1].value} Stunden und ${units[2].value} Minuten bis zum Sendestart.`}

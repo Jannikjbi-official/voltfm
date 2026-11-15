@@ -5,7 +5,6 @@ import { PageHeader } from "@/components/common/page-header";
 import { ButtonLink } from "@/components/common/button-link";
 import { Icon, DiscordIcon, MicIcon, NewsIcon, HeartIcon, ExternalLinkIcon } from "@/lib/icons";
 import { site } from "@/lib/site";
-import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Mitmachen",
@@ -35,7 +34,7 @@ const WAYS = [
 const STEPS = [
   "Öffne unser Bewerbungsportal.",
   "Such dir die Stelle aus, auf die du Lust hast.",
-  "Fuell die Bewerbung aus — bei manchen Stellen gehört ein kleiner Test dazu.",
+  "Füll die Bewerbung aus — bei manchen Stellen gehört ein kleiner Test dazu.",
   "Wir schauen sie uns an und melden uns bei dir.",
 ] as const;
 
@@ -43,7 +42,6 @@ export default function MitmachenPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Mitmachen"
         title="VoltFM ist kein Sender, der auf dich wartet."
         description="Er entsteht durch die Leute, die mitmachen. Platz ist genug — hier sind die Wege hinein."
         breadcrumbs={[
@@ -53,46 +51,54 @@ export default function MitmachenPage() {
         size="large"
       />
 
-      <section className="section shell">
-        <div className={styles.ways}>
+      <section className="shell py-14 sm:py-20">
+        <ul className="grid gap-4 md:grid-cols-3">
           {WAYS.map((way) => (
-            <article key={way.title} className={styles.way}>
-              <span className={styles.wayIcon} aria-hidden="true">
+            <li
+              key={way.title}
+              className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-6 sm:p-7"
+            >
+              <span
+                className="grid size-11 place-items-center rounded-full bg-surface-secondary text-lg text-foreground"
+                aria-hidden="true"
+              >
                 <Icon icon={way.icon} />
               </span>
-              <h2 className={styles.wayTitle}>{way.title}</h2>
-              <p className={styles.wayText}>{way.text}</p>
-            </article>
+              <h2 className="mt-2 font-wide text-xl font-bold text-foreground">{way.title}</h2>
+              <p className="text-pretty leading-relaxed text-muted">{way.text}</p>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
-      <section className="section shell">
-        <div className={styles.how}>
+      <section className="shell pb-6">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:gap-16">
           <div>
-            <h2 className={styles.howTitle}>Wie es losgeht</h2>
-            <ol className={styles.steps}>
+            <h2 className="font-display text-3xl text-foreground sm:text-4xl">Wie es losgeht</h2>
+            <ol className="mt-8 flex flex-col gap-5">
               {STEPS.map((step, index) => (
-                <li key={step} className={styles.step}>
-                  <span className={styles.stepNumber}>{index + 1}</span>
-                  <span>{step}</span>
+                <li key={step} className="flex items-start gap-4">
+                  <span className="grid size-9 shrink-0 place-items-center rounded-full bg-volt font-wide text-sm font-bold text-ink">
+                    {index + 1}
+                  </span>
+                  <span className="pt-1.5 text-lg leading-snug text-foreground">{step}</span>
                 </li>
               ))}
             </ol>
-            <div className={styles.actions}>
-              <ButtonLink href={site.applyUrl} external variant="primary" mode="filled" size="lg">
+            <div className="mt-10 flex flex-wrap gap-3">
+              <ButtonLink href={site.applyUrl} external variant="primary" size="lg">
                 Zum Bewerbungsportal
                 <Icon icon={ExternalLinkIcon} />
               </ButtonLink>
-              <ButtonLink href={site.discordUrl} external variant="neutral" mode="stroke" size="lg">
+              <ButtonLink href={site.discordUrl} external variant="outline" size="lg">
                 <Icon icon={DiscordIcon} />
                 Erst mal fragen
               </ButtonLink>
             </div>
           </div>
 
-          <aside className={styles.honest}>
-            <h2 className={styles.honestTitle}>Ehrlich gesagt</h2>
+          <aside className="flex flex-col gap-4 self-start rounded-3xl bg-surface-secondary p-6 text-pretty leading-relaxed text-muted sm:p-8 [&_a]:font-medium [&_a]:text-foreground [&_a]:underline [&_a]:underline-offset-4">
+            <h2 className="font-wide text-xl font-bold text-foreground">Ehrlich gesagt</h2>
             <p>
               Wir sind ein kleines, nicht-kommerzielles Projekt. Es gibt kein
               Geld und keine Quote. Was es gibt: eigene Sendezeit, Leute, die

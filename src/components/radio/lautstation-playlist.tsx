@@ -2,10 +2,10 @@
 
 import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@heroui/react";
+import { CheckboxField } from "@/components/common/form-field";
 import { Icon, MusicIcon } from "@/lib/icons";
 import { lautstation } from "@/lib/lautstation";
-import styles from "./lautstation-playlist.module.css";
 
 declare global {
   interface Window {
@@ -71,40 +71,50 @@ export function LautstationPlaylist({ station }: { station: string }) {
     window.location.reload();
   }
 
-  if (consent === null) return <div className={styles.placeholder} aria-hidden="true" />;
+  if (consent === null) return <div className="min-h-60" aria-hidden="true" />;
 
   if (!consent) {
     return (
-      <div className={styles.gate}>
-        <span className={styles.gateIcon} aria-hidden="true">
+      <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8">
+        <span
+          aria-hidden="true"
+          className="grid size-10 place-items-center rounded-full bg-volt text-ink"
+        >
           <Icon icon={MusicIcon} />
         </span>
-        {/* Die Fortsetzung der Liste darueber, kein eigener Abschnitt — deshalb
-            eine h3 unter "Was gerade lief" und kein eigener Titel wie "Die
-            letzten Tage". */}
-        <h3 className={styles.gateTitle}>Die ganze Playlist der letzten Tage</h3>
-        <p className={styles.gateText}>
+        {/* Die Fortsetzung der Liste darueber, kein eigener Abschnitt —
+            deshalb eine h3 unter "Was gerade lief". */}
+        <h3 className="mt-4 font-wide text-xl font-bold text-foreground">
+          Die ganze Playlist der letzten Tage
+        </h3>
+        <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted">
           Jeder Titel, mit Uhrzeit, Tag für Tag. Die Liste kommt von{" "}
           {lautstation.name}, einem privaten Verzeichnis für laut.fm-Stationen. Mit
           dem Klick verbindet sich dein Browser dorthin und überträgt dabei deine
           IP-Adresse und Browserkennung. Vorher passiert nichts.
         </p>
-        <div className={styles.gateActions}>
-          <Button variant="primary" mode="filled" size="md" onClick={accept}>
+        <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-4">
+          <Button variant="primary" onPress={accept}>
             Ganze Playlist laden
           </Button>
-          <label className={styles.remember}>
-            <input
-              type="checkbox"
-              checked={remember}
-              onChange={(event) => setRemember(event.target.checked)}
-            />
-            <span>Nicht jedes Mal fragen</span>
-          </label>
+          <CheckboxField
+            label="Nicht jedes Mal fragen"
+            checked={remember}
+            onChange={(event) => setRemember(event.target.checked)}
+          />
         </div>
-        <p className={styles.gateNote}>
-          Mehr dazu in unserer <a href="/datenschutz">Datenschutzerklärung</a> und in der{" "}
-          <a href={lautstation.privacyUrl} target="_blank" rel="noreferrer noopener">
+        <p className="mt-5 text-xs text-muted">
+          Mehr dazu in unserer{" "}
+          <a href="/datenschutz" className="underline underline-offset-4 hover:text-foreground">
+            Datenschutzerklärung
+          </a>{" "}
+          und in der{" "}
+          <a
+            href={lautstation.privacyUrl}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="underline underline-offset-4 hover:text-foreground"
+          >
             von {lautstation.name}
           </a>
           .
@@ -115,7 +125,7 @@ export function LautstationPlaylist({ station }: { station: string }) {
 
   return (
     <>
-      <div ref={container} className={`lautstation-playlist ${styles.widget}`} />
+      <div ref={container} className="lautstation-playlist vfm-lautstation" />
       <Script
         src={lautstation.scriptUrl}
         strategy="afterInteractive"
@@ -124,9 +134,13 @@ export function LautstationPlaylist({ station }: { station: string }) {
         }}
       />
       {remembered && (
-        <p className={styles.revoke}>
+        <p className="mt-4 text-sm text-muted">
           Du hast das Laden dauerhaft erlaubt.{" "}
-          <button type="button" className={styles.linkButton} onClick={revoke}>
+          <button
+            type="button"
+            className="rounded-sm font-medium text-foreground underline underline-offset-4"
+            onClick={revoke}
+          >
             Zurücknehmen
           </button>
         </p>

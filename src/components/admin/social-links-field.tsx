@@ -1,11 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useId, useState } from "react";
+import { Button } from "@heroui/react";
 import { Icon, PlusIcon, DeleteIcon } from "@/lib/icons";
-import styles from "./social-links-field.module.css";
-import formStyles from "./admin-form.module.css";
 
 /**
  * Bekannte Plattformen mit dem Anfang ihrer Adresse.
@@ -68,6 +65,7 @@ export function SocialLinksField({
   defaultValue?: string;
 }) {
   const [rows, setRows] = useState<Row[]>(() => parse(defaultValue));
+  const labelId = useId();
 
   function update(index: number, patch: Partial<Row>) {
     setRows((current) =>
@@ -88,77 +86,94 @@ export function SocialLinksField({
   }
 
   return (
-    <div className={styles.field}>
-      <span className={formStyles.label}>Social Links</span>
+    <div role="group" aria-labelledby={labelId} className="flex min-w-0 flex-col gap-2">
+      <span id={labelId} className="label">
+        Social Links
+      </span>
 
       {rows.length > 0 && (
-        <ul className={styles.rows} role="list">
-          {rows.map((row, index) => (
-            <li key={index} className={styles.row}>
-              <select
-                value={PLATFORMS.some((p) => p.label === row.label) ? row.label : "Andere"}
-                onChange={(event) => choosePlatform(index, event.target.value)}
-                className={`${formStyles.select} ${styles.platform}`}
-                aria-label="Plattform"
+        <ul className="flex flex-col gap-2">
+          {rows.map((row, index) => {
+            const custom = !PLATFORMS.some((p) => p.label === row.label) || row.label === "Andere";
+            return (
+              <li
+                key={index}
+                className="grid grid-cols-[minmax(0,1fr)_auto] gap-2 rounded-xl border border-border bg-surface-secondary/50 p-2 sm:grid-cols-[9.5rem_minmax(0,1fr)_auto] sm:items-center"
               >
-                {PLATFORMS.map((platform) => (
-                  <option key={platform.label} value={platform.label}>
-                    {platform.label}
-                  </option>
-                ))}
-              </select>
+                <div className="relative">
+                  <select
+                    value={PLATFORMS.some((p) => p.label === row.label) ? row.label : "Andere"}
+                    onChange={(event) => choosePlatform(index, event.target.value)}
+                    className="input w-full appearance-none pr-8"
+                    aria-label="Plattform"
+                  >
+                    {PLATFORMS.map((platform) => (
+                      <option key={platform.label} value={platform.label}>
+                        {platform.label}
+                      </option>
+                    ))}
+                  </select>
+                  <svg
+                    viewBox="0 0 16 16"
+                    aria-hidden="true"
+                    className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-muted"
+                  >
+                    <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                  </svg>
+                </div>
 
-              {/* Bei "Andere" braucht es eine eigene Beschriftung. */}
-              {!PLATFORMS.some((p) => p.label === row.label) || row.label === "Andere" ? (
-                <Input
-                  value={row.label === "Andere" ? "" : row.label}
-                  onChange={(event) => update(index, { label: event.target.value })}
-                  placeholder="Beschriftung"
-                  aria-label="Beschriftung"
-                  className={styles.custom}
-                />
-              ) : null}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  isIconOnly
+                  aria-label="Zeile entfernen"
+                  className="text-danger sm:order-last"
+                  onPress={() => setRows((current) => current.filter((_, i) => i !== index))}
+                >
+                  <Icon icon={DeleteIcon} />
+                </Button>
 
-              <Input
-                value={row.url}
-                onChange={(event) => update(index, { url: event.target.value })}
-                placeholder="https://…"
-                aria-label="Adresse"
-                className={styles.url}
-              />
-
-              <Button
-                type="button"
-                variant="error"
-                mode="ghost"
-                size="sm"
-                asIcon
-                aria-label="Zeile entfernen"
-                onClick={() => setRows((current) => current.filter((_, i) => i !== index))}
-              >
-                <Icon icon={DeleteIcon} />
-              </Button>
-            </li>
-          ))}
+                <div className="col-span-2 flex min-w-0 flex-col gap-2 sm:col-span-1 sm:flex-row">
+                  {/* Bei "Andere" braucht es eine eigene Beschriftung. */}
+                  {custom ? (
+                    <input
+                      value={row.label === "Andere" ? "" : row.label}
+                      onChange={(event) => update(index, { label: event.target.value })}
+                      placeholder="Beschriftung"
+                      aria-label="Beschriftung"
+                      className="input w-full sm:w-36"
+                    />
+                  ) : null}
+                  <input
+                    value={row.url}
+                    onChange={(event) => update(index, { url: event.target.value })}
+                    placeholder="https://…"
+                    aria-label="Adresse"
+                    className="input w-full min-w-0 flex-1"
+                  />
+                </div>
+              </li>
+            );
+          })}
         </ul>
       )}
 
-      <Button
-        type="button"
-        variant="neutral"
-        mode="stroke"
-        size="sm"
-        onClick={() =>
-          setRows((current) => [...current, { label: "Discord", url: "https://discord.gg/" }])
-        }
-      >
-        <Icon icon={PlusIcon} />
-        Link hinzufügen
-      </Button>
+      <div>
+        <Button
+          type="button"
+          variant="tertiary"
+          size="sm"
+          onPress={() =>
+            setRows((current) => [...current, { label: "Discord", url: "https://discord.gg/" }])
+          }
+        >
+          <Icon icon={PlusIcon} />
+          Link hinzufügen
+        </Button>
+      </div>
 
-      <p className={styles.hint}>
-        Zeilen ohne Adresse werden beim Speichern verworfen.
-      </p>
+      <p className="description">Zeilen ohne Adresse werden beim Speichern verworfen.</p>
 
       {/* Das, was tatsächlich abgeschickt wird. */}
       <input type="hidden" name={name} value={serialize(rows)} />

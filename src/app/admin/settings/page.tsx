@@ -6,7 +6,7 @@ import { discordNewsEnabled } from "@/services/discord/news";
 import { radioadminConfigured } from "@/services/lautfm/radioadmin";
 import { milestones } from "@/db/collections";
 import { formatDateTime } from "@/lib/format";
-import styles from "../page.module.css";
+import { AdminPageHeader, AdminPanel, DataList } from "@/components/admin/admin-ui";
 
 export const metadata: Metadata = { title: "Einstellungen · Admin", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -48,25 +48,14 @@ export default async function AdminSettingsPage() {
 
   return (
     <>
-      <header className={styles.header}>
-        <div>
-          <h1 className={styles.title}>Einstellungen</h1>
-          <p className={styles.subtitle}>
-            Aktive Konfiguration. Änderungen erfolgen über Environment-Variablen.
-          </p>
-        </div>
-      </header>
+      <AdminPageHeader
+        title="Einstellungen"
+        description="Aktive Konfiguration. Änderungen erfolgen über Environment-Variablen."
+      />
 
-      <section className={styles.panel}>
-        <dl className={styles.onAir}>
-          {rows.map((row) => (
-            <div key={row.label} className={styles.onAirRow}>
-              <dt>{row.label}</dt>
-              <dd>{row.value}</dd>
-            </div>
-          ))}
-        </dl>
-      </section>
+      <AdminPanel className="max-w-4xl">
+        <DataList rows={rows} />
+      </AdminPanel>
     </>
   );
 }

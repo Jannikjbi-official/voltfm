@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/common/page-header";
 import { operator, radio, site } from "@/lib/site";
-import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Datenschutz",
@@ -21,14 +20,14 @@ export default function DatenschutzPage() {
         ]}
       />
 
-      <section className="section shell">
-        <div className={styles.prose}>
+      <section className="shell py-14 sm:py-20">
+        <div className="vfm-prose max-w-[68ch]">
           <h2>Verantwortlicher</h2>
           <p>
             Verantwortlich für die Datenverarbeitung auf dieser Website im Sinne
             der DSGVO ist:
           </p>
-          <address className={styles.address}>
+          <address className="rounded-2xl bg-surface-secondary px-5 py-4 not-italic leading-relaxed">
             {operator.name}
             <br />
             {operator.street}
@@ -40,7 +39,7 @@ export default function DatenschutzPage() {
             E-Mail: <a href={`mailto:${operator.email}`}>{operator.email}</a>
           </address>
           {site.mailOutage && (
-            <p className={styles.note}>
+            <p className="rounded-2xl border border-border bg-surface px-5 py-4 text-[0.9375rem] leading-relaxed">
               Bitte nutze für Datenschutzanliegen genau diese Adresse. Unsere
               Adressen auf voltfm.xyz und jannikjbi.de sind wegen eines
               Serverausfalls derzeit nicht erreichbar.
@@ -284,7 +283,7 @@ export default function DatenschutzPage() {
           </p>
 
           <h2>Eingesetzte Dienste auf einen Blick</h2>
-          <table className={styles.table}>
+          <table className="vfm-table">
             <thead>
               <tr>
                 <th>Dienst</th>
@@ -350,7 +349,7 @@ export default function DatenschutzPage() {
           </p>
 
           <h2>Stand und Hinweis</h2>
-          <p className={styles.note}>
+          <p className="rounded-2xl border border-border bg-surface px-5 py-4 text-[0.9375rem] leading-relaxed">
             Dieser Text beschreibt die tatsächliche Datenverarbeitung von{" "}
             {site.name} zum Stand dieser Fassung. Er ersetzt keine Rechtsberatung.
           </p>

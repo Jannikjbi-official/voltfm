@@ -5,7 +5,6 @@ import { Suspense } from "react";
 import { getCurrentUser } from "@/lib/session";
 import { serverEnv } from "@/lib/env";
 import { LoginForm } from "./login-form";
-import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Anmelden",
@@ -26,12 +25,8 @@ export default async function LoginPage({
   }
 
   return (
-    <div className={styles.page}>
-      <div className="shell">
-        <Suspense fallback={null}>
-          <LoginForm discordEnabled={serverEnv.discordEnabled} />
-        </Suspense>
-      </div>
-    </div>
+    <Suspense fallback={null}>
+      <LoginForm discordEnabled={serverEnv.discordEnabled} />
+    </Suspense>
   );
 }

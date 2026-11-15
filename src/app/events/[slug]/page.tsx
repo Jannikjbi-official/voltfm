@@ -4,12 +4,11 @@ import Image from "next/image";
 
 import { PageHeader } from "@/components/common/page-header";
 import { ButtonLink } from "@/components/common/button-link";
-import { Badge } from "@/components/ui/badge";
+import { Chip } from "@heroui/react";
 import { Icon, ClockIcon, LocationIcon, CalendarIcon, ExternalLinkIcon } from "@/lib/icons";
 import { getEventBySlug } from "@/services/content";
 import { formatDate, formatTime } from "@/lib/format";
 import { site } from "@/lib/site";
-import styles from "./page.module.css";
 
 type Params = { slug: string };
 
@@ -76,7 +75,6 @@ export default async function EventPage({ params }: { params: Promise<Params> })
       />
 
       <PageHeader
-        eyebrow={event.category}
         title={event.title}
         description={event.description}
         breadcrumbs={[
@@ -86,9 +84,9 @@ export default async function EventPage({ params }: { params: Promise<Params> })
         ]}
       />
 
-      <section className="section shell">
-        <div className={styles.layout}>
-          <div className={styles.main}>
+      <section className="shell py-10 sm:py-14">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-16">
+          <div className="min-w-0">
             {event.image && (
               <Image
                 src={event.image}
@@ -96,77 +94,78 @@ export default async function EventPage({ params }: { params: Promise<Params> })
                 width={1200}
                 height={675}
                 priority
-                className={styles.image}
+                className="mb-10 h-auto w-full rounded-2xl"
               />
             )}
 
-            {event.content ? (
-              <div
-                className={styles.prose}
-                dangerouslySetInnerHTML={{ __html: event.content }}
-              />
-            ) : (
-              <p className={styles.prose}>{event.description}</p>
-            )}
+            <div className="max-w-[68ch]">
+              {event.content ? (
+                <div className="vfm-prose" dangerouslySetInnerHTML={{ __html: event.content }} />
+              ) : (
+                <p className="vfm-prose">{event.description}</p>
+              )}
+            </div>
           </div>
 
-          <aside className={styles.side}>
-            {isPast && (
-              <Badge mode="lighter" size="sm">
-                Vergangenes Event
-              </Badge>
-            )}
-            {event.status === "cancelled" && (
-              <Badge variant="primary" mode="filled" size="sm">
-                Abgesagt
-              </Badge>
-            )}
-
-            <dl className={styles.facts}>
-              <div className={styles.fact}>
-                <dt>
-                  <Icon icon={CalendarIcon} /> Datum
-                </dt>
-                <dd>{formatDate(event.startsAt)}</dd>
+          <aside className="lg:sticky lg:top-[calc(var(--header-height)+2rem)] lg:self-start">
+            <div className="flex flex-col gap-5 rounded-2xl border border-border bg-surface p-6">
+              <div className="flex flex-wrap gap-2">
+                <Chip size="sm" variant="soft">
+                  {event.category}
+                </Chip>
+                {isPast && (
+                  <Chip size="sm" variant="soft">
+                    Vergangenes Event
+                  </Chip>
+                )}
+                {event.status === "cancelled" && (
+                  <Chip size="sm" color="danger" variant="soft">
+                    Abgesagt
+                  </Chip>
+                )}
               </div>
-              <div className={styles.fact}>
-                <dt>
-                  <Icon icon={ClockIcon} /> Uhrzeit
-                </dt>
-                <dd>
-                  {/* Endet es an einem anderen Tag, muss der Tag dabei
-                      stehen — "18:00 – 18:00 Uhr" liest sich wie null Minuten. */}
-                  {formatTime(event.startsAt)} Uhr
-                  {event.endsAt &&
-                    (formatDate(event.endsAt) === formatDate(event.startsAt)
-                      ? ` bis ${formatTime(event.endsAt)} Uhr`
-                      : ` bis ${formatDate(event.endsAt)}, ${formatTime(event.endsAt)} Uhr`)}
-                </dd>
-              </div>
-              <div className={styles.fact}>
-                <dt>
-                  <Icon icon={LocationIcon} /> Ort
-                </dt>
-                <dd>{event.location}</dd>
-              </div>
-            </dl>
 
-            {!isPast && (
-              <ButtonLink
-                href={event.url ?? site.discordUrl}
-                external
-                variant="primary"
-                mode="filled"
-                size="md"
-              >
-                Teilnehmen
-                <Icon icon={ExternalLinkIcon} />
-              </ButtonLink>
-            )}
+              <dl className="flex flex-col divide-y divide-separator">
+                <div className="flex flex-col gap-1 pb-4">
+                  <dt className="inline-flex items-center gap-2 text-sm text-muted">
+                    <Icon icon={CalendarIcon} className="text-xs" /> Datum
+                  </dt>
+                  <dd className="font-semibold text-foreground">{formatDate(event.startsAt)}</dd>
+                </div>
+                <div className="flex flex-col gap-1 py-4">
+                  <dt className="inline-flex items-center gap-2 text-sm text-muted">
+                    <Icon icon={ClockIcon} className="text-xs" /> Uhrzeit
+                  </dt>
+                  <dd className="font-semibold text-foreground">
+                    {/* Endet es an einem anderen Tag, muss der Tag dabei
+                        stehen — "18:00 – 18:00 Uhr" liest sich wie null Minuten. */}
+                    {formatTime(event.startsAt)} Uhr
+                    {event.endsAt &&
+                      (formatDate(event.endsAt) === formatDate(event.startsAt)
+                        ? ` bis ${formatTime(event.endsAt)} Uhr`
+                        : ` bis ${formatDate(event.endsAt)}, ${formatTime(event.endsAt)} Uhr`)}
+                  </dd>
+                </div>
+                <div className="flex flex-col gap-1 pt-4">
+                  <dt className="inline-flex items-center gap-2 text-sm text-muted">
+                    <Icon icon={LocationIcon} className="text-xs" /> Ort
+                  </dt>
+                  <dd className="font-semibold break-words text-foreground">{event.location}</dd>
+                </div>
+              </dl>
 
-            <ButtonLink href="/events" variant="neutral" mode="ghost" size="sm">
-              Alle Events
-            </ButtonLink>
+              <div className="flex flex-col gap-2">
+                {!isPast && (
+                  <ButtonLink href={event.url ?? site.discordUrl} external fullWidth>
+                    Teilnehmen
+                    <Icon icon={ExternalLinkIcon} />
+                  </ButtonLink>
+                )}
+                <ButtonLink href="/events" variant="ghost" size="sm" fullWidth>
+                  Alle Events
+                </ButtonLink>
+              </div>
+            </div>
           </aside>
         </div>
       </section>

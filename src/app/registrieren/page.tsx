@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 
 import { getCurrentUser } from "@/lib/session";
 import { RegisterForm } from "./register-form";
-import styles from "../login/page.module.css";
 
 export const metadata: Metadata = {
   title: "Registrieren",
@@ -15,11 +14,5 @@ export default async function RegisterPage() {
   const user = await getCurrentUser();
   if (user) redirect("/");
 
-  return (
-    <div className={styles.page}>
-      <div className="shell">
-        <RegisterForm />
-      </div>
-    </div>
-  );
+  return <RegisterForm />;
 }

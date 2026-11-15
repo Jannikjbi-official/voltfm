@@ -5,7 +5,7 @@ import { requireCan } from "@/lib/session";
 import { UserTable, type AdminUser } from "./user-table";
 import { setUserRole, setUserBanned, revokeUserSessions } from "./actions";
 import { ASSIGNABLE_ROLES, ROLE_LABELS } from "./roles";
-import styles from "../page.module.css";
+import { AdminPageHeader } from "@/components/admin/admin-ui";
 
 export const metadata: Metadata = { title: "Benutzer · Admin", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -63,19 +63,19 @@ export default async function AdminUsersPage() {
 
   return (
     <>
-      <header className={styles.header}>
-        <div>
-          <h1 className={styles.title}>Benutzer</h1>
-          <p className={styles.subtitle}>
-            {users.length} Konten · Rollen vergeben, sperren und Sitzungen beenden.
-          </p>
-        </div>
-      </header>
+      <AdminPageHeader
+        title="Benutzer"
+        description={`${users.length} Konten. Rollen vergeben, sperren und Sitzungen beenden.`}
+      />
 
       {error ? (
-        <p className={styles.empty}>{error}</p>
+        <p className="rounded-2xl border border-dashed border-border px-6 py-10 text-center text-sm text-muted">
+          {error}
+        </p>
       ) : users.length === 0 ? (
-        <p className={styles.empty}>Noch keine Benutzer registriert.</p>
+        <p className="rounded-2xl border border-dashed border-border px-6 py-10 text-center text-sm text-muted">
+          Noch keine Benutzer registriert.
+        </p>
       ) : (
         <UserTable
           users={users}

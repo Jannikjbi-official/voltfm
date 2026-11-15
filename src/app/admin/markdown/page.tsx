@@ -4,8 +4,7 @@ import { requireCan } from "@/lib/session";
 import { renderRichText } from "@/lib/sanitize";
 import { MARKDOWN_GROUPS } from "./examples";
 import { CopyButton } from "./copy-button";
-import pageStyles from "../page.module.css";
-import styles from "./page.module.css";
+import { AdminPageHeader } from "@/components/admin/admin-ui";
 
 export const metadata: Metadata = { title: "Textformat · Admin", robots: { index: false } };
 
@@ -22,35 +21,33 @@ export default async function Page() {
 
   return (
     <>
-      <header className={pageStyles.header}>
-        <div>
-          <h1 className={pageStyles.title}>Textformat</h1>
-          <p className={pageStyles.subtitle}>
-            Alles, was im Textfeld von News und Events funktioniert. Links das, was
-            du tippst, rechts das, was dabei herauskommt.
-          </p>
-        </div>
-      </header>
+      <AdminPageHeader
+        title="Textformat"
+        description="Alles, was im Textfeld von News und Events funktioniert. Links das, was du tippst, rechts das, was dabei herauskommt."
+      />
 
-      <div className={styles.groups}>
+      <div className="flex flex-col gap-10">
         {MARKDOWN_GROUPS.map((group) => (
-          <section key={group.title} className={styles.group}>
-            <h2 className={styles.groupTitle}>{group.title}</h2>
-            {group.intro && <p className={styles.groupIntro}>{group.intro}</p>}
+          <section key={group.title} aria-label={group.title}>
+            <h2 className="font-display text-2xl text-foreground">{group.title}</h2>
+            {group.intro && <p className="mt-2 max-w-2xl text-sm text-muted">{group.intro}</p>}
 
-            <ul className={styles.rows} role="list">
+            <ul className="mt-5 divide-y divide-separator rounded-2xl border border-border bg-surface">
               {group.examples.map((example) => (
-                <li key={example.title} className={styles.row}>
-                  <div className={styles.meta}>
-                    <h3 className={styles.exampleTitle}>{example.title}</h3>
-                    {example.hint && <p className={styles.hint}>{example.hint}</p>}
+                <li
+                  key={example.title}
+                  className="grid grid-cols-1 gap-4 p-5 sm:p-6 xl:grid-cols-[13rem_minmax(0,1fr)_minmax(0,1fr)] xl:items-start"
+                >
+                  <div className="min-w-0">
+                    <h3 className="font-wide text-sm font-bold text-foreground">{example.title}</h3>
+                    {example.hint && <p className="mt-1 text-xs text-muted">{example.hint}</p>}
                   </div>
 
-                  <div className={styles.sourceBox}>
-                    <pre className={styles.source}>
+                  <div className="relative min-w-0 rounded-xl bg-surface-secondary">
+                    <pre className="overflow-x-auto py-3 pr-12 pl-4 font-mono text-[0.8125rem] leading-relaxed whitespace-pre-wrap break-words text-foreground">
                       <code>{example.source}</code>
                     </pre>
-                    <div className={styles.copy}>
+                    <div className="absolute top-1.5 right-1.5">
                       <CopyButton source={example.source} label={example.title} />
                     </div>
                   </div>
@@ -58,7 +55,7 @@ export default async function Page() {
                   {/* Aus renderRichText() und damit schon bereinigt — derselbe
                       Weg, den ein gespeicherter Beitrag nimmt. */}
                   <div
-                    className={styles.result}
+                    className="vfm-prose vfm-prose--compact min-w-0 rounded-xl border border-border p-4"
                     dangerouslySetInnerHTML={{ __html: renderRichText(example.source) }}
                   />
                 </li>
@@ -68,7 +65,7 @@ export default async function Page() {
         ))}
       </div>
 
-      <p className={styles.footer}>
+      <p className="mt-10 max-w-2xl text-sm text-muted">
         Alles andere — eigene Tags, Schriftfarben, eingebettete Videos — wird beim
         Speichern entfernt. Wenn dir etwas fehlt, sag Bescheid, statt es über HTML
         zu versuchen.

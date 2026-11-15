@@ -5,7 +5,7 @@ import { EntityManager } from "@/components/admin/entity-manager";
 import type { EntityRow, FieldDef } from "@/components/admin/entity-types";
 import { saveHost, deleteHost } from "./actions";
 import { DEFAULT_PROFILE_LAYOUT, PROFILE_LAYOUTS } from "@/lib/profile-layouts";
-import styles from "../page.module.css";
+import { AdminPageHeader } from "@/components/admin/admin-ui";
 
 export const metadata: Metadata = { title: "Moderatoren · Admin", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -130,12 +130,10 @@ export default async function Page() {
 
   return (
     <>
-      <header className={styles.header}>
-        <div>
-          <h1 className={styles.title}>Moderatoren</h1>
-          <p className={styles.subtitle}>Profile und Sendungszuordnung.</p>
-        </div>
-      </header>
+      <AdminPageHeader
+        title="Moderatoren"
+        description="Profile und Sendungszuordnung."
+      />
 
       <EntityManager
         rows={rows}

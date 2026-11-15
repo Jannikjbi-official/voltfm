@@ -4,7 +4,7 @@ import { media } from "@/db/collections";
 import { serializeAll } from "@/services/content";
 import { MediaGrid, type MediaItem } from "./media-grid";
 import { deleteMedia, updateMediaAlt } from "./actions";
-import styles from "../page.module.css";
+import { AdminPageHeader } from "@/components/admin/admin-ui";
 
 export const metadata: Metadata = { title: "Medien · Admin", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -25,14 +25,10 @@ export default async function Page() {
 
   return (
     <>
-      <header className={styles.header}>
-        <div>
-          <h1 className={styles.title}>Medien</h1>
-          <p className={styles.subtitle}>
-            {items.length} über UploadThing hochgeladene Bilder. Löschen entfernt die Datei auch dort.
-          </p>
-        </div>
-      </header>
+      <AdminPageHeader
+        title="Medien"
+        description={`${items.length} über UploadThing hochgeladene Bilder. Löschen entfernt die Datei auch dort.`}
+      />
 
       <MediaGrid items={items} deleteAction={deleteMedia} altAction={updateMediaAlt} />
     </>

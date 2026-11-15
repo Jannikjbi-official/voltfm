@@ -1,158 +1,162 @@
-/* OlyxUI base layer — must load before anything else. */
-@import "../components/ui/styles/_base/tokens.css";
-@import "../components/ui/styles/_base/colors.css";
-/* VoltFM brand layer — reseeds the OlyxUI palette and adds editorial type. */
-@import "../styles/brand.css";
-/* VoltFM overrides for OlyxUI component styling (sizing, spacing). */
-@import "../styles/olyx-overrides.css";
-/* Layout classes the article editor may emit into stored HTML. */
+@import "tailwindcss";
+@import "@heroui/styles";
+/* Nach HeroUI: ueberschreibt dessen Standardfarben fuer hell und dunkel. */
+@import "../styles/theme.css";
+/* Global, weil gespeichertes HTML aus der Datenbank diese Klassen traegt. */
+@import "../styles/prose.css";
 @import "../styles/editor-content.css";
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  height: 100%;
-  color-scheme: light;
-  scroll-behavior: smooth;
-  /* Anchor targets clear the sticky header. */
-  scroll-padding-top: calc(var(--header-height) + 1.5rem);
-}
-
-[data-theme="dark"] {
-  color-scheme: dark;
-}
-
-body {
-  min-height: 100%;
-  background: var(--color-surface);
-  color: var(--color-text);
-  font: var(--type-body);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  /* Reserve room for the persistent player so content is never hidden —
-     including the iOS home indicator it sits above. */
-  padding-bottom: calc(var(--player-height) + env(safe-area-inset-bottom, 0px));
-}
-
-img,
-svg,
-video {
-  display: block;
-  max-width: 100%;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-/* Inherit typography only.
-   `color` is deliberately NOT inherited here: this rule is unlayered, so it
-   would outrank OlyxUI's own `@layer components` colours and silently paint
-   every button's label the body text colour — which on a filled button means
-   white-on-white. Components set their own colour. */
-button,
-input,
-select,
-textarea {
-  font: inherit;
-}
-
-ul[role="list"],
-ol[role="list"] {
-  list-style: none;
-}
-
-:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-  border-radius: var(--radius-xs);
-}
-
-::selection {
-  background: var(--color-accent);
-  color: var(--color-on-accent);
-}
-
-/* --- Layout primitives --------------------------------------------------- */
-
-.shell {
-  width: 100%;
-  max-width: var(--shell-max);
-  margin-inline: auto;
-  padding-inline: var(--shell-pad);
-}
-
-.shell-wide {
-  width: 100%;
-  max-width: var(--shell-wide);
-  margin-inline: auto;
-  padding-inline: var(--shell-pad);
-}
-
-.section {
-  padding-block: var(--section-gap);
-}
-
-.section-tight {
-  padding-block: calc(var(--section-gap) * 0.6);
-}
-
-/* --- Accessibility ------------------------------------------------------- */
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-  border: 0;
-}
-
-.skip-link {
-  position: fixed;
-  top: 0.5rem;
-  left: 0.5rem;
-  z-index: 200;
-  padding: 0.75rem 1.25rem;
-  background: var(--color-primary);
-  color: var(--color-on-primary);
-  border-radius: var(--radius-sm);
-  font: var(--type-label);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  transform: translateY(-200%);
-  transition: transform var(--transition-standard-fast-effects);
-}
-
-.skip-link:focus-visible {
-  transform: translateY(0);
-}
-
-@media (prefers-reduced-motion: reduce) {
+@layer base {
   html {
-    scroll-behavior: auto;
+    scroll-behavior: smooth;
+    /* Sprungziele landen unter der festen Kopfzeile, nicht dahinter. */
+    scroll-padding-top: calc(var(--header-height) + 1.5rem);
+    -webkit-text-size-adjust: 100%;
   }
 
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  body {
+    min-height: 100dvh;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Platz fuer die Player-Leiste, auch ueber dem iPhone-Balken. */
+    padding-bottom: calc(var(--player-height) + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Fokus ist immer sichtbar — auch auf Elementen ohne eigene Regel. */
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--volt);
+    color: var(--ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Ueberschriften: Archivo breit (wdth 125) und fett. */
+@utility font-display {
+  font-family: var(--font-sans);
+  font-stretch: 125%;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* Halb breit, fuer kleinere Ueberschriften, Navigation und Knoepfe. */
+@utility font-wide {
+  font-stretch: 112.5%;
+}
+
+/* Der Inhaltsbereich: 72rem breit, an den Seiten 1rem Luft am Handy. */
+@utility shell {
+  width: 100%;
+  max-width: 76rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+
+  @media (min-width: 40rem) {
+    padding-inline: 1.5rem;
+  }
+
+  @media (min-width: 64rem) {
+    padding-inline: 2rem;
+  }
+}
+
+@layer components {
+  /* Springt per Tastatur als Erstes in den Inhalt. */
+  .skip-link {
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 200;
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--radius);
+    background: var(--volt);
+    color: var(--ink);
+    font-weight: 600;
+    transform: translateY(-200%);
+  }
+
+  .skip-link:focus-visible {
+    transform: translateY(0);
+  }
+
+  /* Knoepfe: etwas breiter gesetzt, passend zu den Ueberschriften. */
+  .button {
+    font-stretch: 106%;
+    font-weight: 600;
+  }
+
+  /* Karten etwas weniger rund als HeroUIs Standard. */
+  .card {
+    border-radius: calc(var(--radius) * 2);
+  }
+}
+
+/*
+ * Das Playlist-Widget von lautstation.de bringt eigenes CSS mit und liest
+ * Farben aus --lsw-*. Zwei Klassen heben die Spezifitaet ueber die des
+ * Widgets, das sein CSS erst spaeter einfuegt.
+ */
+.vfm-lautstation.lautstation-playlist {
+  --lsw-accent: var(--volt);
+  --lsw-accent-text: var(--ink);
+  --lsw-border: var(--border);
+  --lsw-tab-bg: var(--surface-secondary);
+  --lsw-radius: var(--radius);
+  max-width: 760px;
+  color: var(--foreground);
+}
+
+/* Ein Tag hat rund 400 Titel: Die Liste scrollt in sich. */
+.vfm-lautstation .lsw-song-list {
+  max-height: 32rem;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+/* Pegel der Player-Leiste: tanzt nur, solange wirklich etwas spielt. */
+@keyframes vfm-level {
+  0% {
+    transform: scaleY(0.2);
+  }
+  35% {
+    transform: scaleY(0.85);
+  }
+  70% {
+    transform: scaleY(0.45);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes vfm-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.75);
   }
 }
