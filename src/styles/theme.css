@@ -1,20 +1,23 @@
 /*
- * VoltFM-Theme fuer HeroUI v3.
+ * VoltFM-Theme fuer HeroUI v3 — Plakat / Print.
  *
  * Drei Farben aus den Logo-Dateien (public/logo/):
  *   Tinte  #0E0F12
  *   Gelb   #FFD60A  — die Senderfarbe
  *   Papier #F5F5F0
  *
- * Regel: Gelb ist immer eine Flaeche mit Tinte darauf. Gelbe Schrift auf
- * hellem Grund gibt es nicht (Kontrast 1,3:1). Wo im Hellmodus Text in
- * Senderfarbe gebraucht wird, steht ein dunkles Bernstein (--accent-text),
- * im Dunkelmodus darf es das Gelb selbst sein.
+ * Die Seite sieht aus wie ein Radio-Flyer oder eine Titelseite: Papier als
+ * Grund, Linien und Kanten aus Tinte, keine runden Ecken, keine weichen
+ * Schatten. Wo etwas schwebt (Menue, Dialog), wirft es einen harten Schatten
+ * wie ein aufgeklebter Zettel.
  *
- * Die Selektoren sind dieselben wie in HeroUIs Standard-Theme, und die Datei
- * wird danach geladen: Gleiche Ebene (base), spaetere Quelle gewinnt. Ein
- * Element mit `.dark` mitten in einer hellen Seite (die Buehne) bekommt so
- * den dunklen Satz Variablen — samt aller daraus berechneten Farben.
+ * Gelb ist immer eine Flaeche mit Tinte darauf. Gelbe Schrift auf Papier gibt
+ * es nicht (Kontrast 1,3:1); Text in Senderfarbe steht im Hellmodus in dunklem
+ * Bernstein (--accent-text), in der Nachtausgabe (dunkel) in Gelb.
+ *
+ * Gleiche Selektoren wie HeroUIs Standard-Theme, danach geladen: gleiche
+ * Ebene (base), spaetere Quelle gewinnt. Ein Abschnitt mit `.dark` in einer
+ * hellen Seite bekommt den dunklen Satz Variablen.
  */
 
 @layer base {
@@ -25,16 +28,20 @@
     --paper: #f5f5f0;
     --amber: #845800;
 
-    --radius: 0.625rem;
-    --field-radius: 0.625rem;
-    --field-border-width: 1px;
+    /* Eckig. HeroUIs Radien (rounded-lg … rounded-3xl) rechnen alle mit
+       --radius, also werden sie mit 0 ebenfalls eckig. rounded-full bleibt
+       rund — nur fuer Avatare und Punkte benutzen. */
+    --radius: 0rem;
+    --field-radius: 0rem;
+    --border-width: 2px;
+    --field-border-width: 2px;
 
     --accent: var(--volt);
     --accent-foreground: var(--ink);
 
     /* Hoehe der Player-Leiste unten, damit nichts darunter verschwindet. */
-    --player-height: 4.5rem;
-    --header-height: 4rem;
+    --player-height: 4rem;
+    --header-height: 4.5rem;
   }
 
   :root,
@@ -45,51 +52,51 @@
     --background: var(--paper);
     --foreground: var(--ink);
 
-    --surface: #ffffff;
+    --surface: #fbfbf8;
     --surface-foreground: var(--foreground);
-    --surface-secondary: #efefe8;
+    --surface-secondary: #ebebe3;
     --surface-secondary-foreground: var(--foreground);
-    --surface-tertiary: #e6e6de;
+    --surface-tertiary: #e0e0d7;
     --surface-tertiary-foreground: var(--foreground);
 
-    --overlay: #ffffff;
+    --overlay: #fbfbf8;
     --overlay-foreground: var(--foreground);
 
-    /* 6,2:1 auf Papier */
-    --muted: #5b5d64;
+    /* 6,6:1 auf Papier */
+    --muted: #55575e;
 
-    --default: #e8e8e0;
+    --default: #e4e4db;
     --default-foreground: var(--ink);
 
     --field-background: #ffffff;
     --field-foreground: var(--ink);
-    --field-placeholder: #7a7c82;
-    --field-border: #d4d4cb;
+    --field-placeholder: #75777d;
+    --field-border: var(--ink);
 
     --accent: var(--volt);
     --accent-foreground: var(--ink);
-    /* Text in Senderfarbe: Bernstein, 5,7:1 auf Papier. */
     --accent-text: var(--amber);
-    --accent-soft: color-mix(in oklab, var(--volt) 28%, transparent);
-    --accent-soft-foreground: var(--amber);
-    --accent-soft-hover: color-mix(in oklab, var(--volt) 38%, transparent);
+    --accent-soft: color-mix(in oklab, var(--volt) 35%, transparent);
+    --accent-soft-foreground: var(--ink);
+    --accent-soft-hover: color-mix(in oklab, var(--volt) 50%, transparent);
 
-    --border: #dcdcd3;
-    --separator: #e4e4dc;
-    /* Ein gelber Fokusring waere auf Papier unsichtbar. */
+    /* Kanten in Tinte, Trennlinien zarter. */
+    --border: var(--ink);
+    --separator: rgba(14, 15, 18, 0.16);
     --focus: var(--ink);
     --link: var(--ink);
 
-    --backdrop: rgba(14, 15, 18, 0.45);
+    --backdrop: rgba(14, 15, 18, 0.5);
 
     /* Logo "auf-weiss": durchgehend Tinte. */
     --logo-mark: var(--ink);
     --logo-word: var(--ink);
     --logo-accent: var(--ink);
 
-    --surface-shadow: 0 1px 2px 0 rgba(14, 15, 18, 0.05), 0 0 0 1px rgba(14, 15, 18, 0.04);
-    --overlay-shadow:
-      0 2px 8px 0 rgba(14, 15, 18, 0.08), 0 16px 32px -8px rgba(14, 15, 18, 0.16);
+    /* Harter Schatten fuer alles, was schwebt. */
+    --hard-shadow: var(--ink);
+    --surface-shadow: none;
+    --overlay-shadow: 6px 6px 0 0 var(--ink);
     --field-shadow: none;
   }
 
@@ -100,39 +107,39 @@
     --background: var(--ink);
     --foreground: var(--paper);
 
-    --surface: #16181c;
+    --surface: #15161a;
     --surface-foreground: var(--foreground);
-    --surface-secondary: #1c1f24;
+    --surface-secondary: #1c1e23;
     --surface-secondary-foreground: var(--foreground);
-    --surface-tertiary: #24272d;
+    --surface-tertiary: #25272d;
     --surface-tertiary-foreground: var(--foreground);
 
-    --overlay: #1a1c21;
+    --overlay: #15161a;
     --overlay-foreground: var(--foreground);
 
     /* 7,4:1 auf Tinte */
     --muted: #a3a49c;
 
-    --default: #23262c;
+    --default: #24262c;
     --default-foreground: var(--paper);
 
-    --field-background: #1b1e23;
+    --field-background: #15161a;
     --field-foreground: var(--paper);
-    --field-placeholder: #7f8079;
-    --field-border: #2f323a;
+    --field-placeholder: #85867f;
+    --field-border: #c9c9c1;
 
     --accent: var(--volt);
     --accent-foreground: var(--ink);
     --accent-text: var(--volt);
-    --accent-soft: color-mix(in oklab, var(--volt) 14%, transparent);
+    --accent-soft: color-mix(in oklab, var(--volt) 16%, transparent);
     --accent-soft-foreground: var(--volt);
-    --accent-soft-hover: color-mix(in oklab, var(--volt) 20%, transparent);
+    --accent-soft-hover: color-mix(in oklab, var(--volt) 24%, transparent);
 
     --danger: #ff6b5e;
     --danger-foreground: var(--ink);
 
-    --border: #2a2d34;
-    --separator: #22252b;
+    --border: #d9d9d1;
+    --separator: rgba(245, 245, 240, 0.16);
     --focus: var(--volt);
     --link: var(--paper);
 
@@ -143,8 +150,9 @@
     --logo-word: var(--paper);
     --logo-accent: var(--volt);
 
-    --surface-shadow: 0 0 0 1px rgba(245, 245, 240, 0.04);
-    --overlay-shadow: 0 0 0 1px rgba(245, 245, 240, 0.08), 0 24px 48px -12px rgba(0, 0, 0, 0.6);
+    --hard-shadow: var(--volt);
+    --surface-shadow: none;
+    --overlay-shadow: 6px 6px 0 0 var(--volt);
     --field-shadow: none;
   }
 }
@@ -156,4 +164,5 @@
   --color-accent-text: var(--accent-text);
 
   --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
 }

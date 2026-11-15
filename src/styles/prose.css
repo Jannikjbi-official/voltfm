@@ -36,14 +36,17 @@
 
     & h2 {
       margin-top: 2em;
-      font-size: 1.6em;
-      font-stretch: 125%;
+      padding-top: 0.4em;
+      border-top: 2px solid var(--border);
+      font-size: 1.9em;
+      font-stretch: 75%;
+      line-height: 1;
     }
 
     & h3 {
       margin-top: 1.75em;
-      font-size: 1.25em;
-      font-stretch: 112.5%;
+      font-size: 1.3em;
+      font-stretch: 87.5%;
     }
 
     & h4 {
@@ -89,10 +92,12 @@
 
     & blockquote {
       margin-inline: 0;
-      padding: 0.25em 0 0.25em 1.25em;
-      border-left: 4px solid var(--volt);
-      font-size: 1.15em;
-      font-style: italic;
+      padding: 0.2em 0 0.2em 1em;
+      border-left: 6px solid var(--volt);
+      font-size: 1.35em;
+      font-stretch: 87.5%;
+      font-weight: 600;
+      line-height: 1.3;
       color: var(--foreground);
     }
 
@@ -102,9 +107,8 @@
 
     & code {
       padding: 0.15em 0.4em;
-      border-radius: calc(var(--radius) * 0.5);
       background: var(--surface-secondary);
-      font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+      font-family: var(--font-mono);
       font-size: 0.875em;
     }
 
@@ -128,7 +132,7 @@
 
     & hr {
       border: 0;
-      border-top: 1px solid var(--separator);
+      border-top: 2px solid var(--border);
     }
   }
 

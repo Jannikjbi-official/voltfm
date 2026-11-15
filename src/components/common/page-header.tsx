@@ -1,11 +1,12 @@
-import { cn } from "@heroui/react";
 import { Breadcrumbs } from "./breadcrumbs";
 
 export type Crumb = { href: string; label: string };
 
 /**
- * Der Kopf jeder Unterseite: Brotkrumen, grosse breite Ueberschrift, ein
- * Satz darunter, optional etwas rechts daneben (Knopf, Zahl).
+ * Der Kopf jeder Unterseite wie der Kopf eines Plakats: Brotkrumen in
+ * Monospace, die Ueberschrift sehr gross, schmal und schwer, ein Satz
+ * darunter, rechts optional etwas daneben (Knopf, Zahl). Unten eine Linie
+ * aus Tinte.
  *
  * Kein Etikett ueber der Ueberschrift — die Brotkrumen sagen schon, wo man ist.
  */
@@ -26,28 +27,25 @@ export function PageHeader({
   children?: React.ReactNode;
 }) {
   return (
-    <header className="border-b border-separator">
-      <div className="shell pt-8 pb-10 sm:pt-10 sm:pb-14">
+    <header className="border-b-2 border-border">
+      <div className="shell pt-6 pb-10 sm:pt-8 sm:pb-14">
         {breadcrumbs && breadcrumbs.length > 0 && <Breadcrumbs items={breadcrumbs} />}
 
-        <div className="mt-6 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div className="min-w-0 max-w-3xl">
+        <div className="mt-8 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div className="min-w-0 max-w-4xl">
             <h1
-              className={cn(
-                /* Lange deutsche Woerter ("Datenschutzerklärung") passen in
-                   der breiten Schrift am Handy nicht in eine Zeile. */
-                "font-display text-balance break-words hyphens-auto text-foreground",
+              className={
+                /* Lange deutsche Woerter ("Datenschutzerklärung") passen
+                   am Handy nicht immer in eine Zeile. */
                 size === "large"
-                  ? "text-[2.5rem] leading-[0.95] sm:text-6xl lg:text-7xl"
-                  : "text-[2rem] leading-[1.02] sm:text-5xl",
-              )}
+                  ? "font-display text-[3.4rem] text-balance break-words hyphens-auto text-foreground sm:text-8xl lg:text-[8.5rem]"
+                  : "font-display text-[2.75rem] text-balance break-words hyphens-auto text-foreground sm:text-7xl"
+              }
             >
               {title}
             </h1>
             {description && (
-              <p className="mt-4 max-w-2xl text-pretty text-lg leading-relaxed text-muted">
-                {description}
-              </p>
+              <p className="mt-5 max-w-2xl text-pretty text-lg leading-relaxed text-muted">{description}</p>
             )}
             {children}
           </div>

@@ -13,9 +13,9 @@ export const THEME_MAX_AGE = 60 * 60 * 24 * 365;
 
 export type Theme = "light" | "dark";
 
-/** Dunkel ist der Standard: Wer noch nichts gewaehlt hat, bekommt das dunkle Design. */
-export const DEFAULT_THEME: Theme = "dark";
+/** Papier ist der Standard (Plakat-Look): Wer noch nichts gewaehlt hat, bekommt das helle Design. */
+export const DEFAULT_THEME: Theme = "light";
 
 export function normalizeTheme(value: string | undefined | null): Theme {
-  return value === "light" ? "light" : "dark";
+  return value === "dark" ? "dark" : "light";
 }

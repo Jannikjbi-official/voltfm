@@ -27,11 +27,11 @@ export function AccountMenu({
   const { data: session, isPending } = useSession();
   const router = useRouter();
 
-  if (isPending) return <Skeleton className="h-9 w-24 rounded-full" />;
+  if (isPending) return <Skeleton className="h-9 w-24" />;
 
   if (!session?.user) {
     return (
-      <ButtonLink href="/login" variant="primary" size="sm" onClick={onNavigate}>
+      <ButtonLink href="/login" variant="outline" size="sm" onClick={onNavigate}>
         Anmelden
       </ButtonLink>
     );

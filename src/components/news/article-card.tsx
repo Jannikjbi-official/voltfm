@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { chipVariants, cn } from "@heroui/react";
+import { cn } from "@heroui/react";
 import { AuthorAvatar } from "@/components/news/author-avatar";
 import { getCategoryNames, getAuthorProfiles, type ArticleDTO } from "@/services/content";
 import { formatDate, formatReadingTime } from "@/lib/format";
@@ -44,7 +44,7 @@ export async function ArticleCard({
       className={cn(
         "group relative flex flex-col",
         wide ? "gap-6" : "gap-4",
-        compact && "border-t border-separator py-5 first:border-t-0 first:pt-0",
+        compact && "border-t-2 border-border py-5 first:border-t-0 first:pt-0",
       )}
     >
       {!compact && (
@@ -53,7 +53,7 @@ export async function ArticleCard({
           tabIndex={-1}
           aria-hidden="true"
           className={cn(
-            "relative block overflow-hidden rounded-xl bg-surface-secondary",
+            "relative block overflow-hidden border-2 border-border bg-surface-secondary",
             wide ? "aspect-video" : "aspect-[16/10]",
           )}
         >
@@ -63,7 +63,7 @@ export async function ArticleCard({
               alt=""
               fill
               sizes={wide ? "(max-width: 900px) 100vw, 60vw" : "(max-width: 900px) 100vw, 33vw"}
-              className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+              className="object-cover"
               preload={priority}
             />
           ) : (
@@ -79,13 +79,10 @@ export async function ArticleCard({
       )}
 
       <div className={cn("flex flex-col", compact ? "gap-2" : "gap-3")}>
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-muted">
           <Link
             href={`/news?kategorie=${article.categorySlug}`}
-            className={cn(
-              chipVariants({ color: "accent", variant: "soft", size: "sm" }).base(),
-              "relative z-10 font-semibold before:absolute before:-inset-1.5 hover:underline",
-            )}
+            className="relative z-10 border-[1.5px] border-foreground px-1.5 py-0.5 font-semibold text-foreground before:absolute before:-inset-1.5 hover:bg-volt hover:text-ink"
           >
             {categoryName}
           </Link>
@@ -96,13 +93,15 @@ export async function ArticleCard({
           className={cn(
             "text-balance text-foreground",
             wide
-              ? "font-display text-[1.75rem] leading-[1.05] sm:text-4xl"
-              : "font-wide text-lg leading-snug font-bold",
+              ? "font-display text-[2.6rem] sm:text-6xl"
+              : compact
+                ? "font-display text-[1.75rem]"
+                : "font-display text-[2rem]",
           )}
         >
           <Link
             href={`/news/${article.slug}`}
-            className="rounded-sm decoration-accent-text decoration-2 underline-offset-4 after:absolute after:inset-0 group-hover:underline"
+            className="box-decoration-clone after:absolute after:inset-0 group-hover:bg-volt group-hover:text-ink"
           >
             {article.title}
           </Link>
@@ -134,7 +133,7 @@ export async function ArticleCard({
               <span className="font-semibold text-foreground">{article.authorName}</span>
             )}
           </span>
-          <span>{formatReadingTime(article.readingTime)}</span>
+          <span className="font-mono text-xs">{formatReadingTime(article.readingTime)}</span>
         </footer>
       </div>
     </article>

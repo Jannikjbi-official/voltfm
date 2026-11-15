@@ -13,7 +13,8 @@ import { ThemeToggle } from "./theme-toggle";
 import { AccountMenu } from "./account-menu";
 
 /**
- * Die Kopfzeile: klebt oben, mit Weichzeichner dahinter.
+ * Die Kopfzeile wie der Kopf einer Zeitung: Papier, darunter eine Linie aus
+ * Tinte, der aktive Bereich als gelber Block. Sie klebt oben.
  *
  * Die Navigation kommt als Prop vom Server. Sie haengt vom Zeitpunkt ab
  * (`buildMainNav` filtert zeitweise Eintraege). Wuerde dieser Client-Baustein
@@ -31,17 +32,17 @@ export function Header({ nav, account }: { nav: NavItem[]; account: AccountAvata
     !item.external && (item.href === "/" ? pathname === "/" : pathname.startsWith(item.href));
 
   return (
-    <header className="sticky top-0 z-50 border-b border-separator bg-[color-mix(in_oklab,var(--background)_80%,transparent)] backdrop-blur-xl backdrop-saturate-150">
+    <header className="sticky top-0 z-50 border-b-2 border-border bg-background">
       <div className="shell flex h-[var(--header-height)] items-center gap-6">
         <Logo />
 
-        <nav aria-label="Hauptnavigation" className="hidden flex-1 items-center gap-1 lg:flex">
+        <nav aria-label="Hauptnavigation" className="hidden flex-1 items-center gap-0.5 lg:flex">
           {nav.map((item) => (
             <NavLink key={item.href} item={item} active={isActive(item)} variant="bar" />
           ))}
         </nav>
 
-        <div className="ml-auto flex items-center gap-1 lg:ml-0">
+        <div className="ml-auto flex items-center gap-1.5 lg:ml-0">
           <ButtonLink
             href="/suche"
             variant="ghost"
@@ -73,7 +74,7 @@ export function Header({ nav, account }: { nav: NavItem[]; account: AccountAvata
       </div>
 
       <Drawer.Backdrop isOpen={mobileOpen} onOpenChange={setMobileOpen}>
-        <Drawer.Content placement="right" className="w-[min(22rem,88vw)]">
+        <Drawer.Content placement="right" className="w-[min(24rem,92vw)]">
           <Drawer.Dialog aria-label="Navigation">
             <Drawer.CloseTrigger aria-label="Menü schließen" />
             <Drawer.Header>
@@ -81,9 +82,9 @@ export function Header({ nav, account }: { nav: NavItem[]; account: AccountAvata
             </Drawer.Header>
             <Drawer.Body className="flex flex-col gap-8 pt-6">
               <nav aria-label="Mobile Navigation">
-                <ul className="flex flex-col">
+                <ul className="flex flex-col border-t-2 border-border">
                   {nav.map((item) => (
-                    <li key={item.href}>
+                    <li key={item.href} className="border-b-2 border-border">
                       <NavLink
                         item={item}
                         active={isActive(item)}
@@ -112,7 +113,7 @@ export function Header({ nav, account }: { nav: NavItem[]; account: AccountAvata
                 </ul>
               </nav>
             </Drawer.Body>
-            <Drawer.Footer className="justify-start border-t border-separator pt-4">
+            <Drawer.Footer className="justify-start border-t-2 border-border pt-4">
               <AccountMenu account={account} onNavigate={() => setMobileOpen(false)} />
             </Drawer.Footer>
           </Drawer.Dialog>
@@ -135,21 +136,24 @@ function NavLink({
   onNavigate?: () => void;
 }) {
   const className = cn(
-    "inline-flex items-center gap-1.5 rounded-lg transition-colors",
+    "inline-flex items-center gap-1.5 transition-colors",
     variant === "bar" &&
       cn(
-        "relative px-3 py-2 font-wide text-sm font-semibold",
+        "px-2.5 py-1.5 font-wide text-[0.95rem] font-bold",
         active
-          ? "text-foreground after:absolute after:inset-x-3 after:-bottom-[0.6rem] after:h-[3px] after:rounded-full after:bg-volt"
-          : "text-muted hover:text-foreground",
+          ? "bg-volt text-ink"
+          : "text-foreground underline-offset-[6px] decoration-2 hover:underline",
       ),
     variant === "large" &&
       cn(
-        "w-full py-2.5 font-display text-[1.75rem] leading-tight",
-        active ? "text-foreground" : "text-muted hover:text-foreground",
+        "w-full py-3 font-display text-[2.6rem] leading-none",
+        active ? "text-foreground" : "text-foreground/70 hover:text-foreground",
       ),
     variant === "small" &&
-      cn("py-1 text-sm font-medium", active ? "text-foreground" : "text-muted hover:text-foreground"),
+      cn(
+        "py-1 font-wide text-sm font-semibold",
+        active ? "text-foreground underline decoration-2 underline-offset-4" : "text-muted hover:text-foreground",
+      ),
   );
 
   if (item.external) {

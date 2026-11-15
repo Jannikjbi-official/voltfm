@@ -21,8 +21,9 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Platz fuer die Player-Leiste, auch ueber dem iPhone-Balken. */
-    padding-bottom: calc(var(--player-height) + env(safe-area-inset-bottom, 0px));
+    /* Den Platz fuer die Player-Leiste haelt der Footer frei (er steht
+       immer zuletzt und laeuft unter der Leiste weiter) — so bleibt unten
+       kein Papierstreifen. Das Admin hat keine Leiste. */
   }
 
   /* Fokus ist immer sichtbar — auch auf Elementen ohne eigene Regel. */
@@ -51,23 +52,32 @@
   }
 }
 
-/* Ueberschriften: Archivo breit (wdth 125) und fett. */
+/* Ueberschriften: Archivo schmal (wdth 75) und schwer — wie auf einem Plakat. */
 @utility font-display {
   font-family: var(--font-sans);
-  font-stretch: 125%;
+  font-stretch: 75%;
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
+  line-height: 0.92;
 }
 
-/* Halb breit, fuer kleinere Ueberschriften, Navigation und Knoepfe. */
+/* Halb schmal, fuer kleinere Ueberschriften, Navigation und Knoepfe. */
 @utility font-wide {
-  font-stretch: 112.5%;
+  font-stretch: 87.5%;
 }
 
-/* Der Inhaltsbereich: 72rem breit, an den Seiten 1rem Luft am Handy. */
+/* Kleine Zeile in Monospace: Uhrzeiten, Daten, Zaehler. */
+@utility font-meta {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+
+/* Der Inhaltsbereich: 80rem breit, an den Seiten 1rem Luft am Handy. */
 @utility shell {
   width: 100%;
-  max-width: 76rem;
+  max-width: 80rem;
   margin-inline: auto;
   padding-inline: 1rem;
 
@@ -80,6 +90,12 @@
   }
 }
 
+/* Harte Kante plus harter Schatten — fuer Flaechen, die "aufgeklebt" sind. */
+@utility print-box {
+  border: 2px solid var(--border);
+  box-shadow: 6px 6px 0 0 var(--hard-shadow);
+}
+
 @layer components {
   /* Springt per Tastatur als Erstes in den Inhalt. */
   .skip-link {
@@ -88,10 +104,10 @@
     left: 0.5rem;
     z-index: 200;
     padding: 0.75rem 1.25rem;
-    border-radius: var(--radius);
+    border: 2px solid var(--ink);
     background: var(--volt);
     color: var(--ink);
-    font-weight: 600;
+    font-weight: 700;
     transform: translateY(-200%);
   }
 
@@ -99,15 +115,93 @@
     transform: translateY(0);
   }
 
-  /* Knoepfe: etwas breiter gesetzt, passend zu den Ueberschriften. */
+  /* --- HeroUI im Plakat-Look ------------------------------------------- */
+
+  /* Knoepfe: eckig, mit Kante, halb schmale fette Schrift. Gedrueckt kein
+     Schrumpfen, sondern der Druck nach unten rechts. */
   .button {
-    font-stretch: 106%;
-    font-weight: 600;
+    border: 2px solid transparent;
+    font-stretch: 87.5%;
+    font-weight: 700;
+    letter-spacing: 0.01em;
   }
 
-  /* Karten etwas weniger rund als HeroUIs Standard. */
+  .button:active,
+  .button[data-pressed="true"] {
+    transform: translate(1px, 1px);
+  }
+
+  .button--primary,
+  .button--outline,
+  .button--secondary,
+  .button--tertiary,
+  .button--danger {
+    border-color: var(--border);
+  }
+
+  .button--primary {
+    --button-bg-hover: var(--volt);
+  }
+
+  @media (hover: hover) {
+    .button--primary:hover,
+    .button--primary[data-hovered="true"] {
+      box-shadow: 3px 3px 0 0 var(--hard-shadow);
+      transform: translate(-1px, -1px);
+    }
+  }
+
+  .button--secondary {
+    --button-fg: var(--foreground);
+  }
+
+  /* Felder: weisser Grund, Kante in Tinte. */
+  .input,
+  .textarea {
+    border-color: var(--field-border);
+  }
+
+  /* Overlays schweben mit Kante und hartem Schatten. */
+  .popover,
+  .dropdown__popover,
+  .tooltip,
+  .toast {
+    border: 2px solid var(--border);
+  }
+
+  .alert-dialog__dialog,
+  .modal__dialog {
+    border: 2px solid var(--border);
+    box-shadow: var(--overlay-shadow);
+  }
+
+  .drawer__content {
+    border: 0 solid var(--border);
+  }
+
+  .drawer__content--right {
+    border-left-width: 2px;
+  }
+
+  .drawer__content--left {
+    border-right-width: 2px;
+  }
+
+  .chip {
+    border: 1.5px solid currentColor;
+  }
+
+  .kbd {
+    border: 1.5px solid var(--border);
+    font-family: var(--font-mono);
+  }
+
+  .alert {
+    border: 2px solid var(--border);
+  }
+
   .card {
-    border-radius: calc(var(--radius) * 2);
+    border: 2px solid var(--border);
   }
 }
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@heroui/react";
 import type { NowPlaying, TrackHistoryItem } from "@/services/radio/types";
 import { formatTime } from "@/lib/format";
 import { useRadioPlayer } from "./player-provider";
@@ -13,7 +14,16 @@ import { CoverArt } from "./cover-art";
  * gerendert — auf der Startseite also bis zu einer Stunde alt, und dann stand
  * der laufende Song mit drin.
  */
-export function RecentTracks({ limit, emptyText }: { limit: number; emptyText?: string }) {
+export function RecentTracks({
+  limit,
+  emptyText,
+  columns = false,
+}: {
+  limit: number;
+  emptyText?: string;
+  /** Am Desktop zweispaltig, wie ein Fahrplan. */
+  columns?: boolean;
+}) {
   const { snapshot } = useRadioPlayer();
   const tracks = withoutCurrent(snapshot?.history ?? [], snapshot?.nowPlaying ?? null).slice(0, limit);
 
@@ -22,23 +32,20 @@ export function RecentTracks({ limit, emptyText }: { limit: number; emptyText?: 
   }
 
   return (
-    <ol className="flex flex-col divide-y divide-separator">
+    <ol className={cn("grid border-t-2 border-border", columns && "md:grid-cols-2 md:gap-x-10")}>
       {tracks.map((track) => (
         <li
           key={`${track.id}-${track.startedAt}`}
-          className="grid grid-cols-[2.75rem_minmax(0,1fr)_auto] items-center gap-4 py-3 first:pt-0"
+          className="grid grid-cols-[3.25rem_2.75rem_minmax(0,1fr)] items-center gap-3 border-b border-separator py-3 sm:gap-4"
         >
-          <CoverArt src={track.coverUrl} alt="" className="size-11 rounded-md" />
-          <span className="min-w-0">
-            <span className="block truncate font-semibold text-foreground">{track.title}</span>
-            <span className="block truncate text-sm text-muted">{track.artist}</span>
-          </span>
-          <time
-            className="text-sm tabular-nums text-muted"
-            dateTime={track.startedAt ?? undefined}
-          >
+          <time className="font-mono text-sm tabular-nums text-muted" dateTime={track.startedAt ?? undefined}>
             {track.startedAt ? formatTime(track.startedAt) : "–"}
           </time>
+          <CoverArt src={track.coverUrl} alt="" className="size-11 border border-border" />
+          <span className="min-w-0">
+            <span className="block truncate font-wide font-bold text-foreground">{track.title}</span>
+            <span className="block truncate text-sm text-muted">{track.artist}</span>
+          </span>
         </li>
       ))}
     </ol>

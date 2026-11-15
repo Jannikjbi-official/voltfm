@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Chip, cn } from "@heroui/react";
+import { cn } from "@heroui/react";
 import type { EventDTO } from "@/services/content";
 import { formatTime } from "@/lib/format";
 import { Icon, LocationIcon, ClockIcon } from "@/lib/icons";
@@ -27,23 +27,23 @@ export function EventCard({ event }: { event: EventDTO }) {
   return (
     <article
       className={cn(
-        "group relative grid grid-cols-[4rem_minmax(0,1fr)] items-start gap-5 border-t border-separator py-6 first:border-t-0 first:pt-0 sm:grid-cols-[4.5rem_minmax(0,1fr)] sm:gap-6",
+        "group relative grid grid-cols-[4.5rem_minmax(0,1fr)] items-start gap-5 border-t-2 border-border py-5 first:border-t-0 first:pt-0 sm:grid-cols-[5.5rem_minmax(0,1fr)] sm:gap-6",
         isPast && "opacity-70",
       )}
     >
       <div
         aria-hidden="true"
-        className="flex aspect-square flex-col items-center justify-center rounded-xl border border-border bg-surface text-foreground"
+        className="flex aspect-square flex-col items-center justify-center bg-foreground text-background transition-colors group-hover:bg-volt group-hover:text-ink"
       >
-        <span className="font-display text-[1.75rem] leading-none tabular-nums">{day}</span>
-        <span className="mt-1 text-xs font-semibold text-muted">{month}</span>
+        <span className="font-display text-[2.4rem] leading-none tabular-nums sm:text-5xl">{day}</span>
+        <span className="mt-1 font-mono text-xs">{month}</span>
       </div>
 
       <div className="flex min-w-0 flex-col gap-2">
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted">
-          <Chip size="sm" variant="soft">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 font-mono text-xs text-muted">
+          <span className="border-[1.5px] border-foreground px-1.5 py-0.5 font-semibold text-foreground">
             {event.category}
-          </Chip>
+          </span>
           <span className="inline-flex items-center gap-1.5">
             <Icon icon={ClockIcon} className="text-xs" />
             {formatTime(event.startsAt)} Uhr
@@ -54,10 +54,10 @@ export function EventCard({ event }: { event: EventDTO }) {
           </span>
         </div>
 
-        <h3 className="font-wide text-lg leading-snug font-bold text-balance text-foreground sm:text-xl">
+        <h3 className="font-display text-[1.9rem] text-balance text-foreground sm:text-4xl">
           <Link
             href={`/events/${event.slug}`}
-            className="rounded-sm decoration-accent-text decoration-2 underline-offset-4 after:absolute after:inset-0 group-hover:underline"
+            className="box-decoration-clone after:absolute after:inset-0"
           >
             {event.title}
           </Link>
