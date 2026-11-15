@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { Button } from "@heroui/react";
 import { Icon, LogoutIcon } from "@/lib/icons";
 import { authClient } from "@/lib/auth-client";
 
@@ -15,7 +15,7 @@ export function SignOutButton() {
   }
 
   return (
-    <Button variant="error" mode="stroke" size="md" onClick={handleSignOut}>
+    <Button variant="danger-soft" onPress={handleSignOut}>
       <Icon icon={LogoutIcon} />
       Abmelden
     </Button>

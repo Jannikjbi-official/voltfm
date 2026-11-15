@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
+import { Button } from "@heroui/react";
 import { ButtonLink } from "@/components/common/button-link";
-import { Button } from "@/components/ui/button";
-import { Icon, ArrowRightIcon, RadioIcon, LoadingIcon } from "@/lib/icons";
+import { ErrorScreen } from "@/components/common/error-screen";
+import { Icon, RadioIcon, RetryIcon } from "@/lib/icons";
 import { buildMainNav } from "@/lib/site";
-import styles from "./not-found.module.css";
 
 /**
  * Was statt eines Absturzes erscheint.
@@ -30,61 +30,34 @@ export default function Error({
     console.error("[error-boundary]", error);
   }, [error]);
 
-  const nav = buildMainNav();
+  const nav = buildMainNav().filter((item) => !item.external);
 
   return (
-    <div className={styles.page}>
-      <div className="shell">
-        <div className={styles.inner}>
-          <p className={styles.code} aria-hidden="true">
-            Fehler
+    <ErrorScreen
+      code="Fehler"
+      title="Da ist uns etwas abgestürzt."
+      lead="Diese Seite konnte nicht geladen werden. Das liegt an uns, nicht an dir. Der Livestream läuft weiter — versuch es gleich noch einmal oder geh woanders hin."
+      actions={
+        <>
+          <Button variant="primary" size="lg" onPress={reset}>
+            <Icon icon={RetryIcon} />
+            Noch einmal versuchen
+          </Button>
+          <ButtonLink href="/radio" variant="outline" size="lg">
+            <Icon icon={RadioIcon} />
+            Zum Livestream
+          </ButtonLink>
+        </>
+      }
+      links={nav.map(({ href, label }) => ({ href, label }))}
+      footer={
+        /* Hilft beim Zuordnen, wenn jemand den Fehler meldet. */
+        error.digest ? (
+          <p className="mt-8 text-xs text-muted">
+            Fehlerkennung: <code className="font-mono">{error.digest}</code>
           </p>
-
-          <h1 className={styles.title}>Da ist uns etwas abgestürzt.</h1>
-
-          <p className={styles.lead}>
-            Diese Seite konnte nicht geladen werden. Das liegt an uns, nicht an
-            dir. Der Livestream läuft weiter — versuch es gleich noch einmal
-            oder geh woanders hin.
-          </p>
-
-          <div className={styles.actions}>
-            <Button variant="primary" mode="filled" size="md" onClick={reset}>
-              <Icon icon={LoadingIcon} />
-              Noch einmal versuchen
-            </Button>
-            <ButtonLink href="/radio" variant="neutral" mode="stroke" size="md">
-              <Icon icon={RadioIcon} />
-              Zum Livestream
-            </ButtonLink>
-          </div>
-
-          {/* Dieselben Klassen wie auf der 404-Seite — beide teilen sich das
-              Stylesheet, damit sie nicht auseinanderlaufen. */}
-          <nav className={styles.nav} aria-label="Weitere Bereiche">
-            <p className={styles.navLabel}>Oder weiter zu</p>
-            <ul className={styles.navList} role="list">
-              {nav
-                .filter((item) => !item.external)
-                .map((item) => (
-                  <li key={item.href}>
-                    <ButtonLink href={item.href} variant="neutral" mode="ghost" size="sm">
-                      {item.label}
-                      <Icon icon={ArrowRightIcon} />
-                    </ButtonLink>
-                  </li>
-                ))}
-            </ul>
-          </nav>
-
-          {/* Hilft beim Zuordnen, wenn jemand den Fehler meldet. */}
-          {error.digest && (
-            <p className={styles.digest}>
-              Fehlerkennung: <code>{error.digest}</code>
-            </p>
-          )}
-        </div>
-      </div>
-    </div>
+        ) : null
+      }
+    />
   );
 }

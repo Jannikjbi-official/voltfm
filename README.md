@@ -16,12 +16,12 @@ Freigabe wird `dev` per Pull Request nach `main` gemerged.
 | Bereich       | Wahl                                                        |
 | ------------- | ----------------------------------------------------------- |
 | Framework     | Next.js 16 (App Router, Turbopack), React 19, TypeScript     |
-| UI            | [OlyxUI](https://www.olyxui.com/) (Base UI), natives CSS     |
+| UI            | [HeroUI v3](https://heroui.com/) (React Aria), Tailwind CSS 4 |
 | Icons         | Font Awesome                                                 |
 | Datenbank     | MongoDB                                                      |
 | Auth          | Better Auth (Admin, Username, Discord, Passkey)              |
 | Uploads       | UploadThing                                                  |
-| Radio         | laut.fm API + natives HTML5 `<audio>`                        |
+| Radio         | laut.fm API (Metadaten), Wiedergabe verlinkt                 |
 
 ---
 
@@ -217,42 +217,41 @@ Fehlt ein Bild, greift eine Kette:
 
 ## Design
 
-Das Farbsystem von OlyxUI leitet die komplette Palette aus drei Variablen ab.
-`src/styles/brand.css` setzt diese auf VoltFM-Blau neu:
+UI-Bibliothek ist **HeroUI v3** (`@heroui/react`, `@heroui/styles`) auf
+**Tailwind CSS 4**. Die Doku liegt fuer Agenten im Projekt
+(`npx heroui-cli@latest agents-md --react --output docs/AGENTS-HEROUI.md`,
+Dateien unter `.heroui-docs/`, nicht eingecheckt).
+
+Drei Farben aus den Logo-Dateien:
 
 ```
-Primary  #456990  ->  oklch(0.5106 0.0749 251.33)
-Accent   #C1121F  ->  oklch(0.5161 0.2019  25.94)
+Tinte  #0E0F12
+Gelb   #FFD60A   Senderfarbe
+Papier #F5F5F0
 ```
 
-Dark Mode ist **true black** (`#000000`) mit einer neutralen Grauleiter
-darüber. Die Graustufen sind bewusst ungefärbt, damit das Markenblau die
-einzige Farbe auf der Fläche bleibt.
+Gelb ist immer eine **Fläche mit Tinte darauf**. Gelbe Schrift auf hellem
+Grund gibt es nicht; Text in Senderfarbe steht im Hellmodus in dunklem
+Bernstein (`text-accent-text`). Die HeroUI-Variablen (`--background`,
+`--surface`, `--accent`, `--muted` …) setzt `src/styles/theme.css` für hell
+und dunkel.
 
-Das Theme liegt in einem **Cookie** (`voltfm-theme`), nicht in `localStorage` —
-so kennt der Server es schon beim Rendern: kein Flash, kein Hydration-Mismatch.
-Standard ist **Light**.
+**Dunkel ist Standard.** Das Theme liegt in einem **Cookie** (`voltfm-theme`),
+nicht in `localStorage` — so kennt der Server es beim Rendern und setzt
+`data-theme` und die Klasse `dark`/`light` schon im HTML: kein Flash, kein
+Hydration-Mismatch. Die Bühne auf Startseite und `/radio`, die Player-Leiste
+und die Fehlerseiten sind immer dunkel (`class="dark"` am Abschnitt).
 
-Schrift: Archivo für alles, variabel in Stärke und Breite. Überschriften laufen
-fett und breit (`expanded` bzw. `semi-expanded` im `font`-Token), Fließtext in
-normaler Breite. Die Tokens stehen in `src/styles/brand.css`.
+Schrift: Archivo, variabel in Stärke und Breite. Große Überschriften
+`font-display` (Breite 125 %, Stärke 800), kleinere `font-wide`.
 
-### OlyxUI-Regeln
+Bausteine:
 
-- `src/components/ui/` ist **vendorter OlyxUI-Code** und bleibt unverändert.
-  ESLint ignoriert den Ordner bewusst.
-- Anpassungen gehören in `src/styles/olyx-overrides.css` (zielt auf die
-  `data-ui`-Attribute) — nicht in die Komponenten.
-- Die OlyxUI-Quellen importieren sich gegenseitig als `@olyx/react`. Dafür gibt
-  es Pfad-Aliase in `tsconfig.json` plus die Barrel-Datei
-  `src/components/ui/index.ts`.
-- OlyxUI selbst rendert intern **Hugeicons**. Das bleibt so — alles, was VoltFM
-  selbst zeichnet, nutzt Font Awesome über `src/lib/icons.tsx`.
-- OlyxUI hat **keine Card-Komponente**; Kartenflächen sind eigenes Markup mit
-  VoltFM-Tokens.
-
-Ein Button, der als Link rendert, muss `nativeButton={false}` setzen — dafür
-gibt es `ButtonLink` (`src/components/common/button-link.tsx`).
+- `ButtonLink` — Link mit HeroUI-Knopfoptik (`buttonVariants`)
+- `PageHeader`, `SectionHeader`, `EmptyState` — `src/components/common/`
+- Formularfelder für Server Actions — `src/components/common/form-field.tsx`
+  (native Felder mit HeroUI-Klassen, damit `FormData` ankommt)
+- `.vfm-prose` — Lesetext für Artikel- und Event-HTML (`src/styles/prose.css`)
 
 ---
 

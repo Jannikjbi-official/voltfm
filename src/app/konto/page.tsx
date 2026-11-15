@@ -6,7 +6,6 @@ import { serverEnv } from "@/lib/env";
 import { PasskeyManager } from "./passkey-manager";
 import { ConnectedAccounts } from "./connected-accounts";
 import { SignOutButton } from "./sign-out-button";
-import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Konto",
@@ -31,7 +30,6 @@ export default async function KontoPage(props: PageProps<"/konto">) {
   return (
     <>
       <PageHeader
-        eyebrow="Dein Konto"
         title={profile.name || profile.username || "Konto"}
         breadcrumbs={[
           { href: "/", label: "Start" },
@@ -39,69 +37,81 @@ export default async function KontoPage(props: PageProps<"/konto">) {
         ]}
       />
 
-      <section className="section shell">
-        <div className={styles.layout}>
-          <section className={styles.block} aria-labelledby="profile-title">
-            <h2 id="profile-title" className={styles.blockTitle}>
-              Profil
-            </h2>
-            <dl className={styles.facts}>
-              <div className={styles.fact}>
-                <dt>Username</dt>
-                <dd>{profile.username ?? "—"}</dd>
-              </div>
-              <div className={styles.fact}>
-                <dt>Anzeigename</dt>
-                <dd>{profile.name || "—"}</dd>
-              </div>
-              <div className={styles.fact}>
-                <dt>E-Mail</dt>
-                <dd>{profile.email}</dd>
-              </div>
-              <div className={styles.fact}>
-                <dt>Rolle</dt>
-                {/* Die geltende Rolle, nicht die gespeicherte: Fest
-                    hinterlegte Betreiber tragen in der Datenbank "user". */}
-                <dd>{effectiveRoleLabel(user)}</dd>
-              </div>
+      <div className="shell py-12 sm:py-16">
+        <div className="grid gap-6 lg:grid-cols-2">
+          <AccountBlock id="profile-title" title="Profil">
+            <dl className="flex flex-col divide-y divide-separator text-sm">
+              {[
+                ["Username", profile.username ?? "—"],
+                ["Anzeigename", profile.name || "—"],
+                ["E-Mail", profile.email],
+                /* Die geltende Rolle, nicht die gespeicherte: Fest
+                   hinterlegte Betreiber tragen in der Datenbank "user". */
+                ["Rolle", effectiveRoleLabel(user)],
+              ].map(([term, value]) => (
+                <div key={term} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-3">
+                  <dt className="text-muted">{term}</dt>
+                  <dd className="min-w-0 break-all font-semibold text-foreground">{value}</dd>
+                </div>
+              ))}
             </dl>
-          </section>
+          </AccountBlock>
 
-          <section className={styles.block} aria-labelledby="accounts-title">
-            <h2 id="accounts-title" className={styles.blockTitle}>
-              Verknüpfte Konten
-            </h2>
-            <p className={styles.blockText}>
-              Verknüpfe Discord, um dich künftig mit einem Klick anzumelden —
-              ohne Username und Passwort.
-            </p>
+          <AccountBlock
+            id="accounts-title"
+            title="Verknüpfte Konten"
+            description="Verknüpfe Discord, um dich künftig mit einem Klick anzumelden — ohne Username und Passwort."
+          >
             <ConnectedAccounts discordEnabled={serverEnv.discordEnabled} notice={linkNotice} />
-          </section>
+          </AccountBlock>
 
-          <section className={styles.block} aria-labelledby="passkeys-title">
-            <h2 id="passkeys-title" className={styles.blockTitle}>
-              Passkeys
-            </h2>
-            <p className={styles.blockText}>
-              Mit einem Passkey meldest du dich ohne Passwort an — per
-              Fingerabdruck, Gesicht oder Geräte-PIN. Du kannst mehrere
-              hinterlegen, zum Beispiel einen pro Gerät.
-            </p>
+          <AccountBlock
+            id="passkeys-title"
+            title="Passkeys"
+            description="Mit einem Passkey meldest du dich ohne Passwort an — per Fingerabdruck, Gesicht oder Geräte-PIN. Du kannst mehrere hinterlegen, zum Beispiel einen pro Gerät."
+          >
             <PasskeyManager />
-          </section>
+          </AccountBlock>
 
-          <section className={styles.block} aria-labelledby="session-title">
-            <h2 id="session-title" className={styles.blockTitle}>
-              Sitzung
-            </h2>
-            <p className={styles.blockText}>
-              Du bist auf diesem Gerät angemeldet. Beim Abmelden wird die Sitzung
-              serverseitig beendet.
-            </p>
-            <SignOutButton />
-          </section>
+          <AccountBlock
+            id="session-title"
+            title="Sitzung"
+            description="Du bist auf diesem Gerät angemeldet. Beim Abmelden wird die Sitzung serverseitig beendet."
+          >
+            <div>
+              <SignOutButton />
+            </div>
+          </AccountBlock>
         </div>
-      </section>
+      </div>
     </>
+  );
+}
+
+/** Ein Kasten auf der Kontoseite: Ueberschrift, ein Satz, Inhalt. */
+function AccountBlock({
+  id,
+  title,
+  description,
+  children,
+}: {
+  id: string;
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section
+      aria-labelledby={id}
+      className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-6"
+    >
+      <div>
+        <h2 id={id} className="font-wide text-lg font-bold text-foreground">
+          {title}
+        </h2>
+        {description && <p className="mt-1.5 text-sm leading-relaxed text-muted">{description}</p>}
+      </div>
+      {children}
+    </section>
   );
 }

@@ -4,14 +4,11 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Field, FieldLabel } from "@/components/ui/field";
-import { Separator } from "@/components/ui/separator";
-import { Alert, AlertContent, AlertDescription } from "@/components/ui/alert";
-import { Icon, DiscordIcon, PasskeyIcon, LoadingIcon, UserIcon } from "@/lib/icons";
+import { Button } from "@heroui/react";
+import { FormMessage, TextField } from "@/components/common/form-field";
+import { Icon, DiscordIcon, PasskeyIcon, UserIcon } from "@/lib/icons";
 import { authClient } from "@/lib/auth-client";
-import styles from "./page.module.css";
+import { AuthCard, AuthDivider } from "./auth-card";
 
 type Pending = "none" | "discord" | "passkey" | "username";
 
@@ -80,93 +77,93 @@ export function LoginForm({ discordEnabled }: { discordEnabled: boolean }) {
     done();
   }
 
+  const busy = pending !== "none";
+
   return (
-    <div className={styles.card}>
-      <h1 className={styles.title}>Bei VoltFM anmelden</h1>
-      <p className={styles.subtitle}>
-        Dein Konto ist für Profil, Favoriten und die Redaktion. Zum Hören
-        brauchst du es nicht — der Stream läuft immer ohne Anmeldung.
-      </p>
+    <AuthCard
+      title="Bei VoltFM anmelden"
+      description={
+        <>
+          Dein Konto ist für Profil, Favoriten und die Redaktion. Zum Hören
+          brauchst du es nicht — der Stream läuft immer ohne Anmeldung.
+        </>
+      }
+      footer={
+        <>
+          Noch kein Konto?{" "}
+          <Link
+            href="/registrieren"
+            className="rounded-sm font-semibold text-foreground underline decoration-accent-text decoration-2 underline-offset-4"
+          >
+            Jetzt registrieren
+          </Link>
+        </>
+      }
+    >
+      {error && <FormMessage status="error">{error}</FormMessage>}
 
-      {error && (
-        <Alert variant="lighter" status="error" role="alert">
-          <AlertContent>
-            <AlertDescription>{error}</AlertDescription>
-          </AlertContent>
-        </Alert>
-      )}
-
-      <div className={styles.methods}>
+      <div className="flex flex-col gap-3">
         {discordEnabled && (
           <Button
             variant="primary"
-            mode="filled"
             size="lg"
-            onClick={handleDiscord}
-            disabled={pending !== "none"}
+            fullWidth
+            onPress={handleDiscord}
+            isDisabled={busy && pending !== "discord"}
+            isPending={pending === "discord"}
           >
-            <Icon icon={pending === "discord" ? LoadingIcon : DiscordIcon} spin={pending === "discord"} />
+            {pending !== "discord" && <Icon icon={DiscordIcon} />}
             Mit Discord anmelden
           </Button>
         )}
 
         <Button
-          variant="neutral"
-          mode="stroke"
+          variant="outline"
           size="lg"
-          onClick={handlePasskey}
-          disabled={pending !== "none"}
+          fullWidth
+          onPress={handlePasskey}
+          isDisabled={busy && pending !== "passkey"}
+          isPending={pending === "passkey"}
         >
-          <Icon icon={pending === "passkey" ? LoadingIcon : PasskeyIcon} spin={pending === "passkey"} />
+          {pending !== "passkey" && <Icon icon={PasskeyIcon} />}
           Mit Passkey anmelden
         </Button>
       </div>
 
-      <div className={styles.divider}>
-        <Separator />
-        <span>oder mit Username</span>
-        <Separator />
-      </div>
+      <AuthDivider>oder mit Username</AuthDivider>
 
-      <form action={handleUsername} className={styles.form}>
-        <Field name="username" className={styles.field}>
-          <FieldLabel>Username</FieldLabel>
-          <Input
-            name="username"
-            type="text"
-            required
-            autoComplete="username"
-            placeholder="dein_username"
-          />
-        </Field>
+      <form action={handleUsername} className="flex flex-col gap-4">
+        <TextField
+          label="Username"
+          name="username"
+          type="text"
+          required
+          autoComplete="username"
+          placeholder="dein_username"
+        />
 
-        <Field name="password" className={styles.field}>
-          <FieldLabel>Passwort</FieldLabel>
-          <Input
-            name="password"
-            type="password"
-            required
-            minLength={10}
-            autoComplete="current-password"
-            placeholder="••••••••••"
-          />
-        </Field>
+        <TextField
+          label="Passwort"
+          name="password"
+          type="password"
+          required
+          minLength={10}
+          autoComplete="current-password"
+          placeholder="••••••••••"
+        />
 
         <Button
           type="submit"
-          variant="neutral"
-          mode="filled"
+          variant="tertiary"
           size="lg"
-          disabled={pending !== "none"}
+          fullWidth
+          isDisabled={busy && pending !== "username"}
+          isPending={pending === "username"}
         >
-          <Icon icon={pending === "username" ? LoadingIcon : UserIcon} spin={pending === "username"} />
+          {pending !== "username" && <Icon icon={UserIcon} />}
           Anmelden
         </Button>
       </form>
-
-      <p className={styles.footer}>
-        Noch kein Konto? <Link href="/registrieren">Jetzt registrieren</Link>
-      </p>
-    </div>
+    </AuthCard>
   );
 }
