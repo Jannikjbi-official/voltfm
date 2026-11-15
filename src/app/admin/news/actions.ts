@@ -10,7 +10,7 @@ import { imageUrl } from "@/lib/validation";
 
 import { articles } from "@/db/collections";
 import { assertCan, AuthorizationError } from "@/lib/session";
-import { slugify } from "@/lib/format";
+import { parseStationTime, slugify } from "@/lib/format";
 import { renderRichText, findImageWithoutAlt } from "@/lib/sanitize";
 import type { ArticleStatus } from "@/types/content";
 import { announceDueArticles } from "@/services/discord/news";
@@ -61,12 +61,20 @@ function parse(formData: FormData) {
   });
 }
 
-/** Resolves the publish date from the chosen status. */
+/**
+ * Resolves the publish date from the chosen status.
+ *
+ * Das Feld ist ein `datetime-local` in Senderzeit (Berlin). `new Date(raw)`
+ * wuerde es in der Zeitzone des Servers lesen — auf Vercel UTC, also eine
+ * bzw. zwei Stunden zu spaet. Was sich nicht lesen laesst, zaehlt als leer.
+ */
 function resolvePublishedAt(status: ArticleStatus, raw: string | undefined): Date | null {
-  if (status === "draft" || status === "archived") return raw ? new Date(raw) : null;
-  if (status === "scheduled") return raw ? new Date(raw) : new Date();
+  const parsed = raw ? parseStationTime(raw) : null;
+  const given = parsed && !Number.isNaN(parsed.getTime()) ? parsed : null;
+  if (status === "draft" || status === "archived") return given;
+  if (status === "scheduled") return given ?? new Date();
   // published: now, unless an explicit date was given (back-dating an import).
-  return raw ? new Date(raw) : new Date();
+  return given ?? new Date();
 }
 
 export async function saveArticle(

@@ -10,7 +10,7 @@ import {
   TextField,
 } from "@/components/common/form-field";
 import { Icon, LoadingIcon, CheckIcon } from "@/lib/icons";
-import { formatDate } from "@/lib/format";
+import { formatDate, toStationTimeInput } from "@/lib/format";
 import { ImageUpload } from "./image-upload";
 import { RichTextEditor } from "./rich-text-editor";
 import { useActionFeedback } from "./use-action-feedback";
@@ -118,11 +118,9 @@ export function ArticleForm({
               name="publishedAt"
               label="Veröffentlichung"
               type="datetime-local"
-              defaultValue={
-                article?.publishedAt
-                  ? new Date(article.publishedAt).toISOString().slice(0, 16)
-                  : undefined
-              }
+              /* Senderzeit (Berlin), nicht UTC: Wer 20:00 sieht, meint 20:00 in
+                 Hamburg. Der Server liest das Feld mit parseStationTime. */
+              defaultValue={toStationTimeInput(article?.publishedAt) || undefined}
               description={<>Für &bdquo;Geplant&ldquo; ein Datum in der Zukunft setzen.</>}
             />
 
