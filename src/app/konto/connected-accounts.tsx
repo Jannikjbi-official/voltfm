@@ -1,11 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertContent, AlertDescription } from "@/components/ui/alert";
-import { Icon, DiscordIcon, LoadingIcon, CheckIcon, LinkIcon } from "@/lib/icons";
+import { Button } from "@heroui/react";
+import { FormMessage } from "@/components/common/form-field";
+import { Icon, DiscordIcon, CheckIcon, LinkIcon } from "@/lib/icons";
 import { authClient } from "@/lib/auth-client";
-import styles from "./page.module.css";
 
 interface LinkedAccount {
   id: string;
@@ -89,86 +88,65 @@ export function ConnectedAccounts({
 
   if (!discordEnabled) {
     return (
-      <p className={styles.empty}>
-        Discord-Login ist auf diesem Server nicht konfiguriert.
-      </p>
+      <p className="text-sm text-muted">Discord-Login ist auf diesem Server nicht konfiguriert.</p>
     );
   }
 
   return (
-    <>
+    <div className="flex flex-col gap-4">
       {notice === "linked" && !error && (
-        <Alert variant="lighter" status="success" role="status">
-          <AlertContent>
-            <AlertDescription>Discord ist jetzt mit deinem Konto verknüpft.</AlertDescription>
-          </AlertContent>
-        </Alert>
+        <FormMessage status="success">Discord ist jetzt mit deinem Konto verknüpft.</FormMessage>
       )}
 
       {notice === "failed" && !error && (
-        <Alert variant="lighter" status="error" role="alert">
-          <AlertContent>
-            <AlertDescription>
-              Die Verknüpfung mit Discord wurde abgebrochen. Falls du sie selbst
-              abgebrochen hast, ist alles in Ordnung — sonst versuch es einfach
-              noch einmal.
-            </AlertDescription>
-          </AlertContent>
-        </Alert>
+        <FormMessage status="error">
+          Die Verknüpfung mit Discord wurde abgebrochen. Falls du sie selbst
+          abgebrochen hast, ist alles in Ordnung — sonst versuch es einfach
+          noch einmal.
+        </FormMessage>
       )}
 
-      {error && (
-        <Alert variant="lighter" status="error" role="alert">
-          <AlertContent>
-            <AlertDescription>{error}</AlertDescription>
-          </AlertContent>
-        </Alert>
-      )}
+      {error && <FormMessage status="error">{error}</FormMessage>}
 
       {loading ? (
-        <p className={styles.empty}>Verknüpfungen werden geladen …</p>
+        <p className="text-sm text-muted">Verknüpfungen werden geladen …</p>
       ) : (
-        <div className={styles.provider}>
-          <div className={styles.providerName}>
-            <span className={styles.providerLabel}>
-              <Icon icon={DiscordIcon} /> Discord
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border px-4 py-3">
+          <div className="flex items-center gap-3">
+            <span
+              aria-hidden="true"
+              className="grid size-9 place-items-center rounded-full bg-surface-secondary text-foreground"
+            >
+              <Icon icon={DiscordIcon} />
             </span>
-            <span className={styles.providerMeta}>
-              {discord ? (
-                <>
-                  <Icon icon={CheckIcon} className={styles.connectedIcon} /> Verknüpft
-                </>
-              ) : (
-                "Nicht verknüpft"
-              )}
-            </span>
+            <div>
+              <p className="font-semibold text-foreground">Discord</p>
+              <p className="flex items-center gap-1.5 text-sm text-muted">
+                {discord ? (
+                  <>
+                    <Icon icon={CheckIcon} className="text-success" /> Verknüpft
+                  </>
+                ) : (
+                  "Nicht verknüpft"
+                )}
+              </p>
+            </div>
           </div>
 
           {discord ? (
             <Button
-              variant="error"
-              mode="ghost"
+              variant="danger-soft"
               size="sm"
-              onClick={handleUnlink}
-              disabled={busy || !hasOtherLogin}
-              title={
-                hasOtherLogin
-                  ? undefined
-                  : "Du brauchst erst eine andere Anmeldemethode, sonst kommst du nicht mehr rein."
-              }
+              onPress={handleUnlink}
+              isDisabled={!hasOtherLogin}
+              isPending={busy}
             >
-              <Icon icon={busy ? LoadingIcon : LinkIcon} spin={busy} />
+              {!busy && <Icon icon={LinkIcon} />}
               Trennen
             </Button>
           ) : (
-            <Button
-              variant="primary"
-              mode="stroke"
-              size="sm"
-              onClick={handleLink}
-              disabled={busy}
-            >
-              <Icon icon={busy ? LoadingIcon : DiscordIcon} spin={busy} />
+            <Button variant="secondary" size="sm" onPress={handleLink} isPending={busy}>
+              {!busy && <Icon icon={DiscordIcon} />}
               Discord verknüpfen
             </Button>
           )}
@@ -176,11 +154,11 @@ export function ConnectedAccounts({
       )}
 
       {discord && !hasOtherLogin && (
-        <p className={styles.hint}>
+        <p className="text-sm text-muted">
           Discord ist gerade deine einzige Anmeldemethode. Lege zuerst einen
           Passkey an, bevor du die Verknüpfung löst.
         </p>
       )}
-    </>
+    </div>
   );
 }

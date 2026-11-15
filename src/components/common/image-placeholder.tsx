@@ -1,18 +1,18 @@
-import styles from "./image-placeholder.module.css";
+import { cn } from "@heroui/react";
 
 /**
- * The fallback for content that genuinely has no image.
+ * Ersatz fuer Inhalte, die wirklich kein Bild haben.
  *
- * Deliberately not a photo and not a gradient: a flat surface with the VoltFM
- * bolt and the item's initial. It reads as "intentionally blank" rather than
- * pretending to be artwork, and it stays legible in both themes.
+ * Bewusst kein Foto und kein Verlauf: eine flache Flaeche mit dem
+ * VoltFM-Blitz und dem Anfangsbuchstaben. Das liest sich als "absichtlich
+ * leer" statt als vorgetaeuschtes Artwork und bleibt in beiden Modi lesbar.
  */
 export function ImagePlaceholder({
   label,
   ratio = "16 / 10",
   className,
 }: {
-  /** Usually the title — its first character becomes the monogram. */
+  /** Meist der Titel — sein erstes Zeichen wird zum Monogramm. */
   label?: string;
   ratio?: string;
   className?: string;
@@ -21,14 +21,18 @@ export function ImagePlaceholder({
 
   return (
     <div
-      className={`${styles.placeholder} ${className ?? ""}`}
-      style={{ aspectRatio: ratio }}
       aria-hidden="true"
+      /* Das Seitenverhaeltnis ist ein Wert des Aufrufers — als Variable, nicht als Stil. */
+      style={{ "--placeholder-ratio": ratio } as React.CSSProperties}
+      className={cn(
+        "relative flex aspect-[var(--placeholder-ratio)] w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-surface-secondary text-muted",
+        className,
+      )}
     >
-      <svg viewBox="0 0 24 24" className={styles.bolt} fill="none">
+      <svg viewBox="0 0 24 24" className="size-8 text-accent-text" fill="none">
         <path d="M13.5 2 4 13.5h6L9.5 22 20 10.5h-6.5L13.5 2Z" fill="currentColor" />
       </svg>
-      {initial && <span className={styles.initial}>{initial}</span>}
+      {initial && <span className="font-display text-4xl text-foreground">{initial}</span>}
     </div>
   );
 }

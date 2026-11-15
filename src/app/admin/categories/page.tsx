@@ -4,7 +4,7 @@ import { listCategories } from "@/services/content";
 import { EntityManager } from "@/components/admin/entity-manager";
 import type { EntityRow, FieldDef } from "@/components/admin/entity-types";
 import { saveCategory, deleteCategory } from "./actions";
-import styles from "../page.module.css";
+import { AdminPageHeader } from "@/components/admin/admin-ui";
 
 export const metadata: Metadata = { title: "Kategorien · Admin", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -58,12 +58,10 @@ export default async function Page() {
 
   return (
     <>
-      <header className={styles.header}>
-        <div>
-          <h1 className={styles.title}>Kategorien</h1>
-          <p className={styles.subtitle}>Kategorien der News-Redaktion.</p>
-        </div>
-      </header>
+      <AdminPageHeader
+        title="Kategorien"
+        description="Kategorien der News-Redaktion."
+      />
 
       <EntityManager
         rows={rows}

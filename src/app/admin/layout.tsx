@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { requireAdmin, can, effectiveRoleLabel, type Resource } from "@/lib/session";
 import { features } from "@/lib/site";
-import { Icon, DashboardIcon, NewsIcon, TagIcon, EventsIcon, MicIcon, CalendarIcon, ImageIcon, UserIcon, SettingsIcon, RadioIcon, ClockIcon, EditIcon } from "@/lib/icons";
-import styles from "./layout.module.css";
+import { DashboardIcon, NewsIcon, TagIcon, EventsIcon, MicIcon, CalendarIcon, ImageIcon, UserIcon, SettingsIcon, RadioIcon, ClockIcon, EditIcon } from "@/lib/icons";
+import { AdminNav } from "@/components/admin/admin-nav";
+import { AdminToasts } from "@/components/admin/admin-toasts";
 
 /**
  * Jeder Bereich nennt die Faehigkeit, die er braucht. Fehlt sie, taucht der
@@ -54,33 +54,17 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     (item) => !item.needs || can(user, item.needs.resource, item.needs.actions as never),
   );
 
+  const name = profile.name || profile.username || "Admin";
+
   return (
-    <div className={styles.shell}>
-      <aside className={styles.sidebar}>
-        <div className={styles.sidebarHead}>
-          <span className={styles.badge}>Admin</span>
-          <span className={styles.who}>
-            {profile.name || profile.username}
-            <span className={styles.role}>{effectiveRoleLabel(user)}</span>
-          </span>
-        </div>
-
-        <nav className={styles.nav} aria-label="Admin-Navigation">
-          {nav.map((item) => (
-            <Link key={item.href} href={item.href} className={styles.navLink}>
-              <Icon icon={item.icon} className={styles.navIcon} />
-              {item.label}
-              {item.off && <span className={styles.navOff}>aus</span>}
-            </Link>
-          ))}
-        </nav>
-
-        <Link href="/" className={styles.backLink}>
-          ← Zur Website
-        </Link>
-      </aside>
-
-      <main className={styles.content}>{children}</main>
+    <div className="mx-auto w-full max-w-[96rem] px-4 pt-6 pb-16 sm:px-6 lg:grid lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-10 lg:px-8 lg:pt-10">
+      <AdminNav
+        items={nav.map(({ href, label, icon, off }) => ({ href, label, icon, off }))}
+        name={name}
+        role={effectiveRoleLabel(user)}
+      />
+      <div className="min-w-0">{children}</div>
+      <AdminToasts />
     </div>
   );
 }

@@ -4,13 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Field, FieldLabel, FieldDescription } from "@/components/ui/field";
-import { Alert, AlertContent, AlertDescription } from "@/components/ui/alert";
-import { Icon, LoadingIcon, PlusIcon } from "@/lib/icons";
+import { Button } from "@heroui/react";
+import { FormMessage, TextField } from "@/components/common/form-field";
+import { Icon, PlusIcon } from "@/lib/icons";
 import { authClient } from "@/lib/auth-client";
-import styles from "../login/page.module.css";
+import { AuthCard } from "../login/auth-card";
 
 /**
  * Account creation.
@@ -63,79 +61,70 @@ export function RegisterForm() {
   }
 
   return (
-    <div className={styles.card}>
-      <h1 className={styles.title}>Konto erstellen</h1>
-      <p className={styles.subtitle}>
-        Für Profil, Favoriten und Community. Zum Hören brauchst du kein Konto.
-      </p>
+    <AuthCard
+      title="Konto erstellen"
+      description="Für Profil, Favoriten und Community. Zum Hören brauchst du kein Konto."
+      footer={
+        <>
+          Schon ein Konto?{" "}
+          <Link
+            href="/login"
+            className="rounded-sm font-semibold text-foreground underline decoration-accent-text decoration-2 underline-offset-4"
+          >
+            Anmelden
+          </Link>
+        </>
+      }
+    >
+      {error && <FormMessage status="error">{error}</FormMessage>}
 
-      {error && (
-        <Alert variant="lighter" status="error" role="alert">
-          <AlertContent>
-            <AlertDescription>{error}</AlertDescription>
-          </AlertContent>
-        </Alert>
-      )}
+      <form action={handleSubmit} className="flex flex-col gap-4">
+        <TextField
+          label="Username"
+          name="username"
+          type="text"
+          required
+          minLength={3}
+          maxLength={24}
+          pattern="[a-zA-Z0-9_]+"
+          autoComplete="username"
+          placeholder="dein_username"
+          description="Kleinbuchstaben, Zahlen und _ — 3 bis 24 Zeichen."
+        />
 
-      <form action={handleSubmit} className={styles.form}>
-        <Field name="username" className={styles.field}>
-          <FieldLabel>Username</FieldLabel>
-          <Input
-            name="username"
-            type="text"
-            required
-            minLength={3}
-            maxLength={24}
-            pattern="[a-zA-Z0-9_]+"
-            autoComplete="username"
-            placeholder="dein_username"
-          />
-          <FieldDescription>Kleinbuchstaben, Zahlen und _ — 3 bis 24 Zeichen.</FieldDescription>
-        </Field>
+        <TextField
+          label="Anzeigename"
+          name="name"
+          type="text"
+          maxLength={60}
+          autoComplete="nickname"
+          placeholder="Wie sollen wir dich nennen?"
+        />
 
-        <Field name="name" className={styles.field}>
-          <FieldLabel>Anzeigename</FieldLabel>
-          <Input
-            name="name"
-            type="text"
-            maxLength={60}
-            autoComplete="nickname"
-            placeholder="Wie sollen wir dich nennen?"
-          />
-        </Field>
+        <TextField
+          label="E-Mail"
+          name="email"
+          type="email"
+          required
+          autoComplete="email"
+          placeholder="name@beispiel.de"
+        />
 
-        <Field name="email" className={styles.field}>
-          <FieldLabel>E-Mail</FieldLabel>
-          <Input
-            name="email"
-            type="email"
-            required
-            autoComplete="email"
-            placeholder="name@beispiel.de"
-          />
-        </Field>
+        <TextField
+          label="Passwort"
+          name="password"
+          type="password"
+          required
+          minLength={10}
+          autoComplete="new-password"
+          placeholder="Mindestens 10 Zeichen"
+        />
 
-        <Field name="password" className={styles.field}>
-          <FieldLabel>Passwort</FieldLabel>
-          <Input
-            name="password"
-            type="password"
-            required
-            minLength={10}
-            autoComplete="new-password"
-            placeholder="Mindestens 10 Zeichen"
-          />
-        </Field>
-
-        <Button type="submit" variant="primary" mode="filled" size="lg" disabled={pending}>
-          <Icon icon={pending ? LoadingIcon : PlusIcon} spin={pending} />
+        <Button type="submit" variant="primary" size="lg" fullWidth isPending={pending}>
+          {!pending && <Icon icon={PlusIcon} />}
           {pending ? "Konto wird erstellt …" : "Konto erstellen"}
         </Button>
       </form>
-
-      <p className={styles.footer}>
-        Schon ein Konto? <Link href="/login">Anmelden</Link>
-      </p>
-    </div>
+    </AuthCard>
   );
 }

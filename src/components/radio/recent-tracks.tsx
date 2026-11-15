@@ -4,7 +4,6 @@ import type { NowPlaying, TrackHistoryItem } from "@/services/radio/types";
 import { formatTime } from "@/lib/format";
 import { useRadioPlayer } from "./player-provider";
 import { CoverArt } from "./cover-art";
-import styles from "./recent-tracks.module.css";
 
 /**
  * "Was gerade lief": kleines Cover, Uhrzeit, Titel, Interpret.
@@ -19,21 +18,27 @@ export function RecentTracks({ limit, emptyText }: { limit: number; emptyText?: 
   const tracks = withoutCurrent(snapshot?.history ?? [], snapshot?.nowPlaying ?? null).slice(0, limit);
 
   if (tracks.length === 0) {
-    return emptyText ? <p className={styles.empty}>{emptyText}</p> : null;
+    return emptyText ? <p className="text-sm text-muted">{emptyText}</p> : null;
   }
 
   return (
-    <ol className={styles.list} role="list">
+    <ol className="flex flex-col divide-y divide-separator">
       {tracks.map((track) => (
-        <li key={`${track.id}-${track.startedAt}`} className={styles.item}>
-          <CoverArt src={track.coverUrl} alt="" className={styles.cover} />
-          <time className={styles.time} dateTime={track.startedAt ?? undefined}>
+        <li
+          key={`${track.id}-${track.startedAt}`}
+          className="grid grid-cols-[2.75rem_minmax(0,1fr)_auto] items-center gap-4 py-3 first:pt-0"
+        >
+          <CoverArt src={track.coverUrl} alt="" className="size-11 rounded-md" />
+          <span className="min-w-0">
+            <span className="block truncate font-semibold text-foreground">{track.title}</span>
+            <span className="block truncate text-sm text-muted">{track.artist}</span>
+          </span>
+          <time
+            className="text-sm tabular-nums text-muted"
+            dateTime={track.startedAt ?? undefined}
+          >
             {track.startedAt ? formatTime(track.startedAt) : "–"}
           </time>
-          <span className={styles.text}>
-            <span className={styles.title}>{track.title}</span>
-            <span className={styles.artist}>{track.artist}</span>
-          </span>
         </li>
       ))}
     </ol>

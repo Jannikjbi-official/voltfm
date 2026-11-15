@@ -1,2 +1,3 @@
 @AGENTS.md
 @docs/AGENTS-VOLTFM.md
+@docs/AGENTS-HEROUI.md

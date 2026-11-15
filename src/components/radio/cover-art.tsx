@@ -1,6 +1,6 @@
+import { cn } from "@heroui/react";
 import { LogoIcon } from "@/components/layout/logo";
 import { coverSrc, type CoverSize } from "./cover-url";
-import styles from "./player.module.css";
 
 /**
  * Track artwork with a VoltFM fallback. laut.fm serves no cover art, and the
@@ -28,8 +28,14 @@ export function CoverArt({
 }) {
   if (!src) {
     return (
-      <span className={`${styles.cover} ${styles.coverFallback} ${className ?? ""}`} aria-hidden="true">
-        <LogoIcon className={styles.coverFallbackIcon} />
+      <span
+        className={cn(
+          "grid aspect-square shrink-0 place-items-center overflow-hidden rounded-lg bg-ink [--logo-mark:var(--volt)]",
+          className,
+        )}
+        aria-hidden="true"
+      >
+        <LogoIcon className="h-[42%] w-auto" />
       </span>
     );
   }
@@ -44,7 +50,7 @@ export function CoverArt({
       loading={eager ? "eager" : "lazy"}
       fetchPriority={eager ? "high" : undefined}
       decoding="async"
-      className={`${styles.cover} ${className ?? ""}`}
+      className={cn("aspect-square shrink-0 rounded-lg bg-surface-secondary object-cover", className)}
     />
   );
 }

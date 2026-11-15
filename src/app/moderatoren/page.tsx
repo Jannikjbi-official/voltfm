@@ -3,10 +3,10 @@ import type { Metadata } from "next";
 import { EmptyState } from "@/components/common/empty-state";
 import { HostCard } from "@/components/common/host-card";
 import { ButtonLink } from "@/components/common/button-link";
-import { Icon, DiscordIcon, MicIcon } from "@/lib/icons";
+import { Icon, DiscordIcon } from "@/lib/icons";
+import { PageHeader } from "@/components/common/page-header";
 import { listHosts, listShows } from "@/services/content";
 import { site } from "@/lib/site";
-import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Moderatoren",
@@ -25,53 +25,28 @@ export default async function ModeratorenPage() {
   const genres = [...new Set(hosts.flatMap((host) => host.genres))];
 
   return (
-    <div className={styles.page}>
-      <header className={styles.masthead}>
-        <div className="shell">
-          <p className={styles.kicker}>
-            <span className={styles.kickerIcon} aria-hidden="true">
-              <Icon icon={MicIcon} />
-            </span>
-            Das Team
-          </p>
+    <>
+      <PageHeader
+        size="large"
+        title="Die Stimmen hinter VoltFM."
+        description="Das sind die Leute hinter VoltFM, mit ihrer Musik und ihren Eigenheiten."
+        breadcrumbs={[
+          { href: "/", label: "Start" },
+          { href: "/moderatoren", label: "Moderatoren" },
+        ]}
+      >
+        {hosts.length > 0 && (
+          <dl className="mt-8 flex flex-wrap gap-x-12 gap-y-5">
+            <Stat label="Am Mikrofon" value={hosts.length} />
+            {shows.length > 0 && <Stat label="Feste Sendungen" value={shows.length} />}
+            {genres.length > 0 && <Stat label="Musikrichtungen" value={genres.length} />}
+          </dl>
+        )}
+      </PageHeader>
 
-          <h1 className={styles.title}>
-            Die Stimmen
-            <br />
-            <span className={styles.titleAccent}>hinter VoltFM.</span>
-          </h1>
-
-          <p className={styles.lead}>
-            Das sind die Leute hinter VoltFM, mit ihrer Musik und ihren
-            Eigenheiten.
-          </p>
-
-          {hosts.length > 0 && (
-            <dl className={styles.stats}>
-              <div className={styles.stat}>
-                <dt>Am Mikrofon</dt>
-                <dd>{hosts.length}</dd>
-              </div>
-              {shows.length > 0 && (
-                <div className={styles.stat}>
-                  <dt>Feste Sendungen</dt>
-                  <dd>{shows.length}</dd>
-                </div>
-              )}
-              {genres.length > 0 && (
-                <div className={styles.stat}>
-                  <dt>Musikrichtungen</dt>
-                  <dd>{genres.length}</dd>
-                </div>
-              )}
-            </dl>
-          )}
-        </div>
-      </header>
-
-      <section className="section shell">
+      <section className="shell py-12 sm:py-16">
         {hosts.length > 0 ? (
-          <div className={styles.grid}>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {hosts.map((host) => (
               <HostCard key={host.id} host={host} />
             ))}
@@ -85,22 +60,34 @@ export default async function ModeratorenPage() {
       </section>
 
       {/* --- Mitmachen ----------------------------------------------------- */}
-      <section className="section shell">
-        <div className={styles.join}>
-          <div>
-            <h2 className={styles.joinTitle}>Du willst selbst ans Mikrofon?</h2>
-            <p className={styles.joinText}>
+      <section className="shell">
+        <div className="flex flex-col gap-6 rounded-2xl border border-border bg-surface p-6 sm:p-10 md:flex-row md:items-center md:justify-between">
+          <div className="max-w-xl">
+            <h2 className="font-display text-2xl leading-tight text-foreground sm:text-3xl">
+              Du willst selbst ans Mikrofon?
+            </h2>
+            <p className="mt-3 text-pretty text-muted">
               Wir sind ein kleines Team und freuen uns über jede Stimme, die
               dazukommt. Vorerfahrung braucht es nicht — Lust auf Musik und
               Verlässlichkeit schon.
             </p>
           </div>
-          <ButtonLink href={site.discordUrl} external variant="primary" mode="filled" size="lg">
+          <ButtonLink href={site.discordUrl} external size="lg" className="shrink-0">
             <Icon icon={DiscordIcon} />
             Im Discord melden
           </ButtonLink>
         </div>
       </section>
+    </>
+  );
+}
+
+/** Eine Kennzahl: gross die Zahl, klein darunter, was sie zaehlt. */
+function Stat({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="flex flex-col-reverse gap-1">
+      <dt className="text-sm text-muted">{label}</dt>
+      <dd className="font-display text-4xl leading-none text-foreground tabular-nums">{value}</dd>
     </div>
   );
 }

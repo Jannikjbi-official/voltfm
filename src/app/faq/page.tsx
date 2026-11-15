@@ -3,9 +3,9 @@ import Link from "next/link";
 
 import { PageHeader } from "@/components/common/page-header";
 import { ButtonLink } from "@/components/common/button-link";
+import { FaqList } from "./faq-list";
 import { Icon, DiscordIcon } from "@/lib/icons";
 import { features, radio, site } from "@/lib/site";
-import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Häufige Fragen",
@@ -120,7 +120,6 @@ export default function FaqPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Häufige Fragen"
         title="Gute Frage."
         description="Das hier wird uns am häufigsten gefragt — mit ehrlichen Antworten statt Marketingsätzen."
         breadcrumbs={[
@@ -130,22 +129,19 @@ export default function FaqPage() {
         size="large"
       />
 
-      <section className="section shell">
-        <div className={styles.list}>
-          {FAQ.map((item) => (
-            <details key={item.question} className={styles.item}>
-              <summary className={styles.question}>{item.question}</summary>
-              <div className={styles.answer}>{item.answer}</div>
-            </details>
-          ))}
+      <section className="shell py-14 sm:py-20">
+        <div className="max-w-3xl">
+          <FaqList items={FAQ} />
         </div>
 
-        <div className={styles.rest}>
-          <h2 className={styles.restTitle}>Deine Frage war nicht dabei?</h2>
-          <p className={styles.restText}>
+        <div className="mt-14 flex max-w-3xl flex-col items-start gap-4 rounded-3xl border border-border bg-surface p-6 sm:mt-20 sm:p-10">
+          <h2 className="font-display text-2xl text-foreground sm:text-3xl">
+            Deine Frage war nicht dabei?
+          </h2>
+          <p className="text-muted">
             Dann frag einfach. Im Discord ist meistens jemand von uns online.
           </p>
-          <ButtonLink href={site.discordUrl} external variant="primary" mode="filled" size="md">
+          <ButtonLink href={site.discordUrl} external variant="primary">
             <Icon icon={DiscordIcon} />
             Im Discord fragen
           </ButtonLink>

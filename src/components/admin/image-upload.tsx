@@ -1,11 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
+import { Button } from "@heroui/react";
 import { Icon, ImageIcon, LoadingIcon, DeleteIcon } from "@/lib/icons";
 import { useUploadThing } from "@/lib/uploadthing";
-import styles from "./admin-form.module.css";
 
 /**
  * Image picker backed by UploadThing.
@@ -28,6 +27,7 @@ export function ImageUpload({
   const [url, setUrl] = useState(value ?? "");
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const labelId = useId();
 
   const { startUpload, isUploading } = useUploadThing(endpoint, {
     onClientUploadComplete: (res) => {
@@ -47,27 +47,32 @@ export function ImageUpload({
   });
 
   return (
-    <div className={styles.upload}>
-      <span className={styles.label}>{label}</span>
+    <div role="group" aria-labelledby={labelId} className="flex min-w-0 flex-col gap-2">
+      <span id={labelId} className="label">
+        {label}
+      </span>
 
       {url ? (
-        <div className={styles.preview}>
-          <Image src={url} alt="" width={320} height={180} className={styles.previewImage} unoptimized />
-          <Button
-            type="button"
-            variant="error"
-            mode="ghost"
-            size="sm"
-            onClick={() => setUrl("")}
-          >
-            <Icon icon={DeleteIcon} />
-            Entfernen
-          </Button>
+        <div className="overflow-hidden rounded-xl border border-border bg-surface">
+          <Image
+            src={url}
+            alt=""
+            width={320}
+            height={180}
+            className="aspect-video w-full object-cover"
+            unoptimized
+          />
+          <div className="flex justify-end p-1.5">
+            <Button type="button" variant="danger-soft" size="sm" onPress={() => setUrl("")}>
+              <Icon icon={DeleteIcon} />
+              Entfernen
+            </Button>
+          </div>
         </div>
       ) : (
-        <div className={styles.dropzone}>
-          <Icon icon={ImageIcon} className={styles.dropIcon} />
-          <p className={styles.dropText}>Noch kein Bild ausgewählt</p>
+        <div className="flex aspect-video flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-surface text-muted">
+          <Icon icon={ImageIcon} className="text-xl" />
+          <p className="text-xs">Noch kein Bild ausgewählt</p>
         </div>
       )}
 
@@ -84,17 +89,16 @@ export function ImageUpload({
 
       <Button
         type="button"
-        variant="neutral"
-        mode="stroke"
+        variant="tertiary"
         size="sm"
-        disabled={isUploading}
-        onClick={() => inputRef.current?.click()}
+        isDisabled={isUploading}
+        onPress={() => inputRef.current?.click()}
       >
         <Icon icon={isUploading ? LoadingIcon : ImageIcon} spin={isUploading} />
         {isUploading ? "Wird hochgeladen …" : url ? "Bild ersetzen" : "Bild hochladen"}
       </Button>
 
-      {error && <p className={styles.error}>{error}</p>}
+      {error && <p className="text-xs font-medium text-danger">{error}</p>}
 
       {/* The value the surrounding form actually submits. */}
       <input type="hidden" name={name} value={url} />

@@ -13,7 +13,9 @@ import { site } from "@/lib/site";
  * IP, and protected by a honeypot field. Nothing here trusts the client.
  */
 
-export const contactSchema = z.object({
+/* Nicht exportiert: Eine "use server"-Datei darf nur async-Funktionen
+   exportieren, sonst bricht jeder Aufruf der Action ab. */
+const contactSchema = z.object({
   name: z.string().trim().min(2, "Bitte gib deinen Namen an.").max(80),
   email: z.string().trim().email("Bitte gib eine gültige E-Mail-Adresse an.").max(160),
   subject: z.string().trim().min(3, "Bitte gib einen Betreff an.").max(120),

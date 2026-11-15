@@ -1,16 +1,18 @@
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
+import { Chip, cn } from "@heroui/react";
 import type { EventDTO } from "@/services/content";
 import { formatTime } from "@/lib/format";
 import { Icon, LocationIcon, ClockIcon } from "@/lib/icons";
-import styles from "./event-card.module.css";
 
-/** Event teaser with a calendar-style date block. */
+/**
+ * Ein Termin als Zeile: Datum als Kalenderblatt links, Inhalt rechts, eine
+ * feine Linie dazwischen. So liest sich eine Terminliste wie ein Kalender und
+ * nicht wie ein Stapel Kaesten. Die ganze Zeile ist ueber den Titel klickbar.
+ */
 export function EventCard({ event }: { event: EventDTO }) {
   const start = new Date(event.startsAt);
-  // Derived from the stored status rather than comparing against the clock:
-  // reading the current time during render is impure and makes the output
-  // depend on when React happens to re-render.
+  // Aus dem gespeicherten Status statt aus der Uhr: Die Uhrzeit beim Rendern
+  // zu lesen waere unrein und machte die Ausgabe vom Zeitpunkt abhaengig.
   const isPast = event.status === "past";
 
   const day = new Intl.DateTimeFormat("de-DE", {
@@ -23,34 +25,47 @@ export function EventCard({ event }: { event: EventDTO }) {
   }).format(start);
 
   return (
-    <article className={styles.card} data-past={isPast}>
-      <div className={styles.date} aria-hidden="true">
-        <span className={styles.day}>{day}</span>
-        <span className={styles.month}>{month}</span>
+    <article
+      className={cn(
+        "group relative grid grid-cols-[4rem_minmax(0,1fr)] items-start gap-5 border-t border-separator py-6 first:border-t-0 first:pt-0 sm:grid-cols-[4.5rem_minmax(0,1fr)] sm:gap-6",
+        isPast && "opacity-70",
+      )}
+    >
+      <div
+        aria-hidden="true"
+        className="flex aspect-square flex-col items-center justify-center rounded-xl border border-border bg-surface text-foreground"
+      >
+        <span className="font-display text-[1.75rem] leading-none tabular-nums">{day}</span>
+        <span className="mt-1 text-xs font-semibold text-muted">{month}</span>
       </div>
 
-      <div className={styles.body}>
-        <div className={styles.meta}>
-          <Badge mode="lighter" size="sm">
+      <div className="flex min-w-0 flex-col gap-2">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted">
+          <Chip size="sm" variant="soft">
             {event.category}
-          </Badge>
-          <span className={styles.metaItem}>
-            <Icon icon={ClockIcon} />
+          </Chip>
+          <span className="inline-flex items-center gap-1.5">
+            <Icon icon={ClockIcon} className="text-xs" />
             {formatTime(event.startsAt)} Uhr
           </span>
-          <span className={styles.metaItem}>
-            <Icon icon={LocationIcon} />
-            {event.location}
+          <span className="inline-flex min-w-0 items-center gap-1.5">
+            <Icon icon={LocationIcon} className="text-xs" />
+            <span className="truncate">{event.location}</span>
           </span>
         </div>
 
-        <h3 className={styles.title}>
-          <Link href={`/events/${event.slug}`} className={styles.link}>
+        <h3 className="font-wide text-lg leading-snug font-bold text-balance text-foreground sm:text-xl">
+          <Link
+            href={`/events/${event.slug}`}
+            className="rounded-sm decoration-accent-text decoration-2 underline-offset-4 after:absolute after:inset-0 group-hover:underline"
+          >
             {event.title}
           </Link>
         </h3>
 
-        <p className={styles.description}>{event.description}</p>
+        <p className="line-clamp-2 text-sm leading-relaxed text-pretty text-muted">
+          {event.description}
+        </p>
       </div>
     </article>
   );

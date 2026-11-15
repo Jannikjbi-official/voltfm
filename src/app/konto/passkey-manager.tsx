@@ -1,12 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertContent, AlertDescription } from "@/components/ui/alert";
-import { Icon, PasskeyIcon, PlusIcon, DeleteIcon, LoadingIcon } from "@/lib/icons";
+import { Button } from "@heroui/react";
+import { FormMessage } from "@/components/common/form-field";
+import { Icon, PasskeyIcon, PlusIcon, DeleteIcon } from "@/lib/icons";
 import { authClient } from "@/lib/auth-client";
 import { formatDate } from "@/lib/format";
-import styles from "./page.module.css";
 
 interface Passkey {
   id: string;
@@ -69,37 +68,37 @@ export function PasskeyManager() {
   }
 
   return (
-    <>
-      {error && (
-        <Alert variant="lighter" status="error" role="alert">
-          <AlertContent>
-            <AlertDescription>{error}</AlertDescription>
-          </AlertContent>
-        </Alert>
-      )}
+    <div className="flex flex-col gap-4">
+      {error && <FormMessage status="error">{error}</FormMessage>}
 
       {loading ? (
-        <p className={styles.empty}>Passkeys werden geladen …</p>
+        <p className="text-sm text-muted">Passkeys werden geladen …</p>
       ) : passkeys.length === 0 ? (
-        <p className={styles.empty}>Noch kein Passkey hinterlegt.</p>
+        <p className="text-sm text-muted">Noch kein Passkey hinterlegt.</p>
       ) : (
-        <ul className={styles.passkeyList} role="list">
+        <ul className="flex flex-col gap-2">
           {passkeys.map((passkey) => (
-            <li key={passkey.id} className={styles.passkey}>
-              <div className={styles.passkeyName}>
-                <span className={styles.passkeyLabel}>
-                  <Icon icon={PasskeyIcon} /> {passkey.name || "Passkey"}
+            <li
+              key={passkey.id}
+              className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border px-4 py-3"
+            >
+              <div className="flex min-w-0 items-center gap-3">
+                <span
+                  aria-hidden="true"
+                  className="grid size-9 shrink-0 place-items-center rounded-full bg-surface-secondary text-foreground"
+                >
+                  <Icon icon={PasskeyIcon} />
                 </span>
-                <span className={styles.passkeyMeta}>
-                  Hinzugefügt am {formatDate(passkey.createdAt)}
-                </span>
+                <div className="min-w-0">
+                  <p className="truncate font-semibold text-foreground">{passkey.name || "Passkey"}</p>
+                  <p className="text-sm text-muted">Hinzugefügt am {formatDate(passkey.createdAt)}</p>
+                </div>
               </div>
               <Button
-                variant="error"
-                mode="ghost"
+                variant="danger-soft"
                 size="sm"
-                onClick={() => handleRemove(passkey.id)}
-                disabled={busy}
+                onPress={() => handleRemove(passkey.id)}
+                isDisabled={busy}
                 aria-label={`${passkey.name || "Passkey"} entfernen`}
               >
                 <Icon icon={DeleteIcon} />
@@ -110,10 +109,12 @@ export function PasskeyManager() {
         </ul>
       )}
 
-      <Button variant="primary" mode="stroke" size="md" onClick={handleAdd} disabled={busy}>
-        <Icon icon={busy ? LoadingIcon : PlusIcon} spin={busy} />
-        Passkey hinzufügen
-      </Button>
-    </>
+      <div>
+        <Button variant="secondary" onPress={handleAdd} isPending={busy}>
+          {!busy && <Icon icon={PlusIcon} />}
+          Passkey hinzufügen
+        </Button>
+      </div>
+    </div>
   );
 }

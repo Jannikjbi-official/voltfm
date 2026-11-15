@@ -6,7 +6,6 @@ import { EventCard } from "@/components/events/event-card";
 import { ButtonLink } from "@/components/common/button-link";
 import { listEvents } from "@/services/content";
 import { site } from "@/lib/site";
-import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Events",
@@ -23,7 +22,6 @@ export default async function EventsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Termine"
         title="Events"
         description="Was bei VoltFM ansteht und was schon war, mit Datum und Uhrzeit."
         breadcrumbs={[
@@ -32,17 +30,19 @@ export default async function EventsPage() {
         ]}
         size="large"
         aside={
-          <ButtonLink href={site.discordUrl} external variant="primary" mode="filled" size="md">
+          <ButtonLink href={site.discordUrl} external variant="secondary">
             Im Discord dabei sein
           </ButtonLink>
         }
       />
 
-      <section className="section shell">
-        <h2 className={styles.groupTitle}>Kommende Events</h2>
+      <section className="shell py-12 sm:py-16" aria-labelledby="upcoming-title">
+        <h2 id="upcoming-title" className="mb-8 font-display text-3xl text-foreground sm:text-4xl">
+          Kommende Events
+        </h2>
 
         {upcoming.length > 0 ? (
-          <div className={styles.list}>
+          <div className="flex flex-col">
             {upcoming.map((event) => (
               <EventCard key={event.id} event={event} />
             ))}
@@ -52,7 +52,7 @@ export default async function EventsPage() {
             title="Aktuell sind keine Events geplant"
             description="Neue Termine kündigen wir zuerst im Discord an — dort verpasst du nichts."
             action={
-              <ButtonLink href={site.discordUrl} external variant="primary" mode="filled" size="sm">
+              <ButtonLink href={site.discordUrl} external size="sm">
                 Zum Discord
               </ButtonLink>
             }
@@ -60,11 +60,14 @@ export default async function EventsPage() {
         )}
 
         {past.length > 0 && (
-          <section className={styles.pastSection} aria-labelledby="past-title">
-            <h2 id="past-title" className={styles.groupTitle}>
+          <section
+            className="mt-16 border-t border-separator pt-12 sm:mt-20"
+            aria-labelledby="past-title"
+          >
+            <h2 id="past-title" className="mb-8 font-wide text-xl font-bold text-foreground">
               Vergangene Events
             </h2>
-            <div className={styles.list}>
+            <div className="flex flex-col">
               {past.map((event) => (
                 <EventCard key={event.id} event={event} />
               ))}

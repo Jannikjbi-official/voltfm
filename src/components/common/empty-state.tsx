@@ -1,8 +1,6 @@
-import styles from "./empty-state.module.css";
-
 /**
- * Shown whenever a list has nothing to show — including when MongoDB is
- * unreachable and a section degrades to empty. Always says what to do next.
+ * Wenn eine Liste nichts zu zeigen hat — auch, wenn die Datenbank gerade
+ * nicht erreichbar ist. Sagt immer, wie es weitergeht.
  */
 export function EmptyState({
   title,
@@ -14,10 +12,10 @@ export function EmptyState({
   action?: React.ReactNode;
 }) {
   return (
-    <div className={styles.empty}>
-      <p className={styles.title}>{title}</p>
-      {description && <p className={styles.description}>{description}</p>}
-      {action && <div className={styles.action}>{action}</div>}
+    <div className="rounded-2xl border border-dashed border-border px-6 py-10 text-center">
+      <p className="font-wide text-base font-semibold text-foreground">{title}</p>
+      {description && <p className="mx-auto mt-2 max-w-md text-sm text-muted">{description}</p>}
+      {action && <div className="mt-5 flex justify-center">{action}</div>}
     </div>
   );
 }

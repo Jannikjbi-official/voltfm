@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@heroui/react";
 import { Icon, CopyIcon, CheckIcon } from "@/lib/icons";
 
 /**
@@ -49,10 +49,9 @@ export function CopyButton({ source, label }: { source: string; label: string })
   return (
     <Button
       type="button"
-      variant="neutral"
-      mode="ghost"
+      variant="ghost"
       size="sm"
-      asIcon
+      isIconOnly
       /* Nur das Sinnbild: Ein beschrifteter Knopf haette bei einzeiligen
          Beispielen das Ende der Zeile verdeckt. */
       aria-label={
@@ -62,8 +61,7 @@ export function CopyButton({ source, label }: { source: string; label: string })
             ? `${label} konnte nicht kopiert werden`
             : `${label} kopieren`
       }
-      title={state === "failed" ? "Dein Browser lässt das Kopieren nicht zu." : "Kopieren"}
-      onClick={async () => {
+      onPress={async () => {
         try {
           await navigator.clipboard.writeText(source);
           setState("done");

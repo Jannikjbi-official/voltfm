@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { coverSrc } from "./cover-url";
-import styles from "./cover-stage.module.css";
 
 type Layer = { src: string; loaded: boolean };
 
@@ -13,8 +12,8 @@ type Layer = { src: string; loaded: boolean };
  *
  * Geladen wird die kleine 96er-Datei: Weichgezeichnet sieht man keine
  * Aufloesung, und sie liegt ohnehin schon im Cache, weil die Leiste unten
- * dieselbe benutzt. Der Schleier darueber kommt aus der Seitenfarbe
- * (--color-stage-scrim), damit der Text in beiden Modi lesbar bleibt.
+ * dieselbe benutzt. Der Schleier darueber ist Tinte: Die Buehne ist immer
+ * dunkel, der Text darauf hell.
  *
  * Bei reduzierter Bewegung wechselt das Bild ohne Ueberblendung — die globale
  * Regel in globals.css setzt die Uebergangsdauer dann praktisch auf null.
@@ -50,7 +49,7 @@ export function CoverBackdrop({ src }: { src: string | null | undefined }) {
     setLayers((current) => current.filter((layer) => layer.src !== failedSrc));
 
   return (
-    <div className={styles.backdrop} aria-hidden="true">
+    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
       {layers.map((layer) => (
         // eslint-disable-next-line @next/next/no-img-element -- feste 96er-Datei, siehe cover-url.ts
         <img
@@ -58,14 +57,15 @@ export function CoverBackdrop({ src }: { src: string | null | undefined }) {
           src={coverSrc(layer.src, "thumb")}
           alt=""
           decoding="async"
-          className={styles.backdropImage}
+          className="absolute inset-[-10%] size-[120%] max-w-none object-cover opacity-0 blur-[64px] saturate-[1.4] transition-opacity duration-700 data-[loaded]:opacity-60"
           data-loaded={layer.loaded || undefined}
           onLoad={() => markLoaded(layer.src)}
           onError={() => dropFailed(layer.src)}
           onTransitionEnd={() => dropOlder(layer.src)}
         />
       ))}
-      <div className={styles.scrim} />
+      {/* Schleier: unten dichter, damit der Uebergang zur Seite weich ist. */}
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(14,15,18,0.55)_0%,rgba(14,15,18,0.75)_60%,var(--ink)_100%)]" />
     </div>
   );
 }

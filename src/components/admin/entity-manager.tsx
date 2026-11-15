@@ -1,21 +1,23 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Field, FieldLabel, FieldDescription } from "@/components/ui/field";
-import { CheckBox } from "@/components/ui/checkbox";
-import { Alert, AlertContent, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@heroui/react";
+import {
+  CheckboxField,
+  FormMessage,
+  SelectField,
+  TextAreaField,
+  TextField,
+} from "@/components/common/form-field";
 import { Icon, PlusIcon, CheckIcon, LoadingIcon, EditIcon, DeleteIcon, CloseIcon } from "@/lib/icons";
 import { ImageUpload } from "./image-upload";
 import { RichTextEditor } from "./rich-text-editor";
 import { SocialLinksField } from "./social-links-field";
 import { AccentColorField } from "./accent-color-field";
+import { ConfirmDialog } from "./confirm-dialog";
+import { StatusBadge } from "./admin-ui";
 import type { EntityFormState, EntityRow, FieldDef } from "./entity-types";
 import { useActionFeedback } from "./use-action-feedback";
-import styles from "./entity-manager.module.css";
-import formStyles from "./admin-form.module.css";
 
 const initial: EntityFormState = { status: "idle" };
 
@@ -82,6 +84,8 @@ export function EntityManager({
   }, [saveState]);
   useEffect(() => {
     if (deleteState.message) setFeedback(deleteState);
+    // Die Antwort ist da: Rueckfrage schliessen, die Meldung steht oben.
+    setConfirmId(null);
   }, [deleteState]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
@@ -102,100 +106,101 @@ export function EntityManager({
     setCreating(false);
   }
 
+  const confirmRow = rows.find((row) => row.id === confirmId) ?? null;
+
   return (
-    <div className={styles.wrap}>
+    <div className="flex flex-col gap-6">
       {message && (
-        <Alert
-          variant="lighter"
-          status={messageStatus === "success" ? "success" : "error"}
-          role="status"
-        >
-          <AlertContent>
-            <AlertDescription>{message}</AlertDescription>
-          </AlertContent>
-        </Alert>
+        <FormMessage status={messageStatus === "success" ? "success" : "error"}>{message}</FormMessage>
       )}
 
       {/* Geschlossen steht hier nur der Knopf — oder die Erklaerung, warum
           gerade nichts angelegt werden kann. */}
       {!formOpen &&
         (canCreate ? (
-          <div className={styles.addRow}>
-            <Button
-              type="button"
-              variant="primary"
-              mode="filled"
-              size="md"
-              onClick={() => setCreating(true)}
-            >
+          <div>
+            <Button variant="primary" onPress={() => setCreating(true)}>
               <Icon icon={PlusIcon} />
               {addLabel}
             </Button>
           </div>
         ) : (
-          createBlockedText && <p className={styles.blocked}>{createBlockedText}</p>
+          createBlockedText && (
+            <p className="max-w-2xl rounded-2xl border border-dashed border-border p-4 text-sm text-muted">
+              {createBlockedText}
+            </p>
+          )
         ))}
 
       {formOpen && (
-      <form ref={formRef} action={save} className={formStyles.form} key={editing?.id ?? "new"}>
-        {editing && <input type="hidden" name="id" value={editing.id} />}
+        <form
+          ref={formRef}
+          action={save}
+          key={editing?.id ?? "new"}
+          className="rounded-2xl border border-border bg-surface"
+        >
+          {editing && <input type="hidden" name="id" value={editing.id} />}
 
-        <div className={styles.formHead}>
-          <h2 className={styles.formTitle}>
-            {editing ? `${singular} bearbeiten` : addLabel}
-          </h2>
-          <Button type="button" variant="neutral" mode="ghost" size="sm" onClick={closeForm}>
-            <Icon icon={CloseIcon} />
-            Abbrechen
-          </Button>
-        </div>
-
-        <div className={formStyles.grid}>
-          <div className={formStyles.main}>
-            {mainFields.map((field) => (
-              <FormField key={field.name} field={field} row={editing} />
-            ))}
+          <div className="flex items-center justify-between gap-4 border-b border-separator px-5 py-4 sm:px-6">
+            <h2 className="min-w-0 font-wide text-lg leading-tight font-bold text-pretty text-foreground">
+              {editing ? `${singular} bearbeiten` : addLabel}
+            </h2>
+            <Button type="button" variant="ghost" size="sm" onPress={closeForm}>
+              <Icon icon={CloseIcon} />
+              Abbrechen
+            </Button>
           </div>
 
-          <aside className={formStyles.side}>
-            {sideFields.map((field) => (
-              <FormField key={field.name} field={field} row={editing} />
-            ))}
+          <div className="grid grid-cols-1 gap-6 p-5 sm:p-6 lg:grid-cols-[minmax(0,1fr)_20rem] xl:grid-cols-[minmax(0,1fr)_22rem]">
+            <div className="flex min-w-0 flex-col gap-5">
+              {mainFields.map((field) => (
+                <FormField key={field.name} field={field} row={editing} />
+              ))}
+            </div>
 
-            <Button type="submit" variant="primary" mode="filled" size="lg" disabled={saving}>
-              <Icon icon={saving ? LoadingIcon : editing ? CheckIcon : PlusIcon} spin={saving} />
-              {saving ? "Wird gespeichert …" : editing ? "Speichern" : addLabel}
-            </Button>
-          </aside>
-        </div>
-      </form>
+            <aside className="flex min-w-0 flex-col gap-5 rounded-2xl bg-surface-secondary p-4 sm:p-5 lg:self-start">
+              {sideFields.map((field) => (
+                <FormField key={field.name} field={field} row={editing} />
+              ))}
+
+              <Button type="submit" variant="primary" size="lg" fullWidth isPending={saving}>
+                <Icon icon={saving ? LoadingIcon : editing ? CheckIcon : PlusIcon} spin={saving} />
+                {saving ? "Wird gespeichert …" : editing ? "Speichern" : addLabel}
+              </Button>
+            </aside>
+          </div>
+        </form>
       )}
 
-      <section className={styles.listSection} aria-label={`Vorhandene Einträge`}>
-        <h2 className={styles.listTitle}>
-          Vorhanden <span className={styles.count}>{rows.length}</span>
-        </h2>
+      <section aria-labelledby="entity-list-title" className="rounded-2xl border border-border bg-surface">
+        <div className="flex items-center gap-3 border-b border-separator px-5 py-4 sm:px-6">
+          <h2 id="entity-list-title" className="font-wide text-base font-bold text-foreground">
+            Vorhanden
+          </h2>
+          <StatusBadge>{rows.length}</StatusBadge>
+        </div>
 
         {rows.length === 0 ? (
-          <p className={styles.empty}>{emptyText}</p>
+          <p className="px-5 py-6 text-sm text-muted sm:px-6">{emptyText}</p>
         ) : (
-          <ul className={styles.list} role="list">
+          <ul className="divide-y divide-separator">
             {rows.map((row) => (
-              <li key={row.id} className={styles.row} data-active={editing?.id === row.id}>
-                <div className={styles.rowMain}>
-                  <span className={styles.rowTitle}>{row.title}</span>
-                  {row.meta && <span className={styles.rowMeta}>{row.meta}</span>}
+              <li
+                key={row.id}
+                data-active={editing?.id === row.id || undefined}
+                className="flex flex-col gap-3 px-5 py-4 transition-colors data-[active]:bg-accent-soft sm:flex-row sm:items-center sm:gap-4 sm:px-6"
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-foreground">{row.title}</p>
+                  {row.meta && <p className="mt-0.5 truncate text-sm text-muted">{row.meta}</p>}
                 </div>
 
-                {row.badge && <span className={styles.rowBadge}>{row.badge}</span>}
-
-                <div className={styles.rowActions}>
+                <div className="flex shrink-0 flex-wrap items-center gap-2">
+                  {row.badge && <StatusBadge>{row.badge}</StatusBadge>}
                   <Button
-                    type="button"
-                    variant="neutral"
-                    mode="ghost"
+                    variant="ghost"
                     size="sm"
-                    onClick={() => {
+                    onPress={() => {
                       setEditing(row);
                       setCreating(false);
                       setConfirmId(null);
@@ -205,45 +210,27 @@ export function EntityManager({
                     <Icon icon={EditIcon} />
                     Bearbeiten
                   </Button>
-
-                  {confirmId === row.id ? (
-                    /* Its own form — a delete nested in the edit form would be
-                       invalid HTML and would submit the wrong fields. */
-                    <form action={remove} className={styles.confirm}>
-                      <input type="hidden" name="id" value={row.id} />
-                      <span className={styles.confirmText}>Wirklich löschen?</span>
-                      <Button type="submit" variant="error" mode="filled" size="sm" disabled={deleting}>
-                        <Icon icon={deleting ? LoadingIcon : DeleteIcon} spin={deleting} />
-                        Ja
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="neutral"
-                        mode="ghost"
-                        size="sm"
-                        onClick={() => setConfirmId(null)}
-                      >
-                        Nein
-                      </Button>
-                    </form>
-                  ) : (
-                    <Button
-                      type="button"
-                      variant="error"
-                      mode="ghost"
-                      size="sm"
-                      onClick={() => setConfirmId(row.id)}
-                    >
-                      <Icon icon={DeleteIcon} />
-                      Löschen
-                    </Button>
-                  )}
+                  <Button variant="danger-soft" size="sm" onPress={() => setConfirmId(row.id)}>
+                    <Icon icon={DeleteIcon} />
+                    Löschen
+                  </Button>
                 </div>
               </li>
             ))}
           </ul>
         )}
       </section>
+
+      <ConfirmDialog
+        isOpen={confirmRow !== null}
+        onOpenChange={(open) => !open && !deleting && setConfirmId(null)}
+        title="Wirklich löschen?"
+        description={confirmRow ? <p className="font-semibold">{confirmRow.title}</p> : null}
+        action={remove}
+        fields={{ id: confirmRow?.id ?? "" }}
+        confirmLabel="Löschen"
+        pending={deleting}
+      />
     </div>
   );
 }
@@ -277,77 +264,77 @@ function FormField({ field, row }: { field: FieldDef; row: EntityRow | null }) {
        dann bleibt es beim HTML, das der Konverter unveraendert durchreicht. */
     const source = row?.values[`${field.name}Source`];
     return (
-      <Field name={field.name} className={formStyles.field}>
-        <FieldLabel>{field.label}</FieldLabel>
-        <RichTextEditor
-          name={field.name}
-          required={field.required}
-          rows={field.rows ?? 12}
-          defaultValue={typeof source === "string" && source ? source : value}
-          placeholder={field.placeholder}
-        />
-        {field.hint && <FieldDescription>{field.hint}</FieldDescription>}
-      </Field>
+      <RichTextEditor
+        name={field.name}
+        label={field.label}
+        description={field.hint}
+        required={field.required}
+        rows={field.rows ?? 12}
+        defaultValue={typeof source === "string" && source ? source : value}
+        placeholder={field.placeholder}
+      />
     );
   }
 
   if (field.type === "checkbox") {
     return (
-      <label className={formStyles.checkboxRow}>
-        <CheckBox name={field.name} defaultChecked={raw === true || raw === "true"} />
-        <span>{field.label}</span>
-      </label>
+      <CheckboxField
+        name={field.name}
+        label={field.label}
+        description={field.hint}
+        defaultChecked={raw === true || raw === "true"}
+      />
+    );
+  }
+
+  if (field.type === "textarea") {
+    return (
+      <TextAreaField
+        name={field.name}
+        label={field.label}
+        description={field.hint}
+        required={field.required}
+        rows={field.rows ?? 5}
+        defaultValue={value}
+        placeholder={field.placeholder}
+      />
+    );
+  }
+
+  if (field.type === "select") {
+    return (
+      <SelectField
+        name={field.name}
+        label={field.label}
+        description={field.hint}
+        required={field.required}
+        defaultValue={value || field.options?.[0]?.value}
+        options={field.options ?? []}
+      />
     );
   }
 
   return (
-    <Field name={field.name} className={formStyles.field}>
-      <FieldLabel>{field.label}</FieldLabel>
-
-      {field.type === "textarea" ? (
-        <Textarea
-          name={field.name}
-          required={field.required}
-          rows={field.rows ?? 5}
-          defaultValue={value}
-          placeholder={field.placeholder}
-        />
-      ) : field.type === "select" ? (
-        <select
-          name={field.name}
-          defaultValue={value || field.options?.[0]?.value}
-          className={formStyles.select}
-          required={field.required}
-        >
-          {field.options?.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      ) : (
-        <Input
-          name={field.name}
-          type={
-            field.type === "number"
-              ? "number"
-              : field.type === "time"
-                ? "time"
-                : field.type === "date"
-                  ? "date"
-                  : field.type === "datetime"
-                    ? "datetime-local"
-                    : "text"
-          }
-          required={field.required}
-          defaultValue={value}
-          placeholder={field.placeholder}
-          min={field.min}
-          max={field.max}
-        />
-      )}
-
-      {field.hint && <FieldDescription>{field.hint}</FieldDescription>}
-    </Field>
+    <TextField
+      name={field.name}
+      label={field.label}
+      description={field.hint}
+      type={
+        field.type === "number"
+          ? "number"
+          : field.type === "time"
+            ? "time"
+            : field.type === "date"
+              ? "date"
+              : field.type === "datetime"
+                ? "datetime-local"
+                : "text"
+      }
+      required={field.required}
+      defaultValue={value}
+      placeholder={field.placeholder}
+      min={field.min}
+      max={field.max}
+    />
   );
 }

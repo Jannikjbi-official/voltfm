@@ -1,8 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { Button, cn } from "@heroui/react";
 import {
   Icon,
   PlayIcon,
@@ -16,18 +14,16 @@ import {
 } from "@/lib/icons";
 import { radio } from "@/lib/site";
 import { useRadioPlayer } from "./player-provider";
-import styles from "./player.module.css";
 
 /**
- * Play / pause / retry, sized for either the sticky bar ("md") or the stage
- * in the hero and on /radio ("lg").
+ * Play / Pause / Erneut versuchen — klein fuer die Leiste ("md"), gross fuer
+ * die Buehne ("lg").
  *
- * While `radio.embedAllowed` is false this is a link to the provider rather
- * than a transport control — laut.fm's terms allow linking, not embedding.
- * Das Ziel ist der Webplayer von lautstation.de (siehe `radio.externalUrl`).
- * Damit vor dem Klick klar ist, dass ein neues Fenster aufgeht, steht dann
- * "Jetzt hören" mit dem Extern-Pfeil daneben (`withLabel`, Buehne) bzw. ein
- * kleiner Pfeil am Knopf (Sticky-Leiste, ohne Platz fuer Text).
+ * Solange `radio.embedAllowed` false ist, ist das kein Wiedergabeknopf,
+ * sondern ein Link zum Webplayer von lautstation.de (`radio.externalUrl`):
+ * laut.fm erlaubt das Verlinken, nicht das Einbetten (§ 6 Abs. 9). Ein
+ * normaler Klick oeffnet vorher den Hinweis (`openStream`), Mittelklick und
+ * "Adresse kopieren" funktionieren weiter wie bei jedem Link.
  */
 export function PlayButton({
   size = "md",
@@ -42,9 +38,6 @@ export function PlayButton({
 
   if (!embedAllowed) {
     const label = `Im Webplayer von ${radio.externalName} hören (öffnet ein neues Fenster)`;
-    /* Bleibt ein echter Link: Mittelklick, Strg-Klick und "Adresse kopieren"
-       sollen weiter funktionieren. Nur der normale Klick wird abgefangen,
-       damit vorher der Hinweis erscheint. */
     const onClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
       if (event.defaultPrevented) return;
       if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -59,47 +52,46 @@ export function PlayButton({
           href={externalUrl}
           target="_blank"
           rel="noreferrer noopener"
-          data-player-size={size}
-          className={styles.externalPlayLabeled}
           onClick={onClick}
+          className="group inline-flex h-16 items-center gap-4 rounded-full bg-volt py-2 pr-7 pl-2 text-ink shadow-[0_12px_40px_-12px_rgba(255,214,10,0.55)] transition-transform hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-volt motion-reduce:transition-none sm:h-[4.5rem]"
         >
-          <span className={styles.externalPlay} data-player-size={size} aria-hidden="true">
-            <Icon icon={PlayIcon} />
+          <span
+            aria-hidden="true"
+            className="grid size-12 place-items-center rounded-full bg-ink text-lg text-volt sm:size-14"
+          >
+            <Icon icon={PlayIcon} className="translate-x-px" />
           </span>
-          <span className={styles.externalPlayText}>
-            Jetzt hören
-            <Icon icon={ExternalLinkIcon} className={styles.externalPlayArrow} />
-            <span className="visually-hidden">
-              {" "}im Webplayer von {radio.externalName} (öffnet ein neues Fenster)
-            </span>
+          <span className="font-display text-xl sm:text-2xl">Jetzt hören</span>
+          <Icon icon={ExternalLinkIcon} className="text-sm opacity-70" aria-hidden />
+          <span className="sr-only">
+            {" "}im Webplayer von {radio.externalName} (öffnet ein neues Fenster)
           </span>
         </a>
       );
     }
 
     return (
-      <Tooltip>
-        <TooltipTrigger
-          render={
-            <a
-              href={externalUrl}
-              target="_blank"
-              rel="noreferrer noopener"
-              aria-label={label}
-              data-player-size={size}
-              className={styles.externalPlay}
-              onClick={onClick}
-            >
-              <Icon icon={PlayIcon} />
-              {/* Ohne Text: der kleine Pfeil sagt, dass ein neues Fenster aufgeht. */}
-              <span className={styles.externalBadge} aria-hidden="true">
-                <Icon icon={ExternalLinkIcon} />
-              </span>
-            </a>
-          }
-        />
-        <TooltipContent>{label}</TooltipContent>
-      </Tooltip>
+      <a
+        href={externalUrl}
+        target="_blank"
+        rel="noreferrer noopener"
+        aria-label={label}
+        title={label}
+        onClick={onClick}
+        className={cn(
+          "relative grid shrink-0 place-items-center rounded-full bg-volt text-ink transition-transform hover:scale-105 active:scale-95 motion-reduce:transition-none",
+          size === "lg" ? "size-16 text-xl" : "size-11 text-base",
+        )}
+      >
+        <Icon icon={PlayIcon} className="translate-x-px" />
+        {/* Ohne Text: der kleine Pfeil sagt, dass ein neues Fenster aufgeht. */}
+        <span
+          aria-hidden="true"
+          className="absolute -top-0.5 -right-0.5 grid size-4 place-items-center rounded-full bg-ink text-[0.5rem] text-volt ring-2 ring-[var(--player-ring,var(--background))]"
+        >
+          <Icon icon={ExternalLinkIcon} />
+        </span>
+      </a>
     );
   }
 
@@ -108,14 +100,11 @@ export function PlayButton({
   if (status === "error" || status === "offline") {
     return (
       <Button
-        variant="error"
-        mode="filled"
-        size={size}
-        asIcon
-        onClick={retry}
+        variant="danger"
+        isIconOnly
+        onPress={retry}
         aria-label="Erneut versuchen"
-        data-player-size={size}
-        className={styles.playButton}
+        className={cn("rounded-full", size === "lg" ? "size-16 text-xl" : "size-11")}
       >
         <Icon icon={RetryIcon} />
       </Button>
@@ -132,29 +121,23 @@ export function PlayButton({
   return (
     <Button
       variant="primary"
-      mode="filled"
-      size={size}
-      asIcon
-      onClick={toggle}
+      isIconOnly
+      onPress={toggle}
       aria-label={label}
-      data-player-size={size}
       data-state={connecting ? "connecting" : isPlaying ? "playing" : "idle"}
-      className={styles.playButton}
+      className={cn("rounded-full", size === "lg" ? "size-16 text-xl" : "size-11")}
     >
-      <Icon
-        icon={connecting ? LoadingIcon : isPlaying ? PauseIcon : PlayIcon}
-        className={connecting ? styles.spin : undefined}
-      />
+      <Icon icon={connecting ? LoadingIcon : isPlaying ? PauseIcon : PlayIcon} spin={connecting} />
     </Button>
   );
 }
 
 /**
- * Mute toggle plus volume slider.
+ * Stummschalten plus Lautstaerkeregler.
  *
- * Renders nothing while playback happens on the provider's site — there is no
- * audio here whose volume could be changed. Auf iPhone und iPad gibt es nur
- * den Stumm-Knopf: Dort bestimmt allein das Geraet die Lautstaerke.
+ * Nichts davon, solange auf der Seite des Anbieters gehoert wird — hier gibt
+ * es dann keinen Ton, dessen Lautstaerke sich aendern liesse. Auf iPhone und
+ * iPad gibt es nur den Stumm-Knopf: Dort bestimmt allein das Geraet.
  */
 export function VolumeControl() {
   const { volume, muted, volumeSupported, setVolume, toggleMute, embedAllowed } =
@@ -167,28 +150,27 @@ export function VolumeControl() {
     effective === 0 ? VolumeMuteIcon : effective < 0.5 ? VolumeLowIcon : VolumeHighIcon;
 
   return (
-    <div className={styles.volume}>
+    <div className="flex items-center gap-1">
       <Button
-        variant="neutral"
-        mode="ghost"
+        variant="ghost"
         size="sm"
-        asIcon
-        onClick={toggleMute}
+        isIconOnly
+        onPress={toggleMute}
         aria-label={muted ? "Ton einschalten" : "Stummschalten"}
         aria-pressed={muted}
-        className={styles.volumeButton}
       >
         <Icon icon={icon} />
       </Button>
       {volumeSupported && (
-        <Slider
-          value={Math.round(effective * 100)}
-          onValueChange={(value) => setVolume((value as number) / 100)}
+        <input
+          type="range"
           min={0}
           max={100}
           step={1}
+          value={Math.round(effective * 100)}
+          onChange={(event) => setVolume(Number(event.target.value) / 100)}
           aria-label="Lautstärke"
-          className={styles.volumeSlider}
+          className="hidden w-28 accent-[var(--volt)] sm:block"
         />
       )}
     </div>
@@ -196,11 +178,10 @@ export function VolumeControl() {
 }
 
 /**
- * Human-readable playback state for screen readers and the error surface.
+ * Der Wiedergabestatus in Worten — fuer Screenreader und fuer Fehler.
  *
- * Angesagt (`announce`) wird nur aus der Sticky-Leiste, die es auf jeder Seite
- * gibt. Steht die Zeile zusaetzlich sichtbar auf der Buehne, waeren es sonst
- * zwei Live-Regionen, und der Screenreader saehe jede Meldung doppelt.
+ * Angesagt (`announce`) wird nur aus der Leiste, die es auf jeder Seite gibt.
+ * Zwei Live-Regionen wuerden jede Meldung doppelt vorlesen.
  */
 export function PlayerStatusLine({
   className,
@@ -211,8 +192,7 @@ export function PlayerStatusLine({
 }) {
   const { status, error, embedAllowed, consent } = useRadioPlayer();
 
-  /* Ohne eingebetteten Player gibt es keinen Wiedergabestatus zu melden — und
-     <StreamNotice> darunter sagt ohnehin schon, wo abgespielt wird. */
+  /* Ohne eingebetteten Player gibt es keinen Wiedergabestatus zu melden. */
   if (!embedAllowed) return null;
 
   const failed = status === "error" || status === "offline";
@@ -231,8 +211,7 @@ export function PlayerStatusLine({
 
   return (
     <p
-      className={`${styles.statusLine} ${className ?? ""}`}
-      data-failed={failed || undefined}
+      className={cn("text-sm", failed ? "text-danger" : "text-muted", className)}
       role={announce ? "status" : undefined}
       aria-live={announce ? "polite" : undefined}
     >
@@ -242,37 +221,40 @@ export function PlayerStatusLine({
 }
 
 /**
- * Die Pegelanzeige: vier Balken, die sich bewegen, solange Musik laeuft.
+ * Vier Balken, die sich bewegen, solange Musik laeuft.
  *
- * Reine Gestaltung, keine Messung. Ein echter Pegel braeuchte die Web Audio
- * API, und die liefert bei einem fremden Stream ohne CORS-Freigabe nur Stille —
- * laut.fm schickt keinen `Access-Control-Allow-Origin`, der Ton waere also weg.
- * Deshalb tanzen die Balken per CSS, und nur dann, wenn wirklich etwas spielt.
- * Bei `prefers-reduced-motion` stehen sie still.
+ * Reine Gestaltung, keine Messung: Die Web Audio API liefert bei einem
+ * fremden Stream ohne CORS-Freigabe nur Stille. Bei reduzierter Bewegung
+ * stehen die Balken still.
  */
 export function LevelMeter({ className }: { className?: string }) {
   const { status, embedAllowed } = useRadioPlayer();
   if (!embedAllowed) return null;
+  const active = status === "playing";
+
+  const bar = cn(
+    "h-full flex-1 origin-bottom scale-y-[0.18] rounded-[1px] bg-volt",
+    active && "animate-[vfm-level_900ms_ease-in-out_infinite_alternate] motion-reduce:animate-none",
+  );
 
   return (
     <span
-      className={`${styles.meter} ${className ?? ""}`}
-      data-active={status === "playing" || undefined}
+      className={cn(
+        "inline-flex h-4 w-[18px] shrink-0 items-end gap-0.5 transition-opacity duration-300",
+        !active && "opacity-0",
+        className,
+      )}
       aria-hidden="true"
     >
-      <span />
-      <span />
-      <span />
-      <span />
+      <span className={bar} />
+      <span className={cn(bar, "[animation-delay:-200ms] [animation-duration:640ms]")} />
+      <span className={cn(bar, "[animation-delay:-450ms] [animation-duration:1100ms]")} />
+      <span className={cn(bar, "[animation-delay:-120ms] [animation-duration:760ms]")} />
     </span>
   );
 }
 
-/**
- * Der zweite Weg zum Hoeren, klein unter dem Play-Knopf. Er fuehrt zum
- * Webplayer von lautstation.de (ein privates Verzeichnis, nicht laut.fm
- * selbst) — deshalb steht der Name im Text, nicht "laut.fm-Player".
- */
+/** Der zweite Weg zum Hoeren — nur mit eingebettetem Player. */
 export function AlsoListenLink({ className }: { className?: string }) {
   const { embedAllowed } = useRadioPlayer();
   /* Ohne eingebetteten Player fuehrt schon der grosse Knopf dorthin. */
@@ -283,36 +265,31 @@ export function AlsoListenLink({ className }: { className?: string }) {
       href={radio.externalUrl}
       target="_blank"
       rel="noreferrer noopener"
-      className={`${styles.alsoListen} ${className ?? ""}`}
+      className={cn(
+        "inline-flex items-center gap-1.5 text-sm text-muted underline underline-offset-4 hover:text-foreground",
+        className,
+      )}
     >
       Auch im Webplayer von {radio.externalName} hören
-      <Icon icon={ExternalLinkIcon} />
-      <span className="visually-hidden"> (öffnet einen neuen Tab)</span>
+      <Icon icon={ExternalLinkIcon} className="text-[0.7em]" />
+      <span className="sr-only"> (öffnet einen neuen Tab)</span>
     </a>
   );
 }
 
-/**
- * Der Weg, eine gegebene Einwilligung zurueckzunehmen — nur mit eingebettetem
- * Player, denn nur dann gibt es eine Verbindung, die sie erlaubt hat.
- *
- * Shown on the stage, where there is room to explain — the sticky bar only
- * gets the button.
- */
+/** Eine gegebene Einwilligung zuruecknehmen — nur mit eingebettetem Player. */
 export function StreamNotice() {
   const { embedAllowed, consent, revokeConsent } = useRadioPlayer();
-
-  /* Ohne eingebetteten Player gibt es keine Einwilligung zurueckzunehmen. Was
-     beim Klick passiert, sagt der Hinweis unter dem Knopf, und alles zur
-     Weiterleitung der Dialog davor. */
-  if (!embedAllowed) return null;
-
-  if (consent !== true) return null;
+  if (!embedAllowed || consent !== true) return null;
 
   return (
-    <p className={styles.notice}>
+    <p className="text-sm text-muted">
       Du hast der Verbindung zu {radio.providerName} zugestimmt.{" "}
-      <button type="button" className={styles.linkButton} onClick={revokeConsent}>
+      <button
+        type="button"
+        className="rounded-sm font-medium text-foreground underline underline-offset-4"
+        onClick={revokeConsent}
+      >
         Verbindung trennen
       </button>
     </p>

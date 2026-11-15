@@ -1,13 +1,11 @@
 "use client";
 
-import { useCallback, useRef, useState, useTransition } from "react";
+import { useCallback, useId, useRef, useState, useTransition } from "react";
 import Link from "next/link";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { Button, cn } from "@heroui/react";
 import { Icon, ImageIcon, EditIcon, LoadingIcon } from "@/lib/icons";
 import { useUploadThing } from "@/lib/uploadthing";
 import { previewRichText } from "@/app/admin/preview-actions";
-import styles from "./rich-text-editor.module.css";
 
 /** Steht im eingefuegten Bild, wenn der Dateiname nichts hergibt. */
 export const ALT_PLACEHOLDER = "Bildbeschreibung ergänzen";
@@ -46,17 +44,23 @@ function altFromFileName(name: string): string {
  */
 export function RichTextEditor({
   name,
+  label,
+  description,
   defaultValue,
   rows = 20,
   placeholder,
   required,
 }: {
   name: string;
+  /** Beschriftung ueber dem Feld, per ID mit dem Textfeld verbunden. */
+  label: string;
+  description?: React.ReactNode;
   defaultValue?: string;
   rows?: number;
   placeholder?: string;
   required?: boolean;
 }) {
+  const id = useId();
   const ref = useRef<HTMLTextAreaElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
@@ -128,122 +132,151 @@ export function RichTextEditor({
   );
 
   return (
-    <div className={styles.editor}>
-      <div className={styles.toolbar} role="toolbar" aria-label="Werkzeuge">
-        {/* Direkt die Dateiauswahl statt eines Zwischendialogs: Bildunterschrift
-            und Beschreibung stehen danach im Text und lassen sich dort
-            tippen, wo man ohnehin schreibt. */}
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/*"
-          hidden
-          onChange={(event) => {
-            uploadFirstImage(event.target.files);
-            // Damit dieselbe Datei ein zweites Mal ausgewählt werden kann.
-            event.target.value = "";
-          }}
-        />
+    <div className="flex min-w-0 flex-col gap-1.5">
+      <label htmlFor={id} className={cn("label", required && "label--required")}>
+        {label}
+      </label>
 
-        <Button
-          type="button"
-          variant="neutral"
-          mode="stroke"
-          size="sm"
-          disabled={isUploading}
-          onClick={() => fileRef.current?.click()}
+      <div
+        className={cn(
+          "overflow-hidden rounded-[var(--field-radius)] border border-[var(--field-border)] bg-[var(--field-background)] transition-shadow has-[textarea:focus]:ring-2 has-[textarea:focus]:ring-focus",
+          dragOver && "ring-2 ring-volt",
+        )}
+      >
+        <div
+          role="toolbar"
+          aria-label="Werkzeuge"
+          className="flex flex-wrap items-center gap-2 border-b border-separator bg-surface-secondary/60 px-2 py-2"
         >
-          <Icon icon={isUploading ? LoadingIcon : ImageIcon} spin={isUploading} />
-          {isUploading ? "Bild wird hochgeladen …" : "Bild einfügen"}
-        </Button>
+          {/* Direkt die Dateiauswahl statt eines Zwischendialogs: Bildunterschrift
+              und Beschreibung stehen danach im Text und lassen sich dort
+              tippen, wo man ohnehin schreibt. */}
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            hidden
+            onChange={(event) => {
+              uploadFirstImage(event.target.files);
+              // Damit dieselbe Datei ein zweites Mal ausgewählt werden kann.
+              event.target.value = "";
+            }}
+          />
 
-        <Button
-          type="button"
-          variant="neutral"
-          mode={preview ? "filled" : "stroke"}
-          size="sm"
-          disabled={rendering}
-          onClick={() => {
-            if (preview) {
-              setPreview(false);
-              return;
-            }
-            /* Gerendert wird auf dem Server, mit demselben Weg wie beim
-               Speichern — so zeigt die Vorschau wirklich das Ergebnis und
-               nicht etwas Ähnliches. */
-            const source = ref.current?.value ?? "";
-            startRendering(async () => {
-              setPreviewHtml(await previewRichText(source));
-              setPreview(true);
-            });
-          }}
-        >
-          <Icon icon={rendering ? LoadingIcon : EditIcon} spin={rendering} />
-          {rendering ? "Moment …" : preview ? "Weiter schreiben" : "Vorschau"}
-        </Button>
+          <Button
+            type="button"
+            variant="tertiary"
+            size="sm"
+            isDisabled={isUploading || preview}
+            onPress={() => fileRef.current?.click()}
+          >
+            <Icon icon={isUploading ? LoadingIcon : ImageIcon} spin={isUploading} />
+            {isUploading ? "Bild wird hochgeladen …" : "Bild einfügen"}
+          </Button>
 
-        <span className={styles.dropHint}>oder Bild in das Textfeld ziehen bzw. einfügen</span>
-      </div>
+          <Button
+            type="button"
+            variant={preview ? "primary" : "tertiary"}
+            size="sm"
+            isDisabled={rendering}
+            aria-pressed={preview}
+            onPress={() => {
+              if (preview) {
+                setPreview(false);
+                return;
+              }
+              /* Gerendert wird auf dem Server, mit demselben Weg wie beim
+                 Speichern — so zeigt die Vorschau wirklich das Ergebnis und
+                 nicht etwas Ähnliches. */
+              const source = ref.current?.value ?? "";
+              startRendering(async () => {
+                setPreviewHtml(await previewRichText(source));
+                setPreview(true);
+              });
+            }}
+          >
+            <Icon icon={rendering ? LoadingIcon : EditIcon} spin={rendering} />
+            {rendering ? "Moment …" : preview ? "Weiter schreiben" : "Vorschau"}
+          </Button>
 
-      {/* Das Feld bleibt während der Vorschau eingehängt — sein Wert ist das,
-          was abgeschickt wird, und darf nicht verlorengehen. */}
-      <div hidden={preview}>
-        <Textarea
-          ref={ref}
-          name={name}
-          required={required}
-          rows={rows}
-          defaultValue={defaultValue}
-          placeholder={placeholder}
-          className={styles.area}
-          data-dragover={dragOver || undefined}
-          onPaste={(event) => {
-            // Manche Browser legen ein eingefügtes Bild nur unter `items` ab,
-            // nicht unter `files`. Nur abfangen, wenn wirklich eines dabei ist
-            // — sonst bliebe normales Textkopieren auf der Strecke.
-            const fromItems = Array.from(event.clipboardData?.items ?? [])
-              .filter((item) => item.type.startsWith("image/"))
-              .map((item) => item.getAsFile())
-              .filter((file): file is File => file !== null);
-            const files = event.clipboardData?.files;
-            if (uploadFirstImage(files?.length ? files : fromItems)) event.preventDefault();
-          }}
-          onDragOver={(event) => {
-            if (!event.dataTransfer?.types.includes("Files")) return;
-            event.preventDefault();
-            setDragOver(true);
-          }}
-          onDragLeave={() => setDragOver(false)}
-          onDrop={(event) => {
-            if (!event.dataTransfer?.files?.length) return;
-            event.preventDefault();
-            setDragOver(false);
-            uploadFirstImage(event.dataTransfer.files);
-          }}
-        />
-      </div>
-
-      {preview && (
-        <div className={styles.preview}>
-          <p className={styles.previewHint}>
-            So sieht der Beitrag aus. Was hier fehlt, wird auch beim Speichern
-            entfernt.
-          </p>
-          {/* Kommt aus previewRichText() und ist dort schon bereinigt. */}
-          <div className={styles.previewBody} dangerouslySetInnerHTML={{ __html: previewHtml }} />
+          <span className="hidden text-xs text-muted sm:inline">
+            oder Bild in das Textfeld ziehen bzw. einfügen
+          </span>
         </div>
+
+        {/* Das Feld bleibt während der Vorschau eingehängt — sein Wert ist das,
+            was abgeschickt wird, und darf nicht verlorengehen. */}
+        <div hidden={preview}>
+          <textarea
+            ref={ref}
+            id={id}
+            name={name}
+            required={required}
+            rows={rows}
+            defaultValue={defaultValue}
+            placeholder={placeholder}
+            aria-describedby={description ? `${id}-hint` : undefined}
+            className="block w-full resize-y bg-transparent px-4 py-3 text-base leading-relaxed text-field-foreground outline-none placeholder:text-field-placeholder sm:text-[0.9375rem]"
+            onPaste={(event) => {
+              // Manche Browser legen ein eingefügtes Bild nur unter `items` ab,
+              // nicht unter `files`. Nur abfangen, wenn wirklich eines dabei ist
+              // — sonst bliebe normales Textkopieren auf der Strecke.
+              const fromItems = Array.from(event.clipboardData?.items ?? [])
+                .filter((item) => item.type.startsWith("image/"))
+                .map((item) => item.getAsFile())
+                .filter((file): file is File => file !== null);
+              const files = event.clipboardData?.files;
+              if (uploadFirstImage(files?.length ? files : fromItems)) event.preventDefault();
+            }}
+            onDragOver={(event) => {
+              if (!event.dataTransfer?.types.includes("Files")) return;
+              event.preventDefault();
+              setDragOver(true);
+            }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={(event) => {
+              if (!event.dataTransfer?.files?.length) return;
+              event.preventDefault();
+              setDragOver(false);
+              uploadFirstImage(event.dataTransfer.files);
+            }}
+          />
+        </div>
+
+        {preview && (
+          <div className="px-4 py-4">
+            <p className="mb-4 rounded-lg bg-surface-secondary px-3 py-2 text-xs text-muted">
+              So sieht der Beitrag aus. Was hier fehlt, wird auch beim Speichern
+              entfernt.
+            </p>
+            {/* Kommt aus previewRichText() und ist dort schon bereinigt. */}
+            <div
+              className="vfm-prose vfm-prose--compact"
+              dangerouslySetInnerHTML={{ __html: previewHtml }}
+            />
+          </div>
+        )}
+      </div>
+
+      {uploadError && <p className="text-xs font-medium text-danger">{uploadError}</p>}
+
+      {description && (
+        <p id={`${id}-hint`} className="description">
+          {description}
+        </p>
       )}
 
-      {uploadError && <p className={styles.uploadError}>{uploadError}</p>}
-
-      <p className={styles.syntax}>
+      <p className="text-xs text-muted [&_code]:rounded [&_code]:bg-surface-secondary [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono">
         <code>## Überschrift</code>, <code>**fett**</code>,{" "}
         <code>[Link](https://…)</code>, <code>- Liste</code>, <code>&gt; Zitat</code> —{" "}
-        <Link href="/admin/markdown" className={styles.syntaxLink} target="_blank">
+        <Link
+          href="/admin/markdown"
+          target="_blank"
+          className="rounded-sm font-medium text-foreground underline underline-offset-4"
+        >
           alles Weitere
         </Link>
       </p>
-
     </div>
   );
 }
