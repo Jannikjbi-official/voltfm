@@ -58,16 +58,12 @@ import {
 import { faDiscord, faInstagram } from "@fortawesome/free-brands-svg-icons";
 
 /**
- * The single icon system for VoltFM: Font Awesome.
+ * Das eine Icon-System fuer VoltFM: Font Awesome.
  *
- * Every icon used by VoltFM-authored UI is re-exported here, so the set stays
- * auditable and no page imports icon names directly.
- *
- * Note on OlyxUI: the vendored OlyxUI components render Hugeicons internally
- * for their own affordances (select chevrons, dialog close buttons). Those are
- * part of the unmodified OlyxUI sources — swapping them would mean editing the
- * vendored library, so they stay as-is. Font Awesome is the icon system for
- * everything VoltFM draws itself.
+ * Jedes Icon, das VoltFM selbst zeichnet, wird hier exportiert — so bleibt die
+ * Auswahl ueberschaubar, und keine Seite importiert Icon-Namen direkt.
+ * HeroUI bringt fuer seine eigenen Bedienelemente (Schliessen-Knopf im Drawer,
+ * Pfeile in Auswahllisten) eigene SVGs mit; die bleiben, wie sie sind.
  */
 
 // Next.js already emits the Font Awesome stylesheet above; stop the library
@@ -81,8 +77,8 @@ export type { IconDefinition };
  * Thin wrapper so call sites stay declarative and consistent.
  *
  * There is deliberately no size prop: Font Awesome glyphs scale to the
- * inherited font-size, so sizing is set in the CSS module that owns the
- * surrounding layout rather than sprinkled through JSX.
+ * inherited font-size, so size them with a Tailwind class (`text-sm`,
+ * `size-4`) on the icon or its container.
  */
 export function Icon({ icon, spin = false, ...rest }: FontAwesomeIconProps) {
   return <FontAwesomeIcon icon={icon} spin={spin} {...rest} />;
