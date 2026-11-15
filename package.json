@@ -18,7 +18,6 @@
     "make-admin": "tsx scripts/make-admin.mts"
   },
   "dependencies": {
-    "@base-ui/react": "^1.8.0",
     "@better-auth/infra": "^0.4.9",
     "@better-auth/mongo-adapter": "^1.7.5",
     "@better-auth/passkey": "^1.7.5",
@@ -29,8 +28,6 @@
     "@fortawesome/react-fontawesome": "^3.5.0",
     "@heroui/react": "^3.2.7",
     "@heroui/styles": "^3.2.7",
-    "@hugeicons/core-free-icons": "^4.3.3",
-    "@hugeicons/react": "^1.1.10",
     "@uploadthing/react": "^7.3.3",
     "better-auth": "^1.7.5",
     "mongodb": "^7.6.0",
@@ -41,7 +38,6 @@
     "server-only": "^0.0.1",
     "sharp": "^0.35.5",
     "uploadthing": "^7.7.4",
-    "vaul-base": "^1.0.0",
     "zod": "^4.6.5"
   },
   "devDependencies": {
