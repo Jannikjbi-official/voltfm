@@ -34,7 +34,9 @@ export function PageHeader({
           <div className="min-w-0 max-w-3xl">
             <h1
               className={cn(
-                "font-display text-balance text-foreground",
+                /* Lange deutsche Woerter ("Datenschutzerklärung") passen in
+                   der breiten Schrift am Handy nicht in eine Zeile. */
+                "font-display text-balance break-words hyphens-auto text-foreground",
                 size === "large"
                   ? "text-[2.5rem] leading-[0.95] sm:text-6xl lg:text-7xl"
                   : "text-[2rem] leading-[1.02] sm:text-5xl",

@@ -6,10 +6,9 @@ import { ButtonLink } from "@/components/common/button-link";
 import { EventCard } from "@/components/events/event-card";
 import { SectionHeader } from "@/components/common/section-header";
 import { EmptyState } from "@/components/common/empty-state";
-import { Icon, ArrowRightIcon, DiscordIcon, InstagramIcon, MicIcon, HeartIcon, SendIcon } from "@/lib/icons";
+import { Icon, DiscordIcon, InstagramIcon, MicIcon, HeartIcon, SendIcon } from "@/lib/icons";
 import { listEvents } from "@/services/content";
 import { operator, site } from "@/lib/site";
-import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Community",
@@ -52,7 +51,6 @@ export default async function CommunityPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Mitmachen"
         title="Die Community"
         description="Zwei Leute machen den Sender, der Rest passiert im Discord. Da erfährst du alles zuerst und erreichst uns direkt."
         breadcrumbs={[
@@ -62,11 +60,11 @@ export default async function CommunityPage() {
         size="large"
         aside={
           <>
-            <ButtonLink href={site.discordUrl} external variant="primary" mode="filled" size="md">
+            <ButtonLink href={site.discordUrl} external variant="primary">
               <Icon icon={DiscordIcon} />
               Discord beitreten
             </ButtonLink>
-            <ButtonLink href={site.instagramUrl} external variant="neutral" mode="stroke" size="md">
+            <ButtonLink href={site.instagramUrl} external variant="outline">
               <Icon icon={InstagramIcon} />
               Instagram
             </ButtonLink>
@@ -74,58 +72,71 @@ export default async function CommunityPage() {
         }
       />
 
-      {/* --- Discord: one loud band, not a card ---------------------------- */}
-      <section className={styles.hero}>
-        <div className="shell">
-          <div className={styles.heroInner}>
-            <Icon icon={DiscordIcon} className={styles.heroIcon} />
-            <h2 className={styles.heroTitle}>Alles passiert im Discord.</h2>
-            <p className={styles.heroText}>
-              Hier erfährst du zuerst, was ansteht, und hier sagst du uns, was dir
-              fehlt. Zwei Klicks, kein Konto auf dieser Seite.
-            </p>
-            <ButtonLink href={site.discordUrl} external variant="primary" mode="filled" size="lg">
+      {/* --- Discord: ein deutliches Band, keine Karte ---------------------- */}
+      <section className="shell pt-14 sm:pt-20">
+        <div
+          data-theme="dark"
+          className="dark relative overflow-hidden rounded-3xl border border-border bg-ink px-6 py-10 text-foreground sm:px-12 sm:py-14"
+        >
+          <span
+            aria-hidden="true"
+            className="grid size-14 place-items-center rounded-2xl bg-volt text-2xl text-ink"
+          >
+            <Icon icon={DiscordIcon} />
+          </span>
+          <h2 className="mt-6 max-w-2xl font-display text-3xl leading-[1.02] text-balance sm:text-5xl">
+            Alles passiert im Discord.
+          </h2>
+          <p className="mt-4 max-w-xl text-lg leading-relaxed text-paper/75">
+            Hier erfährst du zuerst, was ansteht, und hier sagst du uns, was dir
+            fehlt. Zwei Klicks, kein Konto auf dieser Seite.
+          </p>
+          <div className="mt-8">
+            <ButtonLink href={site.discordUrl} external variant="primary" size="lg">
               Zum VoltFM Discord
             </ButtonLink>
           </div>
         </div>
       </section>
 
-      {/* --- Ways to take part -------------------------------------------- */}
-      <section className="section shell">
-        <SectionHeader
-          eyebrow="Mitmachen"
-          title="So bist du dabei"
-        />
+      {/* --- Wege, dabei zu sein --------------------------------------------- */}
+      <section className="shell py-14 sm:py-20">
+        <SectionHeader title="So bist du dabei" />
 
-        <div className={styles.ways}>
+        <ul className="grid gap-4 sm:grid-cols-2">
           {WAYS.map((way) => (
-            <article key={way.title} className={styles.way}>
-              <Icon icon={way.icon} className={styles.wayIcon} />
-              <h3 className={styles.wayTitle}>{way.title}</h3>
-              <p className={styles.wayText}>{way.text}</p>
+            <li
+              key={way.title}
+              className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-6 sm:p-7"
+            >
+              <span
+                aria-hidden="true"
+                className="grid size-11 place-items-center rounded-full bg-surface-secondary text-lg text-foreground"
+              >
+                <Icon icon={way.icon} />
+              </span>
+              <h3 className="mt-2 font-wide text-xl font-bold text-foreground">{way.title}</h3>
+              <p className="text-pretty leading-relaxed text-muted">{way.text}</p>
               {way.link && (
-                <Link href={way.link.href} className={styles.wayLink}>
+                <Link
+                  href={way.link.href}
+                  className="mt-auto self-start rounded-sm pt-2 text-sm font-semibold text-foreground underline decoration-accent-text decoration-2 underline-offset-4 hover:decoration-foreground"
+                >
                   {way.link.label}
-                  <Icon icon={ArrowRightIcon} />
                 </Link>
               )}
-            </article>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
-      {/* --- Community events --------------------------------------------- */}
-      <section className={styles.eventsSection}>
-        <div className="shell">
-          <SectionHeader
-            eyebrow="Termine"
-            title="Als Nächstes"
-            action={{ href: "/events", label: "Alle Events" }}
-          />
+      {/* --- Termine --------------------------------------------------------- */}
+      <section className="border-y border-separator bg-surface-secondary/50">
+        <div className="shell py-14 sm:py-20">
+          <SectionHeader title="Als Nächstes" action={{ href: "/events", label: "Alle Events" }} />
 
           {events.length > 0 ? (
-            <div className={styles.eventList}>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {events.slice(0, 3).map((event) => (
                 <EventCard key={event.id} event={event} />
               ))}
@@ -139,17 +150,17 @@ export default async function CommunityPage() {
         </div>
       </section>
 
-      {/* --- Contact hand-off --------------------------------------------- */}
-      <section className="section shell">
-        <div className={styles.contact}>
-          <div>
-            <h2 className={styles.contactTitle}>Lieber direkt an uns?</h2>
-            <p className={styles.contactText}>
+      {/* --- Direkt an uns --------------------------------------------------- */}
+      <section className="shell pt-14 sm:pt-20">
+        <div className="flex flex-col gap-6 rounded-3xl border border-border bg-surface p-6 sm:flex-row sm:items-center sm:justify-between sm:p-10">
+          <div className="max-w-xl">
+            <h2 className="font-wide text-2xl font-bold text-foreground">Lieber direkt an uns?</h2>
+            <p className="mt-2 leading-relaxed text-muted">
               Für alles, was nicht in den Discord gehört: Feedback, Kooperationen,
               Presseanfragen oder einfach eine Nachricht an uns.
             </p>
           </div>
-          <ButtonLink href="/kontakt" variant="neutral" mode="stroke" size="md">
+          <ButtonLink href="/kontakt" variant="outline" className="shrink-0">
             Kontakt aufnehmen
           </ButtonLink>
         </div>

@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Icon, ArrowRightIcon, ExternalLinkIcon, HeartIcon } from "@/lib/icons";
+import { Icon, ExternalLinkIcon, HeartIcon } from "@/lib/icons";
 import type { RadioAidPhase } from "@/lib/radioaid";
-import styles from "./radioaid-banner.module.css";
 
 /**
  * Der Hinweis auf RadioAid oben auf der Startseite.
@@ -48,15 +47,30 @@ export function RadioAidBanner({
 
   if (phase === "over") return null;
 
+  const link =
+    "inline-flex items-center gap-1.5 rounded-sm text-sm font-semibold text-foreground underline decoration-accent-text decoration-2 underline-offset-4 hover:decoration-foreground";
+
   return (
-    <section className={styles.banner} data-phase={phase} aria-label="RadioAid 2026">
-      <div className={`shell ${styles.inner}`}>
-        <span className={styles.badge}>
-          <Icon icon={HeartIcon} className={styles.heart} />
+    <section aria-label="RadioAid 2026" className="border-b border-separator bg-surface-secondary">
+      <div className="shell flex flex-wrap items-center gap-x-5 gap-y-2 py-3">
+        <span className="inline-flex items-center gap-2 text-sm font-bold text-foreground">
+          <span
+            aria-hidden="true"
+            className="grid size-6 place-items-center rounded-full bg-volt text-[0.65rem] text-ink"
+          >
+            <Icon
+              icon={HeartIcon}
+              className={
+                phase === "live"
+                  ? "animate-[vfm-pulse_2s_ease-in-out_infinite] motion-reduce:animate-none"
+                  : undefined
+              }
+            />
+          </span>
           {phase === "live" ? "Läuft gerade" : "RadioAid 2026"}
         </span>
 
-        <p className={styles.text}>
+        <p className="min-w-0 text-sm text-muted">
           {phase === "live" ? (
             <>RadioAid: 24 Stunden Charity-Radio für {organisation}</>
           ) : (
@@ -68,16 +82,16 @@ export function RadioAidBanner({
 
         {phase === "upcoming" && <Remaining ms={now === null ? null : start - now} />}
 
-        <div className={styles.actions}>
+        <div className="flex items-center gap-5 sm:ml-auto">
           {phase === "live" && (
-            <a href={donateUrl} target="_blank" rel="noreferrer noopener" className={styles.link}>
+            <a href={donateUrl} target="_blank" rel="noreferrer noopener" className={link}>
               Spenden
-              <Icon icon={ExternalLinkIcon} />
+              <Icon icon={ExternalLinkIcon} className="text-[0.7em]" />
+              <span className="sr-only"> (öffnet einen neuen Tab)</span>
             </a>
           )}
-          <Link href="/radioaid" className={styles.link}>
+          <Link href="/radioaid" className={link}>
             Mehr erfahren
-            <Icon icon={ArrowRightIcon} />
           </Link>
         </div>
       </div>
@@ -96,14 +110,15 @@ function Remaining({ ms }: { ms: number | null }) {
   }
 
   return (
-    <p className={styles.countdown}>
-      {/* Sekündlich wechselnde Ziffern wären für Screenreader unbenutzbar —
+    <p className="text-sm text-muted">
+      {/* Sekuendlich wechselnde Ziffern waeren fuer Screenreader unbenutzbar —
           sie bekommen die Angabe einmal, ohne Sekunden. */}
       <span aria-hidden="true">
-        noch <strong className={styles.digits}>{days}</strong> {days === "1" ? "Tag" : "Tage"}{" "}
-        <strong className={styles.digits}>{clock}</strong>
+        noch <strong className="font-semibold tabular-nums text-foreground">{days}</strong>{" "}
+        {days === "1" ? "Tag" : "Tage"}{" "}
+        <strong className="font-semibold tabular-nums text-foreground">{clock}</strong>
       </span>
-      <span className="visually-hidden">
+      <span className="sr-only">
         {ms === null ? "Countdown wird geladen." : `Noch ${days} Tage bis zum Sendestart.`}
       </span>
     </p>

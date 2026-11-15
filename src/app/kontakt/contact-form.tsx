@@ -1,135 +1,137 @@
 "use client";
 
 import { useActionState } from "react";
-import { Field, FieldLabel, FieldDescription } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { CheckBox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertContent, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@heroui/react";
+import {
+  CheckboxField,
+  FormMessage,
+  TextAreaField,
+  TextField,
+} from "@/components/common/form-field";
 import { Icon, SendIcon, CheckIcon, LoadingIcon } from "@/lib/icons";
 import { submitContact, type ContactState } from "./actions";
-import styles from "./page.module.css";
 
 const initialState: ContactState = { status: "idle" };
 
 /**
- * Contact form.
+ * Kontaktformular.
  *
- * Built on a server action, so it works before hydration and degrades to a
- * plain POST. Validation runs on the server (the only place it counts); the
- * browser's own constraint validation handles the first pass for free.
+ * Laeuft ueber eine Server Action: Es funktioniert vor dem Hydrieren und
+ * faellt auf einen normalen POST zurueck. Geprueft wird auf dem Server (nur
+ * dort zaehlt es); die Browser-Pruefung uebernimmt den ersten Durchgang.
+ * Die Felder sind native Eingaben, also landet alles im FormData.
  */
 export function ContactForm() {
   const [state, formAction, pending] = useActionState(submitContact, initialState);
 
   if (state.status === "success") {
     return (
-      <div className={styles.success} role="status">
-        <Icon icon={CheckIcon} className={styles.successIcon} />
-        <h2 className={styles.successTitle}>Nachricht gesendet</h2>
-        <p className={styles.successText}>{state.message}</p>
+      <div
+        role="status"
+        className="flex flex-col items-start gap-3 rounded-3xl border border-border bg-surface p-6 sm:p-10"
+      >
+        <span
+          aria-hidden="true"
+          className="grid size-12 place-items-center rounded-full bg-success-soft text-lg text-success"
+        >
+          <Icon icon={CheckIcon} />
+        </span>
+        <h2 className="font-display text-2xl text-foreground">Nachricht gesendet</h2>
+        <p className="leading-relaxed text-muted">{state.message}</p>
       </div>
     );
   }
 
+  const errors = state.fieldErrors ?? {};
+
   return (
-    <form action={formAction} className={styles.form} noValidate={false}>
+    <form
+      action={formAction}
+      className="relative flex flex-col gap-5 rounded-3xl border border-border bg-surface p-6 sm:p-8"
+    >
       {state.status === "error" && state.message && (
-        <Alert variant="lighter" status="error" role="alert">
-          <AlertContent>
-            <AlertDescription>{state.message}</AlertDescription>
-          </AlertContent>
-        </Alert>
+        <FormMessage status="error">{state.message}</FormMessage>
       )}
 
-      <div className={styles.row}>
-        <Field name="name" className={styles.field}>
-          <FieldLabel>Name</FieldLabel>
-          <Input
-            name="name"
-            type="text"
-            required
-            minLength={2}
-            maxLength={80}
-            autoComplete="name"
-            placeholder="Wie heißt du?"
-            aria-invalid={state.fieldErrors?.name ? true : undefined}
-          />
-          {state.fieldErrors?.name && <p className={styles.error}>{state.fieldErrors.name}</p>}
-        </Field>
-
-        <Field name="email" className={styles.field}>
-          <FieldLabel>E-Mail</FieldLabel>
-          <Input
-            name="email"
-            type="email"
-            required
-            maxLength={160}
-            autoComplete="email"
-            placeholder="name@beispiel.de"
-            aria-invalid={state.fieldErrors?.email ? true : undefined}
-          />
-          {state.fieldErrors?.email && <p className={styles.error}>{state.fieldErrors.email}</p>}
-        </Field>
-      </div>
-
-      <Field name="subject" className={styles.field}>
-        <FieldLabel>Betreff</FieldLabel>
-        <Input
-          name="subject"
+      <div className="grid gap-5 sm:grid-cols-2">
+        <TextField
+          label="Name"
+          name="name"
           type="text"
           required
-          minLength={3}
-          maxLength={120}
-          placeholder="Worum geht es?"
-          aria-invalid={state.fieldErrors?.subject ? true : undefined}
+          minLength={2}
+          maxLength={80}
+          autoComplete="name"
+          placeholder="Wie heißt du?"
+          error={errors.name}
         />
-        {state.fieldErrors?.subject && (
-          <p className={styles.error}>{state.fieldErrors.subject}</p>
-        )}
-      </Field>
-
-      <Field name="message" className={styles.field}>
-        <FieldLabel>Nachricht</FieldLabel>
-        <Textarea
-          name="message"
+        <TextField
+          label="E-Mail"
+          name="email"
+          type="email"
           required
-          minLength={20}
-          maxLength={4000}
-          rows={7}
-          placeholder="Erzähl uns, was du loswerden möchtest."
-          aria-invalid={state.fieldErrors?.message ? true : undefined}
+          maxLength={160}
+          autoComplete="email"
+          placeholder="name@beispiel.de"
+          error={errors.email}
         />
-        <FieldDescription>Mindestens 20 Zeichen.</FieldDescription>
-        {state.fieldErrors?.message && (
-          <p className={styles.error}>{state.fieldErrors.message}</p>
-        )}
-      </Field>
+      </div>
 
-      {/* Honeypot. Hidden from people and from screen readers, visible to bots. */}
-      <div className={styles.honeypot} aria-hidden="true">
+      <TextField
+        label="Betreff"
+        name="subject"
+        type="text"
+        required
+        minLength={3}
+        maxLength={120}
+        placeholder="Worum geht es?"
+        error={errors.subject}
+      />
+
+      <TextAreaField
+        label="Nachricht"
+        name="message"
+        required
+        minLength={20}
+        maxLength={4000}
+        rows={7}
+        placeholder="Erzähl uns, was du loswerden möchtest."
+        description="Mindestens 20 Zeichen."
+        error={errors.message}
+      />
+
+      {/* Honigtopf. Fuer Menschen und Screenreader unsichtbar, fuer Bots nicht. */}
+      <div className="absolute -left-[10000px] h-px w-px overflow-hidden" aria-hidden="true">
         <label htmlFor="website">Website (bitte leer lassen)</label>
         <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
       </div>
 
-      <Field name="privacy" className={styles.consent}>
-        <label className={styles.consentLabel}>
-          <CheckBox name="privacy" required />
-          <span>
-            Ich habe die <a href="/datenschutz">Datenschutzerklärung</a> gelesen und bin
-            einverstanden, dass meine Angaben zur Bearbeitung der Anfrage gespeichert werden.
-          </span>
-        </label>
-        {state.fieldErrors?.privacy && (
-          <p className={styles.error}>{state.fieldErrors.privacy}</p>
+      <div className="flex flex-col gap-1.5">
+        <CheckboxField
+          name="privacy"
+          required
+          label={
+            <>
+              Ich habe die{" "}
+              <a href="/datenschutz" className="underline underline-offset-4">
+                Datenschutzerklärung
+              </a>{" "}
+              gelesen und bin einverstanden, dass meine Angaben zur Bearbeitung der
+              Anfrage gespeichert werden.
+            </>
+          }
+        />
+        {errors.privacy && (
+          <p className="pl-[1.875rem] text-xs font-medium text-danger">{errors.privacy}</p>
         )}
-      </Field>
+      </div>
 
-      <Button type="submit" variant="primary" mode="filled" size="lg" disabled={pending}>
-        <Icon icon={pending ? LoadingIcon : SendIcon} spin={pending} />
-        {pending ? "Wird gesendet …" : "Nachricht senden"}
-      </Button>
+      <div>
+        <Button type="submit" variant="primary" size="lg" isDisabled={pending}>
+          <Icon icon={pending ? LoadingIcon : SendIcon} spin={pending} />
+          {pending ? "Wird gesendet …" : "Nachricht senden"}
+        </Button>
+      </div>
     </form>
   );
 }

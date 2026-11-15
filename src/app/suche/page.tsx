@@ -8,7 +8,6 @@ import { SearchForm } from "./search-form";
 import { searchArticles, listEvents, listHosts } from "@/services/content";
 import { buildPageIndex } from "@/lib/site";
 import { formatDate } from "@/lib/format";
-import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Suche",
@@ -57,11 +56,10 @@ export default async function SuchePage({
   return (
     <>
       <PageHeader
-        eyebrow="Suche"
-        title={query ? `Suche nach „${query}"` : "Suche"}
+        title={query ? `Suche nach „${query}“` : "Suche"}
         description={
           query
-            ? `${total} ${total === 1 ? "Treffer" : "Treffer"} in News, Events, Moderatoren und Seiten.`
+            ? `${total} Treffer in News, Events, Moderatoren und Seiten.`
             : "Durchsuche News, Events, Moderatoren und alle Seiten von VoltFM."
         }
         breadcrumbs={[
@@ -70,92 +68,132 @@ export default async function SuchePage({
         ]}
       />
 
-      <section className="section shell">
+      <section className="shell py-10 sm:py-14">
         <SearchForm initialQuery={query} />
 
-        {!query ? (
-          <EmptyState
-            title="Wonach suchst du?"
-            description="Gib einen Suchbegriff ein — zum Beispiel einen Sendungsnamen, einen Moderator oder ein Thema."
-          />
-        ) : total === 0 ? (
-          <EmptyState
-            title={`Keine Treffer für „${query}"`}
-            description="Versuch es mit einem anderen Begriff oder schau direkt in den News vorbei."
-          />
-        ) : (
-          <div className={styles.results}>
-            {articles.length > 0 && (
-              <section aria-labelledby="results-news">
-                <h2 id="results-news" className={styles.groupTitle}>
-                  News <span className={styles.count}>{articles.length}</span>
-                </h2>
-                <div className={styles.articleGrid}>
-                  {articles.map((article) => (
-                    <ArticleCard key={article.id} article={article} />
-                  ))}
-                </div>
-              </section>
-            )}
+        <div className="mt-10">
+          {!query ? (
+            <EmptyState
+              title="Wonach suchst du?"
+              description="Gib einen Suchbegriff ein — zum Beispiel einen Sendungsnamen, einen Moderator oder ein Thema."
+            />
+          ) : total === 0 ? (
+            <EmptyState
+              title={`Keine Treffer für „${query}“`}
+              description="Versuch es mit einem anderen Begriff oder schau direkt in den News vorbei."
+            />
+          ) : (
+            <div className="flex flex-col gap-14">
+              {articles.length > 0 && (
+                <section aria-labelledby="results-news">
+                  <GroupTitle id="results-news" count={articles.length}>
+                    News
+                  </GroupTitle>
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {articles.map((article) => (
+                      <ArticleCard key={article.id} article={article} />
+                    ))}
+                  </div>
+                </section>
+              )}
 
-            {matchedHosts.length > 0 && (
-              <section aria-labelledby="results-hosts">
-                <h2 id="results-hosts" className={styles.groupTitle}>
-                  Moderatoren <span className={styles.count}>{matchedHosts.length}</span>
-                </h2>
-                <ul className={styles.linkList} role="list">
-                  {matchedHosts.map((host) => (
-                    <li key={host.id}>
-                      <Link href={`/moderatoren/${host.slug}`} className={styles.resultLink}>
-                        <span className={styles.resultTitle}>{host.name}</span>
-                        <span className={styles.resultMeta}>{host.role}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
+              {matchedHosts.length > 0 && (
+                <section aria-labelledby="results-hosts">
+                  <GroupTitle id="results-hosts" count={matchedHosts.length}>
+                    Moderatoren
+                  </GroupTitle>
+                  <ResultList>
+                    {matchedHosts.map((host) => (
+                      <ResultLink
+                        key={host.id}
+                        href={`/moderatoren/${host.slug}`}
+                        title={host.name}
+                        meta={[host.role]}
+                      />
+                    ))}
+                  </ResultList>
+                </section>
+              )}
 
-            {matchedEvents.length > 0 && (
-              <section aria-labelledby="results-events">
-                <h2 id="results-events" className={styles.groupTitle}>
-                  Events <span className={styles.count}>{matchedEvents.length}</span>
-                </h2>
-                <ul className={styles.linkList} role="list">
-                  {matchedEvents.map((event) => (
-                    <li key={event.id}>
-                      <Link href={`/events/${event.slug}`} className={styles.resultLink}>
-                        <span className={styles.resultTitle}>{event.title}</span>
-                        <span className={styles.resultMeta}>
-                          {formatDate(event.startsAt)} · {event.location}
-                        </span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
+              {matchedEvents.length > 0 && (
+                <section aria-labelledby="results-events">
+                  <GroupTitle id="results-events" count={matchedEvents.length}>
+                    Events
+                  </GroupTitle>
+                  <ResultList>
+                    {matchedEvents.map((event) => (
+                      <ResultLink
+                        key={event.id}
+                        href={`/events/${event.slug}`}
+                        title={event.title}
+                        meta={[formatDate(event.startsAt), event.location]}
+                      />
+                    ))}
+                  </ResultList>
+                </section>
+              )}
 
-            {matchedPages.length > 0 && (
-              <section aria-labelledby="results-pages">
-                <h2 id="results-pages" className={styles.groupTitle}>
-                  Seiten <span className={styles.count}>{matchedPages.length}</span>
-                </h2>
-                <ul className={styles.linkList} role="list">
-                  {matchedPages.map((item) => (
-                    <li key={item.href}>
-                      <Link href={item.href} className={styles.resultLink}>
-                        <span className={styles.resultTitle}>{item.label}</span>
-                        {item.hint && <span className={styles.resultMeta}>{item.hint}</span>}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
-          </div>
-        )}
+              {matchedPages.length > 0 && (
+                <section aria-labelledby="results-pages">
+                  <GroupTitle id="results-pages" count={matchedPages.length}>
+                    Seiten
+                  </GroupTitle>
+                  <ResultList>
+                    {matchedPages.map((item) => (
+                      <ResultLink
+                        key={item.href}
+                        href={item.href}
+                        title={item.label}
+                        meta={item.hint ? [item.hint] : []}
+                      />
+                    ))}
+                  </ResultList>
+                </section>
+              )}
+            </div>
+          )}
+        </div>
       </section>
     </>
+  );
+}
+
+function GroupTitle({ id, count, children }: { id: string; count: number; children: string }) {
+  return (
+    <h2 id={id} className="mb-5 flex items-center gap-3 font-wide text-xl font-bold text-foreground">
+      {children}
+      <span className="rounded-full bg-surface-secondary px-2.5 py-0.5 text-sm font-semibold text-muted">
+        {count}
+      </span>
+    </h2>
+  );
+}
+
+function ResultList({ children }: { children: React.ReactNode }) {
+  return (
+    <ul className="flex flex-col divide-y divide-separator overflow-hidden rounded-2xl border border-border bg-surface">
+      {children}
+    </ul>
+  );
+}
+
+/** Ein Treffer. Mehrere Angaben stehen nebeneinander, getrennt durch Abstand. */
+function ResultLink({ href, title, meta }: { href: string; title: string; meta: string[] }) {
+  return (
+    <li>
+      <Link
+        href={href}
+        className="flex flex-col gap-1 px-5 py-4 transition-colors hover:bg-surface-secondary focus-visible:-outline-offset-2"
+      >
+        <span className="font-semibold text-foreground">{title}</span>
+        {meta.filter(Boolean).length > 0 && (
+          <span className="flex flex-wrap gap-x-4 gap-y-0.5 text-sm text-muted">
+            {meta.filter(Boolean).map((part) => (
+              <span key={part}>{part}</span>
+            ))}
+          </span>
+        )}
+      </Link>
+    </li>
   );
 }
