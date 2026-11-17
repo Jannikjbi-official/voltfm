@@ -8,6 +8,8 @@ import { LautstationPlaylist } from "@/components/radio/lautstation-playlist";
 import { Icon, DiscordIcon, ExternalLinkIcon } from "@/lib/icons";
 import { lautstation } from "@/lib/lautstation";
 import { site } from "@/lib/site";
+import { listenOnlineRadio } from "@/lib/listings";
+import { getListenOnlineRadioUrl } from "@/services/settings/listings";
 
 export const metadata: Metadata = {
   title: "Radio",
@@ -18,7 +20,10 @@ export const metadata: Metadata = {
 
 export const revalidate = 60;
 
-export default function RadioPage() {
+export default async function RadioPage() {
+  // Erscheint erst, wenn der Link unter Admin → Einstellungen eingetragen ist.
+  const listenOnlineRadioUrl = await getListenOnlineRadioUrl();
+
   return (
     <>
       {/* Dieselbe Buehne wie auf der Startseite — die Seite ist der Player. */}
@@ -108,6 +113,13 @@ export default function RadioPage() {
                 Der Sendeplan zeigt, welche Playlist wann läuft, und öffnet sich bei{" "}
                 {lautstation.name} in einem neuen Tab.
               </p>
+
+              {listenOnlineRadioUrl && (
+                <ButtonLink href={listenOnlineRadioUrl} external variant="tertiary" size="sm" fullWidth>
+                  Auch bei {listenOnlineRadio.name}
+                  <Icon icon={ExternalLinkIcon} />
+                </ButtonLink>
+              )}
             </div>
           </aside>
         </div>

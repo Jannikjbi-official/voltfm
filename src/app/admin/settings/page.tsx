@@ -7,6 +7,8 @@ import { radioadminConfigured } from "@/services/lautfm/radioadmin";
 import { milestones } from "@/db/collections";
 import { formatDateTime } from "@/lib/format";
 import { AdminPageHeader, AdminPanel, DataList, StatusBadge } from "@/components/admin/admin-ui";
+import { getListenOnlineRadioUrl } from "@/services/settings/listings";
+import { ListingForm } from "./listing-form";
 
 export const metadata: Metadata = { title: "Einstellungen · Admin", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -74,7 +76,7 @@ export default async function AdminSettingsPage() {
     <>
       <AdminPageHeader
         title="Einstellungen"
-        description="Aktive Konfiguration. Änderungen erfolgen über Environment-Variablen."
+        description="Aktive Konfiguration. Bis auf den Verzeichnis-Link kommt alles aus Environment-Variablen."
       />
 
       <div className="grid grid-cols-1 items-start gap-4 sm:gap-6 xl:grid-cols-2">
@@ -102,6 +104,14 @@ export default async function AdminSettingsPage() {
               value: <span className="font-mono text-xs">{row.value}</span>,
             }))}
           />
+        </AdminPanel>
+
+        <AdminPanel
+          title="Verzeichnisse"
+          titleId="settings-listings"
+          description="Wird hier gespeichert, ohne neues Deployment."
+        >
+          <ListingForm current={await getListenOnlineRadioUrl()} />
         </AdminPanel>
       </div>
     </>

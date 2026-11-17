@@ -147,6 +147,7 @@ Nutzer darum bittet, weise auf § 6 Abs. 9 hin und biete den Schalter an.
 | Rollen und Rechte | `src/lib/permissions.ts` |
 | Session-Guards | `src/lib/session.ts` |
 | Statische Sender-/Betreiberdaten | `src/lib/site.ts` |
+| Link zu Verzeichnissen (ListenOnlineRadio), im Admin eintragbar | `src/lib/listings.ts`, `src/services/settings/listings.ts`, Admin → Einstellungen |
 
 Eine neue Admin-Verwaltung ist normalerweise: Action-Datei schreiben, `FieldDef[]`
 definieren, `<EntityManager />` rendern. Kein eigenes Formular.

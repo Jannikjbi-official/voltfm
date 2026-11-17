@@ -239,5 +239,7 @@ export interface SettingsDoc {
   streamUrl: string;
   discordUrl: string;
   announcement?: { active: boolean; text: string; href?: string };
+  /** Senderseite bei ListenOnlineRadio — gesetzt unter Admin → Einstellungen. */
+  listenOnlineRadioUrl?: string;
   updatedAt: Date;
 }
