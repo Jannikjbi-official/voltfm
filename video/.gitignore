@@ -1,0 +1,6 @@
+node_modules/
+# Die Musik wird nicht mit ins Repo gelegt (NCS erlaubt kein Weitergeben der
+# reinen Audiodatei). `npm run musik` laedt sie neu herunter.
+public/musik/*.mp3
+# Zwischenstaende von Remotion
+.remotion/

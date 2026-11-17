@@ -1,0 +1,24 @@
+{
+  "name": "voltfm-video",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Instagram-Reels fuer VoltFM, gebaut mit Remotion",
+  "scripts": {
+    "musik": "node scripts/musik-laden.mjs",
+    "studio": "npm run musik && remotion studio",
+    "render": "npm run musik && remotion render WeihnachtsReel out/voltfm-weihnachten.mp4",
+    "render:ohne-musik": "remotion render WeihnachtsReel out/voltfm-weihnachten-ohne-musik.mp4 --props=props/ohne-musik.json",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource-variable/archivo": "5.3.0",
+    "@remotion/cli": "4.0.544",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "remotion": "4.0.544"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "typescript": "5.9.3"
+  }
+}

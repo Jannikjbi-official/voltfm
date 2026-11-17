@@ -13,6 +13,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Die HeroUI-Doku fuer Agenten (heroui agents-md) mit ihren Demo-Dateien.
     ".heroui-docs/**",
+    // Remotion-Projekt fuer Reels: eigenes package.json, eigene Pruefung.
+    "video/**",
   ]),
 ]);
 
