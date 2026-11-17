@@ -48,15 +48,17 @@ export function RadioAidBanner({
   if (phase === "over") return null;
 
   const link =
-    "inline-flex items-center gap-1.5 rounded-sm text-sm font-semibold text-foreground underline decoration-accent-text decoration-2 underline-offset-4 hover:decoration-foreground";
+    "relative inline-flex items-center gap-1.5 rounded-full bg-default px-3.5 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-volt hover:text-ink";
 
   return (
-    <section aria-label="RadioAid 2026" className="border-b border-separator bg-surface-secondary">
-      <div className="shell flex flex-wrap items-center gap-x-5 gap-y-2 py-3">
-        <span className="inline-flex items-center gap-2 text-sm font-bold text-foreground">
+    <section aria-label="RadioAid 2026" className="shell pt-3">
+      {/* Eine schwebende Karte statt eines Streifens ueber die volle Breite —
+          sie gehoert zur Seite, nicht zur Kopfzeile. */}
+      <div className="surface-card flex flex-wrap items-center gap-x-5 gap-y-3 rounded-3xl p-3">
+        <span className="inline-flex items-center gap-2.5 text-sm font-bold text-foreground">
           <span
             aria-hidden="true"
-            className="grid size-6 place-items-center rounded-full bg-volt text-[0.65rem] text-ink"
+            className="grid size-9 place-items-center rounded-2xl bg-volt text-xs text-ink"
           >
             <Icon
               icon={HeartIcon}
@@ -82,7 +84,7 @@ export function RadioAidBanner({
 
         {phase === "upcoming" && <Remaining ms={now === null ? null : start - now} />}
 
-        <div className="flex items-center gap-5 sm:ml-auto">
+        <div className="flex items-center gap-2 sm:ml-auto">
           {phase === "live" && (
             <a href={donateUrl} target="_blank" rel="noreferrer noopener" className={link}>
               Spenden
@@ -110,7 +112,7 @@ function Remaining({ ms }: { ms: number | null }) {
   }
 
   return (
-    <p className="text-sm text-muted">
+    <p className="rounded-full bg-surface-secondary px-3 py-1 font-mono text-xs text-muted">
       {/* Sekuendlich wechselnde Ziffern waeren fuer Screenreader unbenutzbar —
           sie bekommen die Angabe einmal, ohne Sekunden. */}
       <span aria-hidden="true">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useId, useRef, useState, useTransition } from "react";
+import { useCallback, useEffect, useId, useImperativeHandle, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { Button, cn } from "@heroui/react";
 import { Icon, ImageIcon, EditIcon, LoadingIcon } from "@/lib/icons";
@@ -9,6 +9,11 @@ import { previewRichText } from "@/app/admin/preview-actions";
 
 /** Steht im eingefuegten Bild, wenn der Dateiname nichts hergibt. */
 export const ALT_PLACEHOLDER = "Bildbeschreibung ergänzen";
+
+/** Damit eine Aktionsleiste ausserhalb des Felds die Vorschau umschalten kann. */
+export interface RichTextEditorControls {
+  togglePreview: () => void;
+}
 
 /**
  * Macht aus einem Dateinamen einen Vorschlag für die Bildbeschreibung.
@@ -50,6 +55,8 @@ export function RichTextEditor({
   rows = 20,
   placeholder,
   required,
+  controls,
+  onPreviewChange,
 }: {
   name: string;
   /** Beschriftung ueber dem Feld, per ID mit dem Textfeld verbunden. */
@@ -59,6 +66,10 @@ export function RichTextEditor({
   rows?: number;
   placeholder?: string;
   required?: boolean;
+  /** Optional: Vorschau von aussen umschalten (Aktionsleiste im Artikel-Editor). */
+  controls?: React.Ref<RichTextEditorControls>;
+  /** Meldet, ob gerade die Vorschau zu sehen ist bzw. gerendert wird. */
+  onPreviewChange?: (state: { preview: boolean; rendering: boolean }) => void;
 }) {
   const id = useId();
   const ref = useRef<HTMLTextAreaElement>(null);
@@ -90,6 +101,26 @@ export function RichTextEditor({
     },
     [],
   );
+
+  const togglePreview = useCallback(() => {
+    if (preview) {
+      setPreview(false);
+      return;
+    }
+    /* Gerendert wird auf dem Server, mit demselben Weg wie beim Speichern —
+       so zeigt die Vorschau wirklich das Ergebnis und nicht etwas Ähnliches. */
+    const source = ref.current?.value ?? "";
+    startRendering(async () => {
+      setPreviewHtml(await previewRichText(source));
+      setPreview(true);
+    });
+  }, [preview]);
+
+  useImperativeHandle(controls, () => ({ togglePreview }), [togglePreview]);
+
+  useEffect(() => {
+    onPreviewChange?.({ preview, rendering });
+  }, [preview, rendering, onPreviewChange]);
 
   /* Was beim naechsten fertigen Upload als Beschreibung eingesetzt wird. Ein
      Ref und kein State: Es wird zwischen zwei Ereignissen gemerkt, nicht
@@ -174,30 +205,21 @@ export function RichTextEditor({
             {isUploading ? "Bild wird hochgeladen …" : "Bild einfügen"}
           </Button>
 
-          <Button
-            type="button"
-            variant={preview ? "primary" : "tertiary"}
-            size="sm"
-            isDisabled={rendering}
-            aria-pressed={preview}
-            onPress={() => {
-              if (preview) {
-                setPreview(false);
-                return;
-              }
-              /* Gerendert wird auf dem Server, mit demselben Weg wie beim
-                 Speichern — so zeigt die Vorschau wirklich das Ergebnis und
-                 nicht etwas Ähnliches. */
-              const source = ref.current?.value ?? "";
-              startRendering(async () => {
-                setPreviewHtml(await previewRichText(source));
-                setPreview(true);
-              });
-            }}
-          >
-            <Icon icon={rendering ? LoadingIcon : EditIcon} spin={rendering} />
-            {rendering ? "Moment …" : preview ? "Weiter schreiben" : "Vorschau"}
-          </Button>
+          {/* Hat die Seite eine eigene Aktionsleiste mit Vorschau (Artikel),
+              steht der Knopf nur dort — zweimal dasselbe waere nur Laerm. */}
+          {!controls && (
+            <Button
+              type="button"
+              variant={preview ? "primary" : "tertiary"}
+              size="sm"
+              isDisabled={rendering}
+              aria-pressed={preview}
+              onPress={togglePreview}
+            >
+              <Icon icon={rendering ? LoadingIcon : EditIcon} spin={rendering} />
+              {rendering ? "Moment …" : preview ? "Weiter schreiben" : "Vorschau"}
+            </Button>
+          )}
 
           <span className="hidden text-xs text-muted sm:inline">
             oder Bild in das Textfeld ziehen bzw. einfügen

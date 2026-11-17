@@ -21,8 +21,9 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Platz fuer die Player-Leiste, auch ueber dem iPhone-Balken. */
-    padding-bottom: calc(var(--player-height) + env(safe-area-inset-bottom, 0px));
+    /* Den Platz fuer die Player-Leiste haelt der Footer frei (er steht
+       immer zuletzt und laeuft unter der Leiste weiter) — so bleibt unten
+       kein Papierstreifen. Das Admin hat keine Leiste. */
   }
 
   /* Fokus ist immer sichtbar — auch auf Elementen ohne eigene Regel. */
@@ -51,23 +52,32 @@
   }
 }
 
-/* Ueberschriften: Archivo breit (wdth 125) und fett. */
+/* Ueberschriften: Archivo in normaler Breite, sehr fett und eng gesetzt. */
 @utility font-display {
   font-family: var(--font-sans);
-  font-stretch: 125%;
+  font-stretch: 100%;
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
 }
 
-/* Halb breit, fuer kleinere Ueberschriften, Navigation und Knoepfe. */
+/* Fuer kleinere Ueberschriften, Navigation und Knoepfe: etwas enger. */
 @utility font-wide {
-  font-stretch: 112.5%;
+  letter-spacing: -0.012em;
 }
 
-/* Der Inhaltsbereich: 72rem breit, an den Seiten 1rem Luft am Handy. */
+/* Kleine Zeile in Monospace: Uhrzeiten, Daten, Zaehler. */
+@utility font-meta {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+
+/* Der Inhaltsbereich: 80rem breit, an den Seiten 1rem Luft am Handy. */
 @utility shell {
   width: 100%;
-  max-width: 76rem;
+  max-width: 80rem;
   margin-inline: auto;
   padding-inline: 1rem;
 
@@ -80,6 +90,32 @@
   }
 }
 
+/* Eine Karte: Flaeche, feine Kante, Tiefe. */
+@utility surface-card {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--surface-shadow);
+}
+
+/* Hebt sich beim Ueberfahren leicht an — bei reduzierter Bewegung nur der Schatten. */
+@utility hover-lift {
+  transition:
+    transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 220ms ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--lift-shadow);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
 @layer components {
   /* Springt per Tastatur als Erstes in den Inhalt. */
   .skip-link {
@@ -88,10 +124,10 @@
     left: 0.5rem;
     z-index: 200;
     padding: 0.75rem 1.25rem;
-    border-radius: var(--radius);
+    border-radius: 999px;
     background: var(--volt);
     color: var(--ink);
-    font-weight: 600;
+    font-weight: 700;
     transform: translateY(-200%);
   }
 
@@ -99,15 +135,17 @@
     transform: translateY(0);
   }
 
-  /* Knoepfe: etwas breiter gesetzt, passend zu den Ueberschriften. */
+  /* Knoepfe: fett, leicht eng gesetzt. */
   .button {
-    font-stretch: 106%;
-    font-weight: 600;
+    font-weight: 700;
+    letter-spacing: -0.01em;
   }
 
-  /* Karten etwas weniger rund als HeroUIs Standard. */
-  .card {
-    border-radius: calc(var(--radius) * 2);
+  /* Overlays mit feiner Kante. */
+  .popover,
+  .dropdown__popover,
+  .tooltip {
+    border: 1px solid var(--border);
   }
 }
 
@@ -146,6 +184,16 @@
   }
   100% {
     transform: scaleY(1);
+  }
+}
+
+/* Laufband: der Inhalt steht zweimal hintereinander, -50 % ist nahtlos. */
+@keyframes vfm-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
   }
 }
 

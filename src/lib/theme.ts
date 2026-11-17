@@ -13,7 +13,7 @@ export const THEME_MAX_AGE = 60 * 60 * 24 * 365;
 
 export type Theme = "light" | "dark";
 
-/** Dunkel ist der Standard: Wer noch nichts gewaehlt hat, bekommt das dunkle Design. */
+/** Dunkel ist der Standard: Wer noch nichts gewaehlt hat, bekommt Tinte mit gelben Akzenten. */
 export const DEFAULT_THEME: Theme = "dark";
 
 export function normalizeTheme(value: string | undefined | null): Theme {

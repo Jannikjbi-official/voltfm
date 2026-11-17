@@ -43,7 +43,7 @@ export default function Error({
             <Icon icon={RetryIcon} />
             Noch einmal versuchen
           </Button>
-          <ButtonLink href="/radio" variant="outline" size="lg">
+          <ButtonLink href="/radio" variant="tertiary" size="lg">
             <Icon icon={RadioIcon} />
             Zum Livestream
           </ButtonLink>

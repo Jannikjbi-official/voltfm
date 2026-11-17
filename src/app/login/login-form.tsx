@@ -118,7 +118,7 @@ export function LoginForm({ discordEnabled }: { discordEnabled: boolean }) {
         )}
 
         <Button
-          variant="outline"
+          variant="tertiary"
           size="lg"
           fullWidth
           onPress={handlePasskey}

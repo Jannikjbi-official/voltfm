@@ -1,4 +1,5 @@
 import type { ObjectId } from "mongodb";
+import type { DirectoryId } from "@/lib/listings";
 
 import type { ProfileLayout } from "@/lib/profile-layouts";
 
@@ -239,5 +240,7 @@ export interface SettingsDoc {
   streamUrl: string;
   discordUrl: string;
   announcement?: { active: boolean; text: string; href?: string };
+  /** Links zu VoltFM in Radio-Verzeichnissen (src/lib/listings.ts). "" = bewusst kein Link. */
+  listings?: Partial<Record<DirectoryId, string>>;
   updatedAt: Date;
 }

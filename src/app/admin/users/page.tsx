@@ -65,7 +65,7 @@ export default async function AdminUsersPage() {
     <>
       <AdminPageHeader
         title="Benutzer"
-        description={`${users.length} Konten. Rollen vergeben, sperren und Sitzungen beenden.`}
+        description="Rollen vergeben, sperren und Sitzungen beenden."
       />
 
       {error ? (

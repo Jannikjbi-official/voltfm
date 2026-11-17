@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
-import { PageHeader } from "@/components/common/page-header";
+import { Breadcrumbs } from "@/components/common/breadcrumbs";
 import { ArticleCard } from "@/components/news/article-card";
 import { ArticleCover } from "@/components/news/article-cover";
 import { ShareButtons } from "@/components/news/share-buttons";
@@ -17,7 +17,6 @@ import {
 import { formatDate, formatReadingTime } from "@/lib/format";
 import { site } from "@/lib/site";
 import { SectionHeader } from "@/components/common/section-header";
-import { chipVariants } from "@heroui/react";
 
 type Params = { slug: string };
 
@@ -100,58 +99,76 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <PageHeader
-        title={article.title}
-        description={article.excerpt}
-        breadcrumbs={[
-          { href: "/", label: "Start" },
-          { href: "/news", label: "News" },
-          { href: `/news/${article.slug}`, label: article.title },
-        ]}
-      >
-        <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
-          <div className="flex items-center gap-3">
+      {/* --- Kopf ------------------------------------------------------------
+          Eigener Aufbau statt PageHeader: Kategorie und Zeit stehen ueber dem
+          Titel, die Autorin oder der Autor als Karte darunter. */}
+      <header className="shell pt-10 sm:pt-14">
+        <Breadcrumbs
+          items={[
+            { href: "/", label: "Start" },
+            { href: "/news", label: "News" },
+            { href: `/news/${article.slug}`, label: article.title },
+          ]}
+        />
+
+        <div className="mx-auto mt-10 max-w-4xl sm:mt-14 sm:text-center">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 sm:justify-center">
+            <Link
+              href={`/news?kategorie=${article.categorySlug}`}
+              className="rounded-full bg-accent-soft px-3.5 py-1 text-sm font-semibold text-accent-soft-foreground transition-colors hover:bg-accent-soft-hover"
+            >
+              {categoryName}
+            </Link>
+            {article.publishedAt && (
+              <time className="font-mono text-xs text-muted" dateTime={article.publishedAt}>
+                {formatDate(article.publishedAt)}
+              </time>
+            )}
+            <span className="font-mono text-xs text-muted">{formatReadingTime(article.readingTime)}</span>
+          </div>
+
+          <h1 className="mt-6 font-display text-[2.4rem] text-balance break-words hyphens-auto text-foreground sm:text-6xl lg:text-7xl">
+            {article.title}
+          </h1>
+
+          {article.excerpt && (
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-pretty text-muted sm:text-xl">
+              {article.excerpt}
+            </p>
+          )}
+
+          <div className="mt-8 inline-flex max-w-full items-center gap-3 rounded-full border border-border bg-surface py-1.5 pr-5 pl-1.5 text-left">
             <AuthorAvatar name={article.authorName} image={author?.image} size="md" />
-            <div className="flex flex-col">
+            <div className="min-w-0">
+              <p className="text-xs text-muted">Geschrieben von</p>
               {/* Nur verlinken, wenn es das Profil oeffentlich gibt — sonst
                   fuehrt der Verweis auf eine 404-Seite. */}
               {author ? (
                 <Link
                   href={`/moderatoren/${author.slug}`}
-                  className="rounded-sm font-semibold text-foreground hover:underline"
+                  className="block truncate font-semibold text-foreground transition-colors hover:text-accent-text"
                 >
                   {article.authorName}
                 </Link>
               ) : (
-                <span className="font-semibold text-foreground">{article.authorName}</span>
+                <span className="block truncate font-semibold text-foreground">{article.authorName}</span>
               )}
-              <span className="flex flex-wrap gap-x-3 text-sm text-muted">
-                {article.publishedAt && (
-                  <time dateTime={article.publishedAt}>{formatDate(article.publishedAt)}</time>
-                )}
-                <span>{formatReadingTime(article.readingTime)}</span>
-              </span>
             </div>
           </div>
-          <Link
-            href={`/news?kategorie=${article.categorySlug}`}
-            className={`${chipVariants({ color: "accent", variant: "soft", size: "md" }).base()} font-semibold hover:underline`}
-          >
-            {categoryName}
-          </Link>
         </div>
-      </PageHeader>
+      </header>
 
       <article className="shell pt-10 pb-4 sm:pt-14">
         {article.coverImage ? (
-          <figure className="mx-auto max-w-4xl">
+          <figure className="mx-auto max-w-6xl overflow-hidden rounded-[2rem] border border-border bg-surface-secondary">
             <Image
               src={article.coverImage}
               alt={article.coverAlt ?? ""}
               width={1200}
               height={675}
+              sizes="(max-width: 1200px) 100vw, 1152px"
               priority
-              className="h-auto w-full rounded-2xl"
+              className="h-auto w-full"
             />
           </figure>
         ) : (
@@ -159,7 +176,7 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
           // auf dem erzeugten Titelbild. Dasselbe Format wie ein Foto
           // (1200 × 675), damit der Text nicht springt.
           article.coverLabel && (
-            <div className="relative mx-auto aspect-video max-w-4xl overflow-hidden rounded-2xl">
+            <div className="relative mx-auto aspect-video max-w-6xl overflow-hidden rounded-[2rem]">
               <ArticleCover
                 categorySlug={article.categorySlug}
                 categoryName={categoryName}
@@ -169,32 +186,37 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
           )
         )}
 
-        <div className="mx-auto mt-10 max-w-[68ch] sm:mt-14">
+        <div className="mx-auto mt-10 grid max-w-6xl gap-10 sm:mt-14 lg:grid-cols-[minmax(0,1fr)_17rem] lg:gap-16">
           {/* Ausgabe des Editors. Bereinigt beim Speichern in der
               Admin-Action, nie hier. */}
-          <div className="vfm-prose" dangerouslySetInnerHTML={{ __html: article.content }} />
+          <div className="vfm-prose min-w-0 max-w-[68ch]" dangerouslySetInnerHTML={{ __html: article.content }} />
 
-          {article.tags.length > 0 && (
-            <ul className="mt-10 flex flex-wrap gap-2" aria-label="Schlagwörter">
-              {article.tags.map((tag) => (
-                <li key={tag}>
-                  <Link
-                    href={`/suche?q=${encodeURIComponent(tag)}`}
-                    className={`${chipVariants({ variant: "soft", size: "md" }).base()} hover:underline`}
-                  >
-                    {tag}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
+          <aside aria-label="Zum Artikel" className="flex flex-col gap-4 lg:sticky lg:top-[calc(var(--header-height)+1.5rem)] lg:self-start">
+            <ShareButtons url={url} title={article.title} />
 
-          <ShareButtons url={url} title={article.title} />
+            {article.tags.length > 0 && (
+              <div className="surface-card rounded-3xl p-5">
+                <h2 className="text-sm font-bold text-foreground">Schlagwörter</h2>
+                <ul className="mt-3 flex flex-wrap gap-2">
+                  {article.tags.map((tag) => (
+                    <li key={tag}>
+                      <Link
+                        href={`/suche?q=${encodeURIComponent(tag)}`}
+                        className="inline-flex rounded-full bg-default px-3 py-1 text-sm font-medium text-foreground transition-colors hover:bg-volt hover:text-ink"
+                      >
+                        {tag}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </aside>
         </div>
       </article>
 
       {related.length > 0 && (
-        <section aria-labelledby="related-title" className="shell mt-16 border-t border-separator pt-14 sm:mt-20">
+        <section aria-labelledby="related-title" className="shell mt-20 sm:mt-28">
           <SectionHeader id="related-title" title="Weiterlesen" />
           <div className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((item) => (

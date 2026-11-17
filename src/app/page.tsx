@@ -65,65 +65,60 @@ export default async function HomePage() {
 
       {/* --- Zuletzt gespielt bzw. Sendeplan ------------------------------
           Direkt unter der Buehne: Wer wissen will, was lief, schaut hier
-          zuerst. Links die Ansage, rechts die Liste. */}
-      <section className="shell py-16 sm:py-24">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
-          {features.schedule ? (
-            <>
-              <SectionHeader
-                title="Heute auf Sendung"
-                description="Der Sendeplan kommt direkt von laut.fm und ist damit immer aktuell."
-                action={{ href: "/programm", label: "Ganze Woche" }}
-                className="lg:mb-0 lg:flex-col lg:items-start lg:justify-start lg:self-start"
+          zuerst. */}
+      <section className="shell pt-16 sm:pt-24" aria-labelledby="home-recent">
+        {features.schedule ? (
+          <>
+            <SectionHeader
+              id="home-recent"
+              title="Heute auf Sendung"
+              description="Der Sendeplan kommt direkt von laut.fm und ist damit immer aktuell."
+              action={{ href: "/programm", label: "Ganze Woche" }}
+            />
+            {todaySlots.length > 0 ? (
+              <ol className="grid gap-2 md:grid-cols-2 md:gap-x-4">
+                {todaySlots.map((slot) => (
+                  <li
+                    key={`${slot.id}-${slot.startHour}`}
+                    className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-4 rounded-2xl bg-surface p-4"
+                  >
+                    <span className="font-mono text-sm font-semibold tabular-nums text-foreground">
+                      {String(slot.startHour).padStart(2, "0")}:00
+                    </span>
+                    <div className="min-w-0">
+                      <h3 className="font-bold text-foreground">{slot.name}</h3>
+                      {slot.description && (
+                        <p className="mt-1 text-sm text-muted">{slot.description}</p>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <EmptyState
+                title={`Für ${WEEKDAY_LABELS[today]} liegt kein Sendeplan vor`}
+                description="Die Musik läuft trotzdem durchgehend — schalte einfach ein."
               />
-
-              {todaySlots.length > 0 ? (
-                <ol className="flex flex-col divide-y divide-separator rounded-2xl border border-border bg-surface px-5">
-                  {todaySlots.map((slot) => (
-                    <li
-                      key={`${slot.id}-${slot.startHour}`}
-                      className="grid grid-cols-[4rem_minmax(0,1fr)] gap-4 py-4"
-                    >
-                      <span className="font-wide text-sm font-bold tabular-nums text-foreground">
-                        {String(slot.startHour).padStart(2, "0")}:00
-                      </span>
-                      <div className="min-w-0">
-                        <h3 className="font-semibold text-foreground">{slot.name}</h3>
-                        {slot.description && (
-                          <p className="mt-1 text-sm text-muted">{slot.description}</p>
-                        )}
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-              ) : (
-                <EmptyState
-                  title={`Für ${WEEKDAY_LABELS[today]} liegt kein Sendeplan vor`}
-                  description="Die Musik läuft trotzdem durchgehend — schalte einfach ein."
-                />
-              )}
-            </>
-          ) : (
-            /* Solange der Sendeplan ruht, waere hier nur ein leerer Kasten. Die
-               Titelhistorie ist echte, immer gefuellte Information — und zeigt
-               genau das, was der Sendeplan nicht kann: was tatsaechlich lief. */
-            <>
-              <SectionHeader
-                title="Was gerade lief"
-                description="Die letzten Titel aus unserem Programm, direkt von laut.fm."
-                action={{ href: "/radio", label: "Mehr auf der Radioseite" }}
-                className="lg:mb-0 lg:flex-col lg:items-start lg:justify-start lg:self-start"
-              />
-              <div className="rounded-2xl border border-border bg-surface p-5 sm:p-6">
-                <RecentTracks limit={6} emptyText="Die Titelliste ist gerade nicht erreichbar." />
-              </div>
-            </>
-          )}
-        </div>
+            )}
+          </>
+        ) : (
+          /* Solange der Sendeplan ruht, waere hier nur ein leerer Kasten. Die
+             Titelhistorie ist echte, immer gefuellte Information — und zeigt
+             genau das, was der Sendeplan nicht kann: was tatsaechlich lief. */
+          <>
+            <SectionHeader
+              id="home-recent"
+              title="Was gerade lief"
+              description="Die letzten Titel aus unserem Programm, direkt von laut.fm."
+              action={{ href: "/radio", label: "Mehr auf der Radioseite" }}
+            />
+            <RecentTracks limit={6} columns emptyText="Die Titelliste ist gerade nicht erreichbar." />
+          </>
+        )}
       </section>
 
       {/* --- News: Aufmacher + Spalte ------------------------------------- */}
-      <section className="shell py-16 sm:py-24" aria-labelledby="home-news">
+      <section className="shell pt-16 sm:pt-24" aria-labelledby="home-news">
         <SectionHeader
           id="home-news"
           title="News aus dem Sender"
@@ -132,9 +127,9 @@ export default async function HomePage() {
         />
 
         {featured ? (
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-10">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
             <ArticleCard article={featured} variant="wide" priority />
-            <div className="flex flex-col gap-6">
+            <div className="surface-card flex flex-col rounded-3xl p-6">
               {gridArticles.map((article) => (
                 <ArticleCard key={article.id} article={article} variant="compact" />
               ))}
@@ -149,7 +144,7 @@ export default async function HomePage() {
       </section>
 
       {/* --- Team ---------------------------------------------------------- */}
-      <section className="shell py-16 sm:py-24" aria-labelledby="home-team">
+      <section className="shell pt-16 sm:pt-24" aria-labelledby="home-team">
         <SectionHeader
           id="home-team"
           title="Die zwei hinter VoltFM"
@@ -169,7 +164,7 @@ export default async function HomePage() {
       </section>
 
       {/* --- Events + Discord ---------------------------------------------- */}
-      <section className="shell py-16 sm:py-24">
+      <section className="shell pt-16 sm:pt-24">
         <div className="grid gap-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-10">
           <div aria-labelledby="home-events">
             <SectionHeader
@@ -178,7 +173,7 @@ export default async function HomePage() {
               action={{ href: "/events", label: "Alle Events" }}
             />
             {events.length > 0 ? (
-              <div className="flex flex-col gap-4">
+              <div className="-mx-3 flex flex-col gap-1">
                 {events.slice(0, 3).map((event) => (
                   <EventCard key={event.id} event={event} />
                 ))}
@@ -191,53 +186,42 @@ export default async function HomePage() {
             )}
           </div>
 
-          {/* Die eine gelbe Flaeche der Seite: Sie markiert den einen Weg zu
-              uns, und so soll sie auch auffallen. Tinte auf Gelb. */}
+          {/* Der eine Weg zu uns: eine dunkle Karte, die Ansage in Gelb. */}
           <aside
             aria-labelledby="community-title"
-            className="flex flex-col items-start gap-5 self-start rounded-3xl bg-volt p-7 text-ink sm:p-10"
+            data-theme="dark"
+            className="dark flex flex-col items-start gap-5 self-start rounded-[2rem] border border-border bg-surface p-7 text-paper shadow-[var(--lift-shadow)] sm:p-9"
           >
-            <span
-              aria-hidden="true"
-              className="grid size-12 place-items-center rounded-full bg-ink text-xl text-volt"
-            >
+            <span aria-hidden="true" className="grid size-12 place-items-center rounded-2xl bg-volt text-xl text-ink">
               <Icon icon={DiscordIcon} />
             </span>
-            <h2
-              id="community-title"
-              className="font-display text-3xl leading-[1.02] text-balance sm:text-4xl"
-            >
+            <h2 id="community-title" className="font-display text-[2.2rem] text-balance text-volt sm:text-4xl">
               Am schnellsten erreichst du uns im Discord.
             </h2>
-            <p className="text-base leading-relaxed text-ink/80">
+            <p className="text-base leading-relaxed text-paper/80">
               Da kündigen wir alles zuerst an, und da lesen wir, was dir gefällt
               oder fehlt. Zwei Klicks, kein Konto auf dieser Seite.
             </p>
-            <ul className="flex flex-col gap-2 text-sm font-medium">
+            <ul className="flex w-full flex-col gap-2 text-sm">
               {[
                 "Ankündigungen, bevor sie hier stehen",
                 "Feedback direkt an uns zwei",
                 "Ein Ticket statt einer E-Mail",
               ].map((item) => (
-                <li key={item} className="flex items-baseline gap-2.5">
-                  <Icon icon={CheckIcon} className="text-xs" />
+                <li key={item} className="flex items-center gap-3 rounded-xl bg-default px-3 py-2.5">
+                  <Icon icon={CheckIcon} className="text-xs text-volt" />
                   {item}
                 </li>
               ))}
             </ul>
             <div className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-3">
-              <ButtonLink
-                href={site.discordUrl}
-                external
-                size="lg"
-                className="[--button-bg-hover:#24262c] [--button-bg:var(--ink)] [--button-fg:var(--volt)] focus-visible:outline-ink"
-              >
+              <ButtonLink href={site.discordUrl} external size="lg">
                 <Icon icon={DiscordIcon} />
                 Discord beitreten
               </ButtonLink>
               <Link
                 href="/community"
-                className="rounded-sm text-sm font-semibold underline decoration-2 underline-offset-4 focus-visible:outline-ink"
+                className="text-sm font-semibold text-paper/80 underline-offset-4 hover:text-volt hover:underline"
               >
                 Mehr zur Community
               </Link>
@@ -247,14 +231,14 @@ export default async function HomePage() {
       </section>
 
       {/* --- Über uns: ein Satz, ein Verweis ------------------------------- */}
-      <section className="border-t border-separator">
-        <div className="shell grid gap-8 py-16 sm:py-24 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-end lg:gap-16">
-          {/* Kein Slogan hier: Der steht schon in der Buehne. */}
-          <p className="font-display text-3xl leading-[1.05] text-balance text-foreground sm:text-5xl">
+      <section className="shell pt-16 sm:pt-24">
+        <div className="surface-card rounded-[2rem] p-7 sm:p-12">
+          {/* Kein Slogan hier: Der steht schon auf der Buehne. */}
+          <p className="font-display text-[2.4rem] text-balance text-foreground sm:text-6xl lg:text-7xl">
             2021 eine laut.fm-Station, ein paar Namen später VoltFM.
           </p>
-          <div className="flex flex-col items-start gap-5">
-            <p className="text-lg leading-relaxed text-muted">
+          <div className="mt-8 flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <p className="max-w-xl text-lg leading-relaxed text-muted">
               Kein festes Programm, keine Redaktion, dafür zwei Leute, die
               weitermachen.
             </p>

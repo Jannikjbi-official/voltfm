@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { AlertDialog, Button } from "@heroui/react";
-import { Icon, DeleteIcon, LoadingIcon } from "@/lib/icons";
+import { Icon, CheckIcon, DeleteIcon, LoadingIcon } from "@/lib/icons";
 
 type FormAction = (formData: FormData) => void | Promise<void>;
 
@@ -85,7 +85,7 @@ function ConfirmButton({
   const busy = pending || status.pending;
   return (
     <Button type="submit" variant={variant} isPending={busy}>
-      <Icon icon={busy ? LoadingIcon : DeleteIcon} spin={busy} />
+      <Icon icon={busy ? LoadingIcon : variant === "danger" ? DeleteIcon : CheckIcon} spin={busy} />
       {label}
     </Button>
   );
@@ -101,20 +101,29 @@ export function ConfirmDeleteButton({
   title,
   description,
   label = "Löschen",
+  compact = false,
 }: {
   action: FormAction;
   fields: Record<string, string>;
   title: string;
   description?: React.ReactNode;
   label?: string;
+  /** Am Handy nur das Symbol (z. B. in einer schmalen Aktionsleiste). */
+  compact?: boolean;
 }) {
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      <Button variant="danger-soft" size="sm" onPress={() => setOpen(true)}>
+      <Button
+        variant="danger-soft"
+        size="sm"
+        aria-label={compact ? label : undefined}
+        className={compact ? "max-sm:w-9 max-sm:px-0" : undefined}
+        onPress={() => setOpen(true)}
+      >
         <Icon icon={DeleteIcon} />
-        {label}
+        <span className={compact ? "max-sm:hidden" : undefined}>{label}</span>
       </Button>
       <ConfirmDialog
         isOpen={open}

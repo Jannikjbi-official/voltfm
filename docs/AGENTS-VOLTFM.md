@@ -147,6 +147,7 @@ Nutzer darum bittet, weise auf § 6 Abs. 9 hin und biete den Schalter an.
 | Rollen und Rechte | `src/lib/permissions.ts` |
 | Session-Guards | `src/lib/session.ts` |
 | Statische Sender-/Betreiberdaten | `src/lib/site.ts` |
+| Links zu Radio-Verzeichnissen (TuneIn, Streema …), im Admin änderbar | `src/lib/listings.ts`, `src/services/settings/listings.ts`, Admin → Einstellungen |
 
 Eine neue Admin-Verwaltung ist normalerweise: Action-Datei schreiben, `FieldDef[]`
 definieren, `<EntityManager />` rendern. Kein eigenes Formular.
@@ -201,14 +202,25 @@ definieren, `<EntityManager />` rendern. Kein eigenes Formular.
   setzen.
 - **Gelb ist eine Fläche mit Tinte darauf** (`bg-volt text-ink`). Gelbe Schrift
   auf hellem Grund ist verboten; für Text in Senderfarbe gibt es
-  `text-accent-text` (hell: Bernstein, dunkel: Gelb). Auf der Startseite ist
-  die Discord-Fläche die einzige große gelbe Fläche.
+  `text-accent-text` (hell: Bernstein, dunkel: Gelb). Die große gelbe Fläche
+  der Startseite ist die Bühne.
+- **Look einer aktuellen App:** Karten über die Utility `surface-card` mit
+  `rounded-2xl`/`rounded-3xl`, Pillen `rounded-full bg-default`, Bewegung über
+  `hover-lift` (respektiert `prefers-reduced-motion`). Kein Glow, keine
+  Farbverläufe, keine weichgezeichneten Hintergründe.
 - Licht- und Dunkelmodus: `data-theme` **und** Klasse `dark`/`light` am
   `<html>`, beide aus dem Cookie `voltfm-theme`. Dunkel ist Standard. Ein
-  Abschnitt mit `class="dark" data-theme="dark"` ist immer dunkel (Bühne,
-  Player-Leiste, Fehlerseiten).
-- Überschriften: `font-display` (Archivo breit 125 %, 800), kleinere
-  `font-wide`. Seitenbreite über die Utility `shell`.
+  Abschnitt mit `class="dark" data-theme="dark"` ist immer dunkel
+  (Player-Leiste, Footer, Fehlerseiten).
+- Überschriften: `font-display` (Archivo, sehr fett, eng gesetzt), Zeiten,
+  Daten und Zähler in `font-mono` (IBM Plex Mono). Seitenbreite über die
+  Utility `shell`.
+- **Das Admin ist eine eigene App** (`src/app/admin/layout.tsx` →
+  `AdminShell`): Die Website-Kopfzeile, der Footer und der Player werden dort
+  über `SiteChrome` ausgeblendet. Neue Bereiche gehören in
+  `src/components/admin/nav-config.ts` (mit der nötigen Fähigkeit), Seiten
+  bauen auf `admin-ui.tsx` (Seitenkopf, Karten, Kennzahlen, Tabellen) und dem
+  `EntityManager` (Tabelle + Seitenpanel) auf.
 - **Nichts Templatehaftes:** keine Etiketten in Großbuchstaben über
   Überschriften, keine „→“ an Links, keine Mittelpunkte zwischen
   Metaangaben. Bewegung sparsam und mit `motion-reduce`.

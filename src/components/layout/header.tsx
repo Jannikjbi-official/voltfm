@@ -13,7 +13,8 @@ import { ThemeToggle } from "./theme-toggle";
 import { AccountMenu } from "./account-menu";
 
 /**
- * Die Kopfzeile: klebt oben, mit Weichzeichner dahinter.
+ * Die Kopfzeile als schwebende Leiste: Sie klebt oben, laesst den Inhalt
+ * leicht durchscheinen, und der aktive Bereich steht als gelbe Pille darin.
  *
  * Die Navigation kommt als Prop vom Server. Sie haengt vom Zeitpunkt ab
  * (`buildMainNav` filtert zeitweise Eintraege). Wuerde dieser Client-Baustein
@@ -31,49 +32,51 @@ export function Header({ nav, account }: { nav: NavItem[]; account: AccountAvata
     !item.external && (item.href === "/" ? pathname === "/" : pathname.startsWith(item.href));
 
   return (
-    <header className="sticky top-0 z-50 border-b border-separator bg-[color-mix(in_oklab,var(--background)_80%,transparent)] backdrop-blur-xl backdrop-saturate-150">
-      <div className="shell flex h-[var(--header-height)] items-center gap-6">
-        <Logo />
+    <header className="sticky top-0 z-50 pt-3">
+      <div className="shell">
+        <div className="flex h-16 items-center gap-6 rounded-2xl border border-border bg-[color-mix(in_oklab,var(--surface)_80%,transparent)] px-3 shadow-[var(--surface-shadow)] backdrop-blur-xl sm:px-4">
+          <Logo />
 
-        <nav aria-label="Hauptnavigation" className="hidden flex-1 items-center gap-1 lg:flex">
-          {nav.map((item) => (
-            <NavLink key={item.href} item={item} active={isActive(item)} variant="bar" />
-          ))}
-        </nav>
+          <nav aria-label="Hauptnavigation" className="hidden flex-1 items-center gap-0.5 lg:flex">
+            {nav.map((item) => (
+              <NavLink key={item.href} item={item} active={isActive(item)} variant="bar" />
+            ))}
+          </nav>
 
-        <div className="ml-auto flex items-center gap-1 lg:ml-0">
-          <ButtonLink
-            href="/suche"
-            variant="ghost"
-            size="sm"
-            isIconOnly
-            aria-label="Suche öffnen"
-          >
-            <Icon icon={SearchIcon} />
-          </ButtonLink>
+          <div className="ml-auto flex items-center gap-1.5 lg:ml-0">
+            <ButtonLink
+              href="/suche"
+              variant="ghost"
+              size="sm"
+              isIconOnly
+              aria-label="Suche öffnen"
+            >
+              <Icon icon={SearchIcon} />
+            </ButtonLink>
 
-          <ThemeToggle />
+            <ThemeToggle />
 
-          <div className="ml-2 hidden lg:block">
-            <AccountMenu account={account} />
+            <div className="ml-2 hidden lg:block">
+              <AccountMenu account={account} />
+            </div>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              isIconOnly
+              className="lg:hidden"
+              aria-label="Menü öffnen"
+              aria-expanded={mobileOpen}
+              onPress={() => setMobileOpen(true)}
+            >
+              <Icon icon={MenuIcon} />
+            </Button>
           </div>
-
-          <Button
-            variant="ghost"
-            size="sm"
-            isIconOnly
-            className="lg:hidden"
-            aria-label="Menü öffnen"
-            aria-expanded={mobileOpen}
-            onPress={() => setMobileOpen(true)}
-          >
-            <Icon icon={MenuIcon} />
-          </Button>
         </div>
       </div>
 
       <Drawer.Backdrop isOpen={mobileOpen} onOpenChange={setMobileOpen}>
-        <Drawer.Content placement="right" className="w-[min(22rem,88vw)]">
+        <Drawer.Content placement="right" className="w-[min(24rem,92vw)]">
           <Drawer.Dialog aria-label="Navigation">
             <Drawer.CloseTrigger aria-label="Menü schließen" />
             <Drawer.Header>
@@ -135,17 +138,15 @@ function NavLink({
   onNavigate?: () => void;
 }) {
   const className = cn(
-    "inline-flex items-center gap-1.5 rounded-lg transition-colors",
+    "inline-flex items-center gap-1.5 transition-colors",
     variant === "bar" &&
       cn(
-        "relative px-3 py-2 font-wide text-sm font-semibold",
-        active
-          ? "text-foreground after:absolute after:inset-x-3 after:-bottom-[0.6rem] after:h-[3px] after:rounded-full after:bg-volt"
-          : "text-muted hover:text-foreground",
+        "rounded-full px-3.5 py-1.5 text-[0.95rem] font-semibold",
+        active ? "bg-volt text-ink" : "text-muted hover:bg-default hover:text-foreground",
       ),
     variant === "large" &&
       cn(
-        "w-full py-2.5 font-display text-[1.75rem] leading-tight",
+        "w-full py-2 font-display text-[2.4rem]",
         active ? "text-foreground" : "text-muted hover:text-foreground",
       ),
     variant === "small" &&

@@ -1,11 +1,10 @@
-import { cn } from "@heroui/react";
 import { Breadcrumbs } from "./breadcrumbs";
 
 export type Crumb = { href: string; label: string };
 
 /**
- * Der Kopf jeder Unterseite: Brotkrumen, grosse breite Ueberschrift, ein
- * Satz darunter, optional etwas rechts daneben (Knopf, Zahl).
+ * Der Kopf jeder Unterseite: Brotkrumen, die Ueberschrift gross und eng
+ * gesetzt, ein Satz darunter, rechts optional etwas daneben (Knopf, Zahl).
  *
  * Kein Etikett ueber der Ueberschrift — die Brotkrumen sagen schon, wo man ist.
  */
@@ -26,28 +25,25 @@ export function PageHeader({
   children?: React.ReactNode;
 }) {
   return (
-    <header className="border-b border-separator">
-      <div className="shell pt-8 pb-10 sm:pt-10 sm:pb-14">
+    <header>
+      <div className="shell pt-10 pb-10 sm:pt-14 sm:pb-14">
         {breadcrumbs && breadcrumbs.length > 0 && <Breadcrumbs items={breadcrumbs} />}
 
         <div className="mt-6 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div className="min-w-0 max-w-3xl">
+          <div className="min-w-0 max-w-4xl">
             <h1
-              className={cn(
-                /* Lange deutsche Woerter ("Datenschutzerklärung") passen in
-                   der breiten Schrift am Handy nicht in eine Zeile. */
-                "font-display text-balance break-words hyphens-auto text-foreground",
+              className={
+                /* Lange deutsche Woerter ("Datenschutzerklärung") passen
+                   am Handy nicht immer in eine Zeile. */
                 size === "large"
-                  ? "text-[2.5rem] leading-[0.95] sm:text-6xl lg:text-7xl"
-                  : "text-[2rem] leading-[1.02] sm:text-5xl",
-              )}
+                  ? "font-display text-[2.9rem] text-balance break-words hyphens-auto text-foreground sm:text-7xl lg:text-8xl"
+                  : "font-display text-[2.4rem] text-balance break-words hyphens-auto text-foreground sm:text-6xl"
+              }
             >
               {title}
             </h1>
             {description && (
-              <p className="mt-4 max-w-2xl text-pretty text-lg leading-relaxed text-muted">
-                {description}
-              </p>
+              <p className="mt-5 max-w-2xl text-pretty text-lg leading-relaxed text-muted">{description}</p>
             )}
             {children}
           </div>

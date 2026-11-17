@@ -5,9 +5,9 @@ import Image from "next/image";
 
 import { ButtonLink } from "@/components/common/button-link";
 import { LogoIcon } from "@/components/layout/logo";
-import { Chip, cn } from "@heroui/react";
+import { cn } from "@heroui/react";
 import { Breadcrumbs } from "@/components/common/breadcrumbs";
-import { Icon, ClockIcon, ExternalLinkIcon } from "@/lib/icons";
+import { Icon, ExternalLinkIcon } from "@/lib/icons";
 import {
   getHostBySlug,
   getShowsBySlugs,
@@ -96,9 +96,9 @@ const HOST_TOKENS = cn(
  * Profilbild gelesen. Der Inhalt ist in allen Aufbauten derselbe und kommt
  * vollstaendig aus dem Profil — was dort leer ist, erscheint hier nicht.
  *
- *   buehne — getoentes Band, grosses rundes Bild, Name daneben
- *   poster — Bild randlos neben einer Flaeche in Personenfarbe
- *   karte  — wie ein Discord-Profil: Banner, Bild darueber, alles auf einer Karte
+ *   buehne — getoente Flaeche mit Funkwellen, grosses rundes Bild, Name daneben
+ *   poster — Bild und Name als ein grosser Block in Personenfarbe
+ *   karte  — wie ein App-Profil: Karte mit Banner links, Inhalt rechts
  */
 export default async function HostPage({ params }: { params: Promise<Params> }) {
   const { slug } = await params;
@@ -133,7 +133,17 @@ export default async function HostPage({ params }: { params: Promise<Params> }) 
   return (
     <div data-layout={layout} style={hueStyle} className={cn(HOST_TOKENS, "pb-4")}>
       {layout === "karte" ? (
-        <ProfileCard host={host} image={image} facts={facts} />
+        <section className="shell pt-10 sm:pt-14">
+          <Crumbs host={host} />
+          <div className="mt-8 grid gap-12 lg:grid-cols-[22rem_minmax(0,1fr)] lg:gap-14">
+            <ProfileCard host={host} image={image} facts={facts} />
+            <div className="min-w-0">
+              <About host={host} />
+              <ShowList shows={shows} className="pt-14 sm:pt-16" />
+              <AuthorArticles host={host} articles={articles} className="pt-14 sm:pt-16" />
+            </div>
+          </div>
+        </section>
       ) : (
         <>
           {layout === "poster" ? (
@@ -141,23 +151,23 @@ export default async function HostPage({ params }: { params: Promise<Params> }) 
           ) : (
             <StageHero host={host} image={image} />
           )}
-          <section className="shell pt-12 sm:pt-16">
+          <section className="shell pt-14 sm:pt-20">
             {/* Ohne Steckbrief keine zweite Spalte, die leer bliebe. */}
             <div
               className={cn(
                 "grid gap-10",
-                hasProfile && "lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-16",
+                hasProfile && "lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-16",
               )}
             >
               <About host={host} />
               <Profile host={host} facts={facts} />
             </div>
           </section>
+          <ShowList shows={shows} />
+          <AuthorArticles host={host} articles={articles} />
         </>
       )}
 
-      <ShowList shows={shows} />
-      <AuthorArticles host={host} articles={articles} />
       <Team title={`Zusammen mit ${host.name} auf Sendung`} hosts={coHosts} />
       <Team title="Weitere Stimmen" hosts={otherHosts} />
     </div>
@@ -191,7 +201,7 @@ function buildFacts(host: HostDTO, shows: ShowDTO[], articleCount: number): Fact
       label: "Pro Woche",
       value:
         weeklyMinutes >= 60
-          ? `${Math.round((weeklyMinutes / 60) * 10) / 10} Std.`
+          ? `${(Math.round((weeklyMinutes / 60) * 10) / 10).toLocaleString("de-DE")} Std.`
           : `${weeklyMinutes} Min.`,
     });
   }
@@ -246,11 +256,11 @@ function Avatar({
   );
 }
 
-function LogoFallback() {
+function LogoFallback({ className }: { className?: string }) {
   return (
     <span
       aria-hidden="true"
-      className="grid size-full place-items-center bg-ink [--logo-mark:var(--volt)]"
+      className={cn("grid size-full place-items-center bg-ink [--logo-mark:var(--volt)]", className)}
     >
       <LogoIcon className="h-auto w-[42%]" />
     </span>
@@ -266,7 +276,7 @@ function Socials({ host, onDeep = false }: { host: HostDTO; onDeep?: boolean }) 
           key={social.url}
           href={social.url}
           external
-          variant="outline"
+          variant={onDeep ? "outline" : "secondary"}
           size="sm"
           className={
             onDeep
@@ -282,14 +292,15 @@ function Socials({ host, onDeep = false }: { host: HostDTO; onDeep?: boolean }) 
   );
 }
 
-/** Ueberschrift eines Profilabschnitts, mit einer Linie in Personenfarbe. */
+/** Ueberschrift eines Profilabschnitts, davor eine kurze Pille in Personenfarbe. */
 function SectionTitle({ id, children }: { id?: string; children: React.ReactNode }) {
   return (
     <h2
       id={id}
-      className="mb-5 border-b-2 border-[var(--host-accent)] pb-2.5 font-wide text-xl font-bold text-foreground sm:text-2xl"
+      className="mb-6 flex items-center gap-3 text-2xl font-bold tracking-tight text-foreground sm:text-3xl"
     >
-      {children}
+      <span aria-hidden="true" className="h-2.5 w-7 shrink-0 rounded-full bg-[var(--host-accent)]" />
+      <span className="min-w-0 break-words">{children}</span>
     </h2>
   );
 }
@@ -313,7 +324,7 @@ function About({ host }: { host: HostDTO }) {
       <SectionTitle>Über {host.name}</SectionTitle>
       <Bio bio={host.bio} />
       {host.quote && (
-        <blockquote className="mt-8 border-l-4 border-[var(--host-accent)] py-1 pl-5 font-wide text-xl leading-snug text-balance text-foreground italic">
+        <blockquote className="mt-10 max-w-[60ch] rounded-3xl border border-[color-mix(in_oklch,var(--host-accent)_30%,transparent)] bg-[var(--host-soft)] p-6 text-xl leading-snug font-bold tracking-tight text-balance text-foreground sm:p-8 sm:text-2xl">
           <p>{host.quote}</p>
         </blockquote>
       )}
@@ -321,57 +332,92 @@ function About({ host }: { host: HostDTO }) {
   );
 }
 
-/** Steckbrief: Angaben und Musikrichtungen. Leer heisst: nicht da. */
-function Profile({ host, facts }: { host: HostDTO; facts: Fact[] }) {
+/**
+ * Steckbrief: Angaben als Kacheln und die Musikrichtungen. Leer heisst: nicht
+ * da. `plain` laesst Karte und Ueberschrift weg — fuer die Profilkarte, die
+ * schon eine Karte ist.
+ */
+function Profile({ host, facts, plain = false }: { host: HostDTO; facts: Fact[]; plain?: boolean }) {
   if (facts.length === 0 && host.genres.length === 0) return null;
 
-  return (
-    <aside aria-label={`Steckbrief ${host.name}`} className="min-w-0">
-      <SectionTitle>Steckbrief</SectionTitle>
+  const body = (
+    <>
       {facts.length > 0 && (
-        <dl className="flex flex-col divide-y divide-separator">
+        <dl className="grid grid-cols-2 gap-2">
           {facts.map((fact) => (
-            <div key={fact.label} className="flex items-baseline justify-between gap-4 py-2.5">
-              <dt className="text-sm text-muted">{fact.label}</dt>
-              <dd className="text-right font-semibold break-words text-foreground">{fact.value}</dd>
+            <div key={fact.label} className="min-w-0 rounded-2xl bg-surface-secondary px-4 py-3">
+              <dt className="text-xs text-muted">{fact.label}</dt>
+              <dd className="mt-0.5 font-bold break-words text-foreground">{fact.value}</dd>
             </div>
           ))}
         </dl>
       )}
       {host.genres.length > 0 && (
-        <div className="mt-5">
-          <p className="mb-2 text-sm text-muted">Musik</p>
+        <div className={cn(facts.length > 0 && "mt-5")}>
+          <p className="mb-2 text-xs text-muted">Musik</p>
           <ul className="flex flex-wrap gap-1.5" aria-label="Musikrichtungen">
             {host.genres.map((genre) => (
-              <li key={genre}>
-                <Chip size="sm" variant="soft">
-                  {genre}
-                </Chip>
+              <li
+                key={genre}
+                className="rounded-full border border-[color-mix(in_oklch,var(--host-accent)_35%,transparent)] bg-[var(--host-soft)] px-3 py-1 text-sm font-semibold text-[var(--host-ink)]"
+              >
+                {genre}
               </li>
             ))}
           </ul>
         </div>
       )}
+    </>
+  );
+
+  if (plain) return body;
+
+  return (
+    <aside aria-label={`Steckbrief ${host.name}`} className="min-w-0 lg:self-start">
+      <div className="surface-card rounded-3xl p-5 sm:p-6">
+        <h2 className="mb-4 text-lg font-bold tracking-tight text-foreground">Steckbrief</h2>
+        {body}
+      </div>
     </aside>
   );
 }
 
+/** Drei feine Kreise in Personenfarbe — Funkwellen, kein Verlauf, kein Leuchten. */
+function Waves({ className }: { className?: string }) {
+  return (
+    <span aria-hidden="true" className={cn("pointer-events-none absolute", className)}>
+      <span className="absolute top-1/2 left-1/2 size-[18rem] -translate-1/2 rounded-full border border-[color-mix(in_oklch,var(--host-accent)_40%,transparent)]" />
+      <span className="absolute top-1/2 left-1/2 size-[30rem] -translate-1/2 rounded-full border border-[color-mix(in_oklch,var(--host-accent)_26%,transparent)]" />
+      <span className="absolute top-1/2 left-1/2 size-[42rem] -translate-1/2 rounded-full border border-[color-mix(in_oklch,var(--host-accent)_14%,transparent)]" />
+    </span>
+  );
+}
+
 /* ------------------------------------------------------------------------ */
-/* Aufbau "Bühne": getoentes Band, grosses rundes Bild                       */
+/* Aufbau "Bühne": getoente Flaeche, grosses rundes Bild                     */
 /* ------------------------------------------------------------------------ */
 
 function StageHero({ host, image }: { host: HostDTO; image: string | null }) {
   return (
-    <header className="border-b-4 border-[var(--host-accent)] bg-[var(--host-soft)]">
-      <div className="shell pt-8 pb-12 sm:pb-16">
-        <Crumbs host={host} />
-        <div className="mt-8 flex flex-col items-start gap-8 sm:flex-row sm:items-center sm:gap-12">
-          <Avatar host={host} image={image} size={240} className="w-40 sm:w-52 lg:w-60" />
+    <header className="shell pt-10 sm:pt-14">
+      <Crumbs host={host} />
+      <div className="relative mt-8 overflow-hidden rounded-[2rem] bg-[var(--host-soft)] px-6 py-10 sm:px-10 sm:py-14 lg:px-14 lg:py-16">
+        {/* Die Wellen gehen vom Bild aus. */}
+        <Waves className="top-[7rem] left-[6rem] sm:top-[9.5rem] sm:left-[8.5rem] md:top-1/2 lg:left-[10.5rem]" />
+        <div className="relative flex flex-col items-start gap-8 md:flex-row md:items-center md:gap-12">
+          <Avatar
+            host={host}
+            image={image}
+            size={240}
+            className="w-36 ring-4 ring-[var(--host-accent)] ring-offset-4 ring-offset-[var(--host-soft)] sm:w-48 lg:w-56"
+          />
           <div className="flex w-full min-w-0 flex-col gap-4 @container">
-            <p className="font-semibold text-[var(--host-ink)]">{host.role}</p>
+            <span className="w-fit rounded-full bg-[var(--host-deep)] px-3.5 py-1 text-sm font-semibold text-[var(--host-on-deep)]">
+              {host.role}
+            </span>
             {/* Groesse nach Spaltenbreite: Auch ein langer Name in einem Wort
                 bricht nicht mitten im Wort um. */}
-            <h1 className="font-display text-[clamp(2.25rem,12cqw,4.5rem)] leading-[0.92] text-balance break-words text-foreground">
+            <h1 className="font-display text-[clamp(2.25rem,12cqw,5rem)] leading-[0.92] text-balance break-words text-foreground">
               {host.name}
             </h1>
             {host.tagline && (
@@ -386,37 +432,42 @@ function StageHero({ host, image }: { host: HostDTO; image: string | null }) {
 }
 
 /* ------------------------------------------------------------------------ */
-/* Aufbau "Poster": Bild randlos, Name auf der Personenfarbe                 */
+/* Aufbau "Poster": Bild und Name als ein Block in Personenfarbe             */
 /* ------------------------------------------------------------------------ */
 
 function PosterHero({ host, image }: { host: HostDTO; image: string | null }) {
   return (
-    <header>
-      <div className="shell py-5">
-        <Crumbs host={host} />
-      </div>
-      <div className="grid bg-[var(--host-deep)] text-[var(--host-on-deep)] md:min-h-[min(78vh,720px)] md:grid-cols-2">
-        <div className="relative aspect-square md:aspect-auto">
+    <header className="shell pt-10 sm:pt-14">
+      <Crumbs host={host} />
+      <div className="mt-8 grid overflow-hidden rounded-[2.5rem] bg-[var(--host-deep)] text-[var(--host-on-deep)] md:grid-cols-2">
+        <div className="relative aspect-square">
           {image ? (
             <Image
               src={image}
               alt={host.name}
               fill
-              sizes="(max-width: 768px) 100vw, 50vw"
+              sizes="(max-width: 768px) 100vw, 640px"
               className="object-cover"
               priority
             />
           ) : (
-            <LogoFallback />
+            /* Ohne Bild bleibt der Block eine Flaeche in Personenfarbe. */
+            <LogoFallback className="bg-[var(--host-deep)]" />
           )}
         </div>
-        <div className="flex min-w-0 flex-col justify-end gap-5 px-4 py-10 @container sm:px-8 md:px-12 md:py-14 lg:px-16">
-          <p className="font-semibold opacity-85">{host.role}</p>
-          <h1 className="font-display text-[clamp(2.5rem,14cqw,6rem)] leading-[0.88] break-words">
-            {host.name}
-          </h1>
-          {host.tagline && <p className="max-w-[44ch] text-lg text-pretty opacity-85">{host.tagline}</p>}
-          <Socials host={host} onDeep />
+        <div className="flex min-w-0 flex-col justify-between gap-10 p-6 @container sm:p-10 lg:p-14">
+          <span className="w-fit rounded-full border border-[color-mix(in_oklch,var(--host-on-deep)_40%,transparent)] px-3.5 py-1 text-sm font-semibold">
+            {host.role}
+          </span>
+          <div className="flex flex-col gap-5">
+            <h1 className="font-display text-[clamp(2.75rem,16cqw,7rem)] leading-[0.86] break-words">
+              {host.name}
+            </h1>
+            {host.tagline && (
+              <p className="max-w-[44ch] text-lg text-pretty opacity-85">{host.tagline}</p>
+            )}
+            <Socials host={host} onDeep />
+          </div>
         </div>
       </div>
     </header>
@@ -424,7 +475,7 @@ function PosterHero({ host, image }: { host: HostDTO; image: string | null }) {
 }
 
 /* ------------------------------------------------------------------------ */
-/* Aufbau "Karte": wie ein Discord-Profil, alles auf einer Karte             */
+/* Aufbau "Karte": wie ein App-Profil, Karte links, Inhalt rechts            */
 /* ------------------------------------------------------------------------ */
 
 function ProfileCard({
@@ -436,39 +487,46 @@ function ProfileCard({
   image: string | null;
   facts: Fact[];
 }) {
+  const hasProfile = facts.length > 0 || host.genres.length > 0;
+
   return (
-    <section className="shell pt-8">
-      <Crumbs host={host} />
-      <article className="mx-auto mt-8 max-w-3xl overflow-hidden rounded-3xl border border-border bg-surface">
-        <div aria-hidden="true" className="h-28 bg-[var(--host-deep)] sm:h-40" />
-        <div className="px-5 pb-8 sm:px-10">
-          <div className="-mt-14 flex flex-col gap-4 sm:-mt-16">
-            <Avatar
-              host={host}
-              image={image}
-              size={136}
-              className="w-28 ring-[6px] ring-[var(--surface)] sm:w-[8.5rem]"
-            />
-            <div className="min-w-0 @container">
-              <h1 className="font-display text-[clamp(2rem,9cqw,3.25rem)] leading-[0.95] break-words text-foreground">
-                {host.name}
-              </h1>
-              <p className="mt-2 font-semibold text-[var(--host-ink)]">{host.role}</p>
-            </div>
+    <aside aria-label={`Profil ${host.name}`} className="min-w-0 lg:self-start">
+      <article className="surface-card overflow-hidden rounded-[2rem]">
+        <div aria-hidden="true" className="relative h-28 overflow-hidden bg-[var(--host-deep)] sm:h-32">
+          <span className="absolute -top-16 -right-10 size-48 rounded-full border border-[color-mix(in_oklch,var(--host-on-deep)_22%,transparent)]" />
+          <span className="absolute -top-28 -right-24 size-80 rounded-full border border-[color-mix(in_oklch,var(--host-on-deep)_14%,transparent)]" />
+        </div>
+        <div className="px-5 pb-6 sm:px-6">
+          <Avatar
+            host={host}
+            image={image}
+            size={112}
+            className="-mt-12 w-24 ring-[6px] ring-[var(--surface)] sm:w-28"
+          />
+          <div className="mt-4 min-w-0 @container">
+            <h1 className="font-display text-[clamp(2rem,14cqw,2.9rem)] leading-[0.95] break-words text-foreground">
+              {host.name}
+            </h1>
+            <p className="mt-2 font-semibold text-[var(--host-ink)]">{host.role}</p>
           </div>
           {host.tagline && (
-            <p className="mt-6 rounded-xl bg-[var(--host-soft)] px-4 py-3 text-pretty text-foreground">
+            <p className="mt-5 rounded-2xl bg-[var(--host-soft)] px-4 py-3 text-sm leading-relaxed text-pretty text-foreground">
               {host.tagline}
             </p>
           )}
-          <div className="mt-8 flex flex-col gap-10">
-            <About host={host} />
-            <Profile host={host} facts={facts} />
-            <Socials host={host} />
-          </div>
+          {host.socials.length > 0 && (
+            <div className="mt-5">
+              <Socials host={host} />
+            </div>
+          )}
+          {hasProfile && (
+            <div className="mt-6 border-t border-separator pt-6">
+              <Profile host={host} facts={facts} plain />
+            </div>
+          )}
         </div>
       </article>
-    </section>
+    </aside>
   );
 }
 
@@ -476,24 +534,36 @@ function ProfileCard({
 /* Unter jedem Aufbau                                                        */
 /* ------------------------------------------------------------------------ */
 
-function ShowList({ shows }: { shows: ShowDTO[] }) {
+function ShowList({
+  shows,
+  className = "shell pt-16 sm:pt-20",
+}: {
+  shows: ShowDTO[];
+  className?: string;
+}) {
   if (shows.length === 0) return null;
 
   return (
-    <section className="shell pt-14 sm:pt-16" aria-labelledby="shows-title">
+    <section className={className} aria-labelledby="shows-title">
       <SectionTitle id="shows-title">Sendungen</SectionTitle>
       <ul className="grid gap-4 md:grid-cols-2">
         {shows.map((show) => (
-          <li
-            key={show.id}
-            className="rounded-2xl border border-border border-l-4 border-l-[var(--host-accent)] bg-surface p-5"
-          >
-            <h3 className="font-wide text-lg font-bold text-foreground">{show.title}</h3>
-            <p className="mt-1 inline-flex items-center gap-2 text-sm text-muted">
-              <Icon icon={ClockIcon} className="text-xs" />
-              {WEEKDAY_LABELS[show.weekday]}, {show.startTime}–{show.endTime} Uhr
-            </p>
-            <p className="mt-3 text-sm leading-relaxed text-pretty text-muted">{show.description}</p>
+          <li key={show.id} className="surface-card flex gap-4 rounded-3xl p-5">
+            <span
+              aria-hidden="true"
+              className="grid size-14 shrink-0 place-items-center rounded-2xl bg-[var(--host-deep)] text-base font-bold text-[var(--host-on-deep)]"
+            >
+              {WEEKDAY_LABELS[show.weekday].slice(0, 2)}
+            </span>
+            <div className="min-w-0">
+              <h3 className="text-lg leading-tight font-bold tracking-tight break-words text-foreground">
+                {show.title}
+              </h3>
+              <p className="mt-1.5 font-mono text-xs text-muted">
+                {WEEKDAY_LABELS[show.weekday]}, {show.startTime}–{show.endTime} Uhr
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-pretty text-muted">{show.description}</p>
+            </div>
           </li>
         ))}
       </ul>
@@ -502,23 +572,31 @@ function ShowList({ shows }: { shows: ShowDTO[] }) {
 }
 
 /** Beitraege, die diese Person geschrieben hat. */
-function AuthorArticles({ host, articles }: { host: HostDTO; articles: ArticleDTO[] }) {
+function AuthorArticles({
+  host,
+  articles,
+  className = "shell pt-16 sm:pt-20",
+}: {
+  host: HostDTO;
+  articles: ArticleDTO[];
+  className?: string;
+}) {
   if (articles.length === 0) return null;
 
   return (
-    <section className="shell pt-14 sm:pt-16">
+    <section className={className}>
       <SectionTitle>Beiträge von {host.name}</SectionTitle>
-      <ul className="flex flex-col divide-y divide-separator">
+      <ul className="surface-card flex flex-col gap-1 rounded-3xl p-2">
         {articles.map((article) => (
           <li key={article.id}>
             <Link
               href={`/news/${article.slug}`}
-              className="group flex flex-col gap-1 rounded-md py-4 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
+              className="group flex flex-col gap-1 rounded-2xl px-4 py-3.5 transition-colors hover:bg-surface-secondary sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
             >
-              <span className="font-semibold text-foreground decoration-[var(--host-accent)] decoration-2 underline-offset-4 group-hover:underline">
+              <span className="font-semibold text-foreground transition-colors group-hover:text-[var(--host-ink)]">
                 {article.title}
               </span>
-              <span className="flex shrink-0 gap-3 text-sm text-muted">
+              <span className="flex shrink-0 gap-3 font-mono text-xs text-muted">
                 {article.publishedAt && <span>{formatDate(article.publishedAt)}</span>}
                 <span>{formatReadingTime(article.readingTime)}</span>
               </span>
@@ -535,7 +613,7 @@ function Team({ title, hosts }: { title: string; hosts: HostDTO[] }) {
   if (hosts.length === 0) return null;
 
   return (
-    <section className="shell pt-14 sm:pt-16">
+    <section className="shell pt-16 sm:pt-20">
       <SectionTitle>{title}</SectionTitle>
       <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {hosts.map((other) => (
@@ -553,17 +631,17 @@ async function TeamLink({ host }: { host: HostDTO }) {
   return (
     <Link
       href={`/moderatoren/${host.slug}`}
-      className="flex items-center gap-3 rounded-2xl border border-border bg-surface p-3 transition-colors hover:border-[var(--host-accent)]"
+      className="surface-card hover-lift flex items-center gap-4 rounded-2xl p-3 pr-5"
     >
-      <span className="relative grid size-12 shrink-0 place-items-center overflow-hidden rounded-full bg-surface-secondary">
+      <span className="relative grid size-14 shrink-0 place-items-center overflow-hidden rounded-full bg-surface-secondary">
         {image ? (
-          <Image src={image} alt="" fill sizes="48px" className="object-cover" />
+          <Image src={image} alt="" fill sizes="56px" className="object-cover" />
         ) : (
           <LogoFallback />
         )}
       </span>
       <span className="flex min-w-0 flex-col">
-        <span className="truncate font-semibold text-foreground">{host.name}</span>
+        <span className="truncate font-bold tracking-tight text-foreground">{host.name}</span>
         <span className="truncate text-sm text-muted">{host.role}</span>
       </span>
     </Link>

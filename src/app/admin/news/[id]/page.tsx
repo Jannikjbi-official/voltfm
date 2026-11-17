@@ -28,25 +28,23 @@ export default async function EditArticlePage({
 
   return (
     <>
-      <AdminPageHeader
-        title="Artikel bearbeiten"
-        description={article.title}
-        actions={
-          /* Eigenes Formular im Dialog: verschachtelt im Editor waere es
-             ungueltiges HTML. */
+      <AdminPageHeader title="Artikel bearbeiten" description={article.title} />
+
+      <ArticleForm
+        article={article}
+        categories={categories}
+        authorName={profile.name || profile.username || "VoltFM"}
+        deleteSlot={
+          /* Eigenes Formular im Dialog (Portal) — die Aktionsleiste steht
+             ausserhalb des Editor-Formulars, also ist nichts verschachtelt. */
           <ConfirmDeleteButton
+            compact
             action={deleteArticle}
             fields={{ id: article.id }}
             title="Wirklich löschen?"
             description={<p className="font-semibold">{article.title}</p>}
           />
         }
-      />
-
-      <ArticleForm
-        article={article}
-        categories={categories}
-        authorName={profile.name || profile.username || "VoltFM"}
       />
     </>
   );

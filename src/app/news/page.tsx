@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { chipVariants, cn } from "@heroui/react";
+import { cn } from "@heroui/react";
 
 import { EmptyState } from "@/components/common/empty-state";
 import { PageHeader } from "@/components/common/page-header";
@@ -76,39 +76,40 @@ export default async function NewsPage({
         }
         aside={
           total > 0 ? (
-            <p className="text-sm text-muted">
-              <span className="font-display text-3xl text-foreground">{total}</span>{" "}
-              {total === 1 ? "Beitrag" : "Beiträge"}
-              {activeCategory ? ` in ${activeCategory.name}` : ""}
-            </p>
+            <div className="surface-card flex items-baseline gap-2 rounded-2xl px-5 py-3">
+              <span className="font-display text-4xl text-foreground tabular-nums">{total}</span>
+              <span className="text-sm text-muted">
+                {total === 1 ? "Beitrag" : "Beiträge"}
+                {activeCategory ? ` in ${activeCategory.name}` : ""}
+              </span>
+            </div>
           ) : undefined
         }
       />
 
-      {/* --- Filter ---------------------------------------------------------- */}
+      {/* --- Filter ----------------------------------------------------------
+          Eine Leiste aus Pillen, die am Handy waagerecht scrollt. */}
       {visibleCategories.length > 0 && (
-        <div className="border-b border-separator">
-          <nav aria-label="Kategorien" className="shell">
-            <ul className="-mx-1 flex gap-2 overflow-x-auto px-1 py-4 [scrollbar-width:none]">
-              <li className="shrink-0">
-                <FilterLink href="/news" active={!kategorie} label="Alle" count={total} />
+        <nav aria-label="Kategorien" className="shell">
+          <ul className="surface-card -mx-1 flex gap-1 overflow-x-auto rounded-full p-1.5 [scrollbar-width:none] sm:mx-0 sm:inline-flex sm:max-w-full">
+            <li className="shrink-0">
+              <FilterLink href="/news" active={!kategorie} label="Alle" count={total} />
+            </li>
+            {visibleCategories.map((category) => (
+              <li key={category.id} className="shrink-0">
+                <FilterLink
+                  href={`/news?kategorie=${category.slug}`}
+                  active={kategorie === category.slug}
+                  label={category.name}
+                  count={counts[category.slug] ?? 0}
+                />
               </li>
-              {visibleCategories.map((category) => (
-                <li key={category.id} className="shrink-0">
-                  <FilterLink
-                    href={`/news?kategorie=${category.slug}`}
-                    active={kategorie === category.slug}
-                    label={category.name}
-                    count={counts[category.slug] ?? 0}
-                  />
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
+            ))}
+          </ul>
+        </nav>
       )}
 
-      <section className="shell py-12 sm:py-16">
+      <section className="shell py-10 sm:py-14">
         {items.length === 0 ? (
           <EmptyState
             title="Keine Artikel gefunden"
@@ -127,14 +128,14 @@ export default async function NewsPage({
           />
         ) : (
           <>
-            {/* --- Aufmacher -------------------------------------------------- */}
+            {/* --- Aufmacher: eine grosse Karte, Bild links, Text rechts ----- */}
             {featured && (
-              <article className="group relative grid gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-center lg:gap-12">
+              <article className="group surface-card hover-lift relative grid overflow-hidden rounded-[2rem] lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
                 <Link
                   href={`/news/${featured.slug}`}
                   tabIndex={-1}
                   aria-hidden="true"
-                  className="relative block aspect-[16/10] overflow-hidden rounded-2xl bg-surface-secondary"
+                  className="relative block aspect-[16/10] overflow-hidden bg-surface-secondary lg:aspect-auto lg:min-h-[26rem]"
                 >
                   {featured.coverImage ? (
                     <Image
@@ -142,7 +143,7 @@ export default async function NewsPage({
                       alt=""
                       fill
                       sizes="(max-width: 1024px) 100vw, 720px"
-                      className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                      className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
                       priority
                     />
                   ) : (
@@ -154,23 +155,23 @@ export default async function NewsPage({
                   )}
                 </Link>
 
-                <div className="flex flex-col gap-4">
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
-                    <span
-                      className={chipVariants({ color: "accent", variant: "soft", size: "sm" }).base()}
-                    >
+                <div className="flex flex-col justify-center gap-5 p-6 sm:p-10">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted">
+                    <span className="rounded-full bg-accent-soft px-3 py-1 text-xs font-semibold text-accent-soft-foreground">
                       {categoryNames[featured.categorySlug] ?? featured.categorySlug}
                     </span>
                     {featured.publishedAt && (
-                      <time dateTime={featured.publishedAt}>{formatDate(featured.publishedAt)}</time>
+                      <time className="font-mono text-xs" dateTime={featured.publishedAt}>
+                        {formatDate(featured.publishedAt)}
+                      </time>
                     )}
-                    <span>{formatReadingTime(featured.readingTime)}</span>
+                    <span className="font-mono text-xs">{formatReadingTime(featured.readingTime)}</span>
                   </div>
 
-                  <h2 className="font-display text-[2rem] leading-[1.02] text-balance text-foreground sm:text-[2.5rem] lg:text-[2.75rem]">
+                  <h2 className="font-display text-[2.1rem] text-balance text-foreground sm:text-5xl">
                     <Link
                       href={`/news/${featured.slug}`}
-                      className="rounded-sm decoration-accent-text decoration-[3px] underline-offset-[6px] after:absolute after:inset-0 group-hover:underline"
+                      className="transition-colors after:absolute after:inset-0 group-hover:text-accent-text"
                     >
                       {featured.title}
                     </Link>
@@ -185,7 +186,7 @@ export default async function NewsPage({
                     {featuredAuthor ? (
                       <Link
                         href={`/moderatoren/${featuredAuthor.slug}`}
-                        className="relative z-10 rounded-sm font-semibold text-foreground hover:underline"
+                        className="relative z-10 font-semibold text-foreground hover:text-accent-text"
                       >
                         {featured.authorName}
                       </Link>
@@ -199,9 +200,9 @@ export default async function NewsPage({
 
             {/* --- Raster ----------------------------------------------------- */}
             {gridItems.length > 0 && (
-              <div className={cn(featured && "mt-16 border-t border-separator pt-12 sm:mt-20")}>
+              <div className={cn(featured && "mt-16 sm:mt-20")}>
                 {featured && (
-                  <h2 className="mb-8 font-wide text-xl font-bold text-foreground">
+                  <h2 className="mb-8 font-display text-3xl text-foreground sm:text-4xl">
                     Weitere Beiträge
                   </h2>
                 )}
@@ -217,22 +218,22 @@ export default async function NewsPage({
             {pages > 1 && (
               <nav
                 aria-label="Seitennavigation"
-                className="mt-16 flex items-center justify-between gap-4 border-t border-separator pt-8"
+                className="surface-card mt-16 flex items-center justify-between gap-4 rounded-full p-2"
               >
                 {page > 1 ? (
-                  <ButtonLink href={buildHref(kategorie, page - 1)} variant="outline" size="sm">
+                  <ButtonLink href={buildHref(kategorie, page - 1)} variant="tertiary" size="sm">
                     Zurück
                   </ButtonLink>
                 ) : (
                   <span />
                 )}
 
-                <p className="text-sm text-muted">
+                <p className="font-mono text-xs text-muted">
                   Seite {page} von {pages}
                 </p>
 
                 {page < pages ? (
-                  <ButtonLink href={buildHref(kategorie, page + 1)} variant="outline" size="sm">
+                  <ButtonLink href={buildHref(kategorie, page + 1)} variant="tertiary" size="sm">
                     Weiter
                   </ButtonLink>
                 ) : (
@@ -247,7 +248,7 @@ export default async function NewsPage({
   );
 }
 
-/** Ein Filter in der Kategorienleiste — der aktive in Vordergrundfarbe. */
+/** Ein Filter in der Kategorienleiste — der aktive als gelbe Pille. */
 function FilterLink({
   href,
   active,
@@ -264,14 +265,14 @@ function FilterLink({
       href={href}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "inline-flex h-9 items-center gap-2 rounded-full border px-4 text-sm font-semibold whitespace-nowrap transition-colors",
-        active
-          ? "border-foreground bg-foreground text-background"
-          : "border-border text-muted hover:border-[color-mix(in_oklab,var(--foreground)_30%,transparent)] hover:text-foreground",
+        "inline-flex h-9 items-center gap-2 rounded-full px-4 text-sm font-semibold whitespace-nowrap transition-colors",
+        active ? "bg-volt text-ink" : "text-muted hover:bg-default hover:text-foreground",
       )}
     >
       {label}
-      <span className={cn("text-xs tabular-nums", active ? "opacity-70" : "opacity-80")}>{count}</span>
+      <span className={cn("font-mono text-xs tabular-nums", active ? "text-ink/70" : "opacity-80")}>
+        {count}
+      </span>
     </Link>
   );
 }

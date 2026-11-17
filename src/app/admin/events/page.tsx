@@ -17,6 +17,13 @@ const STATUS_LABELS: Record<string, string> = {
   cancelled: "Abgesagt",
 };
 
+const STATUS_TONES: Record<string, EntityRow["tone"]> = {
+  upcoming: "accent",
+  live: "success",
+  past: "default",
+  cancelled: "danger",
+};
+
 export default async function Page() {
   // Ein ausgeblendeter Menuepunkt ist kein Schutz — die Seite prueft selbst.
   await requireCan("event", ["update"]);
@@ -75,6 +82,8 @@ export default async function Page() {
     title: item.title,
     meta: `${formatDateTime(item.startsAt)}, ${item.location}`,
     badge: STATUS_LABELS[item.status] ?? item.status,
+    tone: STATUS_TONES[item.status],
+    image: item.image,
     values: {
       title: item.title,
       slug: item.slug,

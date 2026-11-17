@@ -46,8 +46,7 @@ export default async function Page() {
   const rows: EntityRow[] = items.map((item) => ({
     id: item.id,
     title: item.name,
-    meta: `/${item.slug}`,
-    badge: String(item.order),
+    meta: `/${item.slug}, Reihenfolge ${item.order}`,
     values: {
       name: item.name,
       slug: item.slug,

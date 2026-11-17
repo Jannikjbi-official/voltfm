@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { chipVariants, cn } from "@heroui/react";
+import { cn } from "@heroui/react";
 import { AuthorAvatar } from "@/components/news/author-avatar";
 import { getCategoryNames, getAuthorProfiles, type ArticleDTO } from "@/services/content";
 import { formatDate, formatReadingTime } from "@/lib/format";
@@ -53,7 +53,7 @@ export async function ArticleCard({
           tabIndex={-1}
           aria-hidden="true"
           className={cn(
-            "relative block overflow-hidden rounded-xl bg-surface-secondary",
+            "relative block overflow-hidden rounded-3xl bg-surface-secondary",
             wide ? "aspect-video" : "aspect-[16/10]",
           )}
         >
@@ -63,7 +63,7 @@ export async function ArticleCard({
               alt=""
               fill
               sizes={wide ? "(max-width: 900px) 100vw, 60vw" : "(max-width: 900px) 100vw, 33vw"}
-              className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+              className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
               preload={priority}
             />
           ) : (
@@ -82,10 +82,7 @@ export async function ArticleCard({
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
           <Link
             href={`/news?kategorie=${article.categorySlug}`}
-            className={cn(
-              chipVariants({ color: "accent", variant: "soft", size: "sm" }).base(),
-              "relative z-10 font-semibold before:absolute before:-inset-1.5 hover:underline",
-            )}
+            className="relative z-10 rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-semibold text-accent-soft-foreground before:absolute before:-inset-1.5 hover:bg-volt hover:text-ink"
           >
             {categoryName}
           </Link>
@@ -96,13 +93,15 @@ export async function ArticleCard({
           className={cn(
             "text-balance text-foreground",
             wide
-              ? "font-display text-[1.75rem] leading-[1.05] sm:text-4xl"
-              : "font-wide text-lg leading-snug font-bold",
+              ? "font-display text-[2.1rem] sm:text-5xl"
+              : compact
+                ? "text-xl leading-tight font-bold tracking-tight"
+                : "text-2xl leading-tight font-bold tracking-tight",
           )}
         >
           <Link
             href={`/news/${article.slug}`}
-            className="rounded-sm decoration-accent-text decoration-2 underline-offset-4 after:absolute after:inset-0 group-hover:underline"
+            className="transition-colors after:absolute after:inset-0 group-hover:text-accent-text"
           >
             {article.title}
           </Link>
@@ -134,7 +133,7 @@ export async function ArticleCard({
               <span className="font-semibold text-foreground">{article.authorName}</span>
             )}
           </span>
-          <span>{formatReadingTime(article.readingTime)}</span>
+          <span className="font-mono text-xs">{formatReadingTime(article.readingTime)}</span>
         </footer>
       </div>
     </article>

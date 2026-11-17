@@ -98,7 +98,7 @@ export function SocialLinksField({
             return (
               <li
                 key={index}
-                className="grid grid-cols-[minmax(0,1fr)_auto] gap-2 rounded-xl border border-border bg-surface-secondary/50 p-2 sm:grid-cols-[9.5rem_minmax(0,1fr)_auto] sm:items-center"
+                className="grid grid-cols-[minmax(0,1fr)_auto] gap-2 rounded-2xl bg-surface-secondary p-2.5 sm:grid-cols-[9.5rem_minmax(0,1fr)_auto] sm:items-center"
               >
                 <div className="relative">
                   <select

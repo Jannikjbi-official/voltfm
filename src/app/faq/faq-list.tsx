@@ -9,17 +9,21 @@ import { Accordion } from "@heroui/react";
  */
 export function FaqList({ items }: { items: { question: string; answer: React.ReactNode }[] }) {
   return (
-    <Accordion allowsMultipleExpanded className="w-full">
+    <Accordion allowsMultipleExpanded hideSeparator className="flex w-full flex-col gap-3">
       {items.map((item) => (
-        <Accordion.Item key={item.question} id={item.question}>
+        <Accordion.Item
+          key={item.question}
+          id={item.question}
+          className="surface-card overflow-hidden rounded-2xl transition-shadow data-[expanded=true]:shadow-[var(--lift-shadow)]"
+        >
           <Accordion.Heading>
-            <Accordion.Trigger className="py-5 text-left font-wide text-lg font-bold text-foreground sm:text-xl">
+            <Accordion.Trigger className="gap-4 px-5 py-5 text-left text-lg font-bold tracking-tight text-foreground hover:bg-transparent sm:px-6 sm:text-xl">
               {item.question}
               <Accordion.Indicator />
             </Accordion.Trigger>
           </Accordion.Heading>
           <Accordion.Panel>
-            <Accordion.Body className="max-w-[64ch] pb-6 text-base leading-relaxed text-muted [&_a]:text-foreground [&_a]:underline [&_a]:decoration-accent-text [&_a]:decoration-2 [&_a]:underline-offset-4 hover:[&_a]:decoration-foreground">
+            <Accordion.Body className="max-w-[64ch] px-1 pb-2 text-base leading-relaxed text-muted sm:px-2 [&_a]:font-semibold [&_a]:text-accent-text [&_a]:underline-offset-4 hover:[&_a]:underline">
               {item.answer}
             </Accordion.Body>
           </Accordion.Panel>

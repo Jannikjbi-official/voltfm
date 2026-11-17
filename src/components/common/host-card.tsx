@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Chip } from "@heroui/react";
 import { resolveHostImage } from "@/services/discord/avatar";
 import { LogoIcon } from "@/components/layout/logo";
 import type { HostDTO } from "@/services/content";
@@ -14,35 +13,32 @@ import type { HostDTO } from "@/services/content";
  * selbst liegt hinter Next' fetch-Cache, ein Bild wird also einmal pro Tag
  * geholt, nicht einmal pro Karte.
  *
- * Rund statt Hochformat: Die Bilder kommen ueberwiegend von Discord, und ein
- * Discord-Avatar ist quadratisch. In ein 4:5-Portraet gezwungen wuerde er
- * oben und unten beschnitten.
+ * Quadratisch statt Hochformat: Die Bilder kommen ueberwiegend von Discord,
+ * und ein Discord-Avatar ist quadratisch. In ein 4:5-Portraet gezwungen wuerde
+ * er oben und unten beschnitten. Es steht randlos oben in der Karte.
  */
 export async function HostCard({ host }: { host: HostDTO }) {
   const image = await resolveHostImage(host);
 
   return (
-    <article className="group relative flex h-full flex-col gap-5 rounded-2xl border border-border bg-surface p-6 transition-colors hover:border-[color-mix(in_oklab,var(--foreground)_28%,transparent)]">
-      <div className="relative grid size-24 shrink-0 place-items-center overflow-hidden rounded-full bg-surface-secondary">
+    <article className="group surface-card hover-lift relative flex h-full flex-col overflow-hidden rounded-3xl">
+      <div className="relative grid aspect-square w-full shrink-0 place-items-center overflow-hidden bg-surface-secondary">
         {image ? (
           <Image
             src={image}
             alt=""
             fill
-            sizes="96px"
-            className="object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+            sizes="(max-width: 640px) 100vw, 25vw"
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
           />
         ) : (
           <HostLogoFallback />
         )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-2">
-        <h3 className="font-wide text-xl leading-tight font-bold text-foreground">
-          <Link
-            href={`/moderatoren/${host.slug}`}
-            className="rounded-sm decoration-accent-text decoration-2 underline-offset-4 after:absolute after:inset-0 after:rounded-2xl group-hover:underline"
-          >
+      <div className="flex flex-1 flex-col gap-2 p-5">
+        <h3 className="text-2xl leading-tight font-bold tracking-tight break-words text-foreground">
+          <Link href={`/moderatoren/${host.slug}`} className="after:absolute after:inset-0">
             {host.name}
           </Link>
         </h3>
@@ -56,10 +52,11 @@ export async function HostCard({ host }: { host: HostDTO }) {
         {host.genres.length > 0 && (
           <ul className="mt-auto flex flex-wrap gap-1.5 pt-2" aria-label="Genres">
             {host.genres.slice(0, 3).map((genre) => (
-              <li key={genre}>
-                <Chip size="sm" variant="soft">
-                  {genre}
-                </Chip>
+              <li
+                key={genre}
+                className="rounded-full bg-default px-2.5 py-0.5 text-xs font-medium text-foreground"
+              >
+                {genre}
               </li>
             ))}
           </ul>
@@ -91,7 +88,7 @@ export async function HostChip({ host }: { host: HostDTO }) {
   return (
     <Link
       href={`/moderatoren/${host.slug}`}
-      className="inline-flex items-center gap-2 rounded-full border border-border bg-surface py-1 pr-3 pl-1 text-sm font-medium text-foreground transition-colors hover:bg-default"
+      className="inline-flex items-center gap-2 rounded-full bg-default py-1 pr-3 pl-1 text-sm font-semibold text-foreground transition-colors hover:bg-volt hover:text-ink"
     >
       {image ? (
         <Image
@@ -104,7 +101,7 @@ export async function HostChip({ host }: { host: HostDTO }) {
       ) : (
         <span
           aria-hidden="true"
-          className="grid size-7 place-items-center rounded-full bg-default text-[0.6rem] font-bold text-muted"
+          className="grid size-7 place-items-center rounded-full bg-surface-secondary text-[0.6rem] font-bold text-muted"
         >
           {host.name.slice(0, 2).toUpperCase()}
         </span>

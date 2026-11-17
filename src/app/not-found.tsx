@@ -26,7 +26,7 @@ export default function NotFound() {
             <Icon icon={RadioIcon} />
             Zum Livestream
           </ButtonLink>
-          <ButtonLink href="/suche" variant="outline" size="lg">
+          <ButtonLink href="/suche" variant="tertiary" size="lg">
             <Icon icon={SearchIcon} />
             Suche öffnen
           </ButtonLink>

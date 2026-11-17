@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo } from "next/font/google";
+import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
 import { cookies } from "next/headers";
@@ -7,6 +7,7 @@ import { after } from "next/server";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { THEME_COOKIE, normalizeTheme } from "@/lib/theme";
 import { Providers } from "@/components/layout/providers";
+import { SiteChrome } from "@/components/layout/site-chrome";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { RadioPlayerProvider } from "@/components/radio/player-provider";
@@ -17,14 +18,22 @@ import { getStreamUrl } from "@/services/radio/stream";
 import { announceDueArticles } from "@/services/discord/news";
 import { buildMainNav, site } from "@/lib/site";
 
-/* Die eine Schrift fuer alles. Variabel geladen, mit der Breitenachse dazu:
-   Ueberschriften laufen breit (wdth 112,5 bis 125), Fliesstext normal. next/font
-   legt die Datei beim Build ab und liefert sie von der eigenen Domain aus — der
-   Browser fragt Google nicht. */
+/* Zwei Schriften, beide von next/font beim Build abgelegt und von der eigenen
+   Domain ausgeliefert — der Browser fragt Google nicht.
+   Archivo variabel mit Breitenachse: Ueberschriften schmal und schwer wie auf
+   einem Plakat (wdth 75), Fliesstext normal. IBM Plex Mono fuer Uhrzeiten,
+   Daten und Zahlen. */
 const archivo = Archivo({
   variable: "--font-archivo",
   subsets: ["latin", "latin-ext"],
   axes: ["wdth"],
+  display: "swap",
+});
+
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600"],
   display: "swap",
 });
 
@@ -80,18 +89,19 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     /* HeroUI liest beides: die Klasse und data-theme. Beides kommt aus dem
        Cookie, also stimmt schon das erste HTML — ohne Skript, ohne Flackern. */
-    <html lang={site.lang} data-theme={theme} className={`${archivo.variable} ${theme}`}>
+    <html lang={site.lang} data-theme={theme} className={`${archivo.variable} ${plexMono.variable} ${theme}`}>
       <body className="bg-background text-foreground">
         <ThemeProvider initialTheme={theme}>
           <Providers>
             <RadioPlayerProvider streamUrl={getStreamUrl()} initialSnapshot={snapshot}>
-              <a href="#main" className="skip-link">
-                Zum Inhalt springen
-              </a>
-              <Header nav={buildMainNav()} account={account} />
-              <main id="main">{children}</main>
-              <Footer />
-              <StickyPlayer />
+              {/* Im Admin ohne Kopfzeile, Footer und Player — siehe SiteChrome. */}
+              <SiteChrome
+                header={<Header nav={buildMainNav()} account={account} />}
+                footer={<Footer />}
+                player={<StickyPlayer />}
+              >
+                {children}
+              </SiteChrome>
             </RadioPlayerProvider>
           </Providers>
         </ThemeProvider>

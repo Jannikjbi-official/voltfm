@@ -86,7 +86,8 @@ export default async function Page() {
     id: item.id,
     title: `${item.year} — ${item.title}`,
     meta: item.kicker,
-    badge: item.current ? "Aktuell" : String(item.order),
+    badge: item.current ? "Aktuell" : undefined,
+    tone: "accent",
     values: {
       year: item.year,
       kicker: item.kicker,

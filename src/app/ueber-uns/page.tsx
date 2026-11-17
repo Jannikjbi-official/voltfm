@@ -30,26 +30,25 @@ export default async function UeberUnsPage() {
   return (
     <>
       {/* --- Kopfbereich --------------------------------------------------- */}
-      <header className="border-b border-separator">
-        <div className="shell pt-8 pb-12 sm:pt-10 sm:pb-16">
-          <Breadcrumbs
-            items={[
-              { href: "/", label: "Start" },
-              { href: "/ueber-uns", label: "Über VoltFM" },
-            ]}
-          />
+      <header className="shell pt-10 sm:pt-14">
+        <Breadcrumbs
+          items={[
+            { href: "/", label: "Start" },
+            { href: "/ueber-uns", label: "Über VoltFM" },
+          ]}
+        />
 
-          <h1 className="mt-6 max-w-4xl font-display text-[2.5rem] leading-[0.95] text-balance text-foreground sm:text-6xl lg:text-7xl">
-            Radio, dem man anhört,
-            <br />
-            <span className="text-accent-text">dass jemand da ist.</span>
-          </h1>
+        <h1 className="mt-6 max-w-5xl font-display text-[2.6rem] text-balance text-foreground sm:text-7xl lg:text-8xl">
+          Radio, dem man anhört,{" "}
+          <span className="box-decoration-clone rounded-2xl bg-volt px-3 text-ink">dass jemand da ist.</span>
+        </h1>
 
+        <div className="mt-10 grid gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-end">
           {/* Hamburg ist die Angabe, die oeffentlich stehen soll — die
               ladungsfaehige Anschrift steht im Impressum und nur dort
               (`operator` in lib/site.ts). Nicht gegen "Norddeutschland"
               o. Ae. tauschen; das ist so gewollt. */}
-          <div className="mt-6 flex max-w-2xl flex-col gap-3 text-lg leading-relaxed text-muted">
+          <div className="flex max-w-2xl flex-col gap-3 text-lg leading-relaxed text-muted">
             <p>
               VoltFM ist ein unabhängiges Webradio aus Hamburg. Kein Sender einer
               Kette, kein Unternehmen dahinter — ein paar Leute, die Radio machen
@@ -63,13 +62,14 @@ export default async function UeberUnsPage() {
             </p>
           </div>
 
-          <dl className="mt-10 grid max-w-2xl grid-cols-3 gap-4 border-t border-separator pt-6 sm:gap-8">
+          <dl className="grid grid-cols-3 gap-3">
             {stats.map((stat) => (
-              <div key={stat.label} className="flex min-w-0 flex-col-reverse gap-1">
-                <dt className="text-sm text-muted">{stat.label}</dt>
-                <dd className="truncate font-display text-2xl leading-none text-foreground sm:text-4xl">
-                  {stat.value}
-                </dd>
+              <div
+                key={stat.label}
+                className="surface-card flex min-w-0 flex-col-reverse gap-2 rounded-2xl p-4 sm:p-5"
+              >
+                <dt className="text-xs text-muted sm:text-sm">{stat.label}</dt>
+                <dd className="truncate font-display text-2xl text-foreground sm:text-4xl">{stat.value}</dd>
               </div>
             ))}
           </dl>
@@ -77,9 +77,9 @@ export default async function UeberUnsPage() {
       </header>
 
       {/* --- Mission: eine grosse Aussage ------------------------------------ */}
-      <section className="shell py-14 sm:py-20">
-        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-16">
-          <p className="font-display text-3xl leading-[1.02] text-balance text-foreground sm:text-5xl">
+      <section className="shell pt-16 sm:pt-24">
+        <div className="surface-card grid items-start gap-8 rounded-[2rem] p-7 sm:p-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-16">
+          <p className="font-display text-[2.1rem] text-balance text-foreground sm:text-5xl">
             {site.tagline}
           </p>
           <div className="flex flex-col gap-5 text-lg leading-relaxed text-muted">
@@ -106,79 +106,61 @@ export default async function UeberUnsPage() {
       </section>
 
       {/* --- Zeitleiste ------------------------------------------------------ */}
-      <section className="border-y border-separator bg-surface-secondary/50">
-        <div className="shell py-14 sm:py-20">
-          <SectionHeader
-            title="Wie es dazu kam"
-            description="Seit Januar 2021: ein paar Namen, ein Umweg über einen eigenen Server, eine Station."
-          />
+      <section className="shell pt-16 sm:pt-24">
+        <SectionHeader
+          title="Wie es dazu kam"
+          description="Seit Januar 2021: ein paar Namen, ein Umweg über einen eigenen Server, eine Station."
+        />
 
-          {entries.length === 0 ? (
-            <p className="text-muted">Die Zeitleiste wird gerade eingepflegt.</p>
-          ) : (
-            <ol className="relative flex flex-col gap-4 before:absolute before:top-3 before:bottom-3 before:left-[0.4375rem] before:w-0.5 before:bg-border sm:before:left-[7.4375rem]">
-              {entries.map((entry) => (
-                <li
-                  key={entry.id}
-                  className="relative grid grid-cols-[1rem_minmax(0,1fr)] gap-x-4 sm:grid-cols-[6rem_1rem_minmax(0,1fr)] sm:gap-x-4"
+        {entries.length === 0 ? (
+          <p className="text-muted">Die Zeitleiste wird gerade eingepflegt.</p>
+        ) : (
+          <ol className="relative flex flex-col gap-3 before:absolute before:top-6 before:bottom-6 before:left-[1.4rem] before:w-px before:bg-separator sm:before:left-[2.9rem]">
+            {entries.map((entry) => (
+              <li key={entry.id} className="relative grid grid-cols-[2.8rem_minmax(0,1fr)] gap-x-4 sm:grid-cols-[5.8rem_minmax(0,1fr)] sm:gap-x-6">
+                {/* Das Jahr als Marke auf der Schiene. */}
+                <span
+                  className={cn(
+                    "relative z-10 mt-4 grid h-11 place-items-center self-start rounded-full font-mono text-xs font-semibold sm:h-12 sm:text-sm",
+                    entry.current ? "bg-volt text-ink" : "bg-surface-secondary text-foreground",
+                  )}
                 >
-                  {/* Jahr und Stichwort links neben der Schiene (am Handy darueber). */}
-                  <div className="col-start-2 flex items-baseline gap-3 sm:col-start-1 sm:row-start-1 sm:flex-col sm:items-end sm:gap-1 sm:pt-5 sm:text-right">
-                    <span
-                      className={cn(
-                        "font-display text-xl leading-none sm:text-2xl",
-                        entry.current ? "text-accent-text" : "text-foreground",
-                      )}
+                  {entry.year}
+                </span>
+
+                <div
+                  className={cn(
+                    "surface-card flex min-w-0 flex-col gap-2 rounded-3xl p-5 sm:p-7",
+                    entry.current && "ring-2 ring-volt",
+                  )}
+                >
+                  <p className="text-sm text-muted">{entry.kicker}</p>
+                  <h3 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+                    {entry.title}
+                  </h3>
+                  <p className="leading-relaxed text-muted">{entry.text}</p>
+                  {entry.href && (
+                    <Link
+                      href={entry.href}
+                      className="mt-1 self-start rounded-full bg-default px-4 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-volt hover:text-ink"
                     >
-                      {entry.year}
-                    </span>
-                    <span className="text-sm text-muted">{entry.kicker}</span>
-                  </div>
-
-                  {/* Der Punkt auf der Schiene. */}
-                  <span
-                    aria-hidden="true"
-                    className={cn(
-                      "relative col-start-1 row-span-2 row-start-1 mt-1 size-4 rounded-full border-2 sm:col-start-2 sm:mt-6",
-                      entry.current
-                        ? "border-volt bg-volt shadow-[0_0_0_5px_color-mix(in_oklab,var(--volt)_22%,transparent)]"
-                        : "border-border bg-background",
-                    )}
-                  />
-
-                  <div
-                    className={cn(
-                      "col-start-2 mt-2 flex min-w-0 flex-col gap-2 rounded-2xl border bg-surface p-5 sm:col-start-3 sm:row-start-1 sm:mt-0 sm:p-6",
-                      entry.current ? "border-accent-text/40" : "border-border",
-                    )}
-                  >
-                    <h3 className="font-wide text-lg font-bold text-foreground sm:text-xl">
-                      {entry.title}
-                    </h3>
-                    <p className="leading-relaxed text-muted">{entry.text}</p>
-                    {entry.href && (
-                      <Link
-                        href={entry.href}
-                        className="self-start rounded-sm pt-1 text-sm font-semibold text-foreground underline decoration-accent-text decoration-2 underline-offset-4 hover:decoration-foreground"
-                      >
-                        {entry.linkLabel ?? "Mehr erfahren"}
-                      </Link>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ol>
-          )}
-        </div>
+                      {entry.linkLabel ?? "Mehr erfahren"}
+                    </Link>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ol>
+        )}
       </section>
 
       {/* --- Team ---------------------------------------------------------- */}
-      <section className="shell py-14 sm:py-20">
+      <section className="shell pt-16 sm:pt-24">
         <SectionHeader
           title="Wer VoltFM macht"
           action={{ href: "/moderatoren", label: "Alle Profile" }}
         />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {hosts.map((host) => (
             <HostCard key={host.id} host={host} />
           ))}
@@ -186,11 +168,12 @@ export default async function UeberUnsPage() {
       </section>
 
       {/* --- Ausblick ------------------------------------------------------ */}
-      <section className="shell">
-        <div className="rounded-3xl border border-border bg-surface p-6 sm:p-10 lg:p-12">
-          <h2 className="font-display text-3xl leading-[1.02] text-foreground sm:text-4xl">
-            Was als Nächstes kommt
-          </h2>
+      <section className="shell pt-16 sm:pt-24">
+        <div
+          data-theme="dark"
+          className="dark rounded-[2rem] border border-border bg-surface p-7 text-foreground shadow-[var(--lift-shadow)] sm:p-12"
+        >
+          <h2 className="font-display text-[2.1rem] text-foreground sm:text-5xl">Was als Nächstes kommt</h2>
 
           <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted">
             Nichts davon hat ein Datum. Wir haben im August einen eigenen
@@ -198,7 +181,7 @@ export default async function UeberUnsPage() {
             versprechen wir nichts mehr, was wir nicht halten können.
           </p>
 
-          <ul className="mt-8 grid gap-4 md:grid-cols-3">
+          <ul className="mt-8 grid gap-3 md:grid-cols-3">
             {[
               {
                 title: "Rund um die Uhr live",
@@ -213,8 +196,8 @@ export default async function UeberUnsPage() {
                 text: "Solange die Zeiten nicht verlässlich sind, steht lieber keiner da als ein falscher.",
               },
             ].map((item) => (
-              <li key={item.title} className="rounded-2xl bg-surface-secondary p-5">
-                <h3 className="font-wide text-lg font-bold text-foreground">{item.title}</h3>
+              <li key={item.title} className="rounded-2xl bg-default p-5">
+                <h3 className="text-lg font-bold tracking-tight text-foreground">{item.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted">{item.text}</p>
               </li>
             ))}
@@ -224,7 +207,7 @@ export default async function UeberUnsPage() {
             <ButtonLink href="/radio" variant="primary">
               Jetzt live hören
             </ButtonLink>
-            <ButtonLink href={site.discordUrl} external variant="outline">
+            <ButtonLink href={site.discordUrl} external variant="tertiary">
               Discord beitreten
             </ButtonLink>
           </div>

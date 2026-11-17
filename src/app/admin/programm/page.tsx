@@ -55,6 +55,8 @@ export default async function Page() {
     title: item.title,
     meta: `${WEEKDAY_LABELS[item.weekday]}, ${item.startTime}–${item.endTime} Uhr`,
     badge: item.active ? "Aktiv" : "Versteckt",
+    tone: item.active ? "success" : "default",
+    image: item.image,
     values: {
       title: item.title,
       slug: item.slug,
