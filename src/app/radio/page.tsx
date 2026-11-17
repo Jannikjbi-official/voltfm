@@ -8,8 +8,7 @@ import { LautstationPlaylist } from "@/components/radio/lautstation-playlist";
 import { Icon, DiscordIcon, ExternalLinkIcon } from "@/lib/icons";
 import { lautstation } from "@/lib/lautstation";
 import { site } from "@/lib/site";
-import { listenOnlineRadio } from "@/lib/listings";
-import { getListenOnlineRadioUrl } from "@/services/settings/listings";
+import { getDirectoryLinks } from "@/services/settings/listings";
 
 export const metadata: Metadata = {
   title: "Radio",
@@ -21,8 +20,8 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function RadioPage() {
-  // Erscheint erst, wenn der Link unter Admin → Einstellungen eingetragen ist.
-  const listenOnlineRadioUrl = await getListenOnlineRadioUrl();
+  // Gepflegt unter Admin → Einstellungen → Verzeichnisse.
+  const directoryLinks = await getDirectoryLinks();
 
   return (
     <>
@@ -114,11 +113,27 @@ export default async function RadioPage() {
                 {lautstation.name} in einem neuen Tab.
               </p>
 
-              {listenOnlineRadioUrl && (
-                <ButtonLink href={listenOnlineRadioUrl} external variant="tertiary" size="sm" fullWidth>
-                  Auch bei {listenOnlineRadio.name}
-                  <Icon icon={ExternalLinkIcon} />
-                </ButtonLink>
+              {directoryLinks.length > 0 && (
+                <div className="flex flex-col gap-3 border-t border-separator pt-4">
+                  <h3 className="text-sm font-bold text-foreground">Auch zu finden bei</h3>
+                  {/* Reine Links, kein Player und kein Bild von dort (src/lib/listings.ts). */}
+                  <ul className="flex flex-wrap gap-2">
+                    {directoryLinks.map((link) => (
+                      <li key={link.id}>
+                        <a
+                          href={link.url}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          className="inline-flex items-center gap-1.5 rounded-full bg-default px-3 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-volt hover:text-ink"
+                        >
+                          {link.name}
+                          <Icon icon={ExternalLinkIcon} className="text-[0.65em] opacity-60" />
+                          <span className="sr-only"> (öffnet einen neuen Tab)</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               )}
             </div>
           </aside>
