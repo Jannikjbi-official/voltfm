@@ -7,8 +7,13 @@ import type { Article } from "@/types/content";
 /**
  * Neue Beitraege im Discord ankuendigen.
  *
- * Der Bot (DISCORD_BOT_TOKEN, derselbe wie fuer die Profilbilder) schickt
- * eine Nachricht mit Titel, Teaser, Autor und Titelbild in den News-Kanal.
+ * Eine Nachricht mit Titel, Teaser, Autor und Titelbild geht in den
+ * News-Kanal. Zwei Wege, der erste gewinnt:
+ *   1. DISCORD_NEWS_WEBHOOK_URL — ein Webhook des Kanals. Wie ein Passwort:
+ *      Wer die Adresse kennt, kann in den Kanal schreiben. Nur als geheime
+ *      Umgebungsvariable, nie im Code und nie im Log.
+ *   2. Der Bot (DISCORD_BOT_TOKEN, derselbe wie fuer die Profilbilder) mit
+ *      DISCORD_NEWS_CHANNEL_ID.
  *
  * Gepostet wird nur von der Production-Seite: Vorschau und dev.voltfm.xyz
  * teilen sich die Datenbank und den Token, und eine Vorschau soll nicht in den
@@ -33,12 +38,29 @@ const BATCH = 3;
 
 let lastSweep = 0;
 
+/** Der Webhook, wenn einer gesetzt und gueltig ist. */
+function webhookUrl(): string | null {
+  const raw = process.env.DISCORD_NEWS_WEBHOOK_URL?.trim();
+  if (!raw) return null;
+  try {
+    const url = new URL(raw);
+    const okHost = ["discord.com", "discordapp.com", "ptb.discord.com", "canary.discord.com"].includes(url.hostname);
+    const okPath = /^\/api(\/v\d+)?\/webhooks\/\d{5,25}\/[\w-]+\/?$/.test(url.pathname);
+    return url.protocol === "https:" && okHost && okPath ? `${url.origin}${url.pathname}` : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Ueber welchen Weg angekuendigt wird — fuer die Einstellungsseite. */
+export function discordNewsTarget(): "webhook" | "bot" | null {
+  if (webhookUrl()) return "webhook";
+  if (process.env.DISCORD_BOT_TOKEN && /^\d{5,25}$/.test(site.discordNewsChannelId)) return "bot";
+  return null;
+}
+
 export function discordNewsEnabled(): boolean {
-  return (
-    process.env.VERCEL_ENV === "production" &&
-    Boolean(process.env.DISCORD_BOT_TOKEN) &&
-    /^\d{5,25}$/.test(site.discordNewsChannelId)
-  );
+  return process.env.VERCEL_ENV === "production" && discordNewsTarget() !== null;
 }
 
 /**
@@ -82,16 +104,28 @@ async function announce(article: Article): Promise<void> {
 
   try {
     const category = await categories().findOne({ slug: article.categorySlug });
-    const res = await fetch(`${DISCORD_API}/channels/${site.discordNewsChannelId}/messages`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(buildMessage(article, category?.name)),
-      cache: "no-store",
-      signal: AbortSignal.timeout(8000),
-    });
+    const body = JSON.stringify(buildMessage(article, category?.name));
+    const webhook = webhookUrl();
+    // ?wait=true: Discord antwortet mit der Nachricht, so bekommen wir die ID.
+    const res = webhook
+      ? await fetch(`${webhook}?wait=true`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body,
+          cache: "no-store",
+          signal: AbortSignal.timeout(8000),
+        })
+      : await fetch(`${DISCORD_API}/channels/${site.discordNewsChannelId}/messages`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
+            "Content-Type": "application/json",
+          },
+          body,
+          cache: "no-store",
+          signal: AbortSignal.timeout(8000),
+        });
+    // Die Antwort von Discord enthaelt nie die Webhook-Adresse — sie darf ins Log.
     if (!res.ok) throw new Error(`Discord antwortet ${res.status}: ${await res.text()}`);
 
     const message = (await res.json()) as { id: string };

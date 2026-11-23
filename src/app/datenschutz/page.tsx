@@ -16,6 +16,7 @@ const SECTIONS = [
   { id: "cookies-und-lokale-speicherung", label: "Cookies und lokale Speicherung" },
   { id: "konto-und-anmeldung", label: "Konto und Anmeldung" },
   { id: "kontaktformular", label: "Kontaktformular" },
+  { id: "vorschlaege-und-playlist-ideen", label: "Vorschläge und Playlist-Ideen" },
   { id: "bilder-und-uploads-uploadthing", label: "Bilder und Uploads (UploadThing)" },
   { id: "eingesetzte-dienste-auf-einen-blick", label: "Eingesetzte Dienste auf einen Blick" },
   { id: "keine-automatisierte-entscheidungsfindung", label: "Keine automatisierte Entscheidungsfindung" },
@@ -309,6 +310,34 @@ export default function DatenschutzPage() {
                 keine gesetzlichen Aufbewahrungspflichten entgegenstehen.
               </p>
 
+              <h2 id="vorschlaege-und-playlist-ideen">Vorschläge und Playlist-Ideen</h2>
+              <p>
+                <strong>Formular auf /mitmachen:</strong> Was du dort eingibst (Name und
+                Text), schickt unser Server als Nachricht in einen von zwei Kanälen
+                unseres Discord-Servers (Discord Netherlands B.V.; Discord verarbeitet
+                Daten auch in den USA). Dein Browser verbindet sich dabei nur mit
+                voltfm.xyz, nicht mit Discord. Auf voltfm.xyz speichern wir die
+                Einsendung nicht. Rechtsgrundlage ist deine Einwilligung (Art. 6 Abs. 1
+                lit. a DSGVO), die du mit dem Häkchen gibst. Du kannst sie jederzeit
+                widerrufen; dann löschen wir die Nachricht im Discord. Damit das
+                Formular nicht missbraucht wird, zählt unser Server kurz im
+                Arbeitsspeicher, wie oft von einer IP-Adresse gesendet wurde.
+                Gespeichert wird die IP-Adresse dabei nicht.
+              </p>
+              <p>
+                <strong>Nachrichten im Discord:</strong> Aus diesen beiden Kanälen liest
+                unser Server Anzeigename, Text und Zeitpunkt der Nachrichten, damit das
+                Team sie im Admin-Bereich sieht. Auf /mitmachen zeigen wir einzelne
+                Einträge mit Anzeigename, Text und Datum, aber erst, wenn jemand aus
+                dem Team sie freigegeben hat. Profilbilder laden wir dafür nicht, und
+                wer in einer Nachricht nur erwähnt wird, erscheint nicht. Die Texte
+                speichern wir nicht; gespeichert wird nur, welche Nachricht freigegeben
+                ist. Löschst du deine Nachricht im Discord, verschwindet sie nach kurzer
+                Zeit auch hier. Rechtsgrundlage ist unser berechtigtes Interesse, Ideen
+                aus der Community zu zeigen (Art. 6 Abs. 1 lit. f DSGVO). Du kannst
+                jederzeit widersprechen, am einfachsten über das Kontaktformular.
+              </p>
+
               <h2 id="bilder-und-uploads-uploadthing">Bilder und Uploads (UploadThing)</h2>
               <p>
                 Titel-, Cover- und Profilbilder liegen bei <strong>UploadThing</strong>
@@ -353,7 +382,7 @@ export default function DatenschutzPage() {
                   </tr>
                   <tr>
                     <td>Discord Netherlands B.V.</td>
-                    <td>Anmeldung mit Discord, Profilbilder</td>
+                    <td>Anmeldung mit Discord, Profilbilder, Vorschläge und Playlist-Ideen</td>
                     <td>Niederlande</td>
                   </tr>
                   <tr>

@@ -148,6 +148,7 @@ Nutzer darum bittet, weise auf § 6 Abs. 9 hin und biete den Schalter an.
 | Session-Guards | `src/lib/session.ts` |
 | Statische Sender-/Betreiberdaten | `src/lib/site.ts` |
 | Links zu Radio-Verzeichnissen (TuneIn, Streema …), im Admin änderbar | `src/lib/listings.ts`, `src/services/settings/listings.ts`, Admin → Einstellungen |
+| Vorschläge und Playlist-Ideen aus/in Discord, öffentlich erst nach Freigabe | `src/lib/ideas.ts`, `src/services/discord/ideas.ts`, `/admin/ideen`, `/mitmachen` |
 
 Eine neue Admin-Verwaltung ist normalerweise: Action-Datei schreiben, `FieldDef[]`
 definieren, `<EntityManager />` rendern. Kein eigenes Formular.

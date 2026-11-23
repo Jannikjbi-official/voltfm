@@ -12,6 +12,7 @@ import {
   RadioIcon,
   ClockIcon,
   EditIcon,
+  IdeaIcon,
   type IconDefinition,
 } from "@/lib/icons";
 
@@ -48,6 +49,7 @@ export function adminNav(scheduleOn: boolean): AdminNavGroup[] {
         { href: "/admin/events", label: "Events", icon: EventsIcon, needs: { resource: "event", actions: ["update"] } },
         { href: "/admin/timeline", label: "Zeitleiste", icon: ClockIcon, needs: { resource: "timeline", actions: ["update"] } },
         { href: "/admin/media", label: "Medien", icon: ImageIcon, needs: { resource: "media", actions: ["upload"] } },
+        { href: "/admin/ideen", label: "Ideen", icon: IdeaIcon, needs: { resource: "article", actions: ["publish"] } },
         { href: "/admin/markdown", label: "Textformat", icon: EditIcon, needs: { resource: "article", actions: ["update"] } },
       ],
     },

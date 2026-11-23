@@ -5,6 +5,7 @@ import type {
   Category,
   ContactMessage,
   Host,
+  IdeaApproval,
   MediaAsset,
   Milestone,
   SettingsDoc,
@@ -32,6 +33,8 @@ export const contactMessages = (): Collection<ContactMessage> =>
 export const settings = (): Collection<SettingsDoc> => getDb().collection<SettingsDoc>("settings");
 export const stationDays = (): Collection<StationDay> => getDb().collection<StationDay>("stationDays");
 export const milestones = (): Collection<Milestone> => getDb().collection<Milestone>("milestones");
+export const ideaApprovals = (): Collection<IdeaApproval> =>
+  getDb().collection<IdeaApproval>("ideaApprovals");
 
 /**
  * Index creation is idempotent, so this is safe to run from the seed script or
@@ -61,5 +64,6 @@ export async function ensureIndexes(): Promise<void> {
     timeline().createIndex({ order: 1 }),
     stationDays().createIndex({ date: 1 }, { unique: true }),
     milestones().createIndex({ key: 1 }, { unique: true }),
+    ideaApprovals().createIndex({ messageId: 1 }, { unique: true }),
   ]);
 }
