@@ -5,6 +5,10 @@ import { PageHeader } from "@/components/common/page-header";
 import { ButtonLink } from "@/components/common/button-link";
 import { Icon, DiscordIcon, MicIcon, NewsIcon, HeartIcon, ExternalLinkIcon } from "@/lib/icons";
 import { site } from "@/lib/site";
+import { formatDate } from "@/lib/format";
+import { IDEA_KIND_LIST, IDEA_KINDS, type Idea } from "@/lib/ideas";
+import { getPublicIdeas } from "@/services/discord/ideas";
+import { IdeaForm } from "./idea-form";
 
 export const metadata: Metadata = {
   title: "Mitmachen",
@@ -38,7 +42,10 @@ const STEPS = [
   "Wir schauen sie uns an und melden uns bei dir.",
 ] as const;
 
-export default function MitmachenPage() {
+export default async function MitmachenPage() {
+  // Nur freigegebene Einträge (Admin → Ideen); die Texte kommen live aus dem Discord.
+  const ideas = await getPublicIdeas();
+
   return (
     <>
       <PageHeader
@@ -117,6 +124,56 @@ export default function MitmachenPage() {
           </aside>
         </div>
       </section>
+
+      <section id="ideen" aria-labelledby="ideen-title" className="shell scroll-mt-28 pt-16 sm:pt-24">
+        <div className="max-w-2xl">
+          <h2 id="ideen-title" className="font-display text-[2.25rem] text-foreground sm:text-5xl">
+            Deine Ideen
+          </h2>
+          <p className="mt-4 text-pretty text-lg leading-relaxed text-muted">
+            Ein Song, der fehlt, eine Sendung, eine Playlist: Schreib es hier oder direkt im
+            Discord. Eine Auswahl zeigen wir hier.
+          </p>
+        </div>
+
+        <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-12">
+          <div className="self-start">
+            <IdeaForm />
+          </div>
+
+          <div className="grid gap-10 sm:grid-cols-2 lg:gap-8">
+            {IDEA_KIND_LIST.map((kind) => (
+              <IdeaList key={kind} title={IDEA_KINDS[kind].plural} ideas={ideas[kind]} />
+            ))}
+          </div>
+        </div>
+      </section>
     </>
+  );
+}
+
+/** Freigegebene Einträge einer Art. Kein Profilbild: das käme von Discords Servern. */
+function IdeaList({ title, ideas }: { title: string; ideas: Idea[] }) {
+  return (
+    <div className="min-w-0">
+      <h3 className="text-xl font-bold tracking-tight text-foreground">{title}</h3>
+      {ideas.length === 0 ? (
+        <p className="mt-4 rounded-3xl border border-dashed border-border p-6 text-sm text-muted">
+          Noch nichts ausgewählt.
+        </p>
+      ) : (
+        <ul className="mt-4 flex flex-col gap-3">
+          {ideas.map((idea) => (
+            <li key={idea.id} className="surface-card rounded-3xl p-5">
+              <p className="leading-relaxed break-words whitespace-pre-line text-foreground">{idea.text}</p>
+              <p className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted">
+                <span className="font-semibold text-foreground">{idea.author}</span>
+                <span className="font-mono text-xs leading-5">{formatDate(idea.createdAt, "short")}</span>
+              </p>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }

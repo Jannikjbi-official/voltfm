@@ -73,6 +73,9 @@ Alle Variablen stehen in `.env.example`. `.env.local` ist gitignored und wird
 | `LAUTFM_RADIOADMIN_TOKEN`      | nein    | Meilensteine — **Admin-Schlüssel**, nur geheim   |
 | `LAUTFM_RADIOADMIN_ORIGIN`     | nein    | Origin des Tokens, Standard `https://www.voltfm.xyz` |
 | `CRON_SECRET`                  | nein    | Schützt `/api/cron/meilensteine`                 |
+| `DISCORD_SUGGESTIONS_CHANNEL_ID` | nein  | Kanal für Vorschläge, Standard `1574526503998455870` (liest und schreibt mit `DISCORD_BOT_TOKEN`) |
+| `DISCORD_PLAYLIST_IDEAS_CHANNEL_ID` | nein | Kanal für Playlist-Ideen, Standard `1574526506087219291` |
+| `DISCORD_API_BASE`             | nein    | Nur lokal: Test-Server statt Discord (auf Vercel ignoriert) |
 
 Fehlt eine optionale Variable, verschwindet nur das jeweilige Feature — die
 Seite läuft weiter. Ohne `DISCORD_CLIENT_ID` wird der Discord-Login schlicht

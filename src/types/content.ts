@@ -195,6 +195,20 @@ export interface MediaAsset {
   createdAt: Date;
 }
 
+/**
+ * Freigabe eines Vorschlags oder einer Playlist-Idee aus dem Discord. Der Text
+ * selbst wird nicht gespeichert — nur, dass die Nachricht auf die Seite darf.
+ */
+export interface IdeaApproval {
+  _id?: ObjectId;
+  /** ID der Discord-Nachricht. */
+  messageId: string;
+  kind: "vorschlag" | "playlist";
+  approvedAt: Date;
+  /** Wer freigegeben hat (Name im Admin). */
+  approvedBy: string;
+}
+
 export interface ContactMessage {
   _id?: ObjectId;
   name: string;

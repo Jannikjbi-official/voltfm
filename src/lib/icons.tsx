@@ -55,6 +55,7 @@ import {
   faRotateRight,
   faHouse,
   faEllipsis,
+  faLightbulb,
   faChevronLeft,
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -142,4 +143,5 @@ export const ListIcon = faListUl;
 export const RetryIcon = faRotateRight;
 export const HomeIcon = faHouse;
 export const MoreIcon = faEllipsis;
+export const IdeaIcon = faLightbulb;
 export const ChevronLeftIcon = faChevronLeft;
