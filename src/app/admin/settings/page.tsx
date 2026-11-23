@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { requireAdmin, requireCan } from "@/lib/session";
 import { serverEnv } from "@/lib/env";
 import { site } from "@/lib/site";
-import { discordNewsEnabled } from "@/services/discord/news";
+import { discordNewsEnabled, discordNewsTarget } from "@/services/discord/news";
 import { radioadminConfigured } from "@/services/lautfm/radioadmin";
 import { milestones } from "@/db/collections";
 import { formatDateTime } from "@/lib/format";
@@ -67,8 +67,12 @@ export default async function AdminSettingsPage() {
       label: "News im Discord",
       purpose: "Neue Artikel ankündigen",
       ...(discordNewsEnabled()
-        ? { status: "aktiv", tone: "success" as const, detail: `Kanal ${site.discordNewsChannelId}` }
-        : { status: "aus", tone: "default" as const, detail: "nur auf voltfm.xyz mit Bot-Token" }),
+        ? {
+            status: "aktiv",
+            tone: "success" as const,
+            detail: discordNewsTarget() === "webhook" ? "über Webhook" : `Bot, Kanal ${site.discordNewsChannelId}`,
+          }
+        : { status: "aus", tone: "default" as const, detail: "nur auf voltfm.xyz, mit Webhook oder Bot-Token" }),
     },
   ];
 
