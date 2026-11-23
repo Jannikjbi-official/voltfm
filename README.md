@@ -65,6 +65,7 @@ Alle Variablen stehen in `.env.example`. `.env.local` ist gitignored und wird
 | `DISCORD_CLIENT_SECRET`        | nein    | Discord-Login                                    |
 | `DISCORD_BOT_TOKEN`            | nein    | Discord-Avatare laden, News im Discord ankündigen |
 | `DISCORD_NEWS_CHANNEL_ID`      | nein    | Kanal für News, Standard `1570831941182161056`   |
+| `DISCORD_NEWS_WEBHOOK_URL`     | nein    | Webhook für News — **wie ein Passwort**, nur geheim; geht vor dem Bot |
 | `UPLOADTHING_TOKEN`            | nein    | Bild-Uploads im Admin                            |
 | `NEXT_PUBLIC_RADIO_STREAM_URL` | nein    | Stream-URL                                       |
 | `NEXT_PUBLIC_RADIO_STATION`    | nein    | laut.fm Slug, steuert alle Metadaten             |
