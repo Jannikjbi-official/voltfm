@@ -991,6 +991,40 @@ const MIGRATIONS: Migration[] = [
       return "Indexe für partners und ideaApprovals angelegt";
     },
   },
+  {
+    /* Toki als erster Partner (Rhythmusspiel, tokigame.com). Nur anlegen,
+       wenn es ihn noch nicht gibt — was im Admin geändert wurde, bleibt. Logo
+       und Banner liegen unter public/titelbilder/, ausgeliefert von voltfm.xyz. */
+    name: "025-partner-toki",
+    run: async (db, now) => {
+      const source = [
+        "Toki ist ein Rhythmusspiel mit nur einem Schläger: Du fängst, schlägst und weichst aus, immer im Takt. Aus jedem Song wird ein Level und eine Lichtshow.",
+        "",
+        "Mehr dazu auf [tokigame.com](https://tokigame.com/).",
+      ].join("\n");
+      const result = await db.collection("partners").updateOne(
+        { slug: "toki" },
+        {
+          $setOnInsert: {
+            slug: "toki",
+            name: "Toki",
+            kurz: "Ein Rhythmusspiel mit nur einem Schläger: fangen, schlagen und ausweichen im Takt.",
+            content: renderRichText(source),
+            contentSource: source,
+            logo: "/titelbilder/partner-toki-logo.png",
+            banner: "/titelbilder/partner-toki-banner.png",
+            links: [{ label: "Website", url: "https://tokigame.com/" }],
+            active: true,
+            order: 1,
+            createdAt: now,
+            updatedAt: now,
+          },
+        },
+        { upsert: true },
+      );
+      return result.upsertedCount ? "Partner Toki angelegt" : "Partner Toki gab es schon — unverändert";
+    },
+  },
 ];
 
 /* --- Der Lauf ------------------------------------------------------------- */

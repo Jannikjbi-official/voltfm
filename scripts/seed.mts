@@ -447,22 +447,9 @@ const events = [
 
 /* --- Partner ------------------------------------------------------------- */
 
-/* DEMO: Toki steht hier nur als Beispiel, damit /partner nicht leer ist. Vor
-   dem Einsatz auf einer echten Datenbank im Admin pruefen oder loeschen. */
-const partners = [
-  {
-    slug: "toki",
-    name: "Toki",
-    kurz: "Demo-Eintrag: Twitch-Streamer und Partner von VoltFM.",
-    content:
-      "<p>Dies ist ein Demo-Eintrag aus dem Seed-Skript. Im Admin unter Partner lässt sich der Text ersetzen.</p>",
-    contentSource:
-      "Dies ist ein Demo-Eintrag aus dem Seed-Skript. Im Admin unter Partner lässt sich der Text ersetzen.",
-    links: [{ label: "Twitch", url: "https://www.twitch.tv/toki" }],
-    active: true,
-    order: 1,
-  },
-];
+/* Partner kommen nicht aus dem Seed: Toki legt die Migration
+   025-partner-toki an (npm run migrate), weitere entstehen im Admin. */
+const partners: { slug: string; name: string; kurz: string; content: string; contentSource: string; links: { label: string; url: string }[]; active: boolean; order: number }[] = [];
 
 /* --- Upserts ------------------------------------------------------------- */
 
