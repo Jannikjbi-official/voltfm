@@ -7,7 +7,17 @@ import { Icon, LogoutIcon, MoreIcon, SearchIcon, UserIcon, WarningIcon, CheckIco
 import type { EntityFormState } from "@/components/admin/entity-types";
 import { useActionFeedback } from "@/components/admin/use-action-feedback";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
-import { AdminTable, PillCount, StatusBadge, Td, Th, filterPillClass, trClass } from "@/components/admin/admin-ui";
+import {
+  AdminTable,
+  PillCount,
+  StatusBadge,
+  Td,
+  Th,
+  emptyWellClass,
+  filterPillClass,
+  filterRowClass,
+  trClass,
+} from "@/components/admin/admin-ui";
 import { formatDate } from "@/lib/format";
 
 const initial: EntityFormState = { status: "idle" };
@@ -114,11 +124,11 @@ export function UserTable({
   });
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-2">
       {/* Erfolg meldet der Toast; ein Fehler bleibt zusaetzlich stehen. */}
       {state.status === "error" && state.message && <FormMessage status="error">{state.message}</FormMessage>}
 
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+      <div className="surface-card flex flex-col gap-2 rounded-[var(--radius)] p-2 lg:flex-row lg:items-center lg:justify-between">
         <div className="relative w-full lg:max-w-xs">
           <Icon
             icon={SearchIcon}
@@ -134,7 +144,7 @@ export function UserTable({
           />
         </div>
 
-        <div role="group" aria-label="Nach Rolle filtern" className="-mx-1 flex gap-1.5 overflow-x-auto px-1 py-1">
+        <div role="group" aria-label="Nach Rolle filtern" className={filterRowClass}>
           {filters.map((entry) => (
             <button
               key={entry.id}
@@ -151,7 +161,7 @@ export function UserTable({
       </div>
 
       {visible.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-border px-6 py-10 text-center text-sm text-muted">
+        <p className={emptyWellClass}>
           Niemand passt dazu.
         </p>
       ) : (
@@ -175,14 +185,16 @@ export function UserTable({
                   <Td className="w-full max-w-0">
                     <div className="flex items-center gap-3">
                       <Avatar size="sm" className="size-9 shrink-0">
-                        <Avatar.Fallback className={cn("text-xs font-semibold", user.isSelf && "bg-volt text-ink")}>
+                        <Avatar.Fallback
+                          className={cn("font-mono text-xs font-semibold", user.isSelf && "bg-volt text-graphite")}
+                        >
                           {name.slice(0, 2).toUpperCase()}
                         </Avatar.Fallback>
                       </Avatar>
                       <div className="min-w-0">
                         <p className="flex items-center gap-2 font-semibold text-foreground">
                           <span className="truncate">{name}</span>
-                          {user.isSelf && <span className="shrink-0 text-xs font-medium text-muted">(du)</span>}
+                          {user.isSelf && <span className="shrink-0 font-meta text-muted">(du)</span>}
                         </p>
                         <p className="truncate text-xs text-muted">
                           {user.email}
@@ -289,7 +301,7 @@ export function UserTable({
               description="Die Person wird abgemeldet, damit die neue Rolle sofort gilt."
             />
             {roleUser.bootstrapAdmin && (
-              <p className="rounded-xl bg-surface-secondary px-3 py-2 text-xs text-muted">
+              <p className="well rounded-[var(--radius)] px-3 py-2 text-xs text-muted">
                 Admin über ADMIN_USER_IDS — eine andere Rolle hier ändert daran nichts.
               </p>
             )}

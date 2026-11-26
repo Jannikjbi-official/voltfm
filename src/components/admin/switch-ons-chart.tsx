@@ -39,9 +39,9 @@ function niceStep(max: number, lines = 4): number {
   return Math.max(1, factor * power);
 }
 
-/** Balken mit runder Oberkante und gerader Grundlinie. */
+/** Balken mit kaum gerundeter Oberkante und gerader Grundlinie — kantig wie ein Pegel. */
 function barPath(x: number, y: number, width: number, height: number): string {
-  const r = Math.min(4, width / 2, height);
+  const r = Math.min(1.5, width / 2, height);
   return [
     `M${x},${y + height}`,
     `V${y + r}`,
@@ -107,7 +107,7 @@ export function SwitchOnsChart({ days }: { days: ChartDay[] }) {
 
   return (
     <div className="flex flex-col gap-5">
-      <dl className="grid grid-cols-3 gap-3">
+      <dl className="grid grid-cols-3 gap-2">
         {[
           { label: "Summe", value: numberFormat.format(total) },
           { label: "Im Schnitt", value: average === null ? "—" : numberFormat.format(average) },
@@ -117,123 +117,126 @@ export function SwitchOnsChart({ days }: { days: ChartDay[] }) {
             hint: best ? axisFormat.format(toDate(best.date)) : undefined,
           },
         ].map((item) => (
-          <div key={item.label} className="min-w-0 rounded-xl bg-surface-secondary px-3 py-2.5">
-            <dt className="truncate text-xs text-muted">{item.label}</dt>
-            <dd className="mt-0.5 flex items-baseline gap-1.5 text-lg font-bold text-foreground">
+          <div key={item.label} className="display-panel min-w-0 rounded-[var(--radius)] px-3 py-2.5">
+            <dt className="truncate font-meta text-display-muted">{item.label}</dt>
+            <dd className="mt-1 flex flex-wrap items-baseline gap-x-1.5 font-dot text-xl leading-none text-display-foreground">
               {item.value}
-              {item.hint && <span className="font-mono text-xs font-normal text-muted">{item.hint}</span>}
+              {item.hint && <span className="font-mono text-xs font-normal text-display-muted">{item.hint}</span>}
             </dd>
           </div>
         ))}
       </dl>
 
-      <div ref={wrapRef} className="relative" style={{ height: HEIGHT }}>
-        {width > 0 && (
-          <svg
-            width={width}
-            height={HEIGHT}
-            role="img"
-            aria-labelledby={titleId}
-            className="block overflow-visible select-none"
-            onPointerLeave={() => setActive(null)}
-          >
-            <title id={titleId}>
-              {`Einschaltungen pro Tag, ${days.length} Tage, zusammen ${numberFormat.format(total)}.`}
-            </title>
+      {/* Das Diagramm steht auf einem Display: gelbe Saeulen auf Schwarz. */}
+      <div className="display-panel display-dots rounded-[var(--radius)] px-2 pt-3 pb-1">
+        <div ref={wrapRef} className="relative" style={{ height: HEIGHT }}>
+          {width > 0 && (
+            <svg
+              width={width}
+              height={HEIGHT}
+              role="img"
+              aria-labelledby={titleId}
+              className="block overflow-visible select-none"
+              onPointerLeave={() => setActive(null)}
+            >
+              <title id={titleId}>
+                {`Einschaltungen pro Tag, ${days.length} Tage, zusammen ${numberFormat.format(total)}.`}
+              </title>
 
-            {ticks.map((tick) => (
-              <g key={tick}>
-                <line
-                  x1={PAD.left}
-                  x2={width - PAD.right}
-                  y1={Math.round(y(tick)) + 0.5}
-                  y2={Math.round(y(tick)) + 0.5}
-                  className={tick === 0 ? "stroke-border" : "stroke-separator"}
-                  strokeWidth={1}
-                />
-                <text
-                  x={PAD.left - 10}
-                  y={y(tick)}
-                  dy="0.32em"
-                  textAnchor="end"
-                  className="fill-muted font-mono text-[11px] tabular-nums"
-                >
-                  {numberFormat.format(tick)}
-                </text>
-              </g>
-            ))}
-
-            {days.map((day, index) => {
-              const value = day.switchOns;
-              const barH = value ? Math.max(1, (value / top) * plotH) : 0;
-              return (
-                <g key={day.date}>
-                  {value !== null && value > 0 && (
-                    <path
-                      d={barPath(x(index), PAD.top + plotH - barH, barW, barH)}
-                      className={cn(
-                        "fill-accent-text transition-opacity duration-150 motion-reduce:transition-none",
-                        day.partial && "opacity-45",
-                        active !== null && active !== index && "opacity-35",
-                      )}
-                    />
-                  )}
-                  {labelled.has(index) && (
-                    <text
-                      x={x(index) + barW / 2}
-                      y={HEIGHT - 6}
-                      textAnchor="middle"
-                      className="fill-muted font-mono text-[11px] tabular-nums"
-                    >
-                      {axisFormat.format(toDate(day.date))}
-                    </text>
-                  )}
-                  {/* Trefferflaeche: die ganze Spalte, nicht nur der Balken. */}
-                  <rect
-                    x={PAD.left + index * band}
-                    y={PAD.top}
-                    width={band}
-                    height={plotH}
-                    fill="transparent"
-                    onPointerEnter={() => setActive(index)}
+              {ticks.map((tick) => (
+                <g key={tick}>
+                  <line
+                    x1={PAD.left}
+                    x2={width - PAD.right}
+                    y1={Math.round(y(tick)) + 0.5}
+                    y2={Math.round(y(tick)) + 0.5}
+                    className={tick === 0 ? "stroke-display-muted/60" : "stroke-display-muted/20"}
+                    strokeWidth={1}
                   />
+                  <text
+                    x={PAD.left - 10}
+                    y={y(tick)}
+                    dy="0.32em"
+                    textAnchor="end"
+                    className="fill-display-muted font-mono text-[11px] tabular-nums"
+                  >
+                    {numberFormat.format(tick)}
+                  </text>
                 </g>
-              );
-            })}
-          </svg>
-        )}
+              ))}
 
-        {activeDay && (
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-xl border border-border bg-overlay px-3 py-2 text-xs whitespace-nowrap text-foreground shadow-overlay"
-            style={{ left: tooltipLeft, top: tooltipTop - 8 }}
-          >
-            <p className="text-muted">
-              {longFormat.format(toDate(activeDay.date))}
-              {activeDay.partial && ", bisher"}
-            </p>
-            <p className="mt-0.5 text-sm font-bold">
-              {activeDay.switchOns === null
-                ? "Keine Daten"
-                : `${numberFormat.format(activeDay.switchOns)} Einschaltungen`}
-            </p>
-          </div>
-        )}
+              {days.map((day, index) => {
+                const value = day.switchOns;
+                const barH = value ? Math.max(1, (value / top) * plotH) : 0;
+                return (
+                  <g key={day.date}>
+                    {value !== null && value > 0 && (
+                      <path
+                        d={barPath(x(index), PAD.top + plotH - barH, barW, barH)}
+                        className={cn(
+                          "fill-volt transition-opacity duration-150 motion-reduce:transition-none",
+                          day.partial && "opacity-45",
+                          active !== null && active !== index && "opacity-35",
+                        )}
+                      />
+                    )}
+                    {labelled.has(index) && (
+                      <text
+                        x={x(index) + barW / 2}
+                        y={HEIGHT - 6}
+                        textAnchor="middle"
+                        className="fill-display-muted font-mono text-[11px] tabular-nums"
+                      >
+                        {axisFormat.format(toDate(day.date))}
+                      </text>
+                    )}
+                    {/* Trefferflaeche: die ganze Spalte, nicht nur der Balken. */}
+                    <rect
+                      x={PAD.left + index * band}
+                      y={PAD.top}
+                      width={band}
+                      height={plotH}
+                      fill="transparent"
+                      onPointerEnter={() => setActive(index)}
+                    />
+                  </g>
+                );
+              })}
+            </svg>
+          )}
+
+          {activeDay && (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-[var(--radius)] border border-border bg-overlay px-3 py-2 text-xs whitespace-nowrap text-foreground shadow-overlay"
+              style={{ left: tooltipLeft, top: tooltipTop - 8 }}
+            >
+              <p className="font-meta text-muted">
+                {longFormat.format(toDate(activeDay.date))}
+                {activeDay.partial && ", bisher"}
+              </p>
+              <p className="mt-0.5 text-sm font-bold">
+                {activeDay.switchOns === null
+                  ? "Keine Daten"
+                  : `${numberFormat.format(activeDay.switchOns)} Einschaltungen`}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       <details className="group text-sm">
-        <summary className="w-fit cursor-pointer rounded-full text-xs font-medium text-muted transition-colors hover:text-foreground">
+        <summary className="w-fit cursor-pointer rounded-[3px] font-meta text-muted transition-colors hover:text-foreground">
           Als Tabelle anzeigen
         </summary>
-        <div className="mt-3 max-h-64 overflow-y-auto rounded-xl border border-separator">
+        <div className="mt-3 max-h-64 overflow-y-auto rounded-[var(--radius)] border border-border">
           <table className="w-full text-left text-sm">
             <thead className="sticky top-0 bg-surface">
               <tr>
-                <th scope="col" className="border-b border-separator px-3 py-2 text-xs font-medium text-muted">
+                <th scope="col" className="border-b border-border px-3 py-2 font-meta font-normal text-muted">
                   Tag
                 </th>
-                <th scope="col" className="border-b border-separator px-3 py-2 text-right text-xs font-medium text-muted">
+                <th scope="col" className="border-b border-border px-3 py-2 text-right font-meta font-normal text-muted">
                   Einschaltungen
                 </th>
               </tr>

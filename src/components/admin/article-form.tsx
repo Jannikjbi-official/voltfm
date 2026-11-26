@@ -24,14 +24,17 @@ const initial: ArticleFormState = { status: "idle" };
 
 const STATUS_ORDER: ArticleStatus[] = ["draft", "scheduled", "published", "archived"];
 
-/** Eine Karte in der Einstellungs-Spalte. */
+/** Ein Modul in der Einstellungs-Spalte: Platte mit abgesetzter Kopfzeile. */
 function SettingsCard({ title, id, children }: { title: string; id: string; children: React.ReactNode }) {
   return (
-    <section aria-labelledby={id} className="surface-card flex flex-col gap-4 rounded-2xl p-5">
-      <h2 id={id} className="text-sm font-bold text-foreground">
+    <section aria-labelledby={id} className="surface-card overflow-hidden rounded-[var(--radius)]">
+      <h2
+        id={id}
+        className="border-b border-separator bg-surface-secondary/50 px-4 py-2.5 font-wide text-[0.95rem] font-bold text-foreground"
+      >
         {title}
       </h2>
-      {children}
+      <div className="flex flex-col gap-4 p-4">{children}</div>
     </section>
   );
 }
@@ -79,8 +82,9 @@ export function ArticleForm({
   );
 
   return (
-    <div className="flex flex-col gap-5">
-      <div className="sticky top-20 z-20 flex items-center gap-2 rounded-2xl border border-border bg-[color-mix(in_oklab,var(--surface)_88%,transparent)] p-2 shadow-surface backdrop-blur-xl">
+    <div className="flex flex-col gap-2">
+      {/* Die Aktionsleiste ist eine Bedienplatte, die unter der Kopfleiste stehen bleibt. */}
+      <div className="surface-card sticky top-[4.5rem] z-20 flex items-center gap-1.5 rounded-[var(--radius)] p-2 sm:gap-2">
         <ButtonLink
           href="/admin/news"
           variant="ghost"
@@ -98,7 +102,10 @@ export function ArticleForm({
         <div className="relative">
           <span
             aria-hidden="true"
-            className={cn("absolute top-1/2 left-3 size-2 -translate-y-1/2 rounded-full", DOT[ARTICLE_STATUS[status].color])}
+            className={cn(
+              "absolute top-1/2 left-3 size-[7px] -translate-y-1/2 rounded-full ring-2",
+              DOT[ARTICLE_STATUS[status].color],
+            )}
           />
           <select
             id={statusId}
@@ -106,7 +113,7 @@ export function ArticleForm({
             form={formId}
             value={status}
             onChange={(event) => setStatus(event.target.value as ArticleStatus)}
-            className="h-9 cursor-pointer appearance-none rounded-full bg-default pr-8 pl-7 text-sm font-semibold text-foreground outline-none focus-visible:ring-2 focus-visible:ring-focus"
+            className="well h-9 max-w-[8.75rem] cursor-pointer appearance-none truncate rounded-[var(--radius)] pr-7 pl-7 sm:max-w-none sm:pr-8 font-mono text-[0.8rem] font-medium text-foreground lowercase outline-none focus-visible:ring-2 focus-visible:ring-focus"
           >
             {STATUS_ORDER.map((value) => (
               <option key={value} value={value}>
@@ -123,7 +130,7 @@ export function ArticleForm({
           </svg>
         </div>
 
-        <p className="hidden min-w-0 flex-1 truncate px-2 text-xs text-muted md:block" suppressHydrationWarning>
+        <p className="hidden min-w-0 flex-1 truncate px-2 font-meta text-muted md:block" suppressHydrationWarning>
           {article ? `Zuletzt gespeichert ${formatRelative(article.updatedAt)}` : "Noch nicht gespeichert"}
         </p>
 
@@ -175,13 +182,13 @@ export function ArticleForm({
       <form
         id={formId}
         action={formAction}
-        className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_19rem] xl:grid-cols-[minmax(0,1fr)_21rem]"
+        className="grid grid-cols-1 items-start gap-2 lg:grid-cols-[minmax(0,1fr)_19rem] xl:grid-cols-[minmax(0,1fr)_21rem]"
       >
         {article && <input type="hidden" name="id" value={article.id} />}
 
-        <div className="surface-card flex min-w-0 flex-col gap-6 rounded-2xl p-5 sm:p-7">
+        <div className="surface-card flex min-w-0 flex-col gap-6 rounded-[var(--radius)] p-4 sm:p-6">
           <div className="flex flex-col gap-1.5">
-            <label htmlFor={titleId} className="label label--required">
+            <label htmlFor={titleId} className="label font-mono text-xs font-medium lowercase text-foreground label--required">
               Titel
             </label>
             {/* Gross wie eine Ueberschrift — man schreibt hier ja eine. */}
@@ -193,7 +200,7 @@ export function ArticleForm({
               maxLength={160}
               defaultValue={article?.title}
               placeholder="Worum geht es?"
-              className="input h-auto w-full py-3 text-xl font-bold tracking-tight sm:text-2xl"
+              className="input h-auto w-full py-3 font-wide text-xl font-bold sm:text-2xl"
             />
           </div>
 
@@ -223,7 +230,7 @@ export function ArticleForm({
           />
         </div>
 
-        <aside aria-label="Einstellungen" className="flex min-w-0 flex-col gap-4">
+        <aside aria-label="Einstellungen" className="flex min-w-0 flex-col gap-2">
           <SettingsCard title="Veröffentlichung" id={`${formId}-publish`}>
             <SelectField
               name="categorySlug"
@@ -243,7 +250,7 @@ export function ArticleForm({
               description={<>Für &bdquo;Geplant&ldquo; ein Datum in der Zukunft setzen.</>}
             />
 
-            <div className="flex flex-col gap-3 rounded-xl bg-surface-secondary p-3.5">
+            <div className="well flex flex-col gap-3 rounded-[var(--radius)] p-3.5">
               <CheckboxField name="featured" label="Als Aufmacher hervorheben" defaultChecked={article?.featured} />
 
               {/* Fehlt der Wert (neuer Beitrag), ist der Haken gesetzt. */}
@@ -260,7 +267,7 @@ export function ArticleForm({
             </div>
           </SettingsCard>
 
-          <section aria-label="Titelbild" className="surface-card flex flex-col gap-4 rounded-2xl p-5">
+          <section aria-label="Titelbild" className="surface-card flex flex-col gap-4 rounded-[var(--radius)] p-4">
             {/* Die Ueberschrift kommt von <ImageUpload> selbst — zweimal
                 "Titelbild" untereinander waere nur Laerm. */}
             <ImageUpload name="coverImage" value={article?.coverImage} label="Titelbild" endpoint="articleImage" />
@@ -300,7 +307,7 @@ export function ArticleForm({
             <div className="flex items-center gap-3">
               <span
                 aria-hidden="true"
-                className="grid size-9 shrink-0 place-items-center rounded-full bg-volt text-sm font-bold text-ink"
+                className="grid size-9 shrink-0 place-items-center rounded-[var(--radius)] bg-volt font-mono text-sm font-bold text-graphite"
               >
                 {(article?.authorName ?? authorName).trim().charAt(0).toUpperCase() || "V"}
               </span>

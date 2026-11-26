@@ -87,7 +87,7 @@ export function SocialLinksField({
 
   return (
     <div role="group" aria-labelledby={labelId} className="flex min-w-0 flex-col gap-2">
-      <span id={labelId} className="label">
+      <span id={labelId} className="label font-mono text-xs font-medium lowercase text-foreground">
         Social Links
       </span>
 
@@ -98,7 +98,7 @@ export function SocialLinksField({
             return (
               <li
                 key={index}
-                className="grid grid-cols-[minmax(0,1fr)_auto] gap-2 rounded-2xl bg-surface-secondary p-2.5 sm:grid-cols-[9.5rem_minmax(0,1fr)_auto] sm:items-center"
+                className="well grid grid-cols-[minmax(0,1fr)_auto] gap-2 rounded-[var(--radius)] p-2 sm:grid-cols-[9.5rem_minmax(0,1fr)_auto] sm:items-center"
               >
                 <div className="relative">
                   <select

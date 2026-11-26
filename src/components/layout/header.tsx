@@ -76,8 +76,8 @@ export function Header({ nav, account }: { nav: NavItem[]; account: AccountAvata
       </div>
 
       <Drawer.Backdrop isOpen={mobileOpen} onOpenChange={setMobileOpen}>
-        <Drawer.Content placement="right" className="w-[min(24rem,92vw)]">
-          <Drawer.Dialog aria-label="Navigation">
+        <Drawer.Content placement="right">
+          <Drawer.Dialog aria-label="Navigation" className="w-[min(24rem,92vw)]">
             <Drawer.CloseTrigger aria-label="Menü schließen" />
             <Drawer.Header>
               <Drawer.Heading className="font-meta text-muted">navigation</Drawer.Heading>

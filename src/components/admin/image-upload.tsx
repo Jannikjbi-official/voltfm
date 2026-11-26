@@ -55,7 +55,7 @@ export function ImageUpload({
 
   return (
     <div role="group" aria-labelledby={labelId} className="flex min-w-0 flex-col gap-2">
-      <span id={labelId} className="label">
+      <span id={labelId} className="label font-mono text-xs font-medium lowercase text-foreground">
         {label}
       </span>
 
@@ -72,7 +72,7 @@ export function ImageUpload({
       />
 
       {url ? (
-        <div className="group relative overflow-hidden rounded-2xl bg-surface-secondary">
+        <div className="well group relative overflow-hidden rounded-[var(--radius)]">
           <Image
             src={url}
             alt=""
@@ -92,7 +92,7 @@ export function ImageUpload({
               size="sm"
               variant="secondary"
               isDisabled={isUploading}
-              className="bg-ink/75 text-paper backdrop-blur hover:bg-ink"
+              className="bg-graphite text-paper hover:bg-graphite/85"
               onPress={() => inputRef.current?.click()}
             >
               <Icon icon={ImageIcon} />
@@ -104,7 +104,7 @@ export function ImageUpload({
               variant="secondary"
               isIconOnly
               aria-label="Bild entfernen"
-              className="bg-ink/75 text-paper backdrop-blur hover:bg-danger hover:text-danger-foreground"
+              className="bg-graphite text-paper hover:bg-danger hover:text-danger-foreground"
               onPress={() => setUrl("")}
             >
               <Icon icon={DeleteIcon} />
@@ -129,17 +129,15 @@ export function ImageUpload({
             pick(event.dataTransfer?.files);
           }}
           className={cn(
-            "flex aspect-video w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed text-muted transition-colors outline-none focus-visible:ring-2 focus-visible:ring-focus",
-            dragOver
-              ? "border-volt bg-accent-soft text-foreground"
-              : "border-[color-mix(in_oklab,var(--foreground)_18%,transparent)] bg-surface-secondary hover:border-[color-mix(in_oklab,var(--foreground)_35%,transparent)] hover:text-foreground",
+            "well flex aspect-video w-full flex-col items-center justify-center gap-2 rounded-[var(--radius)] text-muted transition-colors outline-none focus-visible:ring-2 focus-visible:ring-focus",
+            dragOver ? "bg-accent-soft text-foreground ring-2 ring-volt" : "hover:text-foreground",
           )}
         >
-          <span className="grid size-10 place-items-center rounded-xl bg-surface text-sm">
+          <span className="key grid size-10 place-items-center rounded-[var(--radius)] bg-surface text-sm ring-1 ring-border">
             <Icon icon={isUploading ? LoadingIcon : ImageIcon} spin={isUploading} />
           </span>
           <span className="text-sm font-semibold">{isUploading ? "Wird hochgeladen …" : "Bild hochladen"}</span>
-          <span className="text-xs">oder hierher ziehen</span>
+          <span className="font-meta">oder hierher ziehen</span>
         </button>
       )}
 

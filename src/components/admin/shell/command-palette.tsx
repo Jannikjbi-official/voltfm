@@ -2,7 +2,7 @@
 
 import { useId, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Kbd, Modal, cn } from "@heroui/react";
+import { Modal, cn } from "@heroui/react";
 import { Icon, SearchIcon, type IconDefinition } from "@/lib/icons";
 
 export interface PaletteEntry {
@@ -95,9 +95,13 @@ export function CommandPalette({
       onOpenChange={(next) => (next ? onOpenChange(true) : close())}
     >
       <Modal.Container placement="top" size="md">
-        <Modal.Dialog aria-label="Befehle" className="gap-0 overflow-hidden p-0 sm:mt-[12vh]">
-          <div className="flex items-center gap-3 border-b border-separator px-4">
-            <Icon icon={SearchIcon} className="shrink-0 text-sm text-muted" />
+        {/* Die Palette ist ein Display: schwarz, eingelassen, die Auswahl gelb. */}
+        <Modal.Dialog
+          aria-label="Befehle"
+          className="display-panel gap-0 overflow-hidden rounded-[var(--radius)] bg-display p-0 text-display-foreground sm:mt-[12vh]"
+        >
+          <div className="display-dots flex items-center gap-3 border-b border-display-muted/25 px-4">
+            <span aria-hidden="true" className="led shrink-0" />
             <input
               autoFocus
               value={query}
@@ -112,18 +116,26 @@ export function CommandPalette({
               aria-controls={listId}
               aria-activedescendant={activeId}
               aria-label="Bereich oder Aktion suchen"
-              className="h-14 min-w-0 flex-1 bg-transparent text-base text-foreground outline-none placeholder:text-field-placeholder"
+              className="h-14 min-w-0 flex-1 bg-transparent font-mono text-[0.95rem] text-display-foreground caret-volt outline-none placeholder:text-display-muted"
             />
-            <Kbd className="hidden sm:inline-flex">Esc</Kbd>
+            <Icon icon={SearchIcon} className="shrink-0 text-sm text-display-muted sm:hidden" />
+            <kbd className="hidden rounded-[3px] border border-display-muted/40 px-1.5 py-px font-mono text-[0.65rem] text-display-muted sm:inline-flex">
+              Esc
+            </kbd>
           </div>
 
-          <div id={listId} role="listbox" aria-label="Ergebnisse" className="max-h-[min(60vh,28rem)] overflow-y-auto p-2">
+          <div
+            id={listId}
+            role="listbox"
+            aria-label="Ergebnisse"
+            className="max-h-[min(60vh,28rem)] overflow-y-auto p-2 [scrollbar-color:var(--display-muted)_transparent]"
+          >
             {results.length === 0 ? (
-              <p className="px-3 py-8 text-center text-sm text-muted">Nichts gefunden.</p>
+              <p className="px-3 py-8 text-center font-mono text-sm text-display-muted">Nichts gefunden.</p>
             ) : (
               groups.map(([group, items]) => (
                 <div key={group} role="group" aria-label={group} className="py-1">
-                  <p className="px-3 pt-2 pb-1 text-xs font-medium text-muted">{group}</p>
+                  <p className="px-3 pt-2 pb-1 font-meta text-display-muted">{group}</p>
                   {items.map(({ entry, index }) => (
                     <div
                       key={entry.id}
@@ -133,20 +145,29 @@ export function CommandPalette({
                       onMouseMove={() => setActive(index)}
                       onClick={() => execute(entry)}
                       className={cn(
-                        "flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-foreground",
-                        index === active && "bg-default font-semibold",
+                        "flex cursor-pointer items-center gap-3 rounded-[calc(var(--radius)-2px)] px-3 py-2 text-sm",
+                        index === active
+                          ? "bg-[color-mix(in_oklab,var(--display-foreground)_9%,transparent)] font-semibold text-volt"
+                          : "text-display-foreground",
                       )}
                     >
                       <span
                         aria-hidden="true"
                         className={cn(
-                          "grid size-7 shrink-0 place-items-center rounded-lg text-xs",
-                          index === active ? "bg-volt text-ink" : "bg-surface-secondary text-muted",
+                          "grid size-7 shrink-0 place-items-center rounded-[3px] text-xs",
+                          index === active
+                            ? "bg-volt text-graphite"
+                            : "bg-[color-mix(in_oklab,var(--display-foreground)_8%,transparent)] text-display-muted",
                         )}
                       >
                         <Icon icon={entry.icon} />
                       </span>
-                      {entry.label}
+                      <span className="min-w-0 flex-1 truncate">{entry.label}</span>
+                      {index === active && (
+                        <span aria-hidden="true" className="font-mono text-[0.7rem] text-display-muted">
+                          ↵
+                        </span>
+                      )}
                     </div>
                   ))}
                 </div>

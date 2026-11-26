@@ -5,7 +5,7 @@ import { requireCan } from "@/lib/session";
 import { UserTable, type AdminUser } from "./user-table";
 import { setUserRole, setUserBanned, revokeUserSessions } from "./actions";
 import { ASSIGNABLE_ROLES, ROLE_LABELS } from "./roles";
-import { AdminPageHeader } from "@/components/admin/admin-ui";
+import { AdminPageHeader, emptyWellClass } from "@/components/admin/admin-ui";
 
 export const metadata: Metadata = { title: "Benutzer · Admin", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -69,11 +69,11 @@ export default async function AdminUsersPage() {
       />
 
       {error ? (
-        <p className="rounded-2xl border border-dashed border-border px-6 py-10 text-center text-sm text-muted">
+        <p className={emptyWellClass}>
           {error}
         </p>
       ) : users.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-border px-6 py-10 text-center text-sm text-muted">
+        <p className={emptyWellClass}>
           Noch keine Benutzer registriert.
         </p>
       ) : (

@@ -41,14 +41,14 @@ export function ConfirmDialog({
   return (
     <AlertDialog.Backdrop isOpen={isOpen} onOpenChange={onOpenChange}>
       <AlertDialog.Container>
-        <AlertDialog.Dialog className="sm:max-w-[28rem]">
+        <AlertDialog.Dialog className="rounded-[var(--radius)] border border-border sm:max-w-[28rem]">
           <form action={action} className="contents">
             {Object.entries(fields).map(([name, value]) => (
               <input key={name} type="hidden" name={name} value={value} />
             ))}
             <AlertDialog.Header>
               <AlertDialog.Icon status={status} />
-              <AlertDialog.Heading className="font-wide">{title}</AlertDialog.Heading>
+              <AlertDialog.Heading className="font-wide font-bold">{title}</AlertDialog.Heading>
             </AlertDialog.Header>
             <AlertDialog.Body className="flex flex-col gap-4 text-sm leading-relaxed">
               {description && <div>{description}</div>}

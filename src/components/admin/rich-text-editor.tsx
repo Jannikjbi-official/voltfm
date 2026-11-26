@@ -164,7 +164,7 @@ export function RichTextEditor({
 
   return (
     <div className="flex min-w-0 flex-col gap-1.5">
-      <label htmlFor={id} className={cn("label", required && "label--required")}>
+      <label htmlFor={id} className={cn("label font-mono text-xs font-medium lowercase text-foreground", required && "label--required")}>
         {label}
       </label>
 
@@ -177,7 +177,7 @@ export function RichTextEditor({
         <div
           role="toolbar"
           aria-label="Werkzeuge"
-          className="flex flex-wrap items-center gap-2 border-b border-separator bg-surface-secondary/60 px-2 py-2"
+          className="flex flex-wrap items-center gap-2 border-b border-[var(--field-border)] bg-surface-secondary px-2 pt-2 pb-2.5"
         >
           {/* Direkt die Dateiauswahl statt eines Zwischendialogs: Bildunterschrift
               und Beschreibung stehen danach im Text und lassen sich dort
@@ -221,7 +221,7 @@ export function RichTextEditor({
             </Button>
           )}
 
-          <span className="hidden text-xs text-muted sm:inline">
+          <span className="hidden font-meta text-muted sm:inline">
             oder Bild in das Textfeld ziehen bzw. einfügen
           </span>
         </div>
@@ -267,7 +267,7 @@ export function RichTextEditor({
 
         {preview && (
           <div className="px-4 py-4">
-            <p className="mb-4 rounded-lg bg-surface-secondary px-3 py-2 text-xs text-muted">
+            <p className="well mb-4 rounded-[var(--radius)] px-3 py-2 text-xs text-muted">
               So sieht der Beitrag aus. Was hier fehlt, wird auch beim Speichern
               entfernt.
             </p>
@@ -288,13 +288,13 @@ export function RichTextEditor({
         </p>
       )}
 
-      <p className="text-xs text-muted [&_code]:rounded [&_code]:bg-surface-secondary [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono">
+      <p className="text-xs text-muted [&_code]:rounded-[3px] [&_code]:bg-surface-secondary [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono">
         <code>## Überschrift</code>, <code>**fett**</code>,{" "}
         <code>[Link](https://…)</code>, <code>- Liste</code>, <code>&gt; Zitat</code> —{" "}
         <Link
           href="/admin/markdown"
           target="_blank"
-          className="rounded-sm font-medium text-foreground underline underline-offset-4"
+          className="rounded-[3px] font-medium text-foreground underline underline-offset-4"
         >
           alles Weitere
         </Link>

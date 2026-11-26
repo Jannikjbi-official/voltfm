@@ -17,7 +17,7 @@ import { RichTextEditor } from "./rich-text-editor";
 import { SocialLinksField } from "./social-links-field";
 import { AccentColorField } from "./accent-color-field";
 import { ConfirmDialog } from "./confirm-dialog";
-import { AdminTable, StatusBadge, Td, Th, trClass } from "./admin-ui";
+import { AdminTable, DOT, StatusBadge, Td, Th, trClass } from "./admin-ui";
 import type { EntityFormState, EntityRow, FieldDef } from "./entity-types";
 import { useActionFeedback } from "./use-action-feedback";
 
@@ -147,11 +147,12 @@ export function EntityManager({
   const messageStatus = feedback?.status === "success" ? "success" : "error";
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-2">
       {/* Erfolg meldet der Toast; ein Fehler bleibt zusaetzlich stehen. */}
       {message && !formOpen && messageStatus === "error" && <FormMessage status="error">{message}</FormMessage>}
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      {/* Bedienleiste: Suche links, Zaehler und "Anlegen" rechts. */}
+      <div className="surface-card flex flex-col gap-2 rounded-[var(--radius)] p-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full sm:max-w-xs">
           <Icon
             icon={SearchIcon}
@@ -167,8 +168,8 @@ export function EntityManager({
           />
         </div>
 
-        <div className="flex items-center gap-4">
-          <span className="text-xs text-muted">
+        <div className="flex items-center justify-between gap-3 pl-1 sm:justify-end">
+          <span className="font-meta text-muted tabular-nums">
             {visible.length === rows.length ? `${rows.length} vorhanden` : `${visible.length} von ${rows.length}`}
           </span>
           {canCreate && (
@@ -187,15 +188,15 @@ export function EntityManager({
       </div>
 
       {!canCreate && createBlockedText && (
-        <p className="rounded-2xl border border-dashed border-[color-mix(in_oklab,var(--foreground)_18%,transparent)] p-4 text-sm text-muted">{createBlockedText}</p>
+        <p className="well rounded-[var(--radius)] p-4 text-sm text-muted">{createBlockedText}</p>
       )}
 
       {rows.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-[color-mix(in_oklab,var(--foreground)_18%,transparent)] px-6 py-12 text-center">
-          <p className="text-lg font-bold text-foreground">{emptyText}</p>
+        <div className="well rounded-[var(--radius)] px-6 py-12 text-center">
+          <p className="font-wide text-lg font-bold text-foreground">{emptyText}</p>
         </div>
       ) : visible.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-[color-mix(in_oklab,var(--foreground)_18%,transparent)] px-6 py-8 text-center text-sm text-muted">Nichts gefunden.</p>
+        <p className="well rounded-[var(--radius)] px-6 py-8 text-center text-sm text-muted">Nichts gefunden.</p>
       ) : (
         <AdminTable>
           <thead>
@@ -265,17 +266,24 @@ export function EntityManager({
       )}
 
       <Drawer.Backdrop isOpen={formOpen} onOpenChange={(open) => !open && closeForm()}>
-        <Drawer.Content placement="right" className="w-[min(44rem,100vw)]">
-          <Drawer.Dialog aria-label={editing ? `${singular} bearbeiten` : addLabel} className="flex h-full flex-col p-0">
+        <Drawer.Content placement="right">
+          {/* Das Panel ist eine Platte, die von rechts ins Gehaeuse geschoben wird. */}
+          <Drawer.Dialog
+            aria-label={editing ? `${singular} bearbeiten` : addLabel}
+            className="flex h-full w-[min(44rem,100vw)] max-w-[100vw] flex-col border-l border-border bg-surface p-0 sm:w-[min(44rem,100vw)]"
+          >
             <Drawer.CloseTrigger aria-label="Schließen" className="top-4 right-4" />
-            <Drawer.Header className="border-b border-separator px-6 pt-5 pb-4">
-              <p className="text-xs font-medium text-muted">{editing ? "Bearbeiten" : "Neu"}</p>
-              <Drawer.Heading className="mt-1 pr-10 font-display text-3xl">
+            <Drawer.Header className="gap-0 border-b border-border px-5 pt-5 pb-4 sm:px-6">
+              <p className="flex items-center gap-2 font-meta text-muted">
+                <span aria-hidden="true" className={cn("size-[7px] rounded-full ring-2", editing ? DOT.success : DOT.accent)} />
+                {editing ? "Bearbeiten" : "Neu"}
+              </p>
+              <Drawer.Heading className="mt-2 pr-10 font-display text-3xl break-words text-foreground">
                 {editing ? editing.title : addLabel}
               </Drawer.Heading>
             </Drawer.Header>
 
-            <Drawer.Body className="flex-1 overflow-y-auto px-6 py-6">
+            <Drawer.Body className="mt-0 flex-1 overflow-y-auto px-5 py-6 sm:px-6">
               {message && formOpen && messageStatus === "error" && (
                 <FormMessage status="error" className="mb-5">
                   {message}
@@ -293,7 +301,7 @@ export function EntityManager({
                   <FormField key={field.name} field={field} row={editing} />
                 ))}
                 {sideFields.length > 0 && (
-                  <div className="flex flex-col gap-5 rounded-2xl bg-surface-secondary p-4">
+                  <div className="well flex flex-col gap-5 rounded-[var(--radius)] p-4">
                     {sideFields.map((field) => (
                       <FormField key={field.name} field={field} row={editing} />
                     ))}
@@ -302,7 +310,7 @@ export function EntityManager({
               </form>
             </Drawer.Body>
 
-            <Drawer.Footer className="flex justify-end gap-2 border-t border-separator px-6 py-4">
+            <Drawer.Footer className="mt-0 flex justify-end gap-2 border-t border-border bg-surface-secondary px-5 pt-3 pb-4 sm:px-6">
               <Button variant="tertiary" onPress={closeForm}>
                 Abbrechen
               </Button>
@@ -343,7 +351,7 @@ function Thumb({ src, title }: { src?: string | null; title: string }) {
   return (
     <span
       aria-hidden="true"
-      className="relative grid size-10 shrink-0 place-items-center overflow-hidden rounded-xl bg-surface-secondary text-xs font-bold text-muted"
+      className="well relative grid size-10 shrink-0 place-items-center overflow-hidden rounded-[var(--radius)] font-mono text-xs font-bold text-muted"
     >
       {show ? (
         <Image

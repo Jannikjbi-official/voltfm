@@ -90,11 +90,11 @@ export function AccentColorField({
 
   return (
     <div role="group" aria-labelledby={labelId} className="flex min-w-0 flex-col gap-2">
-      <span id={labelId} className="label">
+      <span id={labelId} className="label font-mono text-xs font-medium lowercase text-foreground">
         {label}
       </span>
 
-      <ul className="grid grid-cols-6 gap-2.5">
+      <ul className="well grid grid-cols-6 gap-2 rounded-[var(--radius)] p-2">
         {PRESETS.map((preset) => (
           <li key={preset.hue}>
             <button
@@ -103,7 +103,7 @@ export function AccentColorField({
                  Variable gesetzt, das Aussehen kommt aus den Klassen. */
               style={{ "--swatch": swatch(preset.hue) } as React.CSSProperties}
               className={cn(
-                "block aspect-square w-full rounded-full bg-[var(--swatch)] ring-offset-2 ring-offset-[var(--surface-secondary)] transition-transform hover:scale-105 motion-reduce:transition-none",
+                "block aspect-square w-full rounded-[var(--radius)] bg-[var(--swatch)] ring-offset-2 ring-offset-[var(--surface-secondary)]",
                 current === preset.hue && "ring-2 ring-foreground",
               )}
               aria-label={preset.label}
@@ -134,13 +134,13 @@ export function AccentColorField({
         {current !== null && (
           <span
             style={{ "--swatch": swatch(current) } as React.CSSProperties}
-            className="size-9 shrink-0 rounded-full bg-[var(--swatch)] ring-1 ring-border"
+            className="size-9 shrink-0 rounded-[var(--radius)] bg-[var(--swatch)] ring-1 ring-border"
             aria-hidden="true"
           />
         )}
         <button
           type="button"
-          className="h-9 shrink-0 rounded-full bg-default px-3.5 text-sm font-medium text-foreground transition-colors hover:bg-surface-tertiary"
+          className="key h-9 shrink-0 rounded-[var(--radius)] bg-surface px-3.5 font-wide text-sm font-semibold text-foreground ring-1 ring-border transition-colors hover:bg-surface-secondary"
           onClick={() => {
             setHue("");
             setHex("");

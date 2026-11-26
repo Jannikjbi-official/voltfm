@@ -50,7 +50,7 @@ export default async function AdminIdeasPage() {
         </AdminNotice>
       )}
 
-      <div className="grid grid-cols-1 items-start gap-4 sm:gap-6 xl:grid-cols-2">
+      <div className="grid grid-cols-1 items-start gap-2 xl:grid-cols-2">
         {feeds.map((feed) => (
           <FeedPanel key={feed.kind} feed={feed} />
         ))}
@@ -70,20 +70,20 @@ function FeedPanel({ feed }: { feed: IdeaFeed }) {
       bodyClassName="p-0"
     >
       {feed.problem ? (
-        <p className="px-5 py-6 text-sm text-muted">{PROBLEMS[feed.problem]}</p>
+        <p className="m-4 well rounded-[var(--radius)] px-4 py-5 text-sm text-muted">{PROBLEMS[feed.problem]}</p>
       ) : feed.ideas.length === 0 ? (
-        <p className="px-5 py-6 text-sm text-muted">Hier ist noch nichts.</p>
+        <p className="m-4 well rounded-[var(--radius)] px-4 py-5 text-sm text-muted">Hier ist noch nichts.</p>
       ) : (
         <ul className="divide-y divide-separator">
           {feed.ideas.map((idea) => (
             <li
               key={idea.id}
-              className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6"
+              className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6 sm:px-5"
             >
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-sm font-semibold text-foreground">{idea.author}</span>
-                  <span className="font-mono text-xs text-muted">{formatDateTime(idea.createdAt)}</span>
+                  <span className="font-wide text-sm font-bold text-foreground">{idea.author}</span>
+                  <span className="font-mono text-[0.7rem] text-muted">{formatDateTime(idea.createdAt)}</span>
                   {idea.viaWebsite && <StatusBadge>über die Website</StatusBadge>}
                   {idea.approved && <StatusBadge color="success">auf der Seite</StatusBadge>}
                 </div>

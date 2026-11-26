@@ -83,18 +83,21 @@ export default async function AdminSettingsPage() {
         description="Aktive Konfiguration. Bis auf die Verzeichnis-Links kommt alles aus Environment-Variablen."
       />
 
-      <div className="grid grid-cols-1 items-start gap-4 sm:gap-6 xl:grid-cols-2">
+      <div className="grid grid-cols-1 items-start gap-2 xl:grid-cols-2">
         <AdminPanel title="Dienste" titleId="settings-services" bodyClassName="p-0">
           <ul className="divide-y divide-separator">
             {services.map((service) => (
-              <li key={service.label} className="flex flex-col gap-2 px-5 py-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+              <li
+                key={service.label}
+                className="flex flex-col gap-2 px-4 py-3.5 sm:flex-row sm:items-start sm:justify-between sm:gap-6 sm:px-5"
+              >
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-foreground">{service.label}</p>
+                  <p className="font-wide text-sm font-bold text-foreground">{service.label}</p>
                   <p className="text-xs text-muted">{service.purpose}</p>
                 </div>
-                <div className="flex min-w-0 flex-col gap-1 sm:items-end sm:text-right">
+                <div className="flex min-w-0 flex-col items-start gap-1 sm:items-end sm:text-right">
                   <StatusBadge color={service.tone}>{service.status}</StatusBadge>
-                  {service.detail && <p className="text-xs break-words text-muted">{service.detail}</p>}
+                  {service.detail && <p className="font-mono text-[0.7rem] break-words text-muted">{service.detail}</p>}
                 </div>
               </li>
             ))}
@@ -105,7 +108,7 @@ export default async function AdminSettingsPage() {
           <DataList
             rows={addresses.map((row) => ({
               label: row.label,
-              value: <span className="font-mono text-xs">{row.value}</span>,
+              value: <span className="font-mono text-xs break-all">{row.value}</span>,
             }))}
           />
         </AdminPanel>

@@ -16,6 +16,7 @@ import {
   StatCard,
   StatusBadge,
   Td,
+  emptyWellClass,
   Th,
   trClass,
 } from "@/components/admin/admin-ui";
@@ -61,7 +62,7 @@ export default async function AdminDashboard() {
         }
       />
 
-      <ul className="mb-6 grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+      <ul className="mb-2 grid grid-cols-2 gap-2 xl:grid-cols-4">
         <li>
           <StatCard
             accent
@@ -101,17 +102,17 @@ export default async function AdminDashboard() {
         </li>
       </ul>
 
-      <div className="mb-6 grid grid-cols-1 items-start gap-4 sm:gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+      <div className="mb-2 grid grid-cols-1 items-stretch gap-2 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <AdminPanel
           title="Einschaltungen pro Tag"
           titleId="switch-ons-title"
           description={`Die letzten ${CHART_DAYS} Tage, Zahlen von laut.fm`}
         >
           {days.length === 0 ? (
-            <div className="flex flex-col items-start gap-3 rounded-xl bg-surface-secondary px-5 py-8">
+            <div className="well flex flex-col items-start gap-3 rounded-[var(--radius)] px-5 py-8">
               <span aria-hidden="true" className="flex h-10 items-end gap-1">
                 {[40, 65, 50, 85, 60, 100, 75].map((h, i) => (
-                  <span key={i} className="w-2.5 rounded-t-[4px] bg-default" style={{ height: `${h}%` }} />
+                  <span key={i} className="w-2.5 rounded-t-[2px] bg-default" style={{ height: `${h}%` }} />
                 ))}
               </span>
               <p className="font-semibold text-foreground">Noch keine Tageszahlen da.</p>
@@ -138,16 +139,14 @@ export default async function AdminDashboard() {
           }
           bodyClassName="flex flex-col gap-5"
         >
-          <div className="flex items-center gap-4 rounded-xl bg-surface-secondary p-4">
-            <span
-              aria-hidden="true"
-              className="flex size-12 shrink-0 items-end justify-center gap-[3px] rounded-xl bg-ink pb-3"
-            >
+          {/* Was laeuft, steht auf einem kleinen Display mit Pegel. */}
+          <div className="display-panel display-dots flex items-center gap-4 rounded-[var(--radius)] p-4">
+            <span aria-hidden="true" className="flex h-10 w-8 shrink-0 items-end justify-center gap-[3px]">
               {[0, 1, 2, 3].map((bar) => (
                 <span
                   key={bar}
                   className={cn(
-                    "w-1 origin-bottom rounded-full bg-volt",
+                    "w-1 origin-bottom rounded-[1px] bg-volt",
                     nowPlaying && "animate-[vfm-level_1.1s_ease-in-out_infinite] motion-reduce:animate-none",
                   )}
                   style={{ height: `${[55, 85, 40, 70][bar]}%`, animationDelay: `${bar * -0.27}s` }}
@@ -155,22 +154,27 @@ export default async function AdminDashboard() {
               ))}
             </span>
             <div className="min-w-0">
-              <p className="text-xs text-muted">Läuft gerade</p>
-              <p className="truncate font-bold text-foreground">{nowPlaying ? nowPlaying.title : "Keine Metadaten"}</p>
-              {nowPlaying && <p className="truncate text-sm text-muted">{nowPlaying.artist}</p>}
+              <p className="flex items-center gap-2 font-meta text-display-muted">
+                {nowPlaying && <span aria-hidden="true" className="led" />}
+                Läuft gerade
+              </p>
+              <p className="mt-0.5 truncate font-bold text-display-foreground">
+                {nowPlaying ? nowPlaying.title : "Keine Metadaten"}
+              </p>
+              {nowPlaying && <p className="truncate text-sm text-display-muted">{nowPlaying.artist}</p>}
             </div>
           </div>
 
           <dl className="grid grid-cols-2 gap-3">
             <div className="min-w-0">
-              <dt className="text-xs text-muted">Sendung</dt>
+              <dt className="font-meta text-muted">Sendung</dt>
               <dd className="mt-0.5 truncate text-sm font-semibold text-foreground">{currentShow?.name ?? "—"}</dd>
               {currentShow?.endsAt && (
                 <dd className="font-mono text-xs text-muted">bis {formatTime(currentShow.endsAt)}</dd>
               )}
             </div>
             <div className="min-w-0">
-              <dt className="text-xs text-muted">Als Nächstes</dt>
+              <dt className="font-meta text-muted">Als Nächstes</dt>
               <dd className="mt-0.5 truncate text-sm font-semibold text-foreground">{nextShow?.name ?? "—"}</dd>
               {nextShow?.startsAt && (
                 <dd className="font-mono text-xs text-muted">ab {formatTime(nextShow.startsAt)}</dd>
@@ -184,8 +188,8 @@ export default async function AdminDashboard() {
         </AdminPanel>
       </div>
 
-      <section aria-labelledby="recent-title">
-        <div className="mb-3 flex items-center justify-between gap-4">
+      <section aria-labelledby="recent-title" className="pt-6">
+        <div className="mb-2 flex items-center justify-between gap-4">
           <h2 id="recent-title" className="font-wide text-lg font-bold text-foreground">
             Zuletzt bearbeitet
           </h2>
@@ -195,7 +199,7 @@ export default async function AdminDashboard() {
         </div>
 
         {recent.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-border px-6 py-10 text-center text-sm text-muted">
+          <p className={emptyWellClass}>
             Noch keine Artikel angelegt.
           </p>
         ) : (

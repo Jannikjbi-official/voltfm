@@ -7,9 +7,9 @@ import type { ArticleStatus } from "@/types/content";
  * Bausteine fuer die Admin-Seiten — bewusst ohne Hooks, damit die Seiten
  * Server-Komponenten bleiben koennen. Farben kommen aus den Theme-Tokens.
  *
- * Das Admin ist eine Arbeitsoberflaeche, keine Lesestrecke: kompakte
- * Ueberschriften (font-wide statt font-display), Karten mit abgesetzter
- * Kopfzeile, Tabellen statt Listen.
+ * Das Admin ist ein Arbeitsplatz am Geraet, keine Lesestrecke: Platten mit
+ * abgesetzter Kopfzeile, Kennzahlen auf eingelassenen Displays, Tabellen mit
+ * Gehaeuse-Beschriftung (font-meta) und Status als LED.
  */
 
 /** Kopf einer Admin-Seite: Titel, ein Satz darunter, rechts die Aktionen. */
@@ -23,19 +23,19 @@ export function AdminPageHeader({
   actions?: React.ReactNode;
 }) {
   return (
-    <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <header className="mb-6 flex flex-col gap-4 border-b border-separator pb-5 sm:flex-row sm:items-end sm:justify-between">
       <div className="min-w-0">
-        <h1 className="font-display text-[2.25rem] text-balance text-foreground sm:text-5xl">
+        <h1 className="font-display text-[2.25rem] text-balance break-words hyphens-auto text-foreground sm:text-5xl">
           {title}
         </h1>
-        {description && <p className="mt-1.5 max-w-2xl text-pretty text-sm text-muted">{description}</p>}
+        {description && <p className="mt-2 max-w-2xl text-pretty text-sm text-muted">{description}</p>}
       </div>
       {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
     </header>
   );
 }
 
-/** Eine Karte mit abgesetzter Kopfzeile (Titel links, Aktion rechts). */
+/** Eine Platte mit abgesetzter Kopfzeile (Titel links, Aktion rechts). */
 export function AdminPanel({
   title,
   titleId,
@@ -56,13 +56,13 @@ export function AdminPanel({
   return (
     <section
       aria-labelledby={title ? titleId : undefined}
-      className={cn("surface-card overflow-hidden rounded-2xl", className)}
+      className={cn("surface-card min-w-0 overflow-hidden rounded-[var(--radius)]", className)}
     >
       {(title || action) && (
-        <div className="flex min-h-14 items-center justify-between gap-4 border-b border-separator px-5 py-3">
+        <div className="flex min-h-13 items-center justify-between gap-4 border-b border-separator bg-surface-secondary/50 px-4 py-2.5 sm:px-5">
           <div className="min-w-0">
             {title && (
-              <h2 id={titleId} className="text-sm font-bold text-foreground">
+              <h2 id={titleId} className="font-wide text-[0.95rem] font-bold text-foreground">
                 {title}
               </h2>
             )}
@@ -71,12 +71,15 @@ export function AdminPanel({
           {action}
         </div>
       )}
-      <div className={cn("p-5", bodyClassName)}>{children}</div>
+      <div className={cn("p-4 sm:p-5", bodyClassName)}>{children}</div>
     </section>
   );
 }
 
-/** Eine Kennzahl als Kachel — optional als Link. */
+/**
+ * Eine Kennzahl als kleines Modul: oben die Beschriftung, darunter ein
+ * eingelassenes Display mit der Zahl in Punktmatrix — optional als Link.
+ */
 export function StatCard({
   label,
   value,
@@ -90,32 +93,32 @@ export function StatCard({
   icon: IconDefinition;
   href?: string;
   hint?: React.ReactNode;
-  /** Gelbe Flaeche fuer die eine Kennzahl, die zaehlt. */
+  /** Die eine Kennzahl, die zaehlt: gelbe Ziffern und eine LED. */
   accent?: boolean;
 }) {
   const body = (
     <>
-      <div className="flex items-center justify-between gap-3">
-        <span className={cn("text-sm", accent ? "text-ink/75" : "text-muted")}>{label}</span>
+      <span className="flex items-center justify-between gap-3 px-1">
+        <span className="truncate font-meta text-muted">{label}</span>
+        <Icon icon={icon} aria-hidden="true" className="shrink-0 text-[0.7rem] text-muted" />
+      </span>
+      <span className="display-panel display-dots relative mt-2 flex min-h-[4.75rem] items-end rounded-[calc(var(--radius)-2px)] px-3.5 pt-5 pb-3 sm:min-h-[5.5rem]">
+        {accent && <span aria-hidden="true" className="led absolute top-3 right-3" />}
         <span
-          aria-hidden="true"
           className={cn(
-            "grid size-9 shrink-0 place-items-center rounded-xl text-xs max-[420px]:hidden",
-            accent ? "bg-ink text-volt" : "bg-surface-secondary text-muted",
+            "block min-w-0 font-dot text-[2.5rem] leading-none sm:text-[3rem]",
+            accent ? "text-volt" : "text-display-foreground",
           )}
         >
-          <Icon icon={icon} />
+          {value}
         </span>
-      </div>
-      {/* Grosse Einzelzahl: proportionale Ziffern, tabellarische nur in Spalten. */}
-      <span className="mt-3 block font-display text-[2.25rem] sm:mt-4 sm:text-[2.75rem]">{value}</span>
-      {hint && <span className={cn("mt-1 block text-xs", accent ? "text-ink/70" : "text-muted")}>{hint}</span>}
+      </span>
+      {hint && <span className="mt-2 block truncate px-1 text-xs text-muted">{hint}</span>}
     </>
   );
 
   const className = cn(
-    "block h-full rounded-2xl p-4 sm:p-5",
-    accent ? "bg-volt text-ink" : "surface-card text-foreground",
+    "surface-card block h-full rounded-[var(--radius)] p-2 pt-2.5 text-foreground",
     href && "hover-lift",
   );
 
@@ -135,9 +138,9 @@ export function DataList({ rows }: { rows: { label: string; value: React.ReactNo
       {rows.map((row) => (
         <div
           key={row.label}
-          className="flex flex-col gap-0.5 py-3 first:pt-0 last:pb-0 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
+          className="flex flex-col gap-1 py-3 first:pt-0 last:pb-0 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
         >
-          <dt className="shrink-0 text-sm text-muted">{row.label}</dt>
+          <dt className="shrink-0 font-meta text-muted">{row.label}</dt>
           <dd className="min-w-0 text-sm font-medium break-words text-foreground sm:text-right">
             {row.value}
           </dd>
@@ -149,15 +152,16 @@ export function DataList({ rows }: { rows: { label: string; value: React.ReactNo
 
 type ChipColor = "default" | "accent" | "success" | "warning" | "danger";
 
+/** LED-Farben: ein Punkt mit Fassung, kein Leuchten. */
 export const DOT: Record<ChipColor, string> = {
-  default: "bg-muted",
-  accent: "bg-volt",
-  success: "bg-success",
-  warning: "bg-warning",
-  danger: "bg-danger",
+  default: "bg-muted ring-muted/25",
+  accent: "bg-volt ring-volt/35",
+  success: "bg-success ring-success/25",
+  warning: "bg-warning ring-warning/30",
+  danger: "bg-danger ring-danger/25",
 };
 
-/** Status mit farbigem Punkt — liest sich in Tabellen ruhiger als bunte Chips. */
+/** Status als LED mit Beschriftung — liest sich in Tabellen ruhiger als bunte Chips. */
 export function StatusBadge({
   color = "default",
   children,
@@ -170,11 +174,11 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center gap-1.5 rounded-full bg-default px-2.5 py-0.5 text-xs font-medium whitespace-nowrap text-foreground",
+        "inline-flex max-w-full shrink-0 items-center gap-1.5 rounded-[3px] border border-border bg-surface-secondary px-2 py-0.5 font-mono text-[0.7rem] whitespace-nowrap text-foreground lowercase",
         className,
       )}
     >
-      <span aria-hidden="true" className={cn("size-1.5 rounded-full", DOT[color])} />
+      <span aria-hidden="true" className={cn("size-[7px] shrink-0 rounded-full ring-2", DOT[color])} />
       {children}
     </span>
   );
@@ -203,12 +207,12 @@ export function AdminNotice({
   return (
     <div
       role="status"
-      className="mb-6 flex gap-3 rounded-2xl border border-[color-mix(in_oklab,var(--warning)_35%,transparent)] bg-[color-mix(in_oklab,var(--warning)_10%,transparent)] p-4 text-sm leading-relaxed text-foreground"
+      className="surface-card mb-2 flex gap-3 rounded-[var(--radius)] p-4 text-sm leading-relaxed text-foreground"
     >
-      <span aria-hidden="true" className="mt-1.5 size-2 shrink-0 rounded-full bg-warning" />
+      <span aria-hidden="true" className={cn("mt-1.5 size-2 shrink-0 rounded-full ring-2", DOT.warning)} />
       <div className="min-w-0">
-        {title && <p className="mb-1 font-semibold">{title}</p>}
-        <div className="text-foreground/85 [&_code]:rounded [&_code]:bg-surface-secondary [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.85em]">
+        {title && <p className="mb-1 font-wide font-bold">{title}</p>}
+        <div className="text-foreground/85 [&_code]:rounded-[3px] [&_code]:bg-surface-secondary [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.85em]">
           {children}
         </div>
       </div>
@@ -216,24 +220,32 @@ export function AdminNotice({
   );
 }
 
-/* --- Filter-Pillen ---------------------------------------------------------
-   Gleiche Optik fuer Links (News-Status ueber searchParams) und Knoepfe
-   (Filter im Browser, z. B. Benutzer und Medien). */
+/** Leerer Zustand oder Meldung in einer Mulde — statt gestrichelter Rahmen. */
+export const emptyWellClass = "well rounded-[var(--radius)] px-6 py-10 text-center text-sm text-muted";
+
+/* --- Filter-Tasten ---------------------------------------------------------
+   Eine Tastenreihe in einer Mulde, wie oben im Header der Website: Die aktive
+   Taste ist gelb und gedrueckt. Gleiche Optik fuer Links (News-Status ueber
+   searchParams) und Knoepfe (Filter im Browser, z. B. Benutzer und Medien). */
+
+/** Die Mulde um die Tasten. Scrollt am Handy waagerecht in sich. */
+export const filterRowClass =
+  "well flex max-w-full gap-1 overflow-x-auto rounded-[var(--radius)] p-1 pb-1.5 [scrollbar-width:thin]";
 
 export function filterPillClass(active: boolean) {
   return cn(
-    "inline-flex shrink-0 items-center gap-2 rounded-full py-1.5 pr-1.5 pl-3.5 text-sm font-medium transition-colors",
-    active ? "bg-foreground text-background" : "bg-default text-foreground hover:bg-surface-tertiary",
+    "inline-flex shrink-0 items-center gap-2 rounded-[calc(var(--radius)-2px)] py-1.5 pr-1.5 pl-3 font-wide text-sm font-semibold whitespace-nowrap transition-colors",
+    active ? "key bg-volt text-graphite" : "text-muted hover:bg-surface hover:text-foreground",
   );
 }
 
-/** Die Zahl rechts in der Pille. */
+/** Die Zahl rechts auf der Taste. */
 export function PillCount({ active, children }: { active: boolean; children: React.ReactNode }) {
   return (
     <span
       className={cn(
-        "min-w-6 rounded-full px-1.5 py-0.5 text-center font-mono text-xs tabular-nums",
-        active ? "bg-background/15" : "bg-surface text-muted",
+        "min-w-6 rounded-[3px] px-1.5 py-0.5 text-center font-mono text-[0.7rem] font-medium tabular-nums",
+        active ? "bg-graphite/15 text-graphite" : "bg-default text-muted",
       )}
     >
       {children}
@@ -243,7 +255,8 @@ export function PillCount({ active, children }: { active: boolean; children: Rea
 
 /* --- Tabellen -------------------------------------------------------------
    Native <table> mit Tailwind: liest sich als Tabelle fuer Screenreader,
-   bleibt Server-Komponente, und scrollt am Handy waagerecht in sich. */
+   bleibt Server-Komponente, und scrollt am Handy waagerecht in sich.
+   Die Tabelle ist eine Platte, die Spaltenkoepfe sind Gehaeuse-Beschriftung. */
 
 /* Am Handy blenden die Tabellen Nebenspalten aus (`hidden sm:table-cell`)
    und zeigen das Wichtigste unter dem Titel — so passt alles ohne seitliches
@@ -252,7 +265,7 @@ export function AdminTable({ children, className }: { children: React.ReactNode;
   return (
     /* relative: sonst entkommen absolut positionierte Kinder (sr-only)
        dem scrollenden Rahmen und verbreitern am Handy die ganze Seite. */
-    <div className={cn("surface-card relative overflow-x-auto rounded-2xl", className)}>
+    <div className={cn("surface-card relative overflow-x-auto rounded-[var(--radius)]", className)}>
       <table className="w-full border-collapse text-left text-sm">{children}</table>
     </div>
   );
@@ -263,7 +276,7 @@ export function Th({ children, className }: { children?: React.ReactNode; classN
     <th
       scope="col"
       className={cn(
-        "border-b border-separator px-4 py-3 text-xs font-medium whitespace-nowrap text-muted",
+        "border-b border-border bg-surface-secondary/60 px-4 py-2.5 font-meta font-normal whitespace-nowrap text-muted",
         className,
       )}
     >
@@ -277,4 +290,4 @@ export function Td({ children, className }: { children?: React.ReactNode; classN
 }
 
 /** Zeile, die beim Ueberfahren hervorgehoben wird; die letzte ohne Linie. */
-export const trClass = "transition-colors hover:bg-surface-secondary/50 [&:last-child>td]:border-b-0";
+export const trClass = "transition-colors hover:bg-surface-secondary/60 [&:last-child>td]:border-b-0";

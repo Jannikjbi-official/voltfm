@@ -52,6 +52,8 @@ export function CopyButton({ source, label }: { source: string; label: string })
       variant="ghost"
       size="sm"
       isIconOnly
+      /* Sitzt auf dem schwarzen Display des Beispiels. */
+      className="text-display-muted hover:bg-transparent hover:text-volt"
       /* Nur das Sinnbild: Ein beschrifteter Knopf haette bei einzeiligen
          Beispielen das Ende der Zeile verdeckt. */
       aria-label={

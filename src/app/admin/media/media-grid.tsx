@@ -5,7 +5,13 @@ import Image from "next/image";
 import { Button } from "@heroui/react";
 import { FormMessage } from "@/components/common/form-field";
 import { Icon, DeleteIcon, LoadingIcon, CheckIcon, ImageIcon, SearchIcon } from "@/lib/icons";
-import { PillCount, StatusBadge, filterPillClass } from "@/components/admin/admin-ui";
+import {
+  PillCount,
+  StatusBadge,
+  emptyWellClass,
+  filterPillClass,
+  filterRowClass,
+} from "@/components/admin/admin-ui";
 import type { EntityFormState } from "@/components/admin/entity-types";
 import { useActionFeedback } from "@/components/admin/use-action-feedback";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
@@ -73,12 +79,12 @@ export function MediaGrid({
   );
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-2">
       {/* Erfolg meldet der Toast; ein Fehler bleibt zusaetzlich stehen. */}
       {message && status === "error" && <FormMessage status="error">{message}</FormMessage>}
 
       {items.length > 0 && (
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="surface-card flex flex-col gap-2 rounded-[var(--radius)] p-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="relative w-full sm:max-w-xs">
             <Icon
               icon={SearchIcon}
@@ -93,7 +99,7 @@ export function MediaGrid({
               className="input w-full pl-8"
             />
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className={filterRowClass}>
             {[
               { id: false, label: "Alle", count: items.length },
               { id: true, label: "Ohne Beschreibung", count: missingAlt },
@@ -114,44 +120,47 @@ export function MediaGrid({
       )}
 
       {items.length === 0 ? (
-        <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border px-6 py-14 text-center">
-          <span aria-hidden="true" className="grid size-12 place-items-center rounded-2xl bg-surface-secondary text-muted">
+        <div className="well flex flex-col items-center gap-3 rounded-[var(--radius)] px-6 py-14 text-center">
+          <span
+            aria-hidden="true"
+            className="key grid size-12 place-items-center rounded-[var(--radius)] bg-surface text-muted ring-1 ring-border"
+          >
             <Icon icon={ImageIcon} />
           </span>
-          <p className="font-bold text-foreground">Noch nichts hochgeladen.</p>
+          <p className="font-wide font-bold text-foreground">Noch nichts hochgeladen.</p>
           <p className="max-w-sm text-sm text-muted">
             Bilder landen hier automatisch, sobald sie im Artikel- oder Event-Editor hochgeladen werden.
           </p>
         </div>
       ) : visible.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-border px-6 py-10 text-center text-sm text-muted">
+        <p className={emptyWellClass}>
           Nichts gefunden.
         </p>
       ) : (
-        <ul className="grid grid-cols-1 gap-4 min-[480px]:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+        <ul className="grid grid-cols-1 gap-2 min-[480px]:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {visible.map((item) => (
             <li
               key={item.id}
-              className="group surface-card hover-lift relative flex flex-col overflow-hidden rounded-2xl motion-reduce:transition-none"
+              className="group surface-card hover-lift relative flex flex-col rounded-[var(--radius)] p-2 motion-reduce:transition-none"
             >
               <a
                 href={item.url}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="relative block overflow-hidden bg-surface-secondary"
+                className="well relative block overflow-hidden rounded-[calc(var(--radius)-2px)]"
               >
                 <Image
                   src={item.url}
                   alt={item.alt || ""}
                   width={480}
                   height={360}
-                  className="aspect-[4/3] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                  className="aspect-[4/3] w-full object-cover"
                   unoptimized
                 />
                 <span className="sr-only"> (öffnet einen neuen Tab)</span>
               </a>
 
-              <span className="pointer-events-none absolute top-3 left-3 rounded-full bg-ink/75 px-2.5 py-0.5 font-mono text-[0.7rem] text-paper uppercase backdrop-blur">
+              <span className="pointer-events-none absolute top-4 left-4 rounded-[3px] bg-graphite px-2 py-0.5 font-mono text-[0.7rem] text-paper lowercase">
                 {item.mimeType.replace("image/", "")}
               </span>
 
@@ -162,13 +171,13 @@ export function MediaGrid({
                 size="sm"
                 isIconOnly
                 aria-label="Bild löschen"
-                className="absolute top-3 right-3 bg-ink/75 text-paper backdrop-blur hover:bg-danger hover:text-danger-foreground sm:opacity-0 sm:group-focus-within:opacity-100 sm:group-hover:opacity-100"
+                className="absolute top-4 right-4 bg-graphite text-paper hover:bg-danger hover:text-danger-foreground sm:opacity-0 sm:group-focus-within:opacity-100 sm:group-hover:opacity-100"
                 onPress={() => setConfirmId(item.id)}
               >
                 <Icon icon={DeleteIcon} />
               </Button>
 
-              <div className="flex flex-1 flex-col gap-2 p-3.5">
+              <div className="flex flex-1 flex-col gap-2 px-1 pt-2.5 pb-1">
                 <form action={saveAlt} className="flex items-center gap-2">
                   <input type="hidden" name="id" value={item.id} />
                   <input
@@ -212,7 +221,7 @@ export function MediaGrid({
                 alt=""
                 width={320}
                 height={200}
-                className="aspect-[16/10] w-full rounded-xl object-cover"
+                className="aspect-[16/10] w-full rounded-[var(--radius)] object-cover"
                 unoptimized
               />
               {forceThis && deleteState.message && (

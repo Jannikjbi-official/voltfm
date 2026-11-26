@@ -14,7 +14,9 @@ import {
   PillCount,
   Td,
   Th,
+  emptyWellClass,
   filterPillClass,
+  filterRowClass,
   trClass,
 } from "@/components/admin/admin-ui";
 
@@ -62,7 +64,7 @@ export default async function AdminNewsPage({
         }
       />
 
-      <nav aria-label="Nach Status filtern" className="-mx-1 mb-5 flex gap-1.5 overflow-x-auto px-1 py-1">
+      <nav aria-label="Nach Status filtern" className={`${filterRowClass} mb-2 w-fit`}>
         {FILTERS.map((filter) => {
           const current = (filter.value === "all" && !active) || filter.value === active;
           const count = filter.value === "all" ? total : counts[filter.value];
@@ -81,8 +83,8 @@ export default async function AdminNewsPage({
       </nav>
 
       {items.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-border px-6 py-12 text-center">
-          <p className="font-bold text-foreground">Keine Artikel in dieser Ansicht.</p>
+        <div className={emptyWellClass}>
+          <p className="font-wide text-base font-bold text-foreground">Keine Artikel in dieser Ansicht.</p>
           {active && (
             <Link href="/admin/news" className="mt-2 inline-block text-sm text-muted underline underline-offset-4 hover:text-foreground">
               Alle Artikel zeigen
