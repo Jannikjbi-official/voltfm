@@ -14,7 +14,7 @@
  */
 
 const DISCORD_URL = process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/6JzSsUTWuh";
-const APPLY_URL = "https://bewerbung.voltfm.xyz/";
+const APPLY_URL = "https://portal.voltfm.xyz/";
 
 export interface SeedArticle {
   slug: string;
@@ -418,14 +418,14 @@ export const BEWERBUNGSPORTAL_ARTICLE: SeedArticle = {
   slug: "eigenes-bewerbungsportal",
   title: "Unser eigenes Bewerbungsportal ist online",
   excerpt:
-    "Moderation, Playlists, Social Media oder eine eigene Sendung: Auf bewerbung.voltfm.xyz bewirbst du dich mit deinem Discord-Konto und siehst jederzeit, wie es steht.",
+    "Moderation, Playlists, Social Media oder eine eigene Sendung: Auf portal.voltfm.xyz bewirbst du dich mit deinem Discord-Konto und siehst jederzeit, wie es steht.",
   categorySlug: "in-eigener-sache",
   tags: ["Mitmachen", "Bewerbung", "In eigener Sache"],
   coverImage: "/titelbilder/eigenes-bewerbungsportal.png",
   coverAlt: "Das VoltFM-Logo, darunter: Unser eigenes Bewerbungsportal, bewerbung.voltfm.xyz",
   authorName: "jannikjbi",
   featured: true,
-  source: `Bewerbungen bei VoltFM liefen bisher über ein fremdes Portal. Jetzt haben wir ein eigenes: [bewerbung.voltfm.xyz](${APPLY_URL}).
+  source: `Bewerbungen bei VoltFM liefen bisher über ein fremdes Portal. Jetzt haben wir ein eigenes: [portal.voltfm.xyz](${APPLY_URL}).
 
 ## Zwei Wege rein
 
