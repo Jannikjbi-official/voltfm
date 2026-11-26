@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cn } from "@heroui/react";
 
 import { SectionHeader } from "@/components/common/section-header";
 import { ButtonLink } from "@/components/common/button-link";
@@ -28,9 +29,9 @@ export default async function RadioPage() {
       {/* Dieselbe Buehne wie auf der Startseite — die Seite ist der Player. */}
       <CoverStage heading="VoltFM hören" />
 
-      <section className="shell py-16 sm:py-24">
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,8fr)_minmax(0,4fr)] lg:gap-16">
-          <div className="min-w-0">
+      <section className="shell pt-12 sm:pt-16">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,8fr)_minmax(0,4fr)] lg:gap-2">
+          <div className="min-w-0 lg:pr-6">
             <SectionHeader title="Was gerade lief" />
 
             {/* Ein Abschnitt, eine Liste: oben die letzten zehn Titel live aus
@@ -43,7 +44,7 @@ export default async function RadioPage() {
 
             {/* Lag kurz auf einer eigenen Seite; /radio/playlist leitet
                 hierher um (next.config.ts). */}
-            <div id="playlist" className="relative mt-12 flex flex-col gap-4">
+            <div id="playlist" className="relative mt-2 flex flex-col gap-3">
               <LautstationPlaylist station={site.station} />
               <p className="px-1 text-xs leading-relaxed text-muted">
                 Daten:{" "}
@@ -64,18 +65,27 @@ export default async function RadioPage() {
 
           <aside
             aria-labelledby="stream-info-title"
-            className="self-start lg:sticky lg:top-[calc(var(--header-height)+1.5rem)]"
+            className="self-start lg:sticky lg:top-[calc(var(--header-height)+1rem)]"
           >
-            <div className="surface-card flex flex-col gap-5 rounded-3xl p-5 sm:p-6">
-              <h2 id="stream-info-title" className="text-lg font-bold tracking-tight text-foreground">
+            <div className="surface-card flex flex-col gap-2 rounded-[var(--radius)] p-2">
+              <h2 id="stream-info-title" className="px-2 pt-2 pb-1 font-meta text-muted">
                 Stream-Informationen
               </h2>
 
-              {/* Angaben als Kacheln; die eine, die zaehlt, gelb. */}
+              {/* Das, was zaehlt, als Display; der Rest in Mulden. */}
+              <div className="display-panel display-dots rounded-[var(--radius)] px-4 py-4">
+                <dl className="flex flex-col gap-2">
+                  <dt className="flex items-center gap-2 font-meta text-display-muted">
+                    <span aria-hidden="true" className="led" />
+                    Verfügbarkeit
+                  </dt>
+                  <dd className="font-dot text-4xl leading-none text-volt">24/7</dd>
+                </dl>
+              </div>
+
               <dl className="grid grid-cols-2 gap-2">
-                <InfoTile term="Sender" wide>
-                  {site.name}
-                </InfoTile>
+                <InfoTile term="Sender">{site.name}</InfoTile>
+                <InfoTile term="Standort">Hamburg</InfoTile>
                 <InfoTile term="Motto" wide>
                   {site.tagline}
                 </InfoTile>
@@ -84,21 +94,16 @@ export default async function RadioPage() {
                     {site.genres.map((genre) => (
                       <span
                         key={genre}
-                        className="rounded-full bg-default px-2.5 py-0.5 text-xs font-medium text-foreground"
+                        className="rounded-[3px] bg-surface px-2 py-0.5 font-mono text-[0.7rem] font-semibold lowercase text-foreground ring-1 ring-border"
                       >
                         {genre}
                       </span>
                     ))}
                   </span>
                 </InfoTile>
-                <InfoTile term="Standort">Hamburg</InfoTile>
-                <div className="flex min-w-0 flex-col gap-0.5 rounded-2xl bg-volt px-4 py-3 text-ink">
-                  <dt className="text-xs text-ink/70">Verfügbarkeit</dt>
-                  <dd className="font-mono text-lg font-semibold">24 / 7</dd>
-                </div>
               </dl>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2 pt-1">
                 <ButtonLink href={site.discordUrl} external size="sm" fullWidth>
                   <Icon icon={DiscordIcon} />
                   Discord
@@ -108,14 +113,14 @@ export default async function RadioPage() {
                   <Icon icon={ExternalLinkIcon} />
                 </ButtonLink>
               </div>
-              <p className="text-xs leading-relaxed text-muted">
+              <p className="px-2 pt-1 text-xs leading-relaxed text-muted">
                 Der Sendeplan zeigt, welche Playlist wann läuft, und öffnet sich bei{" "}
                 {lautstation.name} in einem neuen Tab.
               </p>
 
               {directoryLinks.length > 0 && (
-                <div className="flex flex-col gap-3 border-t border-separator pt-4">
-                  <h3 className="text-sm font-bold text-foreground">Auch zu finden bei</h3>
+                <div className="mt-1 flex flex-col gap-3 border-t border-separator px-2 pt-4 pb-2">
+                  <h3 className="font-meta text-muted">Auch zu finden bei</h3>
                   {/* Reine Links, kein Player und kein Bild von dort (src/lib/listings.ts). */}
                   <ul className="flex flex-wrap gap-2">
                     {directoryLinks.map((link) => (
@@ -124,7 +129,7 @@ export default async function RadioPage() {
                           href={link.url}
                           target="_blank"
                           rel="noreferrer noopener"
-                          className="inline-flex items-center gap-1.5 rounded-full bg-default px-3 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-volt hover:text-ink"
+                          className="key inline-flex items-center gap-1.5 rounded-[var(--radius)] bg-surface px-3 py-1.5 text-sm font-semibold text-foreground ring-1 ring-border transition-colors hover:bg-volt hover:text-graphite"
                         >
                           {link.name}
                           <Icon icon={ExternalLinkIcon} className="text-[0.65em] opacity-60" />
@@ -143,7 +148,7 @@ export default async function RadioPage() {
   );
 }
 
-/** Eine Angabe im Kasten rechts: Bezeichnung klein, Wert darunter. */
+/** Eine Angabe im Kasten rechts: Beschriftung klein, Wert darunter, in einer Mulde. */
 function InfoTile({
   term,
   wide = false,
@@ -155,13 +160,12 @@ function InfoTile({
 }) {
   return (
     <div
-      className={
-        wide
-          ? "col-span-2 flex min-w-0 flex-col gap-0.5 rounded-2xl bg-surface-secondary px-4 py-3"
-          : "flex min-w-0 flex-col gap-0.5 rounded-2xl bg-surface-secondary px-4 py-3"
-      }
+      className={cn(
+        "well flex min-w-0 flex-col gap-0.5 rounded-[var(--radius)] px-3 py-2.5",
+        wide && "col-span-2",
+      )}
     >
-      <dt className="text-xs text-muted">{term}</dt>
+      <dt className="font-meta text-muted">{term}</dt>
       <dd className="font-semibold break-words text-foreground">{children}</dd>
     </div>
   );

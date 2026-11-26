@@ -39,9 +39,9 @@ export function ShareButtons({ url, title }: { url: string; title: string }) {
   return (
     /* relative: die sr-only-Meldung bleibt in der Karte und kann am Handy
        die Seite nicht verbreitern. */
-    <div className="surface-card relative rounded-3xl p-5">
-      <h2 className="text-sm font-bold text-foreground">Artikel teilen</h2>
-      <div className="mt-4 grid grid-cols-2 gap-2 lg:grid-cols-1">
+    <div className="surface-card relative rounded-[var(--radius)] p-4">
+      <h2 className="font-meta text-muted">Artikel teilen</h2>
+      <div className="well mt-3 grid grid-cols-2 gap-2 rounded-[var(--radius)] p-2 lg:grid-cols-1">
         <Button variant="primary" size="sm" fullWidth onPress={handleShare}>
           <Icon icon={ShareIcon} />
           Teilen

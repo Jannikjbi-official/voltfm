@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/common/page-header";
 import { EmptyState } from "@/components/common/empty-state";
 import { ButtonLink } from "@/components/common/button-link";
-import { Chip, cn } from "@heroui/react";
+import { cn } from "@heroui/react";
 import { HostChip } from "@/components/common/host-card";
 import {
   getSchedule,
@@ -16,7 +16,7 @@ import {
 import { listHosts, listShows } from "@/services/content";
 import { formatTime } from "@/lib/format";
 import { features, site } from "@/lib/site";
-import { Icon, DiscordIcon, ClockIcon, BoltIcon } from "@/lib/icons";
+import { Icon, DiscordIcon, BoltIcon } from "@/lib/icons";
 
 export const metadata: Metadata = {
   title: "Programm",
@@ -46,24 +46,23 @@ function SchedulePaused() {
         size="large"
       />
 
-      <section className="shell">
-        <div className="grid grid-cols-[minmax(0,1fr)] gap-3 lg:grid-cols-12">
+      <section className="shell pt-2">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-2 lg:grid-cols-12">
+          {/* Die Erklaerung auf dem Display — dort, wo sonst der Plan stuende. */}
           <div
             data-theme="dark"
-            className="dark flex flex-col items-start gap-5 rounded-[var(--radius)] border border-border bg-surface p-7 text-foreground shadow-[var(--lift-shadow)] sm:p-12 lg:col-span-7"
+            className="dark display-panel display-dots flex flex-col items-start gap-5 rounded-[var(--radius)] p-7 text-display-foreground sm:p-12 lg:col-span-7"
           >
-            <span
-              className="grid size-12 place-items-center rounded-2xl bg-volt text-xl text-ink"
-              aria-hidden="true"
-            >
-              <Icon icon={ClockIcon} />
+            <span className="flex items-center gap-2 font-meta text-display-muted">
+              <span aria-hidden="true" className="led" />
+              sendeplan pausiert
             </span>
 
-            <h2 className="font-display text-[2.1rem] text-balance text-foreground sm:text-5xl">
+            <h2 className="font-display text-[2.1rem] text-balance text-volt sm:text-5xl">
               Warum gerade kein Sendeplan?
             </h2>
 
-            <p className="text-lg leading-relaxed text-muted">
+            <p className="text-lg leading-relaxed text-display-foreground/80">
               Unser Programm liegt derzeit als eine durchlaufende Playlist bei
               laut.fm. Damit lassen sich feste Sendezeiten nicht verlässlich
               zusagen — und ein Sendeplan, der nicht stimmt, ist schlechter als
@@ -73,7 +72,7 @@ function SchedulePaused() {
 
           <div className="surface-card flex flex-col items-start gap-5 rounded-[var(--radius)] p-7 sm:p-10 lg:col-span-5">
             <span
-              className="grid size-12 place-items-center rounded-2xl bg-default text-xl text-foreground"
+              className="well grid size-12 place-items-center rounded-[var(--radius)] text-xl text-foreground"
               aria-hidden="true"
             >
               <Icon icon={BoltIcon} />
@@ -85,7 +84,7 @@ function SchedulePaused() {
               tatsächlich in der laufenden Sendung landen.
             </p>
 
-            <div className="mt-auto flex flex-wrap gap-3 pt-2">
+            <div className="well mt-auto flex w-full flex-wrap gap-2 rounded-[var(--radius)] p-2">
               <ButtonLink href="/radio" variant="primary">
                 Jetzt live hören
               </ButtonLink>
@@ -93,7 +92,7 @@ function SchedulePaused() {
               <ButtonLink
                 href={site.discordUrl}
                 external
-                variant="tertiary"
+                variant="secondary"
                 className="h-auto min-h-10 max-w-full py-2 whitespace-normal"
               >
                 <Icon icon={DiscordIcon} />
@@ -146,7 +145,7 @@ export default async function ProgrammPage() {
         }
       />
 
-      <section className="shell">
+      <section className="shell pt-2">
         {!hasSchedule ? (
           <EmptyState
             title="Der Sendeplan ist gerade nicht abrufbar"
@@ -158,7 +157,7 @@ export default async function ProgrammPage() {
             }
           />
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
             {WEEK_ORDER.map((weekday) => {
               const day = grouped.find((d) => d.weekday === weekday);
               const slots = day?.slots ?? [];
@@ -169,25 +168,30 @@ export default async function ProgrammPage() {
                   key={weekday}
                   aria-labelledby={`day-${weekday}`}
                   className={cn(
-                    "surface-card grid gap-4 rounded-3xl p-5 sm:p-7 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-8",
-                    isToday && "ring-2 ring-volt",
+                    "surface-card grid gap-2 rounded-[var(--radius)] p-2 md:grid-cols-[11rem_minmax(0,1fr)]",
+                    isToday && "border-foreground/40",
                   )}
                 >
-                  <div className="flex items-center gap-3 md:flex-col md:items-start">
-                    <h2 id={`day-${weekday}`} className="text-xl font-bold tracking-tight text-foreground">
+                  {/* Der Tag als Display, heute mit LED. */}
+                  <div className="display-panel flex items-center justify-between gap-3 rounded-[var(--radius)] px-4 py-3 md:flex-col md:items-start md:justify-start">
+                    <h2
+                      id={`day-${weekday}`}
+                      className={cn("font-dot text-lg", isToday ? "text-volt" : "text-display-foreground")}
+                    >
                       {WEEKDAY_LABELS[weekday]}
                     </h2>
                     {isToday && (
-                      <Chip color="accent" variant="primary" size="sm">
+                      <span className="flex items-center gap-2 font-meta text-display-muted">
+                        <span aria-hidden="true" className="led" />
                         Heute
-                      </Chip>
+                      </span>
                     )}
                   </div>
 
                   {slots.length === 0 ? (
-                    <p className="text-muted">Durchgehend Musik — keine moderierte Sendung.</p>
+                    <p className="self-center px-3 py-3 text-muted">Durchgehend Musik — keine moderierte Sendung.</p>
                   ) : (
-                    <ol className="flex flex-col divide-y divide-separator">
+                    <ol className="flex flex-col divide-y divide-separator px-3">
                       {slots.map((slot) => {
                         const show = showByName.get(slot.name.toLowerCase());
                         const onAir = isToday && current?.name === slot.name;
@@ -195,25 +199,23 @@ export default async function ProgrammPage() {
                         return (
                           <li
                             key={`${slot.id}-${slot.startHour}`}
-                            className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-4 py-4 first:pt-0 last:pb-0"
+                            className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-4 py-4"
                           >
-                            <div className="flex flex-col tabular-nums">
-                              <span className="font-mono text-base font-semibold text-foreground">
-                                {formatSlotStart(slot)}
-                              </span>
-                              <span className="font-mono text-xs text-muted">{formatSlotEnd(slot)}</span>
+                            <div className="flex flex-col">
+                              <span className="font-dot text-base text-foreground">{formatSlotStart(slot)}</span>
+                              <span className="font-dot text-xs text-muted">{formatSlotEnd(slot)}</span>
                             </div>
 
                             <div className="flex min-w-0 flex-col gap-2">
                               <div className="flex flex-wrap items-center gap-3">
-                                <h3 className="text-lg font-bold tracking-tight text-foreground">
+                                <h3 className="font-wide text-lg font-bold text-foreground">
                                   {show?.title ?? slot.name}
                                 </h3>
                                 {onAir && (
-                                  <span className="inline-flex items-center gap-2 rounded-full bg-volt px-2.5 py-0.5 text-xs font-bold text-ink">
+                                  <span className="inline-flex items-center gap-2 rounded-[3px] bg-volt px-2 py-0.5 font-mono text-[0.7rem] font-semibold lowercase text-graphite">
                                     <span
                                       aria-hidden="true"
-                                      className="size-1.5 rounded-full bg-ink animate-[vfm-pulse_2s_ease-in-out_infinite] motion-reduce:animate-none"
+                                      className="led animate-[vfm-pulse_2s_ease-in-out_infinite] motion-reduce:animate-none"
                                     />
                                     Auf Sendung
                                   </span>

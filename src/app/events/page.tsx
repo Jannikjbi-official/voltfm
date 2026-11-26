@@ -37,22 +37,15 @@ export default async function EventsPage() {
         }
       />
 
-      <section className="shell pb-12 sm:pb-16" aria-labelledby="upcoming-title">
-        <div className="mb-8 flex items-baseline justify-between gap-4">
-          <h2 id="upcoming-title" className="font-display text-3xl text-foreground sm:text-4xl">
-            Kommende Events
-          </h2>
-          {upcoming.length > 0 && (
-            <span className="font-mono text-xs text-muted tabular-nums">{upcoming.length}</span>
-          )}
-        </div>
+      <section className="shell pt-12 sm:pt-16" aria-labelledby="upcoming-title">
+        <GroupHeader id="upcoming-title" title="Kommende Events" count={upcoming.length} />
 
         {upcoming.length > 0 ? (
           <>
-            {/* Der naechste Termin gross, die weiteren als Liste darunter. */}
+            {/* Der naechste Termin gross, die weiteren als Raster darunter. */}
             <EventSpotlight event={upcoming[0]} />
             {upcoming.length > 1 && (
-              <div className="-mx-3 mt-8 grid gap-1 lg:grid-cols-2">
+              <div className="mt-2 grid gap-2 lg:grid-cols-2">
                 {upcoming.slice(1).map((event) => (
                   <EventCard key={event.id} event={event} />
                 ))}
@@ -70,25 +63,35 @@ export default async function EventsPage() {
             }
           />
         )}
-
-        {past.length > 0 && (
-          <section className="mt-20 sm:mt-28" aria-labelledby="past-title">
-            <div className="mb-6 flex items-baseline justify-between gap-4">
-              <h2 id="past-title" className="text-2xl font-bold tracking-tight text-foreground">
-                Vergangene Events
-              </h2>
-              <span className="font-mono text-xs text-muted tabular-nums">{past.length}</span>
-            </div>
-            <div className="surface-card rounded-3xl p-2 sm:p-3">
-              <div className="grid gap-1 lg:grid-cols-2">
-                {past.map((event) => (
-                  <EventCard key={event.id} event={event} />
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
       </section>
+
+      {past.length > 0 && (
+        <section className="shell pt-12 sm:pt-16" aria-labelledby="past-title">
+          <GroupHeader id="past-title" title="Vergangene Events" count={past.length} />
+          {/* Das Archiv liegt in einer Mulde — es ist vorbei, aber noch da. */}
+          <div className="well grid gap-2 rounded-[var(--radius)] p-2 lg:grid-cols-2">
+            {past.map((event) => (
+              <EventCard key={event.id} event={event} />
+            ))}
+          </div>
+        </section>
+      )}
     </>
+  );
+}
+
+/** Abschnittskopf mit der Anzahl als kleinem Display. */
+function GroupHeader({ id, title, count }: { id: string; title: string; count: number }) {
+  return (
+    <div className="mb-6 flex items-end justify-between gap-4 border-b border-border pb-5">
+      <h2 id={id} className="font-display text-[2.1rem] text-balance text-foreground sm:text-5xl">
+        {title}
+      </h2>
+      {count > 0 && (
+        <span className="display-panel shrink-0 rounded-[3px] px-2.5 py-1 font-dot text-sm text-volt">
+          {count}
+        </span>
+      )}
+    </div>
   );
 }

@@ -75,18 +75,18 @@ export function LautstationPlaylist({ station }: { station: string }) {
 
   if (!consent) {
     return (
-      <div className="surface-card rounded-3xl p-6 sm:p-8">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-5">
+      <div className="surface-card rounded-[var(--radius)] p-2">
+        <div className="flex flex-col gap-4 px-3 pt-4 sm:flex-row sm:items-start sm:gap-5 sm:px-5 sm:pt-5">
           <span
             aria-hidden="true"
-            className="grid size-12 shrink-0 place-items-center rounded-2xl bg-volt text-lg text-ink"
+            className="display-panel grid size-12 shrink-0 place-items-center rounded-[var(--radius)] text-lg text-volt"
           >
             <Icon icon={MusicIcon} />
           </span>
           <div className="min-w-0">
             {/* Die Fortsetzung der Liste darueber, kein eigener Abschnitt —
                 deshalb eine h3 unter "Was gerade lief". */}
-            <h3 className="text-xl font-bold tracking-tight text-foreground">
+            <h3 className="font-wide text-xl font-bold text-foreground">
               Die ganze Playlist der letzten Tage
             </h3>
             <p className="mt-2 max-w-xl text-sm leading-relaxed text-pretty text-muted">
@@ -97,7 +97,7 @@ export function LautstationPlaylist({ station }: { station: string }) {
             </p>
           </div>
         </div>
-        <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-4 rounded-2xl bg-surface-secondary p-3 sm:pr-5">
+        <div className="well mt-6 flex flex-wrap items-center gap-x-6 gap-y-4 rounded-[var(--radius)] p-3 sm:pr-5">
           <Button variant="primary" onPress={accept}>
             Ganze Playlist laden
           </Button>
@@ -107,7 +107,7 @@ export function LautstationPlaylist({ station }: { station: string }) {
             onChange={(event) => setRemember(event.target.checked)}
           />
         </div>
-        <p className="mt-4 text-xs text-muted">
+        <p className="px-3 pt-3 pb-2 text-xs text-muted sm:px-5">
           Mehr dazu in unserer{" "}
           <a href="/datenschutz" className="underline underline-offset-4 hover:text-foreground">
             Datenschutzerklärung
@@ -129,7 +129,9 @@ export function LautstationPlaylist({ station }: { station: string }) {
 
   return (
     <>
-      <div ref={container} className="lautstation-playlist vfm-lautstation" />
+      <div className="surface-card rounded-[var(--radius)] p-3 sm:p-5">
+        <div ref={container} className="lautstation-playlist vfm-lautstation" />
+      </div>
       <Script
         src={lautstation.scriptUrl}
         strategy="afterInteractive"

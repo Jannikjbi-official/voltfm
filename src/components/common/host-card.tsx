@@ -54,7 +54,7 @@ export async function HostCard({ host }: { host: HostDTO }) {
             {host.genres.slice(0, 3).map((genre) => (
               <li
                 key={genre}
-                className="rounded-full bg-default px-2.5 py-0.5 text-xs font-medium text-foreground"
+                className="rounded-[3px] bg-default px-2 py-0.5 font-mono text-[0.7rem] font-medium lowercase text-foreground"
               >
                 {genre}
               </li>
@@ -88,7 +88,7 @@ export async function HostChip({ host }: { host: HostDTO }) {
   return (
     <Link
       href={`/moderatoren/${host.slug}`}
-      className="inline-flex items-center gap-2 rounded-full bg-default py-1 pr-3 pl-1 text-sm font-semibold text-foreground transition-colors hover:bg-volt hover:text-ink"
+      className="inline-flex items-center gap-2 rounded-[var(--radius)] bg-default py-1 pr-3 pl-1 text-sm font-semibold text-foreground transition-colors hover:bg-volt hover:text-graphite"
     >
       {image ? (
         <Image
@@ -96,12 +96,12 @@ export async function HostChip({ host }: { host: HostDTO }) {
           alt=""
           width={28}
           height={28}
-          className="size-7 rounded-full bg-surface-secondary object-cover"
+          className="size-7 rounded-[3px] bg-surface-secondary object-cover"
         />
       ) : (
         <span
           aria-hidden="true"
-          className="grid size-7 place-items-center rounded-full bg-surface-secondary text-[0.6rem] font-bold text-muted"
+          className="grid size-7 place-items-center rounded-[3px] bg-surface-secondary text-[0.6rem] font-bold text-muted"
         >
           {host.name.slice(0, 2).toUpperCase()}
         </span>

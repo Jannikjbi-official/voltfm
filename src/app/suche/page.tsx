@@ -68,10 +68,10 @@ export default async function SuchePage({
         ]}
       />
 
-      <section className="shell">
+      <section className="shell pt-2">
         <SearchForm initialQuery={query} />
 
-        <div className="mt-10">
+        <div className="pt-12 sm:pt-16">
           {!query ? (
             <EmptyState
               title="Wonach suchst du?"
@@ -89,7 +89,7 @@ export default async function SuchePage({
                   <GroupTitle id="results-news" count={articles.length}>
                     News
                   </GroupTitle>
-                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                     {articles.map((article) => (
                       <ArticleCard key={article.id} article={article} />
                     ))}
@@ -160,9 +160,12 @@ export default async function SuchePage({
 
 function GroupTitle({ id, count, children }: { id: string; count: number; children: string }) {
   return (
-    <h2 id={id} className="mb-5 flex items-center gap-3 font-display text-[1.75rem] text-foreground sm:text-4xl">
+    <h2
+      id={id}
+      className="mb-6 flex items-end justify-between gap-4 border-b border-border pb-5 font-display text-[2.1rem] text-foreground sm:text-5xl"
+    >
       {children}
-      <span className="rounded-full bg-default px-3 py-1 font-mono text-sm font-semibold tracking-normal text-foreground">
+      <span className="display-panel shrink-0 rounded-[3px] px-2.5 py-1 font-dot text-sm tracking-normal text-volt">
         {count}
       </span>
     </h2>
@@ -171,7 +174,7 @@ function GroupTitle({ id, count, children }: { id: string; count: number; childr
 
 function ResultList({ children }: { children: React.ReactNode }) {
   return (
-    <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
       {children}
     </ul>
   );
@@ -183,11 +186,13 @@ function ResultLink({ href, title, meta }: { href: string; title: string; meta: 
     <li>
       <Link
         href={href}
-        className="surface-card hover-lift flex h-full flex-col gap-1.5 rounded-3xl p-5 sm:p-6"
+        className="group surface-card hover-lift flex h-full flex-col gap-2 rounded-[var(--radius)] p-4 sm:p-5"
       >
-        <span className="text-lg font-bold tracking-tight text-foreground">{title}</span>
+        <span className="font-wide text-lg leading-tight font-bold text-foreground transition-colors group-hover:text-accent-text">
+          {title}
+        </span>
         {meta.filter(Boolean).length > 0 && (
-          <span className="flex flex-wrap gap-x-4 gap-y-0.5 text-sm text-muted">
+          <span className="flex flex-wrap gap-x-4 gap-y-0.5 font-mono text-xs text-muted">
             {meta.filter(Boolean).map((part) => (
               <span key={part}>{part}</span>
             ))}

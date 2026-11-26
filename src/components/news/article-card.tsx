@@ -83,7 +83,7 @@ export async function ArticleCard({
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
           <Link
             href={`/news?kategorie=${article.categorySlug}`}
-            className="relative z-10 rounded-[3px] bg-volt px-2 py-0.5 font-mono text-[0.7rem] font-semibold lowercase text-graphite before:absolute before:-inset-1.5 hover:bg-graphite hover:text-voltk"
+            className="relative z-10 rounded-[3px] bg-volt px-2 py-0.5 font-mono text-[0.7rem] font-semibold lowercase text-graphite before:absolute before:-inset-1.5 hover:bg-graphite hover:text-volt"
           >
             {categoryName}
           </Link>

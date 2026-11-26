@@ -36,7 +36,7 @@ export default async function ModeratorenPage() {
         ]}
       >
         {hosts.length > 0 && (
-          <dl className="mt-10 flex max-w-xl flex-wrap gap-2 sm:gap-3">
+          <dl className="mt-10 flex max-w-2xl flex-wrap gap-2">
             <Stat label="Am Mikrofon" value={hosts.length} />
             {shows.length > 0 && <Stat label="Feste Sendungen" value={shows.length} />}
             {genres.length > 0 && <Stat label="Musikrichtungen" value={genres.length} />}
@@ -44,9 +44,9 @@ export default async function ModeratorenPage() {
         )}
       </PageHeader>
 
-      <section className="shell pb-16 sm:pb-24">
+      <section className="shell pt-2" aria-label="Alle Moderatoren">
         {hosts.length > 0 ? (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
             {hosts.map((host) => (
               <HostCard key={host.id} host={host} />
             ))}
@@ -60,15 +60,16 @@ export default async function ModeratorenPage() {
       </section>
 
       {/* --- Mitmachen -----------------------------------------------------
-          Eine Karte mit dem Discord-Symbol als gelber Kachel. */}
-      <section className="shell">
+          Ein Modul: das Discord-Symbol als gelbe Taste, daneben die Einladung. */}
+      <section className="shell pt-12 sm:pt-16">
         <div className="surface-card flex flex-col gap-8 rounded-[var(--radius)] p-6 sm:p-10 md:flex-row md:items-center md:justify-between">
           <div className="flex max-w-2xl flex-col gap-5 sm:flex-row sm:items-start sm:gap-6">
-            <span aria-hidden="true" className="grid size-14 shrink-0 place-items-center rounded-2xl bg-volt text-2xl text-ink">
+            <span aria-hidden="true" className="key grid size-14 shrink-0 place-items-center rounded-[var(--radius)] bg-volt text-2xl text-graphite">
               <Icon icon={DiscordIcon} />
             </span>
             <div>
-              <h2 className="font-display text-[1.75rem] text-balance text-foreground sm:text-4xl">
+              <p className="font-meta text-muted">mitmachen</p>
+              <h2 className="mt-2 font-display text-[1.75rem] text-balance text-foreground sm:text-4xl">
                 Du willst selbst ans Mikrofon?
               </h2>
               <p className="mt-3 text-pretty text-muted">
@@ -88,12 +89,12 @@ export default async function ModeratorenPage() {
   );
 }
 
-/** Eine Kennzahl als Kachel: gross die Zahl, klein darunter, was sie zaehlt. */
+/** Eine Kennzahl als kleines Display: oben die Beschriftung, darunter die Zahl in Punktmatrix. */
 function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="surface-card flex min-w-[7.5rem] flex-1 flex-col-reverse gap-1.5 rounded-2xl px-4 py-4 sm:flex-none sm:min-w-[10rem] sm:px-5">
-      <dt className="text-xs leading-snug text-muted sm:text-sm">{label}</dt>
-      <dd className="font-display text-4xl leading-none text-foreground tabular-nums sm:text-5xl">{value}</dd>
+    <div className="display-panel display-dots flex min-w-[7.5rem] flex-1 flex-col gap-3 rounded-[var(--radius)] px-4 py-3 sm:min-w-[10rem] sm:flex-none">
+      <dt className="font-meta text-display-muted">{label}</dt>
+      <dd className="font-dot text-4xl leading-none text-volt sm:text-5xl">{value}</dd>
     </div>
   );
 }

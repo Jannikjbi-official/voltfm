@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
-import { ButtonLink } from "@/components/common/button-link";
 import { LogoIcon } from "@/components/layout/logo";
 import { cn } from "@heroui/react";
 import { Breadcrumbs } from "@/components/common/breadcrumbs";
@@ -133,14 +132,18 @@ export default async function HostPage({ params }: { params: Promise<Params> }) 
   return (
     <div data-layout={layout} style={hueStyle} className={cn(HOST_TOKENS, "pb-4")}>
       {layout === "karte" ? (
-        <section className="shell pt-10 sm:pt-14">
-          <Crumbs host={host} />
-          <div className="mt-8 grid gap-12 lg:grid-cols-[22rem_minmax(0,1fr)] lg:gap-14">
+        <section className="shell pt-2">
+          <div className="grid gap-2 lg:grid-cols-[22rem_minmax(0,1fr)]">
             <ProfileCard host={host} image={image} facts={facts} />
-            <div className="min-w-0">
-              <About host={host} />
-              <ShowList shows={shows} className="pt-14 sm:pt-16" />
-              <AuthorArticles host={host} articles={articles} className="pt-14 sm:pt-16" />
+            <div className="flex min-w-0 flex-col gap-2">
+              <div className="surface-card rounded-[var(--radius)] px-5 pt-5 pb-8 sm:px-8 sm:pt-6 sm:pb-10">
+                <Crumbs host={host} />
+                <div className="mt-8 sm:mt-12">
+                  <About host={host} />
+                </div>
+              </div>
+              <ShowList shows={shows} className="pt-10 sm:pt-12" />
+              <AuthorArticles host={host} articles={articles} className="pt-10 sm:pt-12" />
             </div>
           </div>
         </section>
@@ -151,15 +154,12 @@ export default async function HostPage({ params }: { params: Promise<Params> }) 
           ) : (
             <StageHero host={host} image={image} />
           )}
-          <section className="shell pt-14 sm:pt-20">
+          <section className="shell pt-2">
             {/* Ohne Steckbrief keine zweite Spalte, die leer bliebe. */}
-            <div
-              className={cn(
-                "grid gap-10",
-                hasProfile && "lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-16",
-              )}
-            >
-              <About host={host} />
+            <div className={cn("grid gap-2", hasProfile && "lg:grid-cols-[minmax(0,1fr)_22rem]")}>
+              <div className="surface-card min-w-0 rounded-[var(--radius)] px-5 py-8 sm:px-10 sm:py-10">
+                <About host={host} />
+              </div>
               <Profile host={host} facts={facts} />
             </div>
           </section>
@@ -228,7 +228,10 @@ function Crumbs({ host }: { host: HostDTO }) {
   );
 }
 
-/** Rundes Profilbild. Ohne Bild das Senderlogo — kein erfundenes Gesicht. */
+/**
+ * Profilbild in einem Fenster — quadratisch, wie die Discord-Avatare, aus
+ * denen es meist kommt. Ohne Bild das Senderlogo, kein erfundenes Gesicht.
+ */
 function Avatar({
   host,
   image,
@@ -243,7 +246,7 @@ function Avatar({
   return (
     <div
       className={cn(
-        "relative aspect-square shrink-0 overflow-hidden rounded-full bg-surface-secondary",
+        "well relative aspect-square shrink-0 overflow-hidden rounded-[3px]",
         className,
       )}
     >
@@ -267,39 +270,58 @@ function LogoFallback({ className }: { className?: string }) {
   );
 }
 
+/** Die Profile im Netz als Tasten. */
 function Socials({ host, onDeep = false }: { host: HostDTO; onDeep?: boolean }) {
   if (host.socials.length === 0) return null;
   return (
-    <div className="flex flex-wrap gap-2">
+    <ul className="flex flex-wrap gap-2">
       {host.socials.map((social) => (
-        <ButtonLink
-          key={social.url}
-          href={social.url}
-          external
-          variant={onDeep ? "outline" : "secondary"}
-          size="sm"
-          className={
-            onDeep
-              ? "border-[color-mix(in_oklch,var(--host-on-deep)_45%,transparent)] text-[var(--host-on-deep)] hover:bg-[color-mix(in_oklch,var(--host-on-deep)_12%,transparent)]"
-              : undefined
-          }
-        >
-          {social.label}
-          <Icon icon={ExternalLinkIcon} />
-        </ButtonLink>
+        <li key={social.url}>
+          <a
+            href={social.url}
+            target="_blank"
+            rel="noreferrer noopener"
+            className={cn(
+              "key inline-flex items-center gap-2 rounded-[var(--radius)] px-3.5 py-2 font-wide text-sm font-bold transition-colors",
+              onDeep
+                ? "bg-[var(--host-on-deep)] text-[var(--host-deep)] hover:bg-volt hover:text-graphite"
+                : "bg-surface text-foreground ring-1 ring-border hover:bg-volt hover:text-graphite",
+            )}
+          >
+            {social.label}
+            <Icon icon={ExternalLinkIcon} className="text-[0.75em] opacity-70" />
+            <span className="sr-only"> (öffnet einen neuen Tab)</span>
+          </a>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }
 
-/** Ueberschrift eines Profilabschnitts, davor eine kurze Pille in Personenfarbe. */
+/** Die Rolle als kleines Schild in Personenfarbe. */
+function RoleTag({ role, onDeep = false }: { role: string; onDeep?: boolean }) {
+  return (
+    <span
+      className={cn(
+        "w-fit rounded-[3px] px-2 py-0.5 font-mono text-[0.75rem] font-semibold lowercase",
+        onDeep
+          ? "bg-[var(--host-on-deep)] text-[var(--host-deep)]"
+          : "bg-[var(--host-deep)] text-[var(--host-on-deep)]",
+      )}
+    >
+      {role}
+    </span>
+  );
+}
+
+/** Ueberschrift eines Profilabschnitts, davor eine kleine Marke in Personenfarbe. */
 function SectionTitle({ id, children }: { id?: string; children: React.ReactNode }) {
   return (
     <h2
       id={id}
-      className="mb-6 flex items-center gap-3 text-2xl font-bold tracking-tight text-foreground sm:text-3xl"
+      className="mb-6 flex items-center gap-3 border-b border-border pb-5 font-display text-[1.9rem] text-foreground sm:text-4xl"
     >
-      <span aria-hidden="true" className="h-2.5 w-7 shrink-0 rounded-full bg-[var(--host-accent)]" />
+      <span aria-hidden="true" className="size-3 shrink-0 rounded-[2px] bg-[var(--host-accent)]" />
       <span className="min-w-0 break-words">{children}</span>
     </h2>
   );
@@ -324,7 +346,7 @@ function About({ host }: { host: HostDTO }) {
       <SectionTitle>Über {host.name}</SectionTitle>
       <Bio bio={host.bio} />
       {host.quote && (
-        <blockquote className="mt-10 max-w-[60ch] rounded-3xl border border-[color-mix(in_oklch,var(--host-accent)_30%,transparent)] bg-[var(--host-soft)] p-6 text-xl leading-snug font-bold tracking-tight text-balance text-foreground sm:p-8 sm:text-2xl">
+        <blockquote className="mt-10 max-w-[60ch] rounded-[var(--radius)] border-l-4 border-[var(--host-accent)] bg-[var(--host-soft)] px-6 py-5 text-xl leading-snug font-bold tracking-tight text-balance text-foreground sm:px-8 sm:py-6 sm:text-2xl">
           <p>{host.quote}</p>
         </blockquote>
       )}
@@ -333,9 +355,9 @@ function About({ host }: { host: HostDTO }) {
 }
 
 /**
- * Steckbrief: Angaben als Kacheln und die Musikrichtungen. Leer heisst: nicht
- * da. `plain` laesst Karte und Ueberschrift weg — fuer die Profilkarte, die
- * schon eine Karte ist.
+ * Steckbrief: Angaben in Mulden und die Musikrichtungen. Leer heisst: nicht
+ * da. `plain` laesst Platte und Ueberschrift weg — fuer die Profilkarte, die
+ * schon eine Platte ist.
  */
 function Profile({ host, facts, plain = false }: { host: HostDTO; facts: Fact[]; plain?: boolean }) {
   if (facts.length === 0 && host.genres.length === 0) return null;
@@ -345,8 +367,8 @@ function Profile({ host, facts, plain = false }: { host: HostDTO; facts: Fact[];
       {facts.length > 0 && (
         <dl className="grid grid-cols-2 gap-2">
           {facts.map((fact) => (
-            <div key={fact.label} className="min-w-0 rounded-2xl bg-surface-secondary px-4 py-3">
-              <dt className="text-xs text-muted">{fact.label}</dt>
+            <div key={fact.label} className="well min-w-0 rounded-[var(--radius)] px-3 py-2.5">
+              <dt className="font-meta text-muted">{fact.label}</dt>
               <dd className="mt-0.5 font-bold break-words text-foreground">{fact.value}</dd>
             </div>
           ))}
@@ -354,12 +376,12 @@ function Profile({ host, facts, plain = false }: { host: HostDTO; facts: Fact[];
       )}
       {host.genres.length > 0 && (
         <div className={cn(facts.length > 0 && "mt-5")}>
-          <p className="mb-2 text-xs text-muted">Musik</p>
+          <p className="mb-2 font-meta text-muted">Musik</p>
           <ul className="flex flex-wrap gap-1.5" aria-label="Musikrichtungen">
             {host.genres.map((genre) => (
               <li
                 key={genre}
-                className="rounded-full border border-[color-mix(in_oklch,var(--host-accent)_35%,transparent)] bg-[var(--host-soft)] px-3 py-1 text-sm font-semibold text-[var(--host-ink)]"
+                className="rounded-[3px] border border-[color-mix(in_oklch,var(--host-accent)_35%,transparent)] bg-[var(--host-soft)] px-2 py-0.5 font-mono text-[0.75rem] font-semibold lowercase text-[var(--host-ink)]"
               >
                 {genre}
               </li>
@@ -374,50 +396,31 @@ function Profile({ host, facts, plain = false }: { host: HostDTO; facts: Fact[];
 
   return (
     <aside aria-label={`Steckbrief ${host.name}`} className="min-w-0 lg:self-start">
-      <div className="surface-card rounded-3xl p-5 sm:p-6">
-        <h2 className="mb-4 text-lg font-bold tracking-tight text-foreground">Steckbrief</h2>
+      <div className="surface-card rounded-[var(--radius)] p-4 sm:p-5">
+        <h2 className="mb-4 font-meta text-muted">Steckbrief</h2>
         {body}
       </div>
     </aside>
   );
 }
 
-/** Drei feine Kreise in Personenfarbe — Funkwellen, kein Verlauf, kein Leuchten. */
-function Waves({ className }: { className?: string }) {
-  return (
-    <span aria-hidden="true" className={cn("pointer-events-none absolute", className)}>
-      <span className="absolute top-1/2 left-1/2 size-[18rem] -translate-1/2 rounded-full border border-[color-mix(in_oklch,var(--host-accent)_40%,transparent)]" />
-      <span className="absolute top-1/2 left-1/2 size-[30rem] -translate-1/2 rounded-full border border-[color-mix(in_oklch,var(--host-accent)_26%,transparent)]" />
-      <span className="absolute top-1/2 left-1/2 size-[42rem] -translate-1/2 rounded-full border border-[color-mix(in_oklch,var(--host-accent)_14%,transparent)]" />
-    </span>
-  );
-}
-
 /* ------------------------------------------------------------------------ */
-/* Aufbau "Bühne": getoente Flaeche, grosses rundes Bild                     */
+/* Aufbau "Bühne": Platte mit Bildfenster, daneben der Name                  */
 /* ------------------------------------------------------------------------ */
 
 function StageHero({ host, image }: { host: HostDTO; image: string | null }) {
   return (
-    <header className="shell pt-10 sm:pt-14">
-      <Crumbs host={host} />
-      <div className="relative mt-8 overflow-hidden rounded-[var(--radius)] bg-[var(--host-soft)] px-6 py-10 sm:px-10 sm:py-14 lg:px-14 lg:py-16">
-        {/* Die Wellen gehen vom Bild aus. */}
-        <Waves className="top-[7rem] left-[6rem] sm:top-[9.5rem] sm:left-[8.5rem] md:top-1/2 lg:left-[10.5rem]" />
-        <div className="relative flex flex-col items-start gap-8 md:flex-row md:items-center md:gap-12">
-          <Avatar
-            host={host}
-            image={image}
-            size={240}
-            className="w-36 ring-4 ring-[var(--host-accent)] ring-offset-4 ring-offset-[var(--host-soft)] sm:w-48 lg:w-56"
-          />
-          <div className="flex w-full min-w-0 flex-col gap-4 @container">
-            <span className="w-fit rounded-full bg-[var(--host-deep)] px-3.5 py-1 text-sm font-semibold text-[var(--host-on-deep)]">
-              {host.role}
-            </span>
+    <header className="shell pt-2">
+      <div className="surface-card grid gap-2 rounded-[var(--radius)] p-2 md:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] lg:grid-cols-[24rem_minmax(0,1fr)]">
+        <Avatar host={host} image={image} size={384} className="w-full" />
+        {/* Die Personenfarbe als Kante oben an der Platte. */}
+        <div className="flex min-w-0 flex-col rounded-[3px] border-t-4 border-[var(--host-accent)] bg-[var(--host-soft)] px-4 pt-4 pb-6 sm:px-8 sm:pt-5 sm:pb-8">
+          <Crumbs host={host} />
+          <div className="mt-10 flex flex-1 flex-col justify-end gap-4 @container md:mt-8">
+            <RoleTag role={host.role} />
             {/* Groesse nach Spaltenbreite: Auch ein langer Name in einem Wort
                 bricht nicht mitten im Wort um. */}
-            <h1 className="font-display text-[clamp(2.25rem,12cqw,5rem)] leading-[0.92] text-balance break-words text-foreground">
+            <h1 className="font-display text-[clamp(2.25rem,13cqw,6rem)] leading-[0.92] text-balance break-words text-foreground">
               {host.name}
             </h1>
             {host.tagline && (
@@ -437,10 +440,12 @@ function StageHero({ host, image }: { host: HostDTO; image: string | null }) {
 
 function PosterHero({ host, image }: { host: HostDTO; image: string | null }) {
   return (
-    <header className="shell pt-10 sm:pt-14">
-      <Crumbs host={host} />
-      <div className="mt-8 grid overflow-hidden rounded-[2.5rem] bg-[var(--host-deep)] text-[var(--host-on-deep)] md:grid-cols-2">
-        <div className="relative aspect-square">
+    <header className="shell pt-2">
+      <div className="surface-card rounded-[var(--radius)] px-5 pt-5 pb-4 sm:px-8 sm:pt-6">
+        <Crumbs host={host} />
+      </div>
+      <div className="mt-2 grid gap-2 rounded-[var(--radius)] bg-[var(--host-deep)] p-2 text-[var(--host-on-deep)] shadow-[var(--surface-shadow)] md:grid-cols-2">
+        <div className="relative aspect-square overflow-hidden rounded-[3px] shadow-[var(--well-shadow)]">
           {image ? (
             <Image
               src={image}
@@ -451,14 +456,12 @@ function PosterHero({ host, image }: { host: HostDTO; image: string | null }) {
               priority
             />
           ) : (
-            /* Ohne Bild bleibt der Block eine Flaeche in Personenfarbe. */
+            /* Ohne Bild bleibt das Fenster eine Flaeche in Personenfarbe. */
             <LogoFallback className="bg-[var(--host-deep)]" />
           )}
         </div>
-        <div className="flex min-w-0 flex-col justify-between gap-10 p-6 @container sm:p-10 lg:p-14">
-          <span className="w-fit rounded-full border border-[color-mix(in_oklch,var(--host-on-deep)_40%,transparent)] px-3.5 py-1 text-sm font-semibold">
-            {host.role}
-          </span>
+        <div className="flex min-w-0 flex-col justify-between gap-10 p-4 @container sm:p-8 lg:p-12">
+          <RoleTag role={host.role} onDeep />
           <div className="flex flex-col gap-5">
             <h1 className="font-display text-[clamp(2.75rem,16cqw,7rem)] leading-[0.86] break-words">
               {host.name}
@@ -490,27 +493,26 @@ function ProfileCard({
   const hasProfile = facts.length > 0 || host.genres.length > 0;
 
   return (
-    <aside aria-label={`Profil ${host.name}`} className="min-w-0 lg:self-start">
-      <article className="surface-card overflow-hidden rounded-[var(--radius)]">
-        <div aria-hidden="true" className="relative h-28 overflow-hidden bg-[var(--host-deep)] sm:h-32">
-          <span className="absolute -top-16 -right-10 size-48 rounded-full border border-[color-mix(in_oklch,var(--host-on-deep)_22%,transparent)]" />
-          <span className="absolute -top-28 -right-24 size-80 rounded-full border border-[color-mix(in_oklch,var(--host-on-deep)_14%,transparent)]" />
-        </div>
-        <div className="px-5 pb-6 sm:px-6">
+    <aside aria-label={`Profil ${host.name}`} className="min-w-0 lg:sticky lg:top-[calc(var(--header-height)+1rem)] lg:self-start">
+      <article className="surface-card rounded-[var(--radius)] p-2">
+        <div aria-hidden="true" className="display-dots h-24 rounded-[3px] bg-[var(--host-deep)] sm:h-28" />
+        <div className="px-3 pb-4 sm:px-4">
           <Avatar
             host={host}
             image={image}
             size={112}
-            className="-mt-12 w-24 ring-[6px] ring-[var(--surface)] sm:w-28"
+            className="-mt-12 w-24 ring-4 ring-[var(--surface)] sm:w-28"
           />
           <div className="mt-4 min-w-0 @container">
             <h1 className="font-display text-[clamp(2rem,14cqw,2.9rem)] leading-[0.95] break-words text-foreground">
               {host.name}
             </h1>
-            <p className="mt-2 font-semibold text-[var(--host-ink)]">{host.role}</p>
+            <div className="mt-3">
+              <RoleTag role={host.role} />
+            </div>
           </div>
           {host.tagline && (
-            <p className="mt-5 rounded-2xl bg-[var(--host-soft)] px-4 py-3 text-sm leading-relaxed text-pretty text-foreground">
+            <p className="mt-5 rounded-[var(--radius)] border-l-4 border-[var(--host-accent)] bg-[var(--host-soft)] px-4 py-3 text-sm leading-relaxed text-pretty text-foreground">
               {host.tagline}
             </p>
           )}
@@ -520,7 +522,7 @@ function ProfileCard({
             </div>
           )}
           {hasProfile && (
-            <div className="mt-6 border-t border-separator pt-6">
+            <div className="mt-6 border-t border-separator pt-5">
               <Profile host={host} facts={facts} plain />
             </div>
           )}
@@ -536,7 +538,7 @@ function ProfileCard({
 
 function ShowList({
   shows,
-  className = "shell pt-16 sm:pt-20",
+  className = "shell pt-12 sm:pt-16",
 }: {
   shows: ShowDTO[];
   className?: string;
@@ -546,16 +548,23 @@ function ShowList({
   return (
     <section className={className} aria-labelledby="shows-title">
       <SectionTitle id="shows-title">Sendungen</SectionTitle>
-      <ul className="grid gap-4 md:grid-cols-2">
+      <ul className="grid gap-2 md:grid-cols-2">
         {shows.map((show) => (
-          <li key={show.id} className="surface-card flex gap-4 rounded-3xl p-5">
+          <li
+            key={show.id}
+            className="surface-card grid grid-cols-[5rem_minmax(0,1fr)] gap-4 rounded-[var(--radius)] p-2 sm:grid-cols-[6rem_minmax(0,1fr)]"
+          >
+            {/* Sendetag und Beginn als Display. */}
             <span
               aria-hidden="true"
-              className="grid size-14 shrink-0 place-items-center rounded-2xl bg-[var(--host-deep)] text-base font-bold text-[var(--host-on-deep)]"
+              className="display-panel flex aspect-square flex-col items-center justify-center gap-1 rounded-[var(--radius)]"
             >
-              {WEEKDAY_LABELS[show.weekday].slice(0, 2)}
+              <span className="font-dot text-2xl leading-none text-volt">
+                {WEEKDAY_LABELS[show.weekday].slice(0, 2)}
+              </span>
+              <span className="font-dot text-xs text-display-muted">{show.startTime}</span>
             </span>
-            <div className="min-w-0">
+            <div className="min-w-0 py-1.5 pr-2">
               <h3 className="text-lg leading-tight font-bold tracking-tight break-words text-foreground">
                 {show.title}
               </h3>
@@ -575,7 +584,7 @@ function ShowList({
 function AuthorArticles({
   host,
   articles,
-  className = "shell pt-16 sm:pt-20",
+  className = "shell pt-12 sm:pt-16",
 }: {
   host: HostDTO;
   articles: ArticleDTO[];
@@ -586,12 +595,12 @@ function AuthorArticles({
   return (
     <section className={className}>
       <SectionTitle>Beiträge von {host.name}</SectionTitle>
-      <ul className="surface-card flex flex-col gap-1 rounded-3xl p-2">
+      <ul className="surface-card flex flex-col rounded-[var(--radius)] p-2">
         {articles.map((article) => (
-          <li key={article.id}>
+          <li key={article.id} className="border-b border-separator last:border-b-0">
             <Link
               href={`/news/${article.slug}`}
-              className="group flex flex-col gap-1 rounded-2xl px-4 py-3.5 transition-colors hover:bg-surface-secondary sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
+              className="group flex flex-col gap-1 rounded-[3px] px-3 py-3.5 transition-colors hover:bg-surface-secondary sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
             >
               <span className="font-semibold text-foreground transition-colors group-hover:text-[var(--host-ink)]">
                 {article.title}
@@ -613,9 +622,9 @@ function Team({ title, hosts }: { title: string; hosts: HostDTO[] }) {
   if (hosts.length === 0) return null;
 
   return (
-    <section className="shell pt-16 sm:pt-20">
+    <section className="shell pt-12 sm:pt-16">
       <SectionTitle>{title}</SectionTitle>
-      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
         {hosts.map((other) => (
           <li key={other.id}>
             <TeamLink host={other} />
@@ -631,9 +640,9 @@ async function TeamLink({ host }: { host: HostDTO }) {
   return (
     <Link
       href={`/moderatoren/${host.slug}`}
-      className="surface-card hover-lift flex items-center gap-4 rounded-2xl p-3 pr-5"
+      className="surface-card hover-lift flex items-center gap-4 rounded-[var(--radius)] p-2 pr-5"
     >
-      <span className="relative grid size-14 shrink-0 place-items-center overflow-hidden rounded-full bg-surface-secondary">
+      <span className="well relative grid size-14 shrink-0 place-items-center overflow-hidden rounded-[3px]">
         {image ? (
           <Image src={image} alt="" fill sizes="56px" className="object-cover" />
         ) : (
@@ -642,7 +651,7 @@ async function TeamLink({ host }: { host: HostDTO }) {
       </span>
       <span className="flex min-w-0 flex-col">
         <span className="truncate font-bold tracking-tight text-foreground">{host.name}</span>
-        <span className="truncate text-sm text-muted">{host.role}</span>
+        <span className="truncate font-mono text-xs lowercase text-muted">{host.role}</span>
       </span>
     </Link>
   );

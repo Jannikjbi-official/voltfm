@@ -101,46 +101,48 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
 
       {/* --- Kopf ------------------------------------------------------------
           Eigener Aufbau statt PageHeader: Kategorie und Zeit stehen ueber dem
-          Titel, die Autorin oder der Autor als Karte darunter. */}
-      <header className="shell pt-10 sm:pt-14">
-        <Breadcrumbs
-          items={[
-            { href: "/", label: "Start" },
-            { href: "/news", label: "News" },
-            { href: `/news/${article.slug}`, label: article.title },
-          ]}
-        />
+          Titel, die Autorin oder der Autor als Modul darunter. */}
+      <header className="shell pt-2">
+        <div className="surface-card rounded-[var(--radius)] px-5 pt-5 pb-7 sm:px-8 sm:pt-6 sm:pb-10">
+          <Breadcrumbs
+            items={[
+              { href: "/", label: "Start" },
+              { href: "/news", label: "News" },
+              { href: `/news/${article.slug}`, label: article.title },
+            ]}
+          />
 
-        <div className="mx-auto mt-10 max-w-4xl sm:mt-14 sm:text-center">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 sm:justify-center">
-            <Link
-              href={`/news?kategorie=${article.categorySlug}`}
-              className="rounded-full bg-accent-soft px-3.5 py-1 text-sm font-semibold text-accent-soft-foreground transition-colors hover:bg-accent-soft-hover"
-            >
-              {categoryName}
-            </Link>
-            {article.publishedAt && (
-              <time className="font-mono text-xs text-muted" dateTime={article.publishedAt}>
-                {formatDate(article.publishedAt)}
-              </time>
+          <div className="mt-8 max-w-5xl sm:mt-12">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+              <Link
+                href={`/news?kategorie=${article.categorySlug}`}
+                className="rounded-[3px] bg-volt px-2 py-0.5 font-mono text-[0.7rem] font-semibold lowercase text-graphite transition-colors hover:bg-graphite hover:text-volt"
+              >
+                {categoryName}
+              </Link>
+              {article.publishedAt && (
+                <time className="font-mono text-xs text-muted" dateTime={article.publishedAt}>
+                  {formatDate(article.publishedAt)}
+                </time>
+              )}
+              <span className="font-mono text-xs text-muted">{formatReadingTime(article.readingTime)}</span>
+            </div>
+
+            <h1 className="mt-6 font-display text-[2.4rem] text-balance break-words hyphens-auto text-foreground sm:text-6xl lg:text-7xl">
+              {article.title}
+            </h1>
+
+            {article.excerpt && (
+              <p className="mt-6 max-w-2xl text-lg leading-relaxed text-pretty text-muted sm:text-xl">
+                {article.excerpt}
+              </p>
             )}
-            <span className="font-mono text-xs text-muted">{formatReadingTime(article.readingTime)}</span>
           </div>
 
-          <h1 className="mt-6 font-display text-[2.4rem] text-balance break-words hyphens-auto text-foreground sm:text-6xl lg:text-7xl">
-            {article.title}
-          </h1>
-
-          {article.excerpt && (
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-pretty text-muted sm:text-xl">
-              {article.excerpt}
-            </p>
-          )}
-
-          <div className="mt-8 inline-flex max-w-full items-center gap-3 rounded-full border border-border bg-surface py-1.5 pr-5 pl-1.5 text-left">
+          <div className="well mt-8 inline-flex max-w-full items-center gap-3 rounded-[var(--radius)] py-2 pr-5 pl-2">
             <AuthorAvatar name={article.authorName} image={author?.image} size="md" />
             <div className="min-w-0">
-              <p className="text-xs text-muted">Geschrieben von</p>
+              <p className="font-meta text-muted">Geschrieben von</p>
               {/* Nur verlinken, wenn es das Profil oeffentlich gibt — sonst
                   fuehrt der Verweis auf eine 404-Seite. */}
               {author ? (
@@ -158,51 +160,57 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
         </div>
       </header>
 
-      <article className="shell pt-10 pb-4 sm:pt-14">
+      <article className="shell pt-2">
         {article.coverImage ? (
-          <figure className="mx-auto max-w-6xl overflow-hidden rounded-[var(--radius)] border border-border bg-surface-secondary">
-            <Image
-              src={article.coverImage}
-              alt={article.coverAlt ?? ""}
-              width={1200}
-              height={675}
-              sizes="(max-width: 1200px) 100vw, 1152px"
-              priority
-              className="h-auto w-full"
-            />
+          <figure className="surface-card rounded-[var(--radius)] p-2">
+            <div className="well overflow-hidden rounded-[3px]">
+              <Image
+                src={article.coverImage}
+                alt={article.coverAlt ?? ""}
+                width={1200}
+                height={675}
+                sizes="(max-width: 1400px) 100vw, 1330px"
+                priority
+                className="h-auto w-full"
+              />
+            </div>
           </figure>
         ) : (
           // Meilensteine haben kein Foto, aber eine Zahl — die steht gross
           // auf dem erzeugten Titelbild. Dasselbe Format wie ein Foto
           // (1200 × 675), damit der Text nicht springt.
           article.coverLabel && (
-            <div className="relative mx-auto aspect-video max-w-6xl overflow-hidden rounded-[var(--radius)]">
-              <ArticleCover
-                categorySlug={article.categorySlug}
-                categoryName={categoryName}
-                label={article.coverLabel}
-              />
+            <div className="surface-card rounded-[var(--radius)] p-2">
+              <div className="relative aspect-video overflow-hidden rounded-[3px]">
+                <ArticleCover
+                  categorySlug={article.categorySlug}
+                  categoryName={categoryName}
+                  label={article.coverLabel}
+                />
+              </div>
             </div>
           )
         )}
 
-        <div className="mx-auto mt-10 grid max-w-6xl gap-10 sm:mt-14 lg:grid-cols-[minmax(0,1fr)_17rem] lg:gap-16">
+        <div className="mt-2 grid gap-2 lg:grid-cols-[minmax(0,1fr)_19rem]">
           {/* Ausgabe des Editors. Bereinigt beim Speichern in der
               Admin-Action, nie hier. */}
-          <div className="vfm-prose min-w-0 max-w-[68ch]" dangerouslySetInnerHTML={{ __html: article.content }} />
+          <div className="surface-card min-w-0 rounded-[var(--radius)] px-5 py-8 sm:px-10 sm:py-12 lg:px-16">
+            <div className="vfm-prose mx-auto max-w-[68ch]" dangerouslySetInnerHTML={{ __html: article.content }} />
+          </div>
 
-          <aside aria-label="Zum Artikel" className="flex flex-col gap-4 lg:sticky lg:top-[calc(var(--header-height)+1.5rem)] lg:self-start">
+          <aside aria-label="Zum Artikel" className="flex flex-col gap-2 lg:sticky lg:top-[calc(var(--header-height)+1rem)] lg:self-start">
             <ShareButtons url={url} title={article.title} />
 
             {article.tags.length > 0 && (
-              <div className="surface-card rounded-3xl p-5">
-                <h2 className="text-sm font-bold text-foreground">Schlagwörter</h2>
-                <ul className="mt-3 flex flex-wrap gap-2">
+              <div className="surface-card rounded-[var(--radius)] p-4">
+                <h2 className="font-meta text-muted">Schlagwörter</h2>
+                <ul className="mt-3 flex flex-wrap gap-1.5">
                   {article.tags.map((tag) => (
                     <li key={tag}>
                       <Link
                         href={`/suche?q=${encodeURIComponent(tag)}`}
-                        className="inline-flex rounded-full bg-default px-3 py-1 text-sm font-medium text-foreground transition-colors hover:bg-volt hover:text-ink"
+                        className="inline-flex rounded-[3px] bg-default px-2 py-0.5 font-mono text-[0.75rem] lowercase text-foreground transition-colors hover:bg-volt hover:text-graphite"
                       >
                         {tag}
                       </Link>
@@ -216,9 +224,9 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
       </article>
 
       {related.length > 0 && (
-        <section aria-labelledby="related-title" className="shell mt-20 sm:mt-28">
+        <section aria-labelledby="related-title" className="shell pt-12 sm:pt-16">
           <SectionHeader id="related-title" title="Weiterlesen" />
-          <div className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((item) => (
               <ArticleCard key={item.id} article={item} />
             ))}
