@@ -78,10 +78,10 @@ export const site = {
    */
   applyUrl: "https://bewerbung.voltfm.xyz/",
   /** laut.fm station slug — drives every metadata endpoint. */
-  station: process.env.NEXT_PUBLIC_RADIO_STATION ?? "jannikjbi",
+  station: stationSlug(process.env.NEXT_PUBLIC_RADIO_STATION),
 } as const;
 
-const station = process.env.NEXT_PUBLIC_RADIO_STATION ?? "jannikjbi";
+const station = stationSlug(process.env.NEXT_PUBLIC_RADIO_STATION);
 
 /**
  * How VoltFM is allowed to play its own stream.
@@ -245,4 +245,19 @@ function isAvailable(item: NavItem, now: Date): boolean {
   if (!item.seasonal) return true;
   if (item.href === "/radioaid") return getRadioAidSchedule(now).showInNav;
   return true;
+}
+
+/**
+ * Der laut.fm-Sendername aus NEXT_PUBLIC_RADIO_STATION. Erwartet wird nur der
+ * Name ("jannikjbi"). Steht dort ein ganzer Link wie https://laut.fm/jannikjbi,
+ * zaehlt der letzte Pfadteil — sonst fragen Metadaten, Playlist und Player
+ * eine Station ab, die es nicht gibt (so geschehen nach dem Umzug, Nov 2026).
+ * Als Funktionsdeklaration, damit `site` sie schon beim Laden nutzen kann.
+ */
+function stationSlug(raw: string | undefined): string {
+  const fallback = "jannikjbi";
+  const value = (raw ?? "").trim().replace(/^['"]|['"]$/g, "");
+  if (!value) return fallback;
+  const slug = value.replace(/[?#].*$/, "").replace(/\/+$/, "").split("/").pop() ?? "";
+  return /^[a-z0-9_-]{2,40}$/i.test(slug) ? slug.toLowerCase() : fallback;
 }
