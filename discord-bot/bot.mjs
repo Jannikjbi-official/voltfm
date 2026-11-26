@@ -87,13 +87,20 @@ async function joinRadio() {
 }
 
 /* ---------- Status: laufender Song und Hinweise ---------- */
-/** Der laufende Song: zuerst von der Website (mit Cover), sonst direkt von laut.fm. */
+/** Der laufende Song: zuerst von der Website (mit Cover, Verlauf, Hörern), sonst direkt von laut.fm. */
 async function nowPlaying() {
   try {
     const r = await fetch(`${SITE_API}/api/radio/now`, { signal: AbortSignal.timeout(8000) });
     if (r.ok) {
-      const n = (await r.json())?.nowPlaying;
-      if (n?.title) return { title: n.title, artist: n.artist ?? "", album: n.album, year: n.releaseYear, cover: n.coverUrl, startedAt: n.startedAt };
+      const j = await r.json();
+      const n = j?.nowPlaying;
+      if (n?.title) {
+        const history = (j.history ?? [])
+          .filter((h) => h?.title && !(h.title === n.title && h.artist === n.artist))
+          .slice(0, 3);
+        return { title: n.title, artist: n.artist ?? "", album: n.album, year: n.releaseYear, cover: n.coverUrl,
+          startedAt: n.startedAt, history, listeners: j.listeners };
+      }
     }
   } catch {}
   try {
@@ -101,7 +108,8 @@ async function nowPlaying() {
     if (!r.ok) return null;
     const s = await r.json();
     if (!s?.title) return null;
-    return { title: s.title, artist: s?.artist?.name ?? "", album: s.album, year: s.releaseyear, cover: null, startedAt: s.started_at };
+    return { title: s.title, artist: s?.artist?.name ?? "", album: s.album, year: s.releaseyear, cover: null,
+      startedAt: s.started_at, history: [], listeners: null };
   } catch { return null; }
 }
 async function currentSong() {
@@ -110,50 +118,78 @@ async function currentSong() {
   return text ? text.slice(0, 120) : null;
 }
 
-/* ---------- #läuft-gerade: jeder neue Song als Karte ---------- */
+/* ---------- #läuft-gerade: genau eine Karte, die bei jedem Songwechsel bearbeitet wird ---------- */
 const md = (t) => String(t ?? "").replace(/([\\*_`~|>#\[\]()-])/g, "\\$1");
-let lastPostedKey = null;
-async function postNowPlaying() {
-  if (!NOW_CHANNEL) return;
-  const s = await nowPlaying();
-  if (!s) return;
-  const key = `${s.artist}|${s.title}`;
-  if (key === lastPostedKey) return;
+const unix = (iso) => Math.floor((Date.parse(iso) || Date.now()) / 1000);
+let nowMessageId = null;
+let lastCardKey = null;
+
+function nowPlayingCard(s) {
   const meta = [s.album, s.year].filter(Boolean).map(md).join(" · ");
-  const text = `### ${md(s.title)}\n${s.artist ? `von **${md(s.artist)}**` : ""}${meta ? `\n-# ${meta}` : ""}`;
-  const body = {
+  const text = `## ${md(s.title)}\n${s.artist ? `von **${md(s.artist)}**` : ""}${meta ? `\n-# ${meta}` : ""}`;
+  const head = `-# 🔴 Live auf VoltFM · seit <t:${unix(s.startedAt)}:t>` +
+    (Number.isFinite(s.listeners) ? ` · 🎧 ${s.listeners} ${s.listeners === 1 ? "hört" : "hören"} zu` : "");
+  const before = s.history.length
+    ? s.history.map((h) => `<t:${unix(h.startedAt)}:t> ${md(h.artist)} – ${md(h.title)}`).join("\n")
+    : null;
+  return {
     flags: 1 << 15,
     allowed_mentions: { parse: [] },
     components: [{
       type: 17, accent_color: 0xffd60a,
       components: [
-        { type: 10, content: `-# 🎵 Läuft gerade auf VoltFM · <t:${Math.floor((Date.parse(s.startedAt) || Date.now()) / 1000)}:t>` },
+        { type: 10, content: head },
         s.cover
           ? { type: 9, components: [{ type: 10, content: text }], accessory: { type: 11, media: { url: s.cover } } }
           : { type: 10, content: text },
+        ...(before ? [{ type: 14, divider: true, spacing: 1 }, { type: 10, content: `### Davor\n${before}` }] : []),
         { type: 1, components: [
           { type: 2, style: 5, label: "Radio hören", emoji: { name: "📻" }, url: `https://lautstation.de/?station=${STATION}` },
-          { type: 2, style: 5, label: "Was gerade lief", emoji: { name: "🎧" }, url: "https://voltfm.xyz/radio" },
+          { type: 2, style: 5, label: "Mehr auf voltfm.xyz", emoji: { name: "🎧" }, url: "https://voltfm.xyz/radio" },
         ] },
       ],
     }],
   };
-  try {
-    await client.rest.post(`/channels/${NOW_CHANNEL}/messages`, { body });
-    lastPostedKey = key;
-    log("[läuft-gerade] gepostet:", key);
-  } catch (e) { log("[läuft-gerade] nicht gepostet:", e.message); }
 }
-/** Nach einem Neustart nicht denselben Song noch einmal posten. */
-async function rememberLastPost() {
+
+/** Beim Start: die neueste eigene Karte weiterverwenden, ältere eigene Nachrichten löschen. */
+async function adoptNowMessage() {
   try {
-    const [last] = await client.rest.get(`/channels/${NOW_CHANNEL}/messages?limit=1`);
-    const s = await nowPlaying();
-    if (last?.author?.id === client.user.id && s && JSON.stringify(last.components ?? []).replace(/\\/g, "").includes(s.title)) {
-      lastPostedKey = `${s.artist}|${s.title}`;
+    const msgs = await client.rest.get(`/channels/${NOW_CHANNEL}/messages?limit=100`);
+    const mine = msgs.filter((m) => m.author?.id === client.user.id);
+    nowMessageId = mine[0]?.id ?? null;
+    for (const m of mine.slice(1)) {
+      try { await client.rest.delete(`/channels/${NOW_CHANNEL}/messages/${m.id}`); } catch {}
     }
-  } catch {}
+    if (mine.length > 1) log(`[läuft-gerade] ${mine.length - 1} alte Nachricht(en) aufgeräumt`);
+  } catch (e) { log("[läuft-gerade] Kanal nicht lesbar:", e.message); }
 }
+
+async function updateNowPlaying() {
+  if (!NOW_CHANNEL) return;
+  const s = await nowPlaying();
+  if (!s) return;
+  const key = `${s.artist}|${s.title}|${s.listeners}`;
+  if (key === lastCardKey) return;
+  const body = nowPlayingCard(s);
+  try {
+    if (nowMessageId) {
+      try {
+        await client.rest.patch(`/channels/${NOW_CHANNEL}/messages/${nowMessageId}`, { body });
+      } catch (e) {
+        if (e?.status !== 404) throw e;
+        nowMessageId = null; // Karte wurde gelöscht: neu anlegen
+      }
+    }
+    if (!nowMessageId) {
+      const m = await client.rest.post(`/channels/${NOW_CHANNEL}/messages`, { body });
+      nowMessageId = m.id;
+    }
+    if (!lastCardKey?.startsWith(`${s.artist}|${s.title}|`)) log("[läuft-gerade] Karte:", `${s.artist} – ${s.title}`);
+    lastCardKey = key;
+  } catch (e) { log("[läuft-gerade] Karte nicht aktualisiert:", e.message); }
+}
+
 /* Kanalstatus des Sprachkanals: immer der laufende Song, bei jedem Wechsel neu. */
 let lastVoiceStatus = null;
 async function updateVoiceStatus() {
@@ -218,7 +254,7 @@ client.once(Events.ClientReady, async (c) => {
   tick(); setInterval(tick, 30_000);
   if (ROLES.length || Object.keys(USER_ROLES).length) { sweep(); setInterval(sweep, 6 * 60 * 60 * 1000); }
   if (VOICE) { startStream(); joinRadio(); setInterval(updateVoiceStatus, 15_000); }
-  if (NOW_CHANNEL) { await rememberLastPost(); postNowPlaying(); setInterval(postNowPlaying, 15_000); }
+  if (NOW_CHANNEL) { await adoptNowMessage(); updateNowPlaying(); setInterval(updateNowPlaying, 15_000); }
 });
 
 process.on("SIGTERM", () => { try { connection?.destroy(); } catch {} ffmpeg?.kill("SIGKILL"); client.destroy(); process.exit(0); });
