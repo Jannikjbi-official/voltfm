@@ -80,18 +80,18 @@ export function PasskeyManager() {
           {passkeys.map((passkey) => (
             <li
               key={passkey.id}
-              className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-surface-secondary px-4 py-3"
+              className="flex flex-wrap items-center justify-between gap-3 well rounded-[var(--radius)] px-4 py-3"
             >
               <div className="flex min-w-0 items-center gap-3">
                 <span
                   aria-hidden="true"
-                  className="grid size-9 shrink-0 place-items-center rounded-xl bg-surface text-foreground"
+                  className="grid size-9 shrink-0 place-items-center rounded-[3px] bg-surface text-foreground ring-1 ring-border"
                 >
                   <Icon icon={PasskeyIcon} />
                 </span>
                 <div className="min-w-0">
                   <p className="truncate font-semibold text-foreground">{passkey.name || "Passkey"}</p>
-                  <p className="text-sm text-muted">Hinzugefügt am {formatDate(passkey.createdAt)}</p>
+                  <p className="font-mono text-xs text-muted">Hinzugefügt am {formatDate(passkey.createdAt)}</p>
                 </div>
               </div>
               <Button

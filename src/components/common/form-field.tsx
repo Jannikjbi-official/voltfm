@@ -34,12 +34,16 @@ function FieldShell({
 }: Shared & { id: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div className={cn("flex min-w-0 flex-col gap-1.5", className)}>
-      <label htmlFor={id} className={cn("label", required && "label--required")}>
+      {/* Beschriftung wie am Gehaeuse: Mono, klein, kleingeschrieben. */}
+      <label
+        htmlFor={id}
+        className={cn("label font-mono text-xs font-medium lowercase text-foreground", required && "label--required")}
+      >
         {label}
       </label>
       {children}
       {description && (
-        <p id={`${id}-hint`} className="description">
+        <p id={`${id}-hint`} className="description text-xs text-muted">
           {description}
         </p>
       )}
@@ -51,6 +55,13 @@ function FieldShell({
     </div>
   );
 }
+
+/**
+ * Felder sind Mulden im Gehaeuse: nach innen gesetzt, kantig, beim Fokus
+ * mit gelbem Rand. Die HeroUI-Klasse bleibt fuer Groesse und Zustaende.
+ */
+const FIELD_CLASS =
+  "input well w-full rounded-[var(--radius)] border border-border focus-visible:border-volt data-[invalid=true]:border-danger aria-[invalid=true]:border-danger";
 
 function describedBy(id: string, description: unknown, error: unknown): string | undefined {
   const ids = [description ? `${id}-hint` : null, error ? `${id}-error` : null].filter(Boolean);
@@ -78,7 +89,7 @@ export function TextField({
     >
       <input
         id={id}
-        className="input w-full"
+        className={FIELD_CLASS}
         aria-describedby={describedBy(id, description, error)}
         aria-invalid={error ? true : undefined}
         data-invalid={error ? "true" : undefined}
@@ -109,7 +120,7 @@ export function TextAreaField({
     >
       <textarea
         id={id}
-        className="textarea w-full leading-relaxed"
+        className={cn(FIELD_CLASS, "textarea leading-relaxed")}
         aria-describedby={describedBy(id, description, error)}
         aria-invalid={error ? true : undefined}
         data-invalid={error ? "true" : undefined}
@@ -145,7 +156,7 @@ export function SelectField({
       <div className="relative">
         <select
           id={id}
-          className="input w-full appearance-none pr-9"
+          className={cn(FIELD_CLASS, "appearance-none pr-9")}
           aria-describedby={describedBy(id, description, error)}
           aria-invalid={error ? true : undefined}
           {...select}
@@ -183,7 +194,7 @@ export function CheckboxField({
       <input
         id={id}
         type="checkbox"
-        className="mt-0.5 size-[1.125rem] shrink-0 cursor-pointer rounded accent-[var(--volt)]"
+        className="mt-0.5 size-[1.125rem] shrink-0 cursor-pointer rounded-[3px] accent-[var(--volt)]"
         aria-describedby={description ? `${id}-hint` : undefined}
         {...input}
       />

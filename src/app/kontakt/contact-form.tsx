@@ -32,10 +32,14 @@ export function ContactForm() {
       >
         <span
           aria-hidden="true"
-          className="grid size-12 place-items-center rounded-2xl bg-success-soft text-lg text-success"
+          className="well grid size-12 place-items-center rounded-[var(--radius)] text-lg text-success"
         >
           <Icon icon={CheckIcon} />
         </span>
+        <p className="flex items-center gap-2 font-meta text-muted">
+          <span aria-hidden="true" className="inline-block size-2 rounded-full bg-success" />
+          übertragen
+        </p>
         <h2 className="font-display text-[2rem] text-foreground sm:text-4xl">Nachricht gesendet</h2>
         <p className="leading-relaxed text-muted">{state.message}</p>
       </div>
@@ -47,8 +51,9 @@ export function ContactForm() {
   return (
     <form
       action={formAction}
-      className="surface-card relative flex flex-col gap-5 rounded-[var(--radius)] p-6 sm:p-10"
+      className="surface-card relative flex flex-col gap-5 rounded-[var(--radius)] p-5 sm:p-8"
     >
+      <p className="font-meta text-muted">nachricht an die redaktion</p>
       {state.status === "error" && state.message && (
         <FormMessage status="error">{state.message}</FormMessage>
       )}

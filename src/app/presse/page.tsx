@@ -47,10 +47,11 @@ export default async function PressePage() {
       {/* Ein Raster aus Karten statt einer Textspalte mit Randleiste: Wer
           fuer einen Beitrag recherchiert, sucht eine Angabe und nicht den
           Lesefluss. */}
-      <section className="shell">
-        <div className="grid gap-3 lg:grid-cols-12">
-          <article className="surface-card rounded-[var(--radius)] p-7 sm:p-10 lg:col-span-7">
-            <h2 className="font-display text-[2rem] text-foreground sm:text-4xl">Kurzprofil</h2>
+      <section className="shell pt-2">
+        <div className="grid gap-2 lg:grid-cols-12">
+          <article className="surface-card rounded-[var(--radius)] p-6 sm:p-10 lg:col-span-7">
+            <p className="font-meta text-muted">steckbrief</p>
+            <h2 className="mt-2 font-display text-[2rem] text-foreground sm:text-4xl">Kurzprofil</h2>
             <div className="vfm-prose mt-5 [&>p:first-child]:mt-0">
               <p>
                 VoltFM ist ein unabhängiges, nicht-kommerzielles Webradio aus
@@ -74,24 +75,29 @@ export default async function PressePage() {
             </div>
           </article>
 
-          <div className="flex flex-col gap-3 lg:col-span-5">
+          {/* Die Eckdaten als Anzeige: Beschriftung oben, Wert in Punktmatrix. */}
+          <div className="display-panel display-dots flex flex-col rounded-[var(--radius)] lg:col-span-5">
             <h2 className="sr-only">Zahlen und Fakten</h2>
-            <dl className="grid flex-1 grid-cols-2 gap-3">
-              {facts.map((fact) => (
+            <dl className="grid flex-1 grid-cols-2">
+              {facts.map((fact, index) => (
                 <div
                   key={fact.label}
-                  className="surface-card flex min-w-0 flex-col justify-between gap-6 rounded-3xl p-5"
+                  className={
+                    "flex min-w-0 flex-col justify-between gap-5 border-white/10 p-5 sm:p-6 " +
+                    (index % 2 === 1 ? "border-l " : "") +
+                    (index > 1 ? "border-t" : "")
+                  }
                 >
-                  <dt className="text-sm text-muted">{fact.label}</dt>
-                  <dd className="font-display text-xl break-words text-foreground sm:text-2xl">{fact.value}</dd>
+                  <dt className="font-meta text-display-muted">{fact.label}</dt>
+                  <dd className="font-dot text-base leading-tight break-words text-volt sm:text-xl">{fact.value}</dd>
                 </div>
               ))}
             </dl>
           </div>
 
-          {/* Das Zitat als gelbe Flaeche mit Tinte darauf. */}
-          <figure className="rounded-[var(--radius)] bg-volt p-7 text-ink sm:p-12 lg:col-span-12">
-            <h2 className="text-sm font-semibold text-ink/70">Zum Zitieren</h2>
+          {/* Das Zitat als gelbe Platte mit Tinte darauf. */}
+          <figure className="key rounded-[var(--radius)] bg-volt p-6 text-graphite active:translate-y-0 sm:p-12 lg:col-span-12">
+            <h2 className="font-mono text-xs lowercase text-graphite/70">zum zitieren</h2>
             <blockquote className="mt-4 max-w-4xl font-display text-[1.7rem] leading-[1.15] text-balance sm:text-5xl">
               &bdquo;Ein Algorithmus kennt deinen Geschmack besser als jede
               Redaktion. Was er nicht kann: dafür sorgen, dass viele Menschen im
@@ -99,7 +105,7 @@ export default async function PressePage() {
             </blockquote>
           </figure>
 
-          <div className="surface-card flex flex-col gap-6 rounded-[var(--radius)] p-7 sm:p-10 lg:col-span-7">
+          <div className="surface-card flex flex-col gap-6 rounded-[var(--radius)] p-6 sm:p-10 lg:col-span-7">
             <div>
               <h2 className="font-display text-[2rem] text-foreground sm:text-4xl">Logo</h2>
               <p className="mt-3 max-w-xl leading-relaxed text-muted">
@@ -112,7 +118,7 @@ export default async function PressePage() {
 
             {/* Inline statt als PNG: ohne eigenen Hintergrund, und die Farben
                 folgen dem Modus wie im Header. */}
-            <div className="grid min-h-40 place-items-center rounded-3xl bg-surface-secondary px-6 py-10">
+            <div className="well grid min-h-40 place-items-center rounded-[var(--radius)] px-6 py-10">
               <span role="img" aria-label="Das VoltFM-Logo" className="block">
                 <LogoWordmark className="h-auto w-full max-w-[16rem] sm:max-w-sm" />
               </span>
@@ -124,11 +130,12 @@ export default async function PressePage() {
             </ButtonLink>
           </div>
 
-          <div className="flex flex-col gap-3 lg:col-span-5">
-            <div
-              data-theme="dark"
-              className="dark flex flex-1 flex-col items-start gap-4 rounded-[var(--radius)] border border-border bg-surface p-7 text-foreground shadow-[var(--lift-shadow)] sm:p-9"
-            >
+          <div className="flex flex-col gap-2 lg:col-span-5">
+            <div className="surface-card flex flex-1 flex-col items-start gap-4 rounded-[var(--radius)] p-6 sm:p-8">
+              <p className="flex items-center gap-2 font-meta text-muted">
+                <span className="led" aria-hidden="true" />
+                presseleitung
+              </p>
               <h2 className="font-display text-[2rem] text-foreground sm:text-4xl">Ansprechpartner</h2>
               <p className="leading-relaxed text-muted">
                 <span className="font-semibold text-foreground">{operator.name}</span>
@@ -137,7 +144,7 @@ export default async function PressePage() {
               </p>
               <a
                 href={`mailto:${operator.email}`}
-                className="rounded-sm text-lg font-semibold break-all text-volt underline-offset-4 hover:underline"
+                className="well w-full rounded-[var(--radius)] px-4 py-3 font-mono text-sm font-semibold break-all text-foreground underline-offset-4 hover:underline sm:text-base"
               >
                 {operator.email}
               </a>
@@ -147,8 +154,8 @@ export default async function PressePage() {
               </ButtonLink>
             </div>
 
-            <nav aria-labelledby="presse-weiter" className="surface-card rounded-3xl p-5">
-              <h2 id="presse-weiter" className="text-sm font-semibold text-muted">
+            <nav aria-labelledby="presse-weiter" className="surface-card rounded-[var(--radius)] p-5">
+              <h2 id="presse-weiter" className="font-meta text-muted">
                 Weiterführend
               </h2>
               <ul className="mt-3 flex flex-wrap gap-2">
@@ -160,7 +167,7 @@ export default async function PressePage() {
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      className="inline-flex rounded-full bg-default px-4 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-volt hover:text-ink"
+                      className="key inline-flex rounded-[var(--radius)] bg-surface px-3.5 py-1.5 text-sm font-semibold text-foreground ring-1 ring-border transition-colors hover:bg-volt hover:text-graphite"
                     >
                       {item.label}
                     </Link>

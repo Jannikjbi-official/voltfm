@@ -37,12 +37,19 @@ export function StreamConsentDialog({
   return (
     <AlertDialog.Backdrop isOpen={open} onOpenChange={(next) => !next && onDecline()}>
       <AlertDialog.Container>
-        <AlertDialog.Dialog className="rounded-[var(--radius)] p-6 sm:max-w-[32rem] sm:p-8">
+        <AlertDialog.Dialog className="surface-card rounded-[var(--radius)] p-6 sm:max-w-[32rem] sm:p-8">
           <AlertDialog.Header>
-            {/* Gelbe Kachel mit Tinte, wie die Symbole auf den Seiten. */}
-            <AlertDialog.Icon status="accent" className="size-12 rounded-2xl bg-volt text-lg text-ink">
+            {/* Gelbe Taste mit Tinte, wie die Symbole auf den Seiten. */}
+            <AlertDialog.Icon
+              status="accent"
+              className="key size-12 rounded-[var(--radius)] bg-volt text-lg text-graphite active:translate-y-0"
+            >
               <Icon icon={isRedirect ? ExternalLinkIcon : RadioIcon} />
             </AlertDialog.Icon>
+            <p className="mt-2 flex items-center gap-2 font-meta text-muted">
+              <span className="led" aria-hidden="true" />
+              {isRedirect ? "ausgang / webplayer" : "einwilligung"}
+            </p>
             <AlertDialog.Heading className="mt-1 font-display text-[1.75rem] leading-[1.05] text-balance text-foreground">
               {isRedirect ? "Weiter zum Webplayer" : `Livestream von ${radio.providerName} laden?`}
             </AlertDialog.Heading>
@@ -67,7 +74,7 @@ export function StreamConsentDialog({
               )}
             </p>
 
-            <ul className="flex list-disc flex-col gap-1.5 rounded-2xl bg-surface-secondary py-4 pr-4 pl-9 text-muted marker:text-accent-text">
+            <ul className="flex list-disc flex-col gap-1.5 well rounded-[var(--radius)] py-4 pr-4 pl-9 text-muted marker:text-accent-text">
               {isRedirect ? (
                 <>
                   <li>

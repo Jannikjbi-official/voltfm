@@ -129,23 +129,21 @@ export default function FaqPage() {
         size="large"
       />
 
-      <section className="shell">
-        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,8fr)_minmax(0,4fr)]">
+      <section className="shell pt-2">
+        <div className="grid items-start gap-2 lg:grid-cols-[minmax(0,8fr)_minmax(0,4fr)]">
           <div>
             <FaqList items={FAQ} />
           </div>
 
-          <div
-            data-theme="dark"
-            className="dark flex flex-col items-start gap-4 rounded-[var(--radius)] border border-border bg-surface p-7 text-foreground shadow-[var(--lift-shadow)] sm:p-9 lg:sticky lg:top-[calc(var(--header-height)+1.75rem)]"
-          >
-            <span aria-hidden="true" className="grid size-12 place-items-center rounded-2xl bg-volt text-xl text-ink">
-              <Icon icon={DiscordIcon} />
-            </span>
-            <h2 className="font-display text-[2rem] text-volt sm:text-4xl">
+          <div className="display-panel display-dots flex flex-col items-start gap-4 rounded-[var(--radius)] p-6 sm:p-8 lg:sticky lg:top-[calc(var(--header-height)+1.75rem)]">
+            <p className="flex items-center gap-2 font-meta text-display-muted">
+              <span className="led" aria-hidden="true" />
+              offene leitung
+            </p>
+            <h2 className="font-display text-[2rem] text-balance text-volt sm:text-4xl">
               Deine Frage war nicht dabei?
             </h2>
-            <p className="text-muted">
+            <p className="text-display-muted">
               Dann frag einfach. Im Discord ist meistens jemand von uns online.
             </p>
             <ButtonLink href={site.discordUrl} external variant="primary">

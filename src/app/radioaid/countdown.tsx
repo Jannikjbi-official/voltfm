@@ -7,6 +7,9 @@ import { useRadioPlayer } from "@/components/radio/player-provider";
 import type { RadioAidPhase } from "@/lib/radioaid";
 
 /**
+ * Steht auf einem Display (`display-panel`): helle Schrift, Ziffern in
+ * Punktmatrix.
+ *
  * Countdown bis zum Sendestart — und danach der Weg zum Hören.
  *
  * Zielzeitpunkte kommen als Zeitstempel vom Server, damit hier keine
@@ -48,13 +51,13 @@ export function Countdown({
       <div className="flex items-start gap-4" role="status">
         <span
           aria-hidden="true"
-          className="mt-2 size-3.5 shrink-0 rounded-full bg-volt animate-[vfm-pulse_2s_ease-in-out_infinite] motion-reduce:animate-none"
+          className="led mt-3 shrink-0 animate-[vfm-pulse_2s_ease-in-out_infinite] motion-reduce:animate-none"
         />
         <div className="flex flex-col items-start gap-3">
-          <p className="font-display text-[2.1rem] text-balance text-foreground sm:text-5xl">
+          <p className="font-display text-[2.1rem] text-balance text-volt sm:text-5xl">
             Die Sendung läuft
           </p>
-          <p className="leading-relaxed text-muted">
+          <p className="leading-relaxed text-display-muted">
             24 Stunden Charity-Radio — jetzt einschalten und mitspenden.
           </p>
           {/* Fuehrt ueber denselben Hinweis wie der Player: Die Wiedergabe
@@ -72,12 +75,12 @@ export function Countdown({
   if (phase === "over") {
     return (
       <div className="flex flex-col items-start gap-4">
-        <p className="font-display text-[2.1rem] text-balance text-foreground sm:text-5xl">Die Sendung ist vorbei</p>
-        <p className="max-w-xl text-lg leading-relaxed text-muted">
+        <p className="font-display text-[2.1rem] text-balance text-display-foreground sm:text-5xl">Die Sendung ist vorbei</p>
+        <p className="max-w-xl text-lg leading-relaxed text-display-muted">
           Danke an alle, die zugehört und gespendet haben. Die nächste Ausgabe
           kommt in einem Jahr — sobald der Termin steht, findest du ihn hier.
         </p>
-        <Button variant="tertiary" onPress={openStream} className="mt-2">
+        <Button variant="primary" onPress={openStream} className="mt-2">
           <Icon icon={PlayIcon} />
           Jetzt hören
           <Icon icon={ExternalLinkIcon} />
@@ -108,18 +111,21 @@ export function Countdown({
 
   return (
     <div className="flex min-w-0 flex-col gap-4">
-      <p className="text-sm font-semibold text-muted">{label}</p>
+      <p className="flex items-center gap-2 font-meta text-display-muted">
+        <span className="led" aria-hidden="true" />
+        {label}
+      </p>
       {/* Ziffern ohne Animation: Sie zaehlen still herunter. */}
-      <div className="grid grid-cols-4 gap-2 sm:gap-3" role="timer" aria-live="off">
+      <div className="grid grid-cols-4 gap-1.5 sm:gap-2" role="timer" aria-live="off">
         {units.map((unit) => (
           <div
             key={unit.label}
-            className="flex flex-col items-center gap-2 rounded-2xl bg-default px-1 py-5 sm:py-7"
+            className="flex min-w-0 flex-col items-center gap-3 rounded-[3px] border border-white/10 px-1 py-5 sm:py-8"
           >
-            <span className="font-display text-3xl leading-none tabular-nums text-foreground sm:text-6xl">
+            <span className="font-dot text-3xl leading-none text-volt sm:text-6xl lg:text-7xl">
               {unit.value}
             </span>
-            <span className="text-xs text-muted sm:text-sm">{unit.label}</span>
+            <span className="font-meta text-display-muted">{unit.label}</span>
           </div>
         ))}
       </div>

@@ -38,27 +38,32 @@ export default async function KontoPage(props: PageProps<"/konto">) {
         ]}
       />
 
-      <div className="shell">
-        <div className="grid items-start gap-3 lg:grid-cols-12">
-          {/* Das Profil als dunkle Karte, daneben die Einstellungen als Liste
-              von Karten — wie die Kontoseite einer App. */}
+      <div className="shell pt-2">
+        <div className="grid items-start gap-2 lg:grid-cols-12">
+          {/* Das Profil als Display, daneben die Einstellungen als Platten —
+              wie die Kontoseite eines Geraets. */}
           <section
             aria-labelledby="profile-title"
-            data-theme="dark"
-            className="dark flex flex-col gap-6 rounded-[var(--radius)] border border-border bg-surface p-6 text-foreground shadow-[var(--lift-shadow)] sm:p-8 lg:sticky lg:top-[calc(var(--header-height)+1.75rem)] lg:col-span-5"
+            className="display-panel display-dots flex flex-col gap-6 rounded-[var(--radius)] p-5 sm:p-7 lg:sticky lg:top-[calc(var(--header-height)+1.75rem)] lg:col-span-5"
           >
             <div className="flex items-center gap-4">
               <span
                 aria-hidden="true"
-                className="grid size-16 shrink-0 place-items-center rounded-2xl bg-volt font-display text-3xl text-ink"
+                className="key grid size-16 shrink-0 place-items-center rounded-[var(--radius)] bg-volt font-display text-3xl text-graphite active:translate-y-0"
               >
                 {(profile.name || profile.username || "?").trim().charAt(0).toUpperCase()}
               </span>
-              <h2 id="profile-title" className="font-display text-[2rem] text-foreground">
-                Profil
-              </h2>
+              <div>
+                <p className="flex items-center gap-2 font-meta text-display-muted">
+                  <span className="led" aria-hidden="true" />
+                  angemeldet
+                </p>
+                <h2 id="profile-title" className="mt-1 font-display text-[2rem] text-display-foreground">
+                  Profil
+                </h2>
+              </div>
             </div>
-            <dl className="flex flex-col gap-2 text-sm">
+            <dl className="flex flex-col text-sm">
               {[
                 ["Username", profile.username ?? "—"],
                 ["Anzeigename", profile.name || "—"],
@@ -69,16 +74,16 @@ export default async function KontoPage(props: PageProps<"/konto">) {
               ].map(([term, value]) => (
                 <div
                   key={term}
-                  className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 rounded-2xl bg-default px-4 py-3"
+                  className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-t border-white/10 py-3"
                 >
-                  <dt className="text-muted">{term}</dt>
-                  <dd className="min-w-0 break-all font-semibold text-foreground">{value}</dd>
+                  <dt className="font-meta text-display-muted">{term}</dt>
+                  <dd className="min-w-0 font-mono break-all text-display-foreground">{value}</dd>
                 </div>
               ))}
             </dl>
           </section>
 
-          <div className="flex flex-col gap-3 lg:col-span-7">
+          <div className="flex flex-col gap-2 lg:col-span-7">
             <AccountBlock
               id="accounts-title"
               icon={LinkIcon}
@@ -131,17 +136,17 @@ function AccountBlock({
   return (
     <section
       aria-labelledby={id}
-      className="surface-card flex flex-col gap-5 rounded-3xl p-6 sm:p-7"
+      className="surface-card flex flex-col gap-5 rounded-[var(--radius)] p-5 sm:p-7"
     >
       <div className="flex items-start gap-4">
         <span
           aria-hidden="true"
-          className="grid size-11 shrink-0 place-items-center rounded-2xl bg-default text-foreground"
+          className="well grid size-11 shrink-0 place-items-center rounded-[var(--radius)] text-foreground"
         >
           <Icon icon={icon} />
         </span>
         <div className="min-w-0">
-          <h2 id={id} className="text-xl font-bold tracking-tight text-foreground">
+          <h2 id={id} className="font-wide text-xl font-bold text-foreground">
             {title}
           </h2>
           {description && <p className="mt-1 text-sm leading-relaxed text-muted">{description}</p>}

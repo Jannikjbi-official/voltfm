@@ -14,15 +14,19 @@
   margin-block: 2em;
 }
 
+/* Das Bild sitzt in einem Fenster (Mulde) wie das Cover auf der Buehne. */
 .vfm-figure img {
   display: block;
   width: 100%;
   height: auto;
+  border: 1px solid var(--border);
   border-radius: var(--radius);
 }
 
+/* Bildunterschrift wie eine Beschriftung am Gehaeuse: Mono, klein. */
 .vfm-figure figcaption {
-  font-size: 0.875rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   line-height: 1.5;
   color: var(--muted);
   margin-top: 0.5rem;
@@ -66,9 +70,10 @@
 .vfm-callout {
   margin-block: 2em;
   padding: 1rem 1.25rem;
+  border-left: 4px solid var(--volt);
   border-radius: var(--radius);
-  border-left: 3px solid var(--volt);
   background: var(--surface-secondary);
+  box-shadow: var(--well-shadow);
   font-size: 0.95em;
 }
 
@@ -111,9 +116,12 @@
 
 /* --- Tables --------------------------------------------------------------- */
 
+/* Kantig: feine Fugen, Kopfzeile in Mono wie eine Skala. */
 .vfm-table {
   width: 100%;
   margin-block: 2em;
+  /* Kein Rahmen am Block selbst: Er ist fuers Scrollen `display: block` und
+     waere breiter als die Zellen. Die Fugen ziehen die Zellen. */
   border-collapse: collapse;
   font-size: 0.95em;
   display: block;
@@ -122,15 +130,23 @@
 
 .vfm-table th,
 .vfm-table td {
-  padding: 0.625rem 0.75rem;
-  border-bottom: 1px solid var(--border);
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--border);
   text-align: left;
+  vertical-align: top;
 }
 
 .vfm-table th {
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   color: var(--foreground);
   background: var(--surface-secondary);
+}
+
+.vfm-table tbody tr:nth-child(even) td {
+  background: color-mix(in oklab, var(--surface-secondary) 45%, transparent);
 }
 
 /* --- Clears --------------------------------------------------------------- */

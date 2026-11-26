@@ -65,8 +65,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/radioaid" },
 };
 
-const sideBlock = "surface-card flex flex-col items-start gap-3 rounded-3xl p-6 sm:p-7";
-const sideTitle = "text-xl font-bold tracking-tight text-foreground";
+const sideBlock = "surface-card flex flex-col items-start gap-3 rounded-[var(--radius)] p-5 sm:p-6";
+const sideTitle = "font-wide text-xl font-bold text-foreground";
 
 export default function RadioAidPage() {
   const { start, end, phase } = getRadioAidSchedule();
@@ -85,42 +85,41 @@ export default function RadioAidPage() {
     <>
       {/* RadioAid ist eine fremde Aktion im VoltFM-Gewand: gleiche Farben,
           eigener Kopf mit Herz. */}
-      <header className="shell pt-10 sm:pt-14">
-        <Breadcrumbs
-          items={[
-            { href: "/", label: "Start" },
-            { href: "/radioaid", label: "RadioAid" },
-          ]}
-        />
+      <header className="shell pt-2">
+        <div className="surface-card rounded-[var(--radius)] px-5 pt-5 pb-8 sm:px-8 sm:pt-6 sm:pb-10">
+          <Breadcrumbs
+            items={[
+              { href: "/", label: "Start" },
+              { href: "/radioaid", label: "RadioAid" },
+            ]}
+          />
 
-        <p className="mt-6 inline-flex items-center gap-2.5 rounded-full bg-default py-1 pr-3.5 pl-1 text-sm font-semibold text-foreground">
-          <span
-            aria-hidden="true"
-            className="grid size-7 place-items-center rounded-full bg-volt text-xs text-ink"
-          >
-            <Icon icon={HeartIcon} />
-          </span>
-          Charity-Aktion der Radio-Community
-        </p>
+          <p className="mt-8 flex items-center gap-2.5 font-meta text-muted sm:mt-12">
+            <span
+              aria-hidden="true"
+              className="key grid size-7 place-items-center rounded-[3px] bg-volt text-[0.65rem] text-graphite active:translate-y-0"
+            >
+              <Icon icon={HeartIcon} />
+            </span>
+            Charity-Aktion der Radio-Community
+          </p>
 
-        <h1 className="mt-6 font-display text-[2.6rem] text-balance text-foreground sm:text-7xl lg:text-8xl">
-          Wenn Radio{" "}
-          <span className="box-decoration-clone rounded-2xl bg-volt px-3 text-ink">Gutes tut.</span>
-        </h1>
+          <h1 className="mt-5 font-display text-[2.6rem] text-balance text-foreground sm:text-7xl lg:text-[5.25rem]">
+            Wenn Radio{" "}
+            <span className="box-decoration-clone rounded-[var(--radius)] bg-volt px-2 text-graphite">Gutes tut.</span>
+          </h1>
 
-        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted">
-          Einmal im Jahr macht die Radio-Community 24 Stunden lang gemeinsam
-          Programm für einen guten Zweck. VoltFM ist dabei.
-        </p>
+          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted">
+            Einmal im Jahr macht die Radio-Community 24 Stunden lang gemeinsam
+            Programm für einen guten Zweck. VoltFM ist dabei.
+          </p>
+        </div>
       </header>
 
-      {/* --- Countdown und Eckdaten als Kacheln ----------------------------- */}
-      <section className="shell pt-10 sm:pt-14">
-        <div className="grid gap-3 lg:grid-cols-12">
-          <div
-            data-theme="dark"
-            className="dark flex flex-col justify-center rounded-[var(--radius)] border border-border bg-surface p-6 text-foreground shadow-[var(--lift-shadow)] sm:p-10 lg:col-span-8"
-          >
+      {/* --- Countdown und Eckdaten als Module ------------------------------ */}
+      <section className="shell pt-2">
+        <div className="grid gap-2 lg:grid-cols-12">
+          <div className="display-panel display-dots flex flex-col justify-center rounded-[var(--radius)] p-4 sm:p-8 lg:col-span-8">
             <Countdown
               start={start.getTime()}
               end={end.getTime()}
@@ -129,17 +128,17 @@ export default function RadioAidPage() {
             />
           </div>
 
-          <dl className="grid gap-3 sm:grid-cols-3 lg:col-span-4 lg:grid-cols-1">
+          <dl className="grid gap-2 sm:grid-cols-3 lg:col-span-4 lg:grid-cols-1">
             {details.map((item) => (
-              <div key={item.label} className="surface-card flex items-start gap-4 rounded-3xl p-5">
+              <div key={item.label} className="surface-card flex items-start gap-4 rounded-[var(--radius)] p-4 sm:p-5">
                 <span
                   aria-hidden="true"
-                  className="grid size-11 shrink-0 place-items-center rounded-2xl bg-default text-foreground"
+                  className="well grid size-11 shrink-0 place-items-center rounded-[var(--radius)] text-foreground"
                 >
                   <Icon icon={item.icon} />
                 </span>
-                <div className="flex min-w-0 flex-col gap-0.5">
-                  <dt className="text-sm text-muted">{item.label}</dt>
+                <div className="flex min-w-0 flex-col gap-1">
+                  <dt className="font-meta text-muted">{item.label}</dt>
                   <dd className="font-semibold text-foreground">{item.value}</dd>
                 </div>
               </div>
@@ -148,14 +147,14 @@ export default function RadioAidPage() {
 
           <div className="lg:col-span-12">
             <h2 className="sr-only">In Zahlen</h2>
-            <dl className="grid grid-cols-3 gap-3">
-              {FACTS.map((fact) => (
+            <dl className="surface-card grid grid-cols-3 rounded-[var(--radius)]">
+              {FACTS.map((fact, index) => (
                 <div
                   key={fact.label}
-                  className="surface-card flex min-w-0 flex-col gap-2 rounded-3xl p-4 sm:p-6"
+                  className={cn("flex min-w-0 flex-col gap-2 p-4 sm:p-6", index > 0 && "border-l border-border")}
                 >
-                  <dt className="font-display text-xl text-foreground sm:text-5xl">{fact.value}</dt>
-                  <dd className="text-xs text-muted sm:text-sm">{fact.label}</dd>
+                  <dt className="font-display text-xl break-words text-foreground sm:text-5xl">{fact.value}</dt>
+                  <dd className="font-meta text-muted">{fact.label}</dd>
                 </div>
               ))}
             </dl>
@@ -164,9 +163,9 @@ export default function RadioAidPage() {
       </section>
 
       {/* --- Text mit mitlaufender Randspalte ------------------------------- */}
-      <section className="shell pt-16 sm:pt-24">
-        <div className="grid items-start gap-3 lg:grid-cols-12">
-          <article className="surface-card vfm-prose rounded-[var(--radius)] p-7 sm:p-12 lg:col-span-8 [&>h2:first-child]:mt-0">
+      <section className="shell pt-12 sm:pt-16">
+        <div className="grid items-start gap-2 lg:grid-cols-12">
+          <article className="surface-card vfm-prose rounded-[var(--radius)] p-5 sm:p-10 lg:col-span-8 [&>h2:first-child]:mt-0">
             <h2>Was ist RadioAid?</h2>
             <p>
               RadioAid ist ein Gemeinschaftsprojekt, das aus der laut.fm-Community
@@ -231,11 +230,11 @@ export default function RadioAidPage() {
             </p>
           </article>
 
-          <aside className="flex flex-col gap-3 lg:sticky lg:top-[calc(var(--header-height)+1.75rem)] lg:col-span-4">
+          <aside className="flex flex-col gap-2 lg:sticky lg:top-[calc(var(--header-height)+1.75rem)] lg:col-span-4">
             <div className={sideBlock}>
               <span
                 aria-hidden="true"
-                className="grid size-11 place-items-center rounded-2xl bg-volt text-ink"
+                className="key grid size-11 place-items-center rounded-[var(--radius)] bg-volt text-graphite active:translate-y-0"
               >
                 <Icon icon={HeartIcon} />
               </span>
@@ -254,7 +253,7 @@ export default function RadioAidPage() {
             <div className={sideBlock}>
               <span
                 aria-hidden="true"
-                className="grid size-11 place-items-center rounded-2xl bg-default text-foreground"
+                className="well grid size-11 place-items-center rounded-[var(--radius)] text-foreground"
               >
                 <Icon icon={DiscordIcon} />
               </span>
@@ -273,33 +272,33 @@ export default function RadioAidPage() {
       </section>
 
       {/* --- Unser Weg ------------------------------------------------------ */}
-      <section className="shell pt-16 sm:pt-24">
+      <section className="shell pt-12 sm:pt-16">
         <SectionHeader title="Unser Weg mit RadioAid" />
 
-        <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <ol className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {EDITIONS.map((edition) => {
             const upcoming = "upcoming" in edition;
             return (
               <li
                 key={edition.year}
                 className={cn(
-                  "surface-card flex min-w-0 flex-col gap-3 rounded-3xl p-5 sm:p-6",
-                  upcoming && "ring-2 ring-volt",
+                  "surface-card flex min-w-0 flex-col gap-3 rounded-[var(--radius)] p-2",
+                  upcoming && "border-volt ring-1 ring-volt",
                 )}
               >
-                <span
-                  className={cn(
-                    "self-start rounded-full px-3 py-1 font-mono text-xs font-semibold",
-                    upcoming ? "bg-volt text-ink" : "bg-surface-secondary text-foreground",
-                  )}
-                >
-                  {edition.year}
+                <span className="display-panel flex items-center justify-between gap-3 rounded-[3px] px-4 py-3">
+                  <span className={cn("font-dot text-xl leading-none", upcoming ? "text-volt" : "text-display-foreground")}>
+                    {edition.year}
+                  </span>
+                  {upcoming && <span className="led" aria-hidden="true" />}
                 </span>
-                <h3 className="text-lg font-bold tracking-tight text-foreground">{edition.title}</h3>
-                {edition.text && <p className="text-sm leading-relaxed text-muted">{edition.text}</p>}
-                {edition.org && (
-                  <p className="mt-auto text-sm text-muted">Gesammelt wurde für {edition.org}</p>
-                )}
+                <div className="flex flex-1 flex-col gap-3 px-3 pt-1 pb-3">
+                  <h3 className="font-wide text-lg font-bold text-foreground">{edition.title}</h3>
+                  {edition.text && <p className="text-sm leading-relaxed text-muted">{edition.text}</p>}
+                  {edition.org && (
+                    <p className="mt-auto font-mono text-xs text-muted">Gesammelt wurde für {edition.org}</p>
+                  )}
+                </div>
               </li>
             );
           })}

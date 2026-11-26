@@ -14,9 +14,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "/kontakt" },
 };
 
-const card = "surface-card flex flex-col items-start gap-3 rounded-3xl p-6 sm:p-7";
-const iconTile = "grid size-11 place-items-center rounded-2xl bg-default text-foreground";
-const cardTitle = "text-xl font-bold tracking-tight text-foreground";
+const card = "surface-card flex flex-col items-start gap-3 rounded-[var(--radius)] p-5 sm:p-6";
+const iconTile = "well grid size-11 place-items-center rounded-[var(--radius)] text-foreground";
+const cardTitle = "font-wide text-xl font-bold text-foreground";
 const cardText = "text-sm leading-relaxed text-muted";
 
 export default function KontaktPage() {
@@ -31,20 +31,24 @@ export default function KontaktPage() {
         ]}
       />
 
-      <section className="shell flex flex-col gap-3">
+      <section className="shell flex flex-col gap-2 pt-2">
         {site.mailOutage && (
           <div
             role="status"
-            className="flex flex-col gap-4 rounded-3xl border border-warning/40 bg-warning-soft p-5 sm:flex-row sm:items-start sm:p-6"
+            className="surface-card flex flex-col gap-4 rounded-[var(--radius)] border-l-4 border-l-warning p-5 sm:flex-row sm:items-start sm:p-6"
           >
             <span
               aria-hidden="true"
-              className="grid size-11 shrink-0 place-items-center rounded-2xl bg-warning text-warning-foreground"
+              className="key grid size-11 shrink-0 place-items-center rounded-[var(--radius)] bg-warning text-warning-foreground active:translate-y-0"
             >
               <Icon icon={WarningIcon} />
             </span>
             <div className="min-w-0">
-              <h2 className="text-lg font-bold tracking-tight text-foreground">
+              <p className="flex items-center gap-2 font-meta text-muted">
+                <span className="led" aria-hidden="true" />
+                störung
+              </p>
+              <h2 className="mt-1 font-wide text-lg font-bold text-foreground">
                 Unsere E-Mail ist gerade nicht erreichbar
               </h2>
               <p className="mt-1.5 max-w-3xl text-sm leading-relaxed text-foreground">
@@ -61,7 +65,7 @@ export default function KontaktPage() {
 
         {site.contactFormEnabled ? <ContactForm /> : <TicketPanel />}
 
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           <div className={card}>
             <span aria-hidden="true" className={iconTile}>
               <Icon icon={DiscordIcon} />

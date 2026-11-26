@@ -48,17 +48,17 @@ export function RadioAidBanner({
   if (phase === "over") return null;
 
   const link =
-    "relative inline-flex items-center gap-1.5 rounded-full bg-default px-3.5 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-volt hover:text-ink";
+    "key relative inline-flex items-center gap-1.5 rounded-[var(--radius)] bg-surface px-3.5 py-1.5 text-sm font-semibold text-foreground ring-1 ring-border transition-colors hover:bg-volt hover:text-graphite";
 
   return (
-    <section aria-label="RadioAid 2026" className="shell pt-3">
-      {/* Eine schwebende Karte statt eines Streifens ueber die volle Breite —
-          sie gehoert zur Seite, nicht zur Kopfzeile. */}
-      <div className="surface-card flex flex-wrap items-center gap-x-5 gap-y-3 rounded-3xl p-3">
-        <span className="inline-flex items-center gap-2.5 text-sm font-bold text-foreground">
+    <section aria-label="RadioAid 2026" className="shell pt-2">
+      {/* Eine Leiste im Gehaeuse statt eines Streifens ueber die volle
+          Breite — sie gehoert zur Seite, nicht zur Kopfzeile. */}
+      <div className="surface-card flex flex-wrap items-center gap-x-5 gap-y-3 rounded-[var(--radius)] p-2 pr-3">
+        <span className="inline-flex items-center gap-2.5 font-wide text-sm font-bold text-foreground">
           <span
             aria-hidden="true"
-            className="grid size-9 place-items-center rounded-2xl bg-volt text-xs text-ink"
+            className="key grid size-9 place-items-center rounded-[var(--radius)] bg-volt text-xs text-graphite active:translate-y-0"
           >
             <Icon
               icon={HeartIcon}
@@ -112,13 +112,13 @@ function Remaining({ ms }: { ms: number | null }) {
   }
 
   return (
-    <p className="rounded-full bg-surface-secondary px-3 py-1 font-mono text-xs text-muted">
+    <p className="display-panel rounded-[3px] px-3 py-1.5 font-mono text-xs text-display-muted">
       {/* Sekuendlich wechselnde Ziffern waeren fuer Screenreader unbenutzbar —
           sie bekommen die Angabe einmal, ohne Sekunden. */}
       <span aria-hidden="true">
-        noch <strong className="font-semibold tabular-nums text-foreground">{days}</strong>{" "}
-        {days === "1" ? "Tag" : "Tage"}{" "}
-        <strong className="font-semibold tabular-nums text-foreground">{clock}</strong>
+        noch <strong className="font-dot text-sm text-volt">{days}</strong>{" "}
+        {days === "1" ? "tag" : "tage"}{" "}
+        <strong className="font-dot text-sm text-volt">{clock}</strong>
       </span>
       <span className="sr-only">
         {ms === null ? "Countdown wird geladen." : `Noch ${days} Tage bis zum Sendestart.`}

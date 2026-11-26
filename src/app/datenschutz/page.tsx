@@ -30,17 +30,20 @@ function Contents({ sections }: { sections: readonly { id: string; label: string
   return (
     <nav
       aria-label="Auf dieser Seite"
-      className="surface-card hidden rounded-3xl p-3 lg:sticky lg:top-[calc(var(--header-height)+1.75rem)] lg:col-span-4 lg:block xl:col-span-3"
+      className="surface-card hidden rounded-[var(--radius)] p-2 lg:sticky lg:top-[calc(var(--header-height)+1.75rem)] lg:col-span-4 lg:block xl:col-span-3"
     >
-      <p className="px-3 pt-2 pb-2 text-sm font-semibold text-muted">Auf dieser Seite</p>
-      <ul className="flex flex-col">
-        {sections.map((section) => (
+      <p className="px-3 pt-2 pb-3 font-meta text-muted">Auf dieser Seite</p>
+      <ul className="well flex flex-col gap-px rounded-[3px] p-1">
+        {sections.map((section, index) => (
           <li key={section.id}>
             <a
               href={`#${section.id}`}
-              className="block rounded-xl px-3 py-2 text-sm leading-snug text-foreground transition-colors hover:bg-default"
+              className="grid grid-cols-[1.75rem_minmax(0,1fr)] gap-2 rounded-[3px] px-2.5 py-2 text-sm leading-snug text-foreground transition-colors hover:bg-surface"
             >
-              {section.label}
+              <span aria-hidden="true" className="font-dot text-xs leading-5 text-muted">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <span>{section.label}</span>
             </a>
           </li>
         ))}
@@ -61,18 +64,18 @@ export default function DatenschutzPage() {
         ]}
       />
 
-      <section className="shell">
-        <div className="grid items-start gap-3 lg:grid-cols-12">
+      <section className="shell pt-2">
+        <div className="grid items-start gap-2 lg:grid-cols-12">
           <Contents sections={SECTIONS} />
 
-          <article className="surface-card min-w-0 rounded-[var(--radius)] p-6 sm:p-12 lg:col-span-8 xl:col-span-9">
+          <article className="surface-card min-w-0 rounded-[var(--radius)] p-5 sm:p-10 lg:col-span-8 xl:col-span-9">
             <div className="vfm-prose max-w-[68ch] [&>h2:first-child]:mt-0 [&_h2]:scroll-mt-28">
               <h2 id="verantwortlicher">Verantwortlicher</h2>
               <p>
                 Verantwortlich für die Datenverarbeitung auf dieser Website im Sinne
                 der DSGVO ist:
               </p>
-              <address className="rounded-2xl bg-surface-secondary px-5 py-4 not-italic leading-relaxed">
+              <address className="well rounded-[var(--radius)] px-5 py-4 font-mono text-sm not-italic leading-relaxed">
                 {operator.name}
                 <br />
                 {operator.street}
@@ -84,7 +87,7 @@ export default function DatenschutzPage() {
                 E-Mail: <a href={`mailto:${operator.email}`}>{operator.email}</a>
               </address>
               {site.mailOutage && (
-                <p className="rounded-2xl border border-warning/40 bg-warning-soft px-5 py-4 text-[0.9375rem] leading-relaxed">
+                <p className="rounded-[var(--radius)] border border-border border-l-4 border-l-warning bg-surface-secondary px-5 py-4 text-[0.9375rem] leading-relaxed">
                   Bitte nutze für Datenschutzanliegen genau diese Adresse. Unsere
                   Adressen auf voltfm.xyz und jannikjbi.de sind wegen eines
                   Serverausfalls derzeit nicht erreichbar.
@@ -422,7 +425,7 @@ export default function DatenschutzPage() {
               </p>
 
               <h2 id="stand-und-hinweis">Stand und Hinweis</h2>
-              <p className="rounded-2xl bg-surface-secondary px-5 py-4 text-[0.9375rem] leading-relaxed">
+              <p className="well rounded-[var(--radius)] px-5 py-4 text-[0.9375rem] leading-relaxed">
                 Dieser Text beschreibt die tatsächliche Datenverarbeitung von{" "}
                 {site.name} zum Stand dieser Fassung. Er ersetzt keine Rechtsberatung.
               </p>
