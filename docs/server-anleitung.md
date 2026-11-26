@@ -1,3 +1,25 @@
+## Automatisch veröffentlichen (Standard)
+
+voltfm.xyz läuft auf dem eigenen Server in Docker (`docker-compose.yml`: Mongo,
+Seite, Cron, Discord-Bot aus `discord-bot/`). Der Ordner `/opt/voltfm` ist ein
+Git-Checkout dieses Repos.
+
+**Alles, was auf `main` landet, geht von selbst live.** Ein Timer auf dem Server
+(`voltfm-deploy.timer`) schaut alle 2 Minuten nach neuen Commits. Gibt es einen,
+baut er Seite und Bot neu, führt `npm run migrate` aus und startet beides neu.
+Das dauert etwa 5 Minuten. Schlägt Build oder Migration fehl, läuft die
+bisherige Version weiter.
+
+- Log: `/var/log/voltfm-deploy.log`
+- Sofort statt in 2 Minuten: `systemctl start voltfm-deploy`
+- Geheimnisse stehen nur in `/opt/voltfm/.env` (Admin-Panel), nie im Repo.
+  Das Repo ist öffentlich.
+- Direkt auf dem Server nichts im Code ändern: Der nächste Deploy setzt den
+  Ordner auf den Stand von `main` zurück. Änderungen immer über GitHub.
+
+Die Anleitung unten für Änderungs-ZIPs gilt nur noch, falls der automatische
+Weg einmal nicht geht.
+
 ## Was auf dem Server zu tun ist
 
 VoltFM läuft auf einem eigenen Server (Node.js, `next start`), nicht mehr auf
