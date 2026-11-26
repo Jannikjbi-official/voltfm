@@ -201,21 +201,23 @@ definieren, `<EntityManager />` rendern. Kein eigenes Formular.
   (`bg-surface`, `text-muted`, `border-border`, `bg-volt`, `text-accent-text`
   …), nie als Literal. Inline-Styles nur, um eine dynamische CSS-Variable zu
   setzen.
-- **Gelb ist eine Fläche mit Tinte darauf** (`bg-volt text-ink`). Gelbe Schrift
-  auf hellem Grund ist verboten; für Text in Senderfarbe gibt es
-  `text-accent-text` (hell: Bernstein, dunkel: Gelb). Die große gelbe Fläche
-  der Startseite ist die Bühne.
-- **Look einer aktuellen App:** Karten über die Utility `surface-card` mit
-  `rounded-2xl`/`rounded-3xl`, Pillen `rounded-full bg-default`, Bewegung über
-  `hover-lift` (respektiert `prefers-reduced-motion`). Kein Glow, keine
-  Farbverläufe, keine weichgezeichneten Hintergründe.
+- **Design „Gerät“** (seit 26.11.2026): Die Seite ist ein Radio zum
+  Anfassen. Gehäuse hell-aluminium (Standard) bzw. Graphit (dunkel), darin
+  Platten (`surface-card` + `rounded-[var(--radius)]`, 6 px, kantig),
+  eingelassene schwarze Displays (`display-panel`, optional `display-dots`),
+  Mulden (`well`), Tasten mit harter Unterkante (`key`), Signal-LED (`led`).
+  Große Radien sind global auf 6–8 px gestellt; keine runden Karten, kein
+  Glow, keine Deko-Verläufe.
+- **Gelb ist eine Taste oder ein Leuchten** (`bg-volt text-graphite`). Gelbe
+  Schrift nur auf Displays; auf dem hellen Gehäuse für Senderfarbe
+  `text-accent-text`.
+- **Schriften:** `font-display` (Bricolage Grotesque) für Überschriften,
+  Fließtext Instrument Sans, `font-meta` (JetBrains Mono, klein,
+  kleingeschrieben) als Gehäuse-Beschriftung, `font-dot` (Doto, Punktmatrix)
+  für alles auf Displays: Uhrzeit, Daten, Zahlen, Laufschrift.
 - Licht- und Dunkelmodus: `data-theme` **und** Klasse `dark`/`light` am
-  `<html>`, beide aus dem Cookie `voltfm-theme`. Dunkel ist Standard. Ein
-  Abschnitt mit `class="dark" data-theme="dark"` ist immer dunkel
-  (Player-Leiste, Footer, Fehlerseiten).
-- Überschriften: `font-display` (Archivo, sehr fett, eng gesetzt), Zeiten,
-  Daten und Zähler in `font-mono` (IBM Plex Mono). Seitenbreite über die
-  Utility `shell`.
+  `<html>`, beide aus dem Cookie `voltfm-theme`. **Hell ist Standard.**
+  Seitenbreite über die Utility `shell`.
 - **Das Admin ist eine eigene App** (`src/app/admin/layout.tsx` →
   `AdminShell`): Die Website-Kopfzeile, der Footer und der Player werden dort
   über `SiteChrome` ausgeblendet. Neue Bereiche gehören in
@@ -305,21 +307,22 @@ Nützliche Skripte:
 
 ---
 
-## 10. Branches und Freigabe
+## 10. Server, Branches und Freigabe
 
-| Branch | Domain | Vercel-Umgebung |
-| --- | --- | --- |
-| `main` | <https://voltfm.xyz> | Production |
-| `dev` | <https://dev.voltfm.xyz> | Preview (Domain fest an `dev` gebunden) |
+VoltFM läuft **nicht mehr auf Vercel**, sondern auf einem eigenen Server
+(`next start`). Dort sagt `VOLTFM_ENV`, was die Seite ist
+(`production` = voltfm.xyz, `dev` = Testseite) — siehe `src/lib/deploy.ts`.
+Nur Production postet in den Discord und wird von Suchmaschinen gelistet;
+alles andere schickt `X-Robots-Tag: noindex` und sperrt `robots.txt`.
 
-- Neue Arbeit landet **zuerst auf `dev`**: Pull Requests gehen gegen `dev`,
-  nicht gegen `main`.
-- `main` bekommt Änderungen nur über einen Pull Request `dev` → `main`, und den
-  merged der Betreiber, wenn er die Dev-Seite freigegeben hat. Nie direkt nach
-  `main` pushen.
-- Die Dev-Seite hat eigene Umgebungsvariablen (in Vercel: Preview, Branch
-  `dev`): `NEXT_PUBLIC_SITE_URL` und `BETTER_AUTH_URL` zeigen auf
-  `https://dev.voltfm.xyz`, `MONGODB_DB` auf eine eigene Datenbank. Wer dort
-  Daten anlegt oder löscht, trifft nicht die echte Seite.
-- Alles außer Production schickt `X-Robots-Tag: noindex` und sperrt in
-  `robots.txt` alles (`next.config.ts`, `src/app/robots.ts`).
+- Gearbeitet wird auf einem Branch; `main` ist der Stand, der auf dem Server
+  laufen soll.
+- **Nach jeder Änderung eine ZIP bauen**, damit die Person bzw. KI am Server
+  weiß, was zu tun ist:
+  `bash scripts/aenderungs-zip.sh <stand-auf-dem-server>` (z. B. `origin/main`
+  oder der zuletzt ausgelieferte Commit). Die ZIP enthält alle geänderten
+  Dateien, einen Git-Patch, die Liste gelöschter Dateien und `ANLEITUNG.md`
+  (aus `docs/server-anleitung.md`). Neue Umgebungsvariablen, Migrationen oder
+  Schritte, die nur diese Änderung betreffen, zusätzlich dem Betreiber nennen.
+- Neue Indexe und Inhalte gehören als Migration in `scripts/migrate.mts`;
+  auf dem Server läuft `npm run migrate` vor `npm run build`.

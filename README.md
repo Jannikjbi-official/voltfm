@@ -76,7 +76,8 @@ Alle Variablen stehen in `.env.example`. `.env.local` ist gitignored und wird
 | `CRON_SECRET`                  | nein    | Schützt `/api/cron/meilensteine`                 |
 | `DISCORD_SUGGESTIONS_CHANNEL_ID` | nein  | Kanal für Vorschläge, Standard `1574526503998455870` (liest und schreibt mit `DISCORD_BOT_TOKEN`) |
 | `DISCORD_PLAYLIST_IDEAS_CHANNEL_ID` | nein | Kanal für Playlist-Ideen, Standard `1574526506087219291` |
-| `DISCORD_API_BASE`             | nein    | Nur lokal: Test-Server statt Discord (auf Vercel ignoriert) |
+| `DISCORD_API_BASE`             | nein    | Nur lokal: Test-Server statt Discord (auf dem Server ignoriert) |
+| `VOLTFM_ENV`                   | ja (Server) | `production` auf voltfm.xyz, `dev` auf einer Testseite — siehe `src/lib/deploy.ts` |
 
 Fehlt eine optionale Variable, verschwindet nur das jeweilige Feature — die
 Seite läuft weiter. Ohne `DISCORD_CLIENT_ID` wird der Discord-Login schlicht
@@ -221,67 +222,34 @@ Fehlt ein Bild, greift eine Kette:
 
 ## Design
 
-UI-Bibliothek ist **HeroUI v3** (`@heroui/react`, `@heroui/styles`) auf
-**Tailwind CSS 4**. Die Doku liegt fuer Agenten im Projekt
-(`npx heroui-cli@latest agents-md --react --output docs/AGENTS-HEROUI.md`,
-Dateien unter `.heroui-docs/`, nicht eingecheckt).
+Look „Gerät“ (seit 26.11.2026): VoltFM sieht aus wie ein modernes Radio zum
+Anfassen. Geblieben ist nur die Senderfarbe Gelb `#FFD60A`.
 
-Drei Farben aus den Logo-Dateien:
+- **Gehäuse** hell-aluminium (Standard) bzw. Graphit (dunkel), Cookie
+  `voltfm-theme`.
+- **Platten** (`surface-card`), **Displays** (`display-panel`,
+  `display-dots`), **Mulden** (`well`), **Tasten** (`key`), **LED** (`led`) —
+  alle als Tailwind-Utilities in `src/app/globals.css`, Farben als Tokens in
+  `src/styles/theme.css`.
+- **Schriften** (über `next/font`, vom eigenen Server): Bricolage Grotesque
+  (Überschriften), Instrument Sans (Text), JetBrains Mono (Beschriftung,
+  `font-meta`), Doto (Punktmatrix auf Displays, `font-dot`).
+- Kantig: Radius 6 px, große Tailwind-Radien sind global verkleinert.
+- Details für Agenten: `docs/AGENTS-VOLTFM.md` §7.
 
-```
-Tinte  #0E0F12
-Gelb   #FFD60A   Senderfarbe
-Papier #F5F5F0
-```
+## Deployment (eigener Server)
 
-Gelb ist immer eine **Fläche mit Tinte darauf**. Gelbe Schrift auf hellem
-Grund gibt es nicht; Text in Senderfarbe steht im Hellmodus in dunklem
-Bernstein (`text-accent-text`). Die HeroUI-Variablen (`--background`,
-`--surface`, `--accent`, `--muted` …) setzt `src/styles/theme.css` für hell
-und dunkel.
+VoltFM läuft mit `npm run build` und `npm run start` auf einem eigenen Server.
 
-Look: wie eine aktuelle App — Flächen in Ebenen (`surface-card`), feine
-Kanten, runde Karten und Pillen-Knöpfe, Schatten nur, wo etwas schwebt,
-leichte Bewegung (`hover-lift`, Laufband) mit Rücksicht auf
-`prefers-reduced-motion`. Kein Glow, keine Farbverläufe.
-
-**Dunkel ist Standard.** Das Theme liegt in einem **Cookie** (`voltfm-theme`),
-nicht in `localStorage` — so kennt der Server es beim Rendern und setzt
-`data-theme` und die Klasse `dark`/`light` schon im HTML: kein Flash, kein
-Hydration-Mismatch. Player-Leiste, Footer und Fehlerseiten sind immer dunkel
-(`class="dark"` am Abschnitt), die Bühne ist eine gelbe Karte.
-
-Schrift: Archivo (große Überschriften `font-display`: sehr fett, eng
-gesetzt) und IBM Plex Mono für Uhrzeiten, Daten und Zähler (`font-mono`).
-Beide liefert `next/font` von der eigenen Domain aus.
-
-Das Admin ist eine eigene App ohne Website-Kopf, Footer und Player: Seitenleiste,
-Kopfleiste mit „Neu“, Befehlspalette (Strg+K / ⌘K), Tabellen und ein
-Seitenpanel zum Bearbeiten (`src/components/admin/shell/`, `admin-ui.tsx`).
-
-Bausteine:
-
-- `ButtonLink` — Link mit HeroUI-Knopfoptik (`buttonVariants`)
-- `PageHeader`, `SectionHeader`, `EmptyState` — `src/components/common/`
-- Formularfelder für Server Actions — `src/components/common/form-field.tsx`
-  (native Felder mit HeroUI-Klassen, damit `FormData` ankommt)
-- `.vfm-prose` — Lesetext für Artikel- und Event-HTML (`src/styles/prose.css`)
-
----
-
-## Deployment (Vercel)
-
-Das Projekt ist Vercel-ready: kein persistentes Dateisystem, keine lokalen
-Serverprozesse, keine Secrets im Code.
-
-1. Repository importieren.
-2. Alle Variablen aus `.env.example` in den Projekt-Einstellungen setzen.
-3. `BETTER_AUTH_URL` und `NEXT_PUBLIC_SITE_URL` auf `https://voltfm.xyz`.
-4. In der Discord-App unter *OAuth2 → Redirects* eintragen:
-   `https://voltfm.xyz/api/auth/callback/discord`
-5. Deployen, danach einmal `npm run seed` gegen die Produktionsdatenbank.
-
----
+- `VOLTFM_ENV=production` auf voltfm.xyz (`dev` auf einer Testseite). Ohne den
+  Wert postet die Seite nichts in den Discord (`src/lib/deploy.ts`).
+- Vor jedem Build `npm run migrate` (Indexe und ausstehende Inhalte).
+- Änderungen gehen als ZIP an den Server:
+  `bash scripts/aenderungs-zip.sh <stand-auf-dem-server>` baut sie mit allen
+  geänderten Dateien, Patch und Anleitung (`docs/server-anleitung.md`).
+- Der tägliche Meilenstein-Abruf braucht auf dem Server einen Cronjob, der
+  `/api/cron/meilensteine` mit `Authorization: Bearer $CRON_SECRET` aufruft
+  (früher hat das Vercel übernommen).
 
 ## Troubleshooting
 

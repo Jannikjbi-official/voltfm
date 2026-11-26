@@ -3,6 +3,7 @@ import "server-only";
 import { articles, categories } from "@/db/collections";
 import { site } from "@/lib/site";
 import type { Article } from "@/types/content";
+import { isProductionDeploy } from "@/lib/deploy";
 
 /**
  * Neue Beitraege im Discord ankuendigen.
@@ -60,7 +61,7 @@ export function discordNewsTarget(): "webhook" | "bot" | null {
 }
 
 export function discordNewsEnabled(): boolean {
-  return process.env.VERCEL_ENV === "production" && discordNewsTarget() !== null;
+  return isProductionDeploy() && discordNewsTarget() !== null;
 }
 
 /**

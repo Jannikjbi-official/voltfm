@@ -3,6 +3,7 @@ import "server-only";
 import { ideaApprovals } from "@/db/collections";
 import { site } from "@/lib/site";
 import { IDEA_KIND_LIST, IDEA_TEXT_MAX, type Idea, type IdeaKind } from "@/lib/ideas";
+import { deployEnv, isProductionDeploy } from "@/lib/deploy";
 
 /**
  * Vorschläge und Playlist-Ideen: lesen aus und schreiben in zwei
@@ -21,9 +22,9 @@ import { IDEA_KIND_LIST, IDEA_TEXT_MAX, type Idea, type IdeaKind } from "@/lib/i
  * der Seite.
  */
 
-/* Nur lokal (nie auf Vercel) darf ein Test-Server statt Discord antworten. */
+/* Nur lokal (nie auf dem Server) darf ein Test-Server statt Discord antworten. */
 const API =
-  !process.env.VERCEL && process.env.DISCORD_API_BASE
+  deployEnv() === "local" && process.env.DISCORD_API_BASE
     ? process.env.DISCORD_API_BASE.replace(/\/$/, "")
     : "https://discord.com/api/v10";
 
@@ -172,7 +173,7 @@ export async function getPublicIdeas(limit = 6): Promise<Record<IdeaKind, Idea[]
 
 /** Ob das Formular wirklich nach Discord schreibt: nur auf voltfm.xyz (und lokal gegen einen Test-Server). */
 export function ideaPostingEnabled(): boolean {
-  return process.env.VERCEL_ENV === "production" || (!process.env.VERCEL && Boolean(process.env.DISCORD_API_BASE));
+  return isProductionDeploy() || (deployEnv() === "local" && Boolean(process.env.DISCORD_API_BASE));
 }
 
 export type PostIdeaResult = "ok" | "testseite" | "nicht-eingerichtet" | "fehler";

@@ -1,4 +1,5 @@
 import { runMilestones } from "@/services/milestones";
+import { isPreviewDeploy } from "@/lib/deploy";
 
 /**
  * Der taegliche Lauf fuer die Meilenstein-Beitraege (Zeitplan in vercel.json).
@@ -13,7 +14,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 export async function GET(request: Request) {
-  if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "production") {
+  if (isPreviewDeploy()) {
     return new Response("Läuft nur auf voltfm.xyz.", { status: 403 });
   }
   const secret = process.env.CRON_SECRET;

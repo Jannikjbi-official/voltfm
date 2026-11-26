@@ -21,6 +21,7 @@ import { config } from "dotenv";
 import { MongoClient, type Db } from "mongodb";
 
 import { renderRichText } from "../src/lib/sanitize";
+import { isPreviewDeploy } from "../src/lib/deploy";
 import { radioaid, getRadioAidSchedule } from "../src/lib/radioaid";
 import { formatDayMonth, formatTime } from "../src/lib/format";
 import {
@@ -976,6 +977,20 @@ const MIGRATIONS: Migration[] = [
       return result.upsertedCount ? `angelegt: /news/${rest.slug}` : "war schon da";
     },
   },
+  {
+    /* Partner (/partner) und Freigaben der Discord-Ideen: Slug bzw.
+       Nachrichten-ID eindeutig, damit doppelte Einträge eine klare Meldung
+       bekommen statt still nebeneinander zu stehen. */
+    name: "024-indexes-partner-ideen",
+    run: async (db) => {
+      await Promise.all([
+        db.collection("partners").createIndex({ slug: 1 }, { unique: true }),
+        db.collection("partners").createIndex({ active: 1, order: 1, name: 1 }),
+        db.collection("ideaApprovals").createIndex({ messageId: 1 }, { unique: true }),
+      ]);
+      return "Indexe für partners und ideaApprovals angelegt";
+    },
+  },
 ];
 
 /* --- Der Lauf ------------------------------------------------------------- */
@@ -1003,7 +1018,7 @@ try {
 
   for (const migration of MIGRATIONS) {
     if (done.has(migration.name)) continue;
-    if (migration.productionOnly && process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "production") {
+    if (migration.productionOnly && isPreviewDeploy()) {
       // Nicht vermerkt: Der Production-Build holt sie nach.
       console.log(`[migrate] ${migration.name}: wartet auf den Production-Build`);
       continue;
