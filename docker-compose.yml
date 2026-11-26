@@ -1,0 +1,79 @@
+# VoltFM on this server: Cloudflare (proxy on) -> Caddy (toki-web stack) -> voltfm -> mongo.
+# Caddy reaches this stack over the shared toki-edge network; its site block is
+# /opt/toki-web/caddy-sites/voltfm.caddy.
+services:
+  mongo:
+    image: mongo:8
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: voltfm
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:?set MONGO_ROOT_PASSWORD in .env}
+    volumes:
+      - mongodata:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  voltfm:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://voltfm.xyz}
+        NEXT_PUBLIC_RADIO_STATION: ${NEXT_PUBLIC_RADIO_STATION:-}
+        NEXT_PUBLIC_RADIO_STREAM_URL: ${NEXT_PUBLIC_RADIO_STREAM_URL:-}
+        NEXT_PUBLIC_DISCORD_URL: ${NEXT_PUBLIC_DISCORD_URL:-}
+        NEXT_PUBLIC_RADIO_EMBED: ${NEXT_PUBLIC_RADIO_EMBED:-}
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      MONGODB_URI: mongodb://voltfm:${MONGO_ROOT_PASSWORD}@mongo:27017/?authSource=admin
+      MONGODB_DB: ${MONGODB_DB:-voltfm}
+    networks:
+      - default
+      - edge
+
+  # Täglicher Meilenstein-Abruf (früher Vercel-Cron, gleiche Uhrzeit: 04:15 UTC)
+  cron:
+    image: alpine:3.22
+    env_file: .env
+    environment:
+      TZ: UTC
+    command:
+      - sh
+      - -c
+      - |
+        apk add --no-cache curl >/dev/null
+        printf '15 4 * * * curl -fsS -H "Authorization: Bearer $$CRON_SECRET" http://voltfm:3000/api/cron/meilensteine\n' > /etc/crontabs/root
+        exec crond -f -l 6
+    depends_on: [voltfm]
+    restart: unless-stopped
+
+  # Bot „VoltFM Zentrale“ (Code in ./discord-bot): spielt das Radio im Sprachkanal „📻┃Radio hören“,
+  # zeigt den laufenden Song als Status und gibt jedem Mitglied die Rolle 🎧 Hörer.
+  zentrale:
+    build: ./discord-bot
+    image: voltfm-zentrale
+    restart: unless-stopped
+    environment:
+      DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN:-}
+      GUILD_ID: "1549922141003190324"
+      VOICE_CHANNEL_ID: "1574526526190260244"
+      AUTOROLE_IDS: "1575651699534594122"
+      # Dustin bekommt beim Beitritt 👑 Founder
+      USER_ROLES: '{"513032712240627733":["1574526410138329220"]}'
+      LAUTFM_STATION: jannikjbi
+      STREAM_URL: https://stream.laut.fm/jannikjbi
+      NOW_PLAYING_CHANNEL_ID: "1574526501531942973"
+
+networks:
+  edge:
+    name: toki-edge
+    external: true
+
+volumes:
+  mongodata:

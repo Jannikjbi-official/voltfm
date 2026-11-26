@@ -64,11 +64,36 @@ export function LogoWordmark({ className }: { className?: string }) {
   );
 }
 
+/** Weihnachtsmuetze bis Silvester: 01.01.2027 00:00 deutscher Zeit = 31.12.2026 23:00 UTC. */
+const SANTA_HAT_UNTIL = Date.UTC(2026, 11, 31, 23, 0);
+
+/** Die Muetze sitzt schraeg auf der oberen Ecke des Play-Dreiecks. Rein dekorativ. */
+function SantaHat({ compact }: { compact: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 64 56"
+      aria-hidden="true"
+      focusable="false"
+      className={
+        compact
+          ? "pointer-events-none absolute -left-[8px] -top-[13px] h-[22px] w-auto -rotate-[20deg]"
+          : "pointer-events-none absolute -left-[8px] -top-[12px] h-[19px] w-auto -rotate-[20deg] min-[380px]:-top-[13px] min-[380px]:h-[22px]"
+      }
+    >
+      <path d="M9 46 Q16 16 42 8 Q55 5 58 19 Q50 14 44 22 L56 46 Z" fill="#d62828" />
+      <path d="M17 40 Q22 24 36 15" stroke="#a51d1d" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.6" />
+      <rect x="3" y="41" width="58" height="13" rx="6.5" fill="#f4f1ea" />
+      <circle cx="58" cy="20" r="6.5" fill="#f4f1ea" />
+    </svg>
+  );
+}
+
 /**
  * Die Wortmarke als Link zur Startseite. Sie ist dekorativ — den Namen
- * traegt das aria-label des Links.
+ * traegt das aria-label des Links. Bis Silvester mit Weihnachtsmuetze.
  */
 export function Logo({ compact = false }: { compact?: boolean }) {
+  const xmas = Date.now() < SANTA_HAT_UNTIL;
   return (
     <Link
       href="/"
@@ -76,11 +101,14 @@ export function Logo({ compact = false }: { compact?: boolean }) {
       className="inline-flex min-h-11 shrink-0 items-center rounded-md"
       aria-label="VoltFM — zur Startseite"
     >
-      {compact ? (
-        <LogoIcon className="block h-8 w-auto" />
-      ) : (
-        <LogoWordmark className="block h-[22px] w-auto min-[380px]:h-[26px]" />
-      )}
+      <span className="relative inline-block">
+        {compact ? (
+          <LogoIcon className="block h-8 w-auto" />
+        ) : (
+          <LogoWordmark className="block h-[22px] w-auto min-[380px]:h-[26px]" />
+        )}
+        {xmas ? <SantaHat compact={compact} /> : null}
+      </span>
     </Link>
   );
 }

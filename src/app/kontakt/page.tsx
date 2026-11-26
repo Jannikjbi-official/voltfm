@@ -24,7 +24,7 @@ export default function KontaktPage() {
     <>
       <PageHeader
         title="Schreib uns"
-        description="Feedback, Songwünsche, Kooperationen oder eine Presseanfrage — am schnellsten geht es über ein Ticket in unserem Discord."
+        description="Feedback, Songwünsche, Kooperationen oder eine Presseanfrage — schreib uns über das Formular, per E-Mail oder per Ticket in unserem Discord."
         breadcrumbs={[
           { href: "/", label: "Start" },
           { href: "/kontakt", label: "Kontakt" },
@@ -107,8 +107,7 @@ export default function KontaktPage() {
               >
                 {operator.email}
               </a>
-              . Diese Adresse funktioniert, auch während unser eigener
-              Mailserver ausfällt.
+              . Das Formular oben landet im selben Postfach.
             </p>
           </div>
 

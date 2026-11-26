@@ -6,10 +6,10 @@ import { getRadioAidSchedule } from "@/lib/radioaid";
  */
 
 /**
- * Die eine Adresse, die erreichbar ist. Bewusst ausserhalb der eigenen Domain,
- * weil deren Mailserver ausgefallen ist.
+ * Die Kontaktadresse. Laeuft ueber den eigenen Mailserver (Stalwart auf dem
+ * VoltFM-Server); dorthin schickt auch das Kontaktformular.
  */
-const operatorEmail = "Jannikjbi@proton.me";
+const operatorEmail = "kontakt@voltfm.xyz";
 
 export const site = {
   name: "VoltFM",
@@ -49,32 +49,27 @@ export const site = {
     process.env.NEXT_PUBLIC_RADIO_STREAM_URL ?? "https://stream.laut.fm/jannikjbi",
   /**
    * Die erreichbare Kontaktadresse. § 5 DDG verlangt die Angabe einer
-   * E-Mail-Adresse, und sie muss tatsaechlich funktionieren — deshalb steht
-   * hier die Proton-Adresse und nicht eine auf der eigenen Domain.
+   * E-Mail-Adresse, und sie muss tatsaechlich funktionieren.
    */
   contactEmail: operatorEmail,
-  /**
-   * Die Adressen auf der eigenen Domain. Der Mailserver dahinter ist komplett
-   * ausgefallen, keine davon empfaengt derzeit Nachrichten.
-   */
-  stationEmail: "Kontakt@voltfm.xyz",
+  /** Die Adresse der Station auf der eigenen Domain. */
+  stationEmail: "kontakt@voltfm.xyz",
   legacyEmail: "admin@jannikjbi.de",
   /**
    * Solange das true ist, darf keine Stelle im UI eine @voltfm.xyz- oder
    * @jannikjbi.de-Adresse als funktionierenden Weg anbieten. Erreichbar sind
    * `contactEmail` und der Discord.
    */
-  mailOutage: true,
+  mailOutage: false,
   /**
    * Ist das Kontaktformular aktiv?
    *
-   * Nein: Anfragen laufen ueber ein Ticket im Discord. Dort sieht sie das
-   * ganze Team, es kann direkt jemand antworten, und es geht nichts unter,
-   * weil niemand in die Datenbank schaut. Die Server Action lehnt Einsendungen
-   * ebenfalls ab, solange das hier false ist — ein ausgeblendetes Formular
-   * haelt einen direkten POST nicht auf.
+   * Ja: Einsendungen landen in der Datenbank und gehen per Mail an
+   * `stationEmail` (src/lib/mail.ts, SMTP-Zugang aus der .env). Die Server
+   * Action lehnt Einsendungen ab, solange das hier false ist — ein
+   * ausgeblendetes Formular haelt einen direkten POST nicht auf.
    */
-  contactFormEnabled: false,
+  contactFormEnabled: true,
   /** Wo im Discord das Ticket aufgemacht wird. */
   supportChannelHint: "Kanal #ticket-erstellen",
   /**
@@ -119,12 +114,12 @@ export const features = {
 export const radio = {
   embedAllowed: process.env.NEXT_PUBLIC_RADIO_EMBED === "true",
   /**
-   * Wohin "hören" fuehrt, solange nicht eingebettet wird: der Webplayer von
+   * Wohin "hören" fuehrt, solange nicht eingebettet wird: die Stationsseite von
    * lautstation.de, in einem neuen Fenster. Entscheidung des Betreibers vom
    * 25.10.2026 — vorher war es laut.fm selbst. Eingebettet wird weiterhin
    * nichts; der Player laeuft auf lautstation.de, nicht auf voltfm.xyz.
    */
-  externalUrl: `https://lautstation.de/?webplayer=${station}`,
+  externalUrl: `https://lautstation.de/?station=${station}`,
   /** Wer die Seite hinter `externalUrl` betreibt — fuer Hinweis und Datenschutz. */
   externalName: "lautstation.de",
   externalPrivacyUrl: "https://lautstation.de/?mode=datenschutz",

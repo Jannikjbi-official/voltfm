@@ -109,7 +109,7 @@ async function announce(article: Article): Promise<void> {
     const webhook = webhookUrl();
     // ?wait=true: Discord antwortet mit der Nachricht, so bekommen wir die ID.
     const res = webhook
-      ? await fetch(`${webhook}?wait=true`, {
+      ? await fetch(`${webhook}?wait=true&with_components=true`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body,
@@ -145,29 +145,62 @@ function absolute(path: string): string {
   return new URL(path, site.canonicalUrl).toString();
 }
 
+/** Eigenes Server-Emoji (VoltFM-Discord), wie in den Ankuendigungen. */
+const NEWS_EMOJI = { id: "1575198131753066667", name: "news" };
+/** Discord: Nachricht besteht aus Components v2 statt content/embeds. */
+const IS_COMPONENTS_V2 = 1 << 15;
+
 /**
- * Die Nachricht. Kein eigener Text, nur was im Beitrag steht — Titel, Teaser,
- * Autor, Kategorie, Titelbild. Niemand wird erwaehnt oder angepingt.
+ * Die Nachricht: eine Karte im Stil der Ankuendigungen (Components v2) mit
+ * "Neuer Artikel", Titel, Teaser, Titelbild und einem Button zum Beitrag.
+ * Kein eigener Text ausser diesem Rahmen. Niemand wird erwaehnt oder angepingt.
  */
 export function buildMessage(
   article: Pick<
     Article,
-    "title" | "slug" | "excerpt" | "authorName" | "coverImage" | "publishedAt"
+    "title" | "slug" | "excerpt" | "authorName" | "coverImage" | "coverAlt" | "publishedAt"
   >,
   categoryName?: string,
 ) {
+  const url = absolute(`/news/${article.slug}`);
+  const emoji = `<:${NEWS_EMOJI.name}:${NEWS_EMOJI.id}>`;
+  const kicker = categoryName ? `Neuer Artikel · ${categoryName}` : "Neuer Artikel";
+  const when = article.publishedAt
+    ? ` · <t:${Math.floor(new Date(article.publishedAt).getTime() / 1000)}:D>`
+    : "";
+  const title = article.title.replace(/[\[\]]/g, "").slice(0, 200);
+
   return {
+    flags: IS_COMPONENTS_V2,
     allowed_mentions: { parse: [] },
-    embeds: [
+    components: [
       {
-        title: article.title.slice(0, 256),
-        url: absolute(`/news/${article.slug}`),
-        description: article.excerpt.slice(0, 1000),
-        color: EMBED_COLOR,
-        author: { name: article.authorName.slice(0, 256) },
-        ...(article.coverImage ? { image: { url: absolute(article.coverImage) } } : {}),
-        footer: { text: categoryName ? `${categoryName} · voltfm.xyz` : "voltfm.xyz" },
-        ...(article.publishedAt ? { timestamp: new Date(article.publishedAt).toISOString() } : {}),
+        type: 17,
+        accent_color: EMBED_COLOR,
+        components: [
+          { type: 10, content: `-# ${emoji} ${kicker}` },
+          { type: 10, content: `## [${title}](${url})
+${article.excerpt.slice(0, 1200)}` },
+          ...(article.coverImage
+            ? [
+                {
+                  type: 12,
+                  items: [
+                    {
+                      media: { url: absolute(article.coverImage) },
+                      ...(article.coverAlt ? { description: article.coverAlt.slice(0, 1000) } : {}),
+                    },
+                  ],
+                },
+              ]
+            : []),
+          { type: 14, divider: true, spacing: 1 },
+          { type: 10, content: `-# von ${article.authorName.slice(0, 80)}${when} · voltfm.xyz` },
+          {
+            type: 1,
+            components: [{ type: 2, style: 5, label: "Artikel lesen", emoji: NEWS_EMOJI, url }],
+          },
+        ],
       },
     ],
   };

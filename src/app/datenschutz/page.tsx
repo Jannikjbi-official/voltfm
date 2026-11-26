@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 const SECTIONS = [
   { id: "verantwortlicher", label: "Verantwortlicher" },
-  { id: "hosting-vercel", label: "Hosting (Vercel)" },
+  { id: "hosting", label: "Hosting und Auslieferung" },
   { id: "livestream-und-sendedaten-laut-fm", label: "Livestream und Sendedaten (laut.fm)" },
   { id: "playlist-der-letzten-tage-lautstation-de", label: "Playlist der letzten Tage (lautstation.de)" },
   { id: "cookies-und-lokale-speicherung", label: "Cookies und lokale Speicherung" },
@@ -94,24 +94,30 @@ export default function DatenschutzPage() {
                 </p>
               )}
 
-              <h2 id="hosting-vercel">Hosting (Vercel)</h2>
+              <h2 id="hosting">Hosting und Auslieferung</h2>
               <p>
-                Diese Website wird von der <strong>Vercel Inc.</strong>, 440 N Barranca
-                Ave #4133, Covina, CA 91723, USA gehostet. Beim Aufruf verarbeitet
-                Vercel technisch notwendige Server-Logfiles: IP-Adresse, Datum und
-                Uhrzeit, abgerufene Seite, übertragene Datenmenge, Referrer und
-                Browserkennung. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO —
+                <strong>Eigener Server:</strong> Diese Website, ihre Datenbank und unser
+                Mailserver laufen auf einem eigenen Server in einem Rechenzentrum der{" "}
+                <strong>GHOSTnet GmbH</strong>, Am Dachsbau 17, 65812 Bad Soden am
+                Taunus, Deutschland. Die Daten bleiben in Deutschland. Beim Aufruf
+                verarbeitet unser Server technisch notwendige Logdaten: IP-Adresse,
+                Datum und Uhrzeit, abgerufene Seite, übertragene Datenmenge, Referrer
+                und Browserkennung. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO —
                 unser berechtigtes Interesse am sicheren und störungsfreien Betrieb.
                 Die Daten werden nicht mit anderen Quellen zusammengeführt.
               </p>
               <p>
-                Vercel ist ein US-Unternehmen, es kann also zu einer Übermittlung in
-                die USA kommen. Vercel ist unter dem EU–US Data Privacy Framework
-                zertifiziert und schließt ergänzend die Standardvertragsklauseln der
-                EU-Kommission ab. Wir haben mit Vercel einen Vertrag zur
-                Auftragsverarbeitung nach Art. 28 DSGVO geschlossen. Es gilt die{" "}
-                <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noreferrer noopener">
-                  Datenschutzerklärung von Vercel
+                <strong>Cloudflare:</strong> Bevor eine Anfrage unseren Server
+                erreicht, läuft sie über das Netzwerk der Cloudflare, Inc., 101
+                Townsend St, San Francisco, CA 94107, USA. Cloudflare schützt die Seite
+                vor Angriffen und liefert sie schneller aus und verarbeitet dafür
+                dieselben technischen Daten wie oben, insbesondere deine IP-Adresse.
+                Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Dabei kann es zu einer
+                Übermittlung in die USA kommen; Cloudflare ist unter dem EU–US Data
+                Privacy Framework zertifiziert und schließt ergänzend die
+                Standardvertragsklauseln der EU-Kommission ab. Es gilt die{" "}
+                <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noreferrer noopener">
+                  Datenschutzerklärung von Cloudflare
                 </a>
                 .
               </p>
@@ -283,9 +289,8 @@ export default function DatenschutzPage() {
                 Wenn du ein Konto erstellst, speichern wir Benutzername,
                 Anzeigename, E-Mail-Adresse und einen Passwort-Hash (Klartext-Passwörter
                 werden nie gespeichert). Rechtsgrundlage ist Art. 6 Abs. 1 lit. b
-                DSGVO. Gespeichert werden sie in einer von der MongoDB, Inc.
-                betriebenen Atlas-Datenbank, mit der ebenfalls ein Vertrag zur
-                Auftragsverarbeitung besteht.
+                DSGVO. Gespeichert werden sie in unserer eigenen Datenbank auf unserem
+                Server in Deutschland (siehe „Hosting und Auslieferung“).
               </p>
               <p>
                 <strong>Anmeldung über Discord:</strong> Meldest du dich über Discord
@@ -307,7 +312,10 @@ export default function DatenschutzPage() {
               <h2 id="kontaktformular">Kontaktformular</h2>
               <p>
                 Die von dir eingegebenen Daten (Name, E-Mail-Adresse, Betreff,
-                Nachricht) speichern wir zur Bearbeitung deiner Anfrage.
+                Nachricht) speichern wir zur Bearbeitung deiner Anfrage und senden
+                sie als E-Mail an unser Postfach {site.stationEmail}. Das Postfach
+                liegt auf unserem eigenen Mailserver; ein externer Maildienst ist
+                nicht beteiligt.
                 Rechtsgrundlage ist Art. 6 Abs. 1 lit. b bzw. f DSGVO. Die Nachrichten
                 werden gelöscht, sobald die Anfrage abschließend bearbeitet ist und
                 keine gesetzlichen Aufbewahrungspflichten entgegenstehen.
@@ -369,14 +377,14 @@ export default function DatenschutzPage() {
                 </thead>
                 <tbody>
                   <tr>
-                    <td>Vercel Inc.</td>
-                    <td>Hosting der Website</td>
-                    <td>USA</td>
+                    <td>GHOSTnet GmbH</td>
+                    <td>Rechenzentrum für unseren Server (Website, Datenbank, E-Mail)</td>
+                    <td>Deutschland</td>
                   </tr>
                   <tr>
-                    <td>MongoDB, Inc. (Atlas)</td>
-                    <td>Datenbank für Konten und Inhalte</td>
-                    <td>USA / EU</td>
+                    <td>Cloudflare, Inc.</td>
+                    <td>Schutz und schnellere Auslieferung der Website</td>
+                    <td>USA</td>
                   </tr>
                   <tr>
                     <td>Ping Labs, Inc. (UploadThing)</td>

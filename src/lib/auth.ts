@@ -7,7 +7,8 @@ import { nextCookies } from "better-auth/next-js";
 import { getDb, getMongoClient } from "@/db/client";
 import { serverEnv, isProduction } from "@/lib/env";
 import { site } from "@/lib/site";
-import { ac, roles, ADMIN_ROLES, OWNER_USER_IDS } from "@/lib/permissions";
+import { ac, roles, ADMIN_ROLES, OWNER_USER_IDS, OWNER_DISCORD_IDS } from "@/lib/permissions";
+import { ObjectId } from "mongodb";
 
 /**
  * The single source of truth for identity in VoltFM.
@@ -24,7 +25,28 @@ export const auth = betterAuth({
   appName: site.name,
   secret: serverEnv.authSecret,
   baseURL: serverEnv.authUrl,
-  database: mongodbAdapter(db, { client }),
+  /* Eigener Server: MongoDB laeuft als Einzelinstanz ohne Replica Set und kann
+     keine Transaktionen (Atlas auf Vercel konnte das). Ohne diesen Schalter
+     scheitert jede Registrierung, auch per Discord. */
+  database: mongodbAdapter(db, { client, transaction: false }),
+
+  /* Inhaber per Discord: Die Benutzer-IDs in OWNER_ACCOUNTS stammen aus der
+     alten Atlas-Datenbank. Auf dem eigenen Server entstehen neue IDs, deshalb
+     bekommt ein Discord-Konto aus OWNER_DISCORD_IDS beim Verknuepfen die Rolle
+     "owner" — beim ersten Discord-Login genauso wie beim spaeteren Verbinden. */
+  databaseHooks: {
+    account: {
+      create: {
+        after: async (account) => {
+          if (account.providerId !== "discord" || !OWNER_DISCORD_IDS.includes(account.accountId)) return;
+          const id = String(account.userId);
+          await db
+            .collection("user")
+            .updateOne({ _id: ObjectId.isValid(id) ? new ObjectId(id) : (id as never) }, { $set: { role: "owner" } });
+        },
+      },
+    },
+  },
 
   // Required by the username plugin: username sign-in resolves to a credential
   // account, so the email/password provider has to be enabled underneath it.

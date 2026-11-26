@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import { contactMessages } from "@/db/collections";
 import { clientKey, rateLimit } from "@/lib/rate-limit";
+import { isMailConfigured, sendContactMail } from "@/lib/mail";
 import { site } from "@/lib/site";
 
 /**
@@ -90,6 +91,7 @@ export async function submitContact(
     };
   }
 
+  let stored = false;
   try {
     await contactMessages().insertOne({
       name: parsed.data.name,
@@ -99,11 +101,27 @@ export async function submitContact(
       handled: false,
       createdAt: new Date(),
     });
+    stored = true;
   } catch (error) {
     console.error("[contact] insert failed", error);
+  }
+
+  /* Zusaetzlich per Mail ans Stationspostfach. Klappt einer der beiden Wege,
+     ist die Nachricht angekommen. */
+  let mailed = false;
+  if (isMailConfigured()) {
+    try {
+      await sendContactMail(parsed.data);
+      mailed = true;
+    } catch (error) {
+      console.error("[contact] mail failed", error);
+    }
+  }
+
+  if (!stored && !mailed) {
     return {
       status: "error",
-      message: "Die Nachricht konnte nicht gespeichert werden. Bitte versuch es später erneut.",
+      message: "Die Nachricht konnte nicht gesendet werden. Bitte versuch es später erneut.",
     };
   }
 
