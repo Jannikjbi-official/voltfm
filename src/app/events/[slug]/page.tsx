@@ -172,7 +172,7 @@ export default async function EventPage({ params }: { params: Promise<Params> })
 
           <div className="min-w-0">
             {event.image && (
-              <div className="mb-10 overflow-hidden rounded-[2rem] border border-border bg-surface-secondary">
+              <div className="mb-10 overflow-hidden rounded-[var(--radius)] border border-border bg-surface-secondary">
                 <Image
                   src={event.image}
                   alt=""

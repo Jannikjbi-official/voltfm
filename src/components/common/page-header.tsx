@@ -25,19 +25,20 @@ export function PageHeader({
   children?: React.ReactNode;
 }) {
   return (
-    <header>
-      <div className="shell pt-10 pb-10 sm:pt-14 sm:pb-14">
+    <header className="shell pt-2">
+      {/* Kopf als Platte im Gehaeuse; die Brotkrumen stehen wie eine Beschriftung darueber. */}
+      <div className="surface-card rounded-[var(--radius)] px-5 pt-5 pb-7 sm:px-8 sm:pt-6 sm:pb-10">
         {breadcrumbs && breadcrumbs.length > 0 && <Breadcrumbs items={breadcrumbs} />}
 
-        <div className="mt-6 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <div className="mt-8 flex flex-col gap-6 md:flex-row md:items-end md:justify-between sm:mt-12">
           <div className="min-w-0 max-w-4xl">
             <h1
               className={
                 /* Lange deutsche Woerter ("Datenschutzerklärung") passen
                    am Handy nicht immer in eine Zeile. */
                 size === "large"
-                  ? "font-display text-[2.9rem] text-balance break-words hyphens-auto text-foreground sm:text-7xl lg:text-8xl"
-                  : "font-display text-[2.4rem] text-balance break-words hyphens-auto text-foreground sm:text-6xl"
+                  ? "font-display text-[2.75rem] text-balance break-words hyphens-auto text-foreground sm:text-7xl lg:text-[5.5rem]"
+                  : "font-display text-[2.3rem] text-balance break-words hyphens-auto text-foreground sm:text-6xl"
               }
             >
               {title}

@@ -137,7 +137,7 @@ export default function FaqPage() {
 
           <div
             data-theme="dark"
-            className="dark flex flex-col items-start gap-4 rounded-[2rem] border border-border bg-surface p-7 text-foreground shadow-[var(--lift-shadow)] sm:p-9 lg:sticky lg:top-[calc(var(--header-height)+1.75rem)]"
+            className="dark flex flex-col items-start gap-4 rounded-[var(--radius)] border border-border bg-surface p-7 text-foreground shadow-[var(--lift-shadow)] sm:p-9 lg:sticky lg:top-[calc(var(--header-height)+1.75rem)]"
           >
             <span aria-hidden="true" className="grid size-12 place-items-center rounded-2xl bg-volt text-xl text-ink">
               <Icon icon={DiscordIcon} />

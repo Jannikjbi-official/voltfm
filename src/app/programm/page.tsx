@@ -50,7 +50,7 @@ function SchedulePaused() {
         <div className="grid grid-cols-[minmax(0,1fr)] gap-3 lg:grid-cols-12">
           <div
             data-theme="dark"
-            className="dark flex flex-col items-start gap-5 rounded-[2rem] border border-border bg-surface p-7 text-foreground shadow-[var(--lift-shadow)] sm:p-12 lg:col-span-7"
+            className="dark flex flex-col items-start gap-5 rounded-[var(--radius)] border border-border bg-surface p-7 text-foreground shadow-[var(--lift-shadow)] sm:p-12 lg:col-span-7"
           >
             <span
               className="grid size-12 place-items-center rounded-2xl bg-volt text-xl text-ink"
@@ -71,7 +71,7 @@ function SchedulePaused() {
             </p>
           </div>
 
-          <div className="surface-card flex flex-col items-start gap-5 rounded-[2rem] p-7 sm:p-10 lg:col-span-5">
+          <div className="surface-card flex flex-col items-start gap-5 rounded-[var(--radius)] p-7 sm:p-10 lg:col-span-5">
             <span
               className="grid size-12 place-items-center rounded-2xl bg-default text-xl text-foreground"
               aria-hidden="true"

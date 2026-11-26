@@ -119,7 +119,7 @@ export default function RadioAidPage() {
         <div className="grid gap-3 lg:grid-cols-12">
           <div
             data-theme="dark"
-            className="dark flex flex-col justify-center rounded-[2rem] border border-border bg-surface p-6 text-foreground shadow-[var(--lift-shadow)] sm:p-10 lg:col-span-8"
+            className="dark flex flex-col justify-center rounded-[var(--radius)] border border-border bg-surface p-6 text-foreground shadow-[var(--lift-shadow)] sm:p-10 lg:col-span-8"
           >
             <Countdown
               start={start.getTime()}
@@ -166,7 +166,7 @@ export default function RadioAidPage() {
       {/* --- Text mit mitlaufender Randspalte ------------------------------- */}
       <section className="shell pt-16 sm:pt-24">
         <div className="grid items-start gap-3 lg:grid-cols-12">
-          <article className="surface-card vfm-prose rounded-[2rem] p-7 sm:p-12 lg:col-span-8 [&>h2:first-child]:mt-0">
+          <article className="surface-card vfm-prose rounded-[var(--radius)] p-7 sm:p-12 lg:col-span-8 [&>h2:first-child]:mt-0">
             <h2>Was ist RadioAid?</h2>
             <p>
               RadioAid ist ein Gemeinschaftsprojekt, das aus der laut.fm-Community

@@ -177,6 +177,7 @@ export const mainNav: NavItem[] = [
   { href: "/news", label: "News", hint: "Aktuelles aus Musik, Radio und Community" },
   { href: "/events", label: "Events", hint: "Livestreams, Specials und Community-Termine" },
   { href: "/moderatoren", label: "Team", hint: "Die Stimmen hinter VoltFM" },
+  { href: "/partner", label: "Partner", hint: "Streamer und Projekte, mit denen wir zusammenarbeiten" },
   { href: site.discordUrl, label: "Discord", hint: "Ankündigungen, Feedback, Tickets", external: true },
 ];
 
@@ -209,6 +210,7 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
       { href: "/radio", label: "Livestream" },
       ...(features.schedule ? [{ href: "/programm", label: "Sendeplan" }] : []),
       { href: "/moderatoren", label: "Team" },
+      { href: "/partner", label: "Partner" },
     ],
   },
   {

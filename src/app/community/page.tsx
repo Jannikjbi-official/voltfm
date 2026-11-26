@@ -76,7 +76,7 @@ export default async function CommunityPage() {
       <section className="shell">
         <div
           data-theme="dark"
-          className="dark relative overflow-hidden rounded-[2rem] border border-border bg-surface px-7 py-10 text-foreground shadow-[var(--lift-shadow)] sm:px-12 sm:py-14"
+          className="dark relative overflow-hidden rounded-[var(--radius)] border border-border bg-surface px-7 py-10 text-foreground shadow-[var(--lift-shadow)] sm:px-12 sm:py-14"
         >
           <span
             aria-hidden="true"
@@ -150,7 +150,7 @@ export default async function CommunityPage() {
 
       {/* --- Direkt an uns --------------------------------------------------- */}
       <section className="shell pt-16 sm:pt-24">
-        <div className="surface-card flex flex-col gap-6 rounded-[2rem] p-7 sm:flex-row sm:items-center sm:justify-between sm:p-10">
+        <div className="surface-card flex flex-col gap-6 rounded-[var(--radius)] p-7 sm:flex-row sm:items-center sm:justify-between sm:p-10">
           <div className="max-w-xl">
             <h2 className="text-2xl font-bold tracking-tight text-foreground">Lieber direkt an uns?</h2>
             <p className="mt-2 leading-relaxed text-muted">

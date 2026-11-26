@@ -26,12 +26,12 @@ export function ErrorScreen({
     <section className="px-3 pt-4 sm:pt-8">
       <div
         data-theme="dark"
-        className="dark rounded-[2rem] border border-border bg-surface text-foreground shadow-[var(--lift-shadow)]"
+        className="dark rounded-[var(--radius)] border border-border bg-surface text-foreground shadow-[var(--lift-shadow)]"
       >
         <div className="shell py-16 sm:py-24">
           <p
             aria-hidden="true"
-            className="inline-flex rounded-[1.75rem] bg-volt px-5 pt-3 pb-2 font-display text-[4.5rem] leading-none text-ink sm:rounded-[2.5rem] sm:px-8 sm:pt-5 sm:pb-4 sm:text-[8rem]"
+            className="inline-flex rounded-[var(--radius)] bg-volt px-5 pt-3 pb-2 font-display text-[4.5rem] leading-none text-ink sm:rounded-[2.5rem] sm:px-8 sm:pt-5 sm:pb-4 sm:text-[8rem]"
           >
             {code}
           </p>

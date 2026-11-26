@@ -18,7 +18,7 @@ export function AuthCard({
   return (
     <div className="shell flex justify-center pt-10 pb-4 sm:pt-16">
       <div className="w-full max-w-md">
-        <div className="surface-card rounded-[2rem] p-6 shadow-[var(--lift-shadow)] sm:p-10">
+        <div className="surface-card rounded-[var(--radius)] p-6 shadow-[var(--lift-shadow)] sm:p-10">
           {/* Das Play-Zeichen als App-Symbol: Tinte auf Gelb, in beiden Modi. */}
           <span
             data-theme="light"

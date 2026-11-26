@@ -130,7 +130,7 @@ export default async function NewsPage({
           <>
             {/* --- Aufmacher: eine grosse Karte, Bild links, Text rechts ----- */}
             {featured && (
-              <article className="group surface-card hover-lift relative grid overflow-hidden rounded-[2rem] lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+              <article className="group surface-card hover-lift relative grid overflow-hidden rounded-[var(--radius)] lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
                 <Link
                   href={`/news/${featured.slug}`}
                   tabIndex={-1}

@@ -37,7 +37,7 @@ export function StreamConsentDialog({
   return (
     <AlertDialog.Backdrop isOpen={open} onOpenChange={(next) => !next && onDecline()}>
       <AlertDialog.Container>
-        <AlertDialog.Dialog className="rounded-[2rem] p-6 sm:max-w-[32rem] sm:p-8">
+        <AlertDialog.Dialog className="rounded-[var(--radius)] p-6 sm:max-w-[32rem] sm:p-8">
           <AlertDialog.Header>
             {/* Gelbe Kachel mit Tinte, wie die Symbole auf den Seiten. */}
             <AlertDialog.Icon status="accent" className="size-12 rounded-2xl bg-volt text-lg text-ink">

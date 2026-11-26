@@ -45,7 +45,7 @@ export default async function KontoPage(props: PageProps<"/konto">) {
           <section
             aria-labelledby="profile-title"
             data-theme="dark"
-            className="dark flex flex-col gap-6 rounded-[2rem] border border-border bg-surface p-6 text-foreground shadow-[var(--lift-shadow)] sm:p-8 lg:sticky lg:top-[calc(var(--header-height)+1.75rem)] lg:col-span-5"
+            className="dark flex flex-col gap-6 rounded-[var(--radius)] border border-border bg-surface p-6 text-foreground shadow-[var(--lift-shadow)] sm:p-8 lg:sticky lg:top-[calc(var(--header-height)+1.75rem)] lg:col-span-5"
           >
             <div className="flex items-center gap-4">
               <span

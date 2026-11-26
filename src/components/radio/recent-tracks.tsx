@@ -36,14 +36,14 @@ export function RecentTracks({
       {tracks.map((track) => (
         <li
           key={`${track.id}-${track.startedAt}`}
-          className="grid grid-cols-[3rem_minmax(0,1fr)_auto] items-center gap-4 rounded-2xl p-2 transition-colors hover:bg-surface"
+          className="surface-card grid grid-cols-[3rem_minmax(0,1fr)_auto] items-center gap-4 rounded-[var(--radius)] p-2"
         >
-          <CoverArt src={track.coverUrl} alt="" className="size-12 rounded-xl" />
+          <CoverArt src={track.coverUrl} alt="" className="size-12 rounded-[3px]" />
           <span className="min-w-0">
             <span className="block truncate font-semibold text-foreground">{track.title}</span>
             <span className="block truncate text-sm text-muted">{track.artist}</span>
           </span>
-          <time className="font-mono text-xs tabular-nums text-muted" dateTime={track.startedAt ?? undefined}>
+          <time className="display-panel rounded-[3px] px-2 py-1 font-dot text-sm text-volt" dateTime={track.startedAt ?? undefined}>
             {track.startedAt ? formatTime(track.startedAt) : "–"}
           </time>
         </li>

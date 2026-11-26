@@ -21,8 +21,8 @@ export async function HostCard({ host }: { host: HostDTO }) {
   const image = await resolveHostImage(host);
 
   return (
-    <article className="group surface-card hover-lift relative flex h-full flex-col overflow-hidden rounded-3xl">
-      <div className="relative grid aspect-square w-full shrink-0 place-items-center overflow-hidden bg-surface-secondary">
+    <article className="group surface-card hover-lift relative flex h-full flex-col overflow-hidden rounded-[var(--radius)] p-2">
+      <div className="well relative grid aspect-square w-full shrink-0 place-items-center overflow-hidden rounded-[3px]">
         {image ? (
           <Image
             src={image}
@@ -36,13 +36,13 @@ export async function HostCard({ host }: { host: HostDTO }) {
         )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-2 p-5">
-        <h3 className="text-2xl leading-tight font-bold tracking-tight break-words text-foreground">
+      <div className="flex flex-1 flex-col gap-2 px-3 pt-4 pb-3">
+        <h3 className="font-display text-[1.75rem] break-words text-foreground">
           <Link href={`/moderatoren/${host.slug}`} className="after:absolute after:inset-0">
             {host.name}
           </Link>
         </h3>
-        <p className="text-sm font-semibold text-accent-text">{host.role}</p>
+        <p className="font-mono text-xs lowercase text-muted">{host.role}</p>
         {/* Die Tagline ist der persoenlichere Satz — wenn es einen gibt, steht
             er statt des Anfangs der Biografie. */}
         <p className="line-clamp-3 text-sm leading-relaxed text-pretty text-muted">

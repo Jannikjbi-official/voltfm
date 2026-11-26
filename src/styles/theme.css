@@ -1,167 +1,190 @@
 /*
- * VoltFM-Theme fuer HeroUI v3.
+ * VoltFM — Theme "Gerät".
  *
- * Drei Farben aus den Logo-Dateien (public/logo/):
- *   Tinte  #0E0F12
- *   Gelb   #FFD60A  — die Senderfarbe
- *   Papier #F5F5F0
+ * Die Seite ist ein Radio zum Anfassen: ein Gehäuse aus hellem Aluminium
+ * (im Dunkelmodus Graphit), darin eingelassene schwarze Displays mit
+ * Punktmatrix-Ziffern, gelbe Tasten und eine rote Signal-LED.
  *
- * Wie eine aktuelle App: Flaechen in Ebenen (Grund, Karte, Overlay), feine
- * Kanten, abgerundete Karten und Pillen-Knoepfe, Schatten nur dort, wo etwas
- * wirklich schwebt. Kein Leuchten, keine Farbverlaeufe.
+ * Geblieben ist nur die Senderfarbe Gelb #FFD60A. Sie ist immer eine Taste
+ * oder eine Leuchtfläche mit Graphit darauf; gelbe Schrift steht nur auf den
+ * schwarzen Displays, nie auf dem hellen Gehäuse.
  *
- * Gelb ist immer eine Flaeche mit Tinte darauf. Gelbe Schrift auf Papier gibt
- * es nicht (Kontrast 1,3:1); Text in Senderfarbe steht im Hellmodus in dunklem
- * Bernstein (--accent-text), im Dunkelmodus in Gelb.
+ * Formen: kantig mit kleinem Radius (6 px), Fugen statt Schatten-Wolken,
+ * Tasten mit einer harten Unterkante, die beim Drücken verschwindet.
  *
- * Gleiche Selektoren wie HeroUIs Standard-Theme, danach geladen: gleiche
- * Ebene (base), spaetere Quelle gewinnt. Ein Abschnitt mit `.dark` in einer
- * hellen Seite bekommt den dunklen Satz Variablen.
+ * Gleiche Selektoren wie HeroUIs Standard-Theme, danach geladen.
  */
 
 @layer base {
   :root,
   :host {
-    --ink: #0e0f12;
     --volt: #ffd60a;
-    --paper: #f5f5f0;
-    --amber: #845800;
+    --volt-deep: #e6b800;
+    --graphite: #141518;
+    --led: #ff3b1f;
 
-    /* rounded-lg = 0,75rem, rounded-2xl = 1,5rem, Knoepfe (rounded-3xl)
-       werden damit zu Pillen. */
-    --radius: 0.75rem;
-    --field-radius: 0.75rem;
+    /* Alte Namen, die viele Bausteine noch benutzen. */
+    --ink: var(--graphite);
+    --paper: #eef0f2;
+    --amber: #7a5600;
+
+    --radius: 0.375rem;
+    --field-radius: 0.375rem;
     --border-width: 1px;
     --field-border-width: 1px;
 
     --accent: var(--volt);
-    --accent-foreground: var(--ink);
+    --accent-foreground: var(--graphite);
 
-    /* Hoehe der Player-Leiste unten, damit nichts darunter verschwindet. */
-    --player-height: 4.5rem;
-    --header-height: 4.5rem;
+    --player-height: 4.75rem;
+    --header-height: 4rem;
   }
 
+  /* ---------- Hell: Aluminium ---------- */
   :root,
   .light,
   [data-theme="light"] {
     color-scheme: light;
 
-    --background: var(--paper);
-    --foreground: var(--ink);
+    --background: #d9dcdf;
+    --foreground: #131417;
 
-    --surface: #ffffff;
+    /* Platten im Gehäuse */
+    --surface: #e9ebed;
     --surface-foreground: var(--foreground);
-    --surface-secondary: #efefe9;
+    --surface-secondary: #dfe2e5;
     --surface-secondary-foreground: var(--foreground);
-    --surface-tertiary: #e6e6df;
+    --surface-tertiary: #cfd3d7;
     --surface-tertiary-foreground: var(--foreground);
 
-    --overlay: #ffffff;
+    --overlay: #eef0f2;
     --overlay-foreground: var(--foreground);
 
-    /* 6,2:1 auf Papier */
-    --muted: #5b5d64;
+    --muted: #555a62;
 
-    --default: #e9e9e2;
-    --default-foreground: var(--ink);
+    --default: #cdd1d5;
+    --default-foreground: var(--foreground);
 
-    --field-background: #ffffff;
-    --field-foreground: var(--ink);
-    --field-placeholder: #7a7c82;
-    --field-border: rgba(14, 15, 18, 0.16);
+    --field-background: #f4f5f6;
+    --field-foreground: var(--foreground);
+    --field-placeholder: #7b8088;
+    --field-border: rgba(19, 20, 23, 0.22);
 
-    --accent: var(--volt);
-    --accent-foreground: var(--ink);
     --accent-text: var(--amber);
-    --accent-soft: color-mix(in oklab, var(--volt) 30%, transparent);
-    --accent-soft-foreground: var(--amber);
-    --accent-soft-hover: color-mix(in oklab, var(--volt) 42%, transparent);
+    --accent-soft: color-mix(in oklab, var(--volt) 45%, transparent);
+    --accent-soft-foreground: #4d3700;
+    --accent-soft-hover: color-mix(in oklab, var(--volt) 60%, transparent);
 
-    --border: rgba(14, 15, 18, 0.1);
-    --separator: rgba(14, 15, 18, 0.08);
-    --focus: var(--ink);
-    --link: var(--ink);
+    --border: rgba(19, 20, 23, 0.16);
+    --separator: rgba(19, 20, 23, 0.12);
+    --focus: var(--graphite);
+    --link: var(--foreground);
+    --backdrop: rgba(19, 20, 23, 0.45);
 
-    --backdrop: rgba(14, 15, 18, 0.4);
+    /* Eingelassene Displays */
+    --display: #0d0e10;
+    --display-foreground: #e9ecef;
+    --display-muted: #8a9099;
+    --display-border: rgba(0, 0, 0, 0.55);
 
-    /* Logo "auf-weiss": durchgehend Tinte. */
-    --logo-mark: var(--ink);
-    --logo-word: var(--ink);
-    --logo-accent: var(--ink);
+    --logo-mark: var(--graphite);
+    --logo-word: var(--graphite);
+    --logo-accent: var(--graphite);
 
-    --surface-shadow: 0 1px 2px 0 rgba(14, 15, 18, 0.04), 0 10px 30px -18px rgba(14, 15, 18, 0.25);
-    --overlay-shadow: 0 0 0 1px rgba(14, 15, 18, 0.06), 0 24px 48px -16px rgba(14, 15, 18, 0.28);
-    --lift-shadow: 0 20px 40px -20px rgba(14, 15, 18, 0.35);
-    --field-shadow: none;
+    /* Platte: helle Oberkante, dunkle Fuge unten */
+    --surface-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75), 0 1px 0 rgba(19, 20, 23, 0.18);
+    --overlay-shadow: 0 0 0 1px rgba(19, 20, 23, 0.14), 0 18px 40px -18px rgba(19, 20, 23, 0.45);
+    --lift-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 2px 0 rgba(19, 20, 23, 0.22);
+    --well-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.22), inset 0 0 0 1px rgba(0, 0, 0, 0.35);
+    --key-edge: rgba(19, 20, 23, 0.38);
+    --field-shadow: inset 0 1px 2px rgba(19, 20, 23, 0.08);
   }
 
+  /* ---------- Dunkel: Graphit ---------- */
   .dark,
   [data-theme="dark"] {
     color-scheme: dark;
 
-    --background: var(--ink);
-    --foreground: var(--paper);
+    --background: #0f1012;
+    --foreground: #e7e9ec;
 
-    --surface: #17191e;
+    --surface: #1a1c1f;
     --surface-foreground: var(--foreground);
-    --surface-secondary: #1e2127;
+    --surface-secondary: #212428;
     --surface-secondary-foreground: var(--foreground);
-    --surface-tertiary: #262930;
+    --surface-tertiary: #2a2d32;
     --surface-tertiary-foreground: var(--foreground);
 
-    --overlay: #1b1d22;
+    --overlay: #1d1f23;
     --overlay-foreground: var(--foreground);
 
-    /* 7,4:1 auf Tinte */
-    --muted: #a3a49c;
+    --muted: #969ca5;
 
-    --default: #25282e;
-    --default-foreground: var(--paper);
+    --default: #2a2d32;
+    --default-foreground: var(--foreground);
 
-    --field-background: #1b1e23;
-    --field-foreground: var(--paper);
-    --field-placeholder: #7f8079;
-    --field-border: rgba(245, 245, 240, 0.12);
+    --field-background: #121316;
+    --field-foreground: var(--foreground);
+    --field-placeholder: #6c727b;
+    --field-border: rgba(231, 233, 236, 0.16);
 
-    --accent: var(--volt);
-    --accent-foreground: var(--ink);
     --accent-text: var(--volt);
-    --accent-soft: color-mix(in oklab, var(--volt) 14%, transparent);
+    --accent-soft: color-mix(in oklab, var(--volt) 16%, transparent);
     --accent-soft-foreground: var(--volt);
-    --accent-soft-hover: color-mix(in oklab, var(--volt) 20%, transparent);
+    --accent-soft-hover: color-mix(in oklab, var(--volt) 24%, transparent);
 
-    --danger: #ff6b5e;
-    --danger-foreground: var(--ink);
+    --danger: #ff6a55;
+    --danger-foreground: var(--graphite);
 
-    --border: rgba(245, 245, 240, 0.09);
-    --separator: rgba(245, 245, 240, 0.07);
+    --border: rgba(231, 233, 236, 0.11);
+    --separator: rgba(231, 233, 236, 0.08);
     --focus: var(--volt);
-    --link: var(--paper);
+    --link: var(--foreground);
+    --backdrop: rgba(0, 0, 0, 0.7);
 
-    --backdrop: rgba(5, 6, 8, 0.7);
+    --display: #060607;
+    --display-foreground: #e9ecef;
+    --display-muted: #7b818a;
+    --display-border: rgba(255, 255, 255, 0.06);
 
-    /* Logo "dunkel": Play-Zeichen und FM gelb, VOLT in Papier. */
     --logo-mark: var(--volt);
-    --logo-word: var(--paper);
+    --logo-word: var(--foreground);
     --logo-accent: var(--volt);
 
-    /* Oben eine Spur Licht an der Kante, unten Tiefe — keine Glow-Effekte. */
-    --surface-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.04), 0 12px 32px -20px rgba(0, 0, 0, 0.8);
-    --overlay-shadow: 0 0 0 1px rgba(245, 245, 240, 0.08), 0 28px 56px -18px rgba(0, 0, 0, 0.75);
-    --lift-shadow: 0 24px 48px -24px rgba(0, 0, 0, 0.9);
-    --field-shadow: none;
+    --surface-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 1px 0 rgba(0, 0, 0, 0.6);
+    --overlay-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 24px 48px -18px rgba(0, 0, 0, 0.8);
+    --lift-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 2px 0 rgba(0, 0, 0, 0.7);
+    --well-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    --key-edge: rgba(0, 0, 0, 0.6);
+    --field-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4);
   }
 }
 
 @theme inline {
-  --color-ink: var(--ink);
+  --color-ink: var(--graphite);
+  --color-graphite: var(--graphite);
   --color-volt: var(--volt);
+  --color-volt-deep: var(--volt-deep);
   --color-paper: var(--paper);
+  --color-led: var(--led);
   --color-accent-text: var(--accent-text);
+  --color-display: var(--display);
+  --color-display-foreground: var(--display-foreground);
+  --color-display-muted: var(--display-muted);
 
   --shadow-lift: var(--lift-shadow);
 
-  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-bricolage), var(--font-instrument), ui-sans-serif, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-dot: var(--font-doto), var(--font-jetbrains), ui-monospace, monospace;
+}
+
+/* Alle grossen Radien werden kantig — so wirkt jede Karte wie eine Platte,
+   auch in Bausteinen, die noch rounded-2xl/3xl tragen. */
+@theme {
+  --radius-lg: 0.375rem;
+  --radius-xl: 0.375rem;
+  --radius-2xl: 0.375rem;
+  --radius-3xl: 0.5rem;
 }

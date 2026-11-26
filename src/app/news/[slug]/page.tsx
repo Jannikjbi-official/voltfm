@@ -160,7 +160,7 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
 
       <article className="shell pt-10 pb-4 sm:pt-14">
         {article.coverImage ? (
-          <figure className="mx-auto max-w-6xl overflow-hidden rounded-[2rem] border border-border bg-surface-secondary">
+          <figure className="mx-auto max-w-6xl overflow-hidden rounded-[var(--radius)] border border-border bg-surface-secondary">
             <Image
               src={article.coverImage}
               alt={article.coverAlt ?? ""}
@@ -176,7 +176,7 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
           // auf dem erzeugten Titelbild. Dasselbe Format wie ein Foto
           // (1200 × 675), damit der Text nicht springt.
           article.coverLabel && (
-            <div className="relative mx-auto aspect-video max-w-6xl overflow-hidden rounded-[2rem]">
+            <div className="relative mx-auto aspect-video max-w-6xl overflow-hidden rounded-[var(--radius)]">
               <ArticleCover
                 categorySlug={article.categorySlug}
                 categoryName={categoryName}

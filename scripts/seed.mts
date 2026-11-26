@@ -445,6 +445,25 @@ const events = [
   },
 ];
 
+/* --- Partner ------------------------------------------------------------- */
+
+/* DEMO: Toki steht hier nur als Beispiel, damit /partner nicht leer ist. Vor
+   dem Einsatz auf einer echten Datenbank im Admin pruefen oder loeschen. */
+const partners = [
+  {
+    slug: "toki",
+    name: "Toki",
+    kurz: "Demo-Eintrag: Twitch-Streamer und Partner von VoltFM.",
+    content:
+      "<p>Dies ist ein Demo-Eintrag aus dem Seed-Skript. Im Admin unter Partner lässt sich der Text ersetzen.</p>",
+    contentSource:
+      "Dies ist ein Demo-Eintrag aus dem Seed-Skript. Im Admin unter Partner lässt sich der Text ersetzen.",
+    links: [{ label: "Twitch", url: "https://www.twitch.tv/toki" }],
+    active: true,
+    order: 1,
+  },
+];
+
 /* --- Upserts ------------------------------------------------------------- */
 
 async function upsertAll<T extends { slug: string }>(
@@ -481,6 +500,9 @@ await upsertAll("articles", articles, (doc) => ({
   seoDescription: doc.excerpt,
 }));
 await upsertAll("events", events, (doc) => ({ image: placeholderImage(`event-${doc.slug}`) }));
+/* Partner bekommen kein Platzhalterbild: Ein fremdes Stockfoto als Logo waere
+   irrefuehrend. Logo und Banner kommen ueber das Admin. */
+await upsertAll("partners", partners, () => ({}));
 
 await db.collection("settings").updateOne(
   { key: "site" },
@@ -511,6 +533,8 @@ await Promise.all([
   db.collection("shows").createIndex({ slug: 1 }, { unique: true }),
   db.collection("events").createIndex({ slug: 1 }, { unique: true }),
   db.collection("events").createIndex({ startsAt: -1 }),
+  db.collection("partners").createIndex({ slug: 1 }, { unique: true }),
+  db.collection("partners").createIndex({ active: 1, order: 1, name: 1 }),
 ]);
 
 console.log("  Indexes angelegt.");

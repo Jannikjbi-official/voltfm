@@ -62,7 +62,7 @@ export default async function ModeratorenPage() {
       {/* --- Mitmachen -----------------------------------------------------
           Eine Karte mit dem Discord-Symbol als gelber Kachel. */}
       <section className="shell">
-        <div className="surface-card flex flex-col gap-8 rounded-[2rem] p-6 sm:p-10 md:flex-row md:items-center md:justify-between">
+        <div className="surface-card flex flex-col gap-8 rounded-[var(--radius)] p-6 sm:p-10 md:flex-row md:items-center md:justify-between">
           <div className="flex max-w-2xl flex-col gap-5 sm:flex-row sm:items-start sm:gap-6">
             <span aria-hidden="true" className="grid size-14 shrink-0 place-items-center rounded-2xl bg-volt text-2xl text-ink">
               <Icon icon={DiscordIcon} />

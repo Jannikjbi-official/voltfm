@@ -14,7 +14,7 @@ export function TicketPanel() {
   return (
     <div
       data-theme="dark"
-      className="dark relative flex flex-col gap-8 overflow-hidden rounded-[2rem] border border-border bg-surface p-7 text-foreground shadow-[var(--lift-shadow)] sm:p-12"
+      className="dark relative flex flex-col gap-8 overflow-hidden rounded-[var(--radius)] border border-border bg-surface p-7 text-foreground shadow-[var(--lift-shadow)] sm:p-12"
     >
       <div className="flex flex-col items-start gap-5 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
         <div className="flex max-w-2xl flex-col items-start gap-5">

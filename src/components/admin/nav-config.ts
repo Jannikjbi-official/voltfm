@@ -13,6 +13,7 @@ import {
   ClockIcon,
   EditIcon,
   IdeaIcon,
+  PartnerIcon,
   type IconDefinition,
 } from "@/lib/icons";
 
@@ -70,6 +71,7 @@ export function adminNav(scheduleOn: boolean): AdminNavGroup[] {
     {
       label: "Verwaltung",
       items: [
+        { href: "/admin/partner", label: "Partner", icon: PartnerIcon, needs: { resource: "partner", actions: ["update"] } },
         { href: "/admin/users", label: "Benutzer", icon: UserIcon, needs: { resource: "user", actions: ["list"] } },
         { href: "/admin/settings", label: "Einstellungen", icon: SettingsIcon, needs: { resource: "settings", actions: ["update"] } },
       ],
@@ -85,5 +87,6 @@ export const QUICK_CREATE: (AdminNavEntry & { needs: Needs })[] = [
   { href: "/admin/events?neu=1", label: "Event anlegen", icon: EventsIcon, needs: { resource: "event", actions: ["update"] } },
   { href: "/admin/categories?neu=1", label: "Kategorie anlegen", icon: TagIcon, needs: { resource: "category", actions: ["update"] } },
   { href: "/admin/moderatoren?neu=1", label: "Moderator anlegen", icon: MicIcon, needs: { resource: "host", actions: ["update"] } },
+  { href: "/admin/partner?neu=1", label: "Partner anlegen", icon: PartnerIcon, needs: { resource: "partner", actions: ["update"] } },
   { href: "/admin/timeline?neu=1", label: "Eintrag anlegen", icon: ClockIcon, needs: { resource: "timeline", actions: ["update"] } },
 ];

@@ -28,7 +28,7 @@ export function ContactForm() {
     return (
       <div
         role="status"
-        className="surface-card flex flex-col items-start gap-3 rounded-[2rem] p-7 sm:p-12"
+        className="surface-card flex flex-col items-start gap-3 rounded-[var(--radius)] p-7 sm:p-12"
       >
         <span
           aria-hidden="true"
@@ -47,7 +47,7 @@ export function ContactForm() {
   return (
     <form
       action={formAction}
-      className="surface-card relative flex flex-col gap-5 rounded-[2rem] p-6 sm:p-10"
+      className="surface-card relative flex flex-col gap-5 rounded-[var(--radius)] p-6 sm:p-10"
     >
       {state.status === "error" && state.message && (
         <FormMessage status="error">{state.message}</FormMessage>

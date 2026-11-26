@@ -57,6 +57,7 @@ import {
   faEllipsis,
   faLightbulb,
   faChevronLeft,
+  faHandshake,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { faDiscord, faInstagram } from "@fortawesome/free-brands-svg-icons";
@@ -141,6 +142,7 @@ export const BoltIcon = faBolt;
 export const ToolsIcon = faScrewdriverWrench;
 export const ListIcon = faListUl;
 export const RetryIcon = faRotateRight;
+export const PartnerIcon = faHandshake;
 export const HomeIcon = faHouse;
 export const MoreIcon = faEllipsis;
 export const IdeaIcon = faLightbulb;

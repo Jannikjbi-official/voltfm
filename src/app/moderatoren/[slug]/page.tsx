@@ -401,7 +401,7 @@ function StageHero({ host, image }: { host: HostDTO; image: string | null }) {
   return (
     <header className="shell pt-10 sm:pt-14">
       <Crumbs host={host} />
-      <div className="relative mt-8 overflow-hidden rounded-[2rem] bg-[var(--host-soft)] px-6 py-10 sm:px-10 sm:py-14 lg:px-14 lg:py-16">
+      <div className="relative mt-8 overflow-hidden rounded-[var(--radius)] bg-[var(--host-soft)] px-6 py-10 sm:px-10 sm:py-14 lg:px-14 lg:py-16">
         {/* Die Wellen gehen vom Bild aus. */}
         <Waves className="top-[7rem] left-[6rem] sm:top-[9.5rem] sm:left-[8.5rem] md:top-1/2 lg:left-[10.5rem]" />
         <div className="relative flex flex-col items-start gap-8 md:flex-row md:items-center md:gap-12">
@@ -491,7 +491,7 @@ function ProfileCard({
 
   return (
     <aside aria-label={`Profil ${host.name}`} className="min-w-0 lg:self-start">
-      <article className="surface-card overflow-hidden rounded-[2rem]">
+      <article className="surface-card overflow-hidden rounded-[var(--radius)]">
         <div aria-hidden="true" className="relative h-28 overflow-hidden bg-[var(--host-deep)] sm:h-32">
           <span className="absolute -top-16 -right-10 size-48 rounded-full border border-[color-mix(in_oklch,var(--host-on-deep)_22%,transparent)]" />
           <span className="absolute -top-28 -right-24 size-80 rounded-full border border-[color-mix(in_oklch,var(--host-on-deep)_14%,transparent)]" />

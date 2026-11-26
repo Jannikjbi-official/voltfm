@@ -49,7 +49,7 @@ export default async function PressePage() {
           Lesefluss. */}
       <section className="shell">
         <div className="grid gap-3 lg:grid-cols-12">
-          <article className="surface-card rounded-[2rem] p-7 sm:p-10 lg:col-span-7">
+          <article className="surface-card rounded-[var(--radius)] p-7 sm:p-10 lg:col-span-7">
             <h2 className="font-display text-[2rem] text-foreground sm:text-4xl">Kurzprofil</h2>
             <div className="vfm-prose mt-5 [&>p:first-child]:mt-0">
               <p>
@@ -90,7 +90,7 @@ export default async function PressePage() {
           </div>
 
           {/* Das Zitat als gelbe Flaeche mit Tinte darauf. */}
-          <figure className="rounded-[2rem] bg-volt p-7 text-ink sm:p-12 lg:col-span-12">
+          <figure className="rounded-[var(--radius)] bg-volt p-7 text-ink sm:p-12 lg:col-span-12">
             <h2 className="text-sm font-semibold text-ink/70">Zum Zitieren</h2>
             <blockquote className="mt-4 max-w-4xl font-display text-[1.7rem] leading-[1.15] text-balance sm:text-5xl">
               &bdquo;Ein Algorithmus kennt deinen Geschmack besser als jede
@@ -99,7 +99,7 @@ export default async function PressePage() {
             </blockquote>
           </figure>
 
-          <div className="surface-card flex flex-col gap-6 rounded-[2rem] p-7 sm:p-10 lg:col-span-7">
+          <div className="surface-card flex flex-col gap-6 rounded-[var(--radius)] p-7 sm:p-10 lg:col-span-7">
             <div>
               <h2 className="font-display text-[2rem] text-foreground sm:text-4xl">Logo</h2>
               <p className="mt-3 max-w-xl leading-relaxed text-muted">
@@ -127,7 +127,7 @@ export default async function PressePage() {
           <div className="flex flex-col gap-3 lg:col-span-5">
             <div
               data-theme="dark"
-              className="dark flex flex-1 flex-col items-start gap-4 rounded-[2rem] border border-border bg-surface p-7 text-foreground shadow-[var(--lift-shadow)] sm:p-9"
+              className="dark flex flex-1 flex-col items-start gap-4 rounded-[var(--radius)] border border-border bg-surface p-7 text-foreground shadow-[var(--lift-shadow)] sm:p-9"
             >
               <h2 className="font-display text-[2rem] text-foreground sm:text-4xl">Ansprechpartner</h2>
               <p className="leading-relaxed text-muted">

@@ -58,7 +58,7 @@ export default function ImpressumPage() {
         <div className="grid items-start gap-3 lg:grid-cols-12">
           <Contents sections={SECTIONS} />
 
-          <article className="surface-card min-w-0 rounded-[2rem] p-6 sm:p-12 lg:col-span-8 xl:col-span-9">
+          <article className="surface-card min-w-0 rounded-[var(--radius)] p-6 sm:p-12 lg:col-span-8 xl:col-span-9">
             <div className="vfm-prose max-w-[68ch] [&>h2:first-child]:mt-0 [&_h2]:scroll-mt-28">
               <h2 id="angaben-gemaess-5-ddg">Angaben gemäß § 5 DDG</h2>
               <p>

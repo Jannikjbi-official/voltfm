@@ -43,7 +43,8 @@ export async function ArticleCard({
     <article
       className={cn(
         "group relative flex flex-col",
-        wide ? "gap-6" : "gap-4",
+        !compact && "surface-card rounded-[var(--radius)] p-2 hover-lift",
+        wide ? "gap-5" : "gap-4",
         compact && "border-t border-separator py-5 first:border-t-0 first:pt-0",
       )}
     >
@@ -53,7 +54,7 @@ export async function ArticleCard({
           tabIndex={-1}
           aria-hidden="true"
           className={cn(
-            "relative block overflow-hidden rounded-3xl bg-surface-secondary",
+            "relative block overflow-hidden rounded-[3px] bg-surface-secondary",
             wide ? "aspect-video" : "aspect-[16/10]",
           )}
         >
@@ -78,11 +79,11 @@ export async function ArticleCard({
         </Link>
       )}
 
-      <div className={cn("flex flex-col", compact ? "gap-2" : "gap-3")}>
+      <div className={cn("flex flex-col", compact ? "gap-2" : "gap-3 px-3 pb-4")}>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
           <Link
             href={`/news?kategorie=${article.categorySlug}`}
-            className="relative z-10 rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-semibold text-accent-soft-foreground before:absolute before:-inset-1.5 hover:bg-volt hover:text-ink"
+            className="relative z-10 rounded-[3px] bg-volt px-2 py-0.5 font-mono text-[0.7rem] font-semibold lowercase text-graphite before:absolute before:-inset-1.5 hover:bg-graphite hover:text-voltk"
           >
             {categoryName}
           </Link>

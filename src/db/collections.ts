@@ -8,6 +8,7 @@ import type {
   IdeaApproval,
   MediaAsset,
   Milestone,
+  Partner,
   SettingsDoc,
   Show,
   StationDay,
@@ -33,6 +34,7 @@ export const contactMessages = (): Collection<ContactMessage> =>
 export const settings = (): Collection<SettingsDoc> => getDb().collection<SettingsDoc>("settings");
 export const stationDays = (): Collection<StationDay> => getDb().collection<StationDay>("stationDays");
 export const milestones = (): Collection<Milestone> => getDb().collection<Milestone>("milestones");
+export const partners = (): Collection<Partner> => getDb().collection<Partner>("partners");
 export const ideaApprovals = (): Collection<IdeaApproval> =>
   getDb().collection<IdeaApproval>("ideaApprovals");
 
@@ -65,5 +67,7 @@ export async function ensureIndexes(): Promise<void> {
     stationDays().createIndex({ date: 1 }, { unique: true }),
     milestones().createIndex({ key: 1 }, { unique: true }),
     ideaApprovals().createIndex({ messageId: 1 }, { unique: true }),
+    partners().createIndex({ slug: 1 }, { unique: true }),
+    partners().createIndex({ active: 1, order: 1, name: 1 }),
   ]);
 }

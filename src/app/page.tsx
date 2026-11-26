@@ -66,7 +66,7 @@ export default async function HomePage() {
       {/* --- Zuletzt gespielt bzw. Sendeplan ------------------------------
           Direkt unter der Buehne: Wer wissen will, was lief, schaut hier
           zuerst. */}
-      <section className="shell pt-16 sm:pt-24" aria-labelledby="home-recent">
+      <section className="shell pt-12 sm:pt-16" aria-labelledby="home-recent">
         {features.schedule ? (
           <>
             <SectionHeader
@@ -80,9 +80,9 @@ export default async function HomePage() {
                 {todaySlots.map((slot) => (
                   <li
                     key={`${slot.id}-${slot.startHour}`}
-                    className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-4 rounded-2xl bg-surface p-4"
+                    className="surface-card grid grid-cols-[4.5rem_minmax(0,1fr)] gap-4 rounded-[var(--radius)] p-4"
                   >
-                    <span className="font-mono text-sm font-semibold tabular-nums text-foreground">
+                    <span className="font-dot text-lg text-foreground">
                       {String(slot.startHour).padStart(2, "0")}:00
                     </span>
                     <div className="min-w-0">
@@ -118,7 +118,7 @@ export default async function HomePage() {
       </section>
 
       {/* --- News: Aufmacher + Spalte ------------------------------------- */}
-      <section className="shell pt-16 sm:pt-24" aria-labelledby="home-news">
+      <section className="shell pt-12 sm:pt-16" aria-labelledby="home-news">
         <SectionHeader
           id="home-news"
           title="News aus dem Sender"
@@ -144,7 +144,7 @@ export default async function HomePage() {
       </section>
 
       {/* --- Team ---------------------------------------------------------- */}
-      <section className="shell pt-16 sm:pt-24" aria-labelledby="home-team">
+      <section className="shell pt-12 sm:pt-16" aria-labelledby="home-team">
         <SectionHeader
           id="home-team"
           title="Die zwei hinter VoltFM"
@@ -164,7 +164,7 @@ export default async function HomePage() {
       </section>
 
       {/* --- Events + Discord ---------------------------------------------- */}
-      <section className="shell pt-16 sm:pt-24">
+      <section className="shell pt-12 sm:pt-16">
         <div className="grid gap-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-10">
           <div aria-labelledby="home-events">
             <SectionHeader
@@ -173,7 +173,7 @@ export default async function HomePage() {
               action={{ href: "/events", label: "Alle Events" }}
             />
             {events.length > 0 ? (
-              <div className="-mx-3 flex flex-col gap-1">
+              <div className="flex flex-col gap-2">
                 {events.slice(0, 3).map((event) => (
                   <EventCard key={event.id} event={event} />
                 ))}
@@ -190,9 +190,9 @@ export default async function HomePage() {
           <aside
             aria-labelledby="community-title"
             data-theme="dark"
-            className="dark flex flex-col items-start gap-5 self-start rounded-[2rem] border border-border bg-surface p-7 text-paper shadow-[var(--lift-shadow)] sm:p-9"
+            className="dark display-panel display-dots flex flex-col items-start gap-5 self-start rounded-[var(--radius)] p-7 text-display-foreground sm:p-9"
           >
-            <span aria-hidden="true" className="grid size-12 place-items-center rounded-2xl bg-volt text-xl text-ink">
+            <span aria-hidden="true" className="key grid size-12 place-items-center rounded-[var(--radius)] bg-volt text-xl text-graphite">
               <Icon icon={DiscordIcon} />
             </span>
             <h2 id="community-title" className="font-display text-[2.2rem] text-balance text-volt sm:text-4xl">
@@ -208,7 +208,7 @@ export default async function HomePage() {
                 "Feedback direkt an uns zwei",
                 "Ein Ticket statt einer E-Mail",
               ].map((item) => (
-                <li key={item} className="flex items-center gap-3 rounded-xl bg-default px-3 py-2.5">
+                <li key={item} className="flex items-center gap-3 border-b border-white/10 py-2.5 font-mono text-[0.8rem]">
                   <Icon icon={CheckIcon} className="text-xs text-volt" />
                   {item}
                 </li>
@@ -231,8 +231,8 @@ export default async function HomePage() {
       </section>
 
       {/* --- Über uns: ein Satz, ein Verweis ------------------------------- */}
-      <section className="shell pt-16 sm:pt-24">
-        <div className="surface-card rounded-[2rem] p-7 sm:p-12">
+      <section className="shell pt-12 sm:pt-16">
+        <div className="surface-card rounded-[var(--radius)] p-7 sm:p-12">
           {/* Kein Slogan hier: Der steht schon auf der Buehne. */}
           <p className="font-display text-[2.4rem] text-balance text-foreground sm:text-6xl lg:text-7xl">
             2021 eine laut.fm-Station, ein paar Namen später VoltFM.

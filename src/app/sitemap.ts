@@ -1,15 +1,17 @@
 import type { MetadataRoute } from "next";
 import { getAllPublishedSlugs, listEvents, listHosts } from "@/services/content";
+import { listPartners } from "@/services/content/partners";
 import { site } from "@/lib/site";
 
 /** Rebuilt hourly so new articles appear without a deploy. */
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [articles, hosts, events] = await Promise.all([
+  const [articles, hosts, events, partners] = await Promise.all([
     getAllPublishedSlugs(),
     listHosts(),
     listEvents("all"),
+    listPartners(),
   ]);
 
   const staticRoutes = [
@@ -19,6 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/news", priority: 0.8, changeFrequency: "daily" as const },
     { path: "/moderatoren", priority: 0.7, changeFrequency: "weekly" as const },
     { path: "/events", priority: 0.7, changeFrequency: "weekly" as const },
+    { path: "/partner", priority: 0.6, changeFrequency: "weekly" as const },
     { path: "/radioaid", priority: 0.7, changeFrequency: "weekly" as const },
     { path: "/community", priority: 0.6, changeFrequency: "monthly" as const },
     { path: "/ueber-uns", priority: 0.6, changeFrequency: "monthly" as const },
@@ -52,6 +55,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...events.map((event) => ({
       url: `${site.url}/events/${event.slug}`,
       lastModified: new Date(event.updatedAt),
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+    })),
+    ...partners.map((partner) => ({
+      url: `${site.url}/partner/${partner.slug}`,
+      lastModified: new Date(partner.updatedAt),
       changeFrequency: "monthly" as const,
       priority: 0.5,
     })),

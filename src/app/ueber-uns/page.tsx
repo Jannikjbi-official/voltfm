@@ -78,7 +78,7 @@ export default async function UeberUnsPage() {
 
       {/* --- Mission: eine grosse Aussage ------------------------------------ */}
       <section className="shell pt-16 sm:pt-24">
-        <div className="surface-card grid items-start gap-8 rounded-[2rem] p-7 sm:p-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-16">
+        <div className="surface-card grid items-start gap-8 rounded-[var(--radius)] p-7 sm:p-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-16">
           <p className="font-display text-[2.1rem] text-balance text-foreground sm:text-5xl">
             {site.tagline}
           </p>
@@ -171,7 +171,7 @@ export default async function UeberUnsPage() {
       <section className="shell pt-16 sm:pt-24">
         <div
           data-theme="dark"
-          className="dark rounded-[2rem] border border-border bg-surface p-7 text-foreground shadow-[var(--lift-shadow)] sm:p-12"
+          className="dark rounded-[var(--radius)] border border-border bg-surface p-7 text-foreground shadow-[var(--lift-shadow)] sm:p-12"
         >
           <h2 className="font-display text-[2.1rem] text-foreground sm:text-5xl">Was als Nächstes kommt</h2>
 

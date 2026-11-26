@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, IBM_Plex_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Doto, Instrument_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
 import { cookies } from "next/headers";
@@ -18,22 +18,35 @@ import { getStreamUrl } from "@/services/radio/stream";
 import { announceDueArticles } from "@/services/discord/news";
 import { buildMainNav, site } from "@/lib/site";
 
-/* Zwei Schriften, beide von next/font beim Build abgelegt und von der eigenen
+/* Vier Schriften, alle von next/font beim Build abgelegt und von der eigenen
    Domain ausgeliefert — der Browser fragt Google nicht.
-   Archivo variabel mit Breitenachse: Ueberschriften schmal und schwer wie auf
-   einem Plakat (wdth 75), Fliesstext normal. IBM Plex Mono fuer Uhrzeiten,
-   Daten und Zahlen. */
-const archivo = Archivo({
-  variable: "--font-archivo",
+   Bricolage Grotesque fuer Ueberschriften, Instrument Sans fuer Text,
+   JetBrains Mono fuer die Beschriftung am Gehaeuse, Doto (Punktmatrix) fuer
+   alles, was auf einem Display steht. */
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
+  subsets: ["latin", "latin-ext"],
+  axes: ["opsz", "wdth"],
+  display: "swap",
+});
+
+const instrument = Instrument_Sans({
+  variable: "--font-instrument",
   subsets: ["latin", "latin-ext"],
   axes: ["wdth"],
   display: "swap",
 });
 
-const plexMono = IBM_Plex_Mono({
-  variable: "--font-plex-mono",
+const jetbrains = JetBrains_Mono({
+  variable: "--font-jetbrains",
   subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600"],
+  display: "swap",
+});
+
+const doto = Doto({
+  variable: "--font-doto",
+  subsets: ["latin", "latin-ext"],
+  weight: ["700", "800", "900"],
   display: "swap",
 });
 
@@ -63,8 +76,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  // Tinte — die Farbe der Kopfzeile im Standard (dunkel).
-  themeColor: "#0e0f12",
+  // Aluminium — die Farbe des Gehaeuses im Standard (hell).
+  themeColor: "#d9dcdf",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
@@ -89,7 +102,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     /* HeroUI liest beides: die Klasse und data-theme. Beides kommt aus dem
        Cookie, also stimmt schon das erste HTML — ohne Skript, ohne Flackern. */
-    <html lang={site.lang} data-theme={theme} className={`${archivo.variable} ${plexMono.variable} ${theme}`}>
+    <html lang={site.lang} data-theme={theme} className={`${bricolage.variable} ${instrument.variable} ${jetbrains.variable} ${doto.variable} ${theme}`}>
       <body className="bg-background text-foreground">
         <ThemeProvider initialTheme={theme}>
           <Providers>

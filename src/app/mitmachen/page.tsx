@@ -103,7 +103,7 @@ export default async function MitmachenPage() {
 
           <aside
             data-theme="dark"
-            className="dark flex flex-col gap-4 self-start rounded-[2rem] border border-border bg-surface p-7 text-pretty leading-relaxed text-muted shadow-[var(--lift-shadow)] sm:p-9 [&_a]:font-semibold [&_a]:text-volt [&_a]:underline-offset-4 hover:[&_a]:underline"
+            className="dark flex flex-col gap-4 self-start rounded-[var(--radius)] border border-border bg-surface p-7 text-pretty leading-relaxed text-muted shadow-[var(--lift-shadow)] sm:p-9 [&_a]:font-semibold [&_a]:text-volt [&_a]:underline-offset-4 hover:[&_a]:underline"
           >
             <h2 className="text-2xl font-bold tracking-tight text-foreground">Ehrlich gesagt</h2>
             <p>

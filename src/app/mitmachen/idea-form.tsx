@@ -26,7 +26,7 @@ export function IdeaForm() {
 
   if (state.status === "success") {
     return (
-      <div role="status" className="surface-card flex flex-col gap-3 rounded-[2rem] p-6 sm:p-8">
+      <div role="status" className="surface-card flex flex-col gap-3 rounded-[var(--radius)] p-6 sm:p-8">
         <p className="text-lg font-bold text-foreground">{state.message}</p>
         <p className="text-sm text-muted">
           Ob und wann etwas hier auf der Seite auftaucht, entscheidet das Team.
@@ -36,7 +36,7 @@ export function IdeaForm() {
   }
 
   return (
-    <form action={formAction} className="surface-card relative flex flex-col gap-5 rounded-[2rem] p-6 sm:p-8">
+    <form action={formAction} className="surface-card relative flex flex-col gap-5 rounded-[var(--radius)] p-6 sm:p-8">
       {state.status !== "idle" && state.message && (
         <FormMessage status={state.status === "info" ? "info" : "error"}>{state.message}</FormMessage>
       )}

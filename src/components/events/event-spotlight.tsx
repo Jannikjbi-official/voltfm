@@ -14,7 +14,7 @@ export function EventSpotlight({ event }: { event: EventDTO }) {
   const { day, monthLong, weekday } = eventDateParts(event.startsAt);
 
   return (
-    <article className="group surface-card hover-lift relative grid overflow-hidden rounded-[2rem] md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+    <article className="group surface-card hover-lift relative grid overflow-hidden rounded-[var(--radius)] md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
       <div className="relative flex min-h-56 flex-col justify-between gap-8 overflow-hidden bg-volt p-6 text-ink sm:p-8 md:min-h-[22rem]">
         {event.image && (
           <Image

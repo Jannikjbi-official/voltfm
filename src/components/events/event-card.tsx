@@ -19,21 +19,21 @@ export function EventCard({ event }: { event: EventDTO }) {
   return (
     <article
       className={cn(
-        "group relative grid grid-cols-[4.5rem_minmax(0,1fr)] items-start gap-5 rounded-3xl p-3 transition-colors hover:bg-surface sm:grid-cols-[5rem_minmax(0,1fr)] sm:gap-6",
+        "group surface-card hover-lift relative grid grid-cols-[4.5rem_minmax(0,1fr)] items-start gap-5 rounded-[var(--radius)] p-3 sm:grid-cols-[5rem_minmax(0,1fr)] sm:gap-6",
         isPast && "opacity-70",
       )}
     >
       <div
         aria-hidden="true"
-        className="flex aspect-square flex-col items-center justify-center rounded-2xl bg-surface-secondary text-foreground transition-colors group-hover:bg-volt group-hover:text-ink"
+        className="display-panel flex aspect-square flex-col items-center justify-center rounded-[var(--radius)] text-display-foreground transition-colors group-hover:text-volt"
       >
-        <span className="font-display text-[2rem] leading-none tabular-nums sm:text-4xl">{day}</span>
-        <span className="mt-1 text-xs font-semibold">{month}</span>
+        <span className="font-dot text-[2rem] leading-none sm:text-4xl">{day}</span>
+        <span className="mt-1 font-mono text-[0.7rem] lowercase text-display-muted">{month}</span>
       </div>
 
       <div className="flex min-w-0 flex-col gap-2">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted">
-          <span className="rounded-full bg-default px-2.5 py-0.5 text-xs font-semibold text-foreground">
+          <span className="rounded-[3px] bg-default px-2 py-0.5 font-mono text-[0.7rem] font-semibold lowercase text-foreground">
             {event.category}
           </span>
           <span className="inline-flex items-center gap-1.5 font-mono text-xs">

@@ -15,8 +15,8 @@ import { LiveIndicator } from "./live-indicator";
  * die Wiedergabe nicht unterbricht. Das Padding am <body>
  * (--player-height) haelt ihr den Platz frei.
  *
- * Sie schwebt unten als dunkle Leiste mit runden Ecken, in beiden Modi —
- * der gelbe Knopf steht so immer auf Tinte.
+ * Sie ist die Bedienleiste des Geraets: gelbe Play-Taste links, daneben
+ * ein schwarzes Display mit Cover, Titel und Interpret in Punktmatrix.
  *
  * Auf 375 px bleiben Knopf, Cover und Titel. Laeuft etwas schief, steht die
  * Meldung an der Stelle des Interpreten — dort schaut man nach dem Klick hin.
@@ -30,48 +30,43 @@ export function StickyPlayer() {
   return (
     <aside
       aria-label="VoltFM Player"
-      data-theme="dark"
-      className="dark fixed inset-x-2 bottom-[calc(0.5rem+env(safe-area-inset-bottom,0px))] z-40 mx-auto max-w-[80rem] rounded-2xl border border-border bg-[color-mix(in_oklab,#141519_92%,transparent)] text-foreground shadow-[var(--overlay-shadow)] backdrop-blur-xl sm:inset-x-4"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface pb-[env(safe-area-inset-bottom,0px)] shadow-[0_-1px_0_rgba(255,255,255,0.4),0_-12px_32px_-20px_rgba(0,0,0,0.5)]"
     >
-      <div className="flex h-[var(--player-height)] items-center gap-3 px-3 sm:gap-4 sm:px-4">
+      <div className="shell flex h-[var(--player-height)] items-center gap-2.5 sm:gap-3">
         <PlayButton />
 
-        <div className="flex min-w-0 flex-1 items-center gap-3">
+        {/* Das Display: Cover, Titel in Gross, Interpret in Punktmatrix. */}
+        <div className="display-panel display-dots flex h-[3.4rem] min-w-0 flex-1 items-center gap-3 rounded-[var(--radius)] px-2.5">
           <CoverArt
             src={track?.coverUrl}
             alt={track ? `Cover: ${track.title} von ${track.artist}` : ""}
-            className="size-11 rounded-lg"
+            className="size-10 rounded-[3px]"
           />
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-foreground">
+          <div className="min-w-0 flex-1">
+            <p className="truncate font-wide text-[0.95rem] font-bold text-display-foreground">
               {track?.title ?? `${site.name} Livestream`}
             </p>
-            <p className={cn("truncate font-mono text-xs", failed ? "text-danger" : "text-volt")}>
+            <p className={cn("truncate font-dot text-[0.95rem] leading-tight", failed ? "text-danger" : "text-volt")}>
               {failed && error ? error : (track?.artist ?? site.tagline)}
             </p>
           </div>
-        </div>
-
-        <div className="flex shrink-0 items-center gap-4">
           {show && (
             /* Zeigt auf den Sendeplan, solange es einen gibt — sonst auf den
                Player, wo die laufende Playlist ohnehin steht. */
             <Link
               href={features.schedule ? "/programm" : "/radio"}
-              className="hidden flex-col items-end rounded-md text-right md:flex"
+              className="hidden shrink-0 flex-col items-end border-l border-white/10 pl-3 text-right md:flex"
             >
-              <span className="font-mono text-[0.7rem] text-muted">Playlist</span>
-              <span className="max-w-[14rem] truncate font-wide text-sm font-bold">{show.name}</span>
+              <span className="font-meta text-display-muted">playlist</span>
+              <span className="max-w-[14rem] truncate text-sm font-semibold text-display-foreground">
+                {show.name}
+              </span>
             </Link>
           )}
-          {embedAllowed ? (
-            <LevelMeter />
-          ) : (
-            /* Am Handy steht "Live" schon gross auf der Buehne. */
-            <LiveIndicator className="hidden sm:inline-flex" />
-          )}
-          <VolumeControl />
+          {embedAllowed ? <LevelMeter /> : <LiveIndicator className="hidden sm:inline-flex" />}
         </div>
+
+        <VolumeControl />
       </div>
 
       {/* Die einzige Live-Region fuer den Wiedergabestatus. */}

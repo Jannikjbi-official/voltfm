@@ -152,6 +152,32 @@ export interface VoltEvent {
 }
 
 /**
+ * Ein Partner von VoltFM, z. B. ein Twitch-Streamer, mit dem der Sender
+ * zusammenarbeitet. Oeffentlich unter /partner und /partner/<slug>.
+ */
+export interface Partner {
+  _id?: ObjectId;
+  name: string;
+  slug: string;
+  /** Ein, zwei Saetze fuer die Liste, hoechstens 160 Zeichen. */
+  kurz: string;
+  /** Bereinigtes HTML aus dem Markdown-Editor. Siehe `Article.content`. */
+  content?: string;
+  /** Siehe `Article.contentSource`. */
+  contentSource?: string;
+  /** Quadratisches Logo bzw. Profilbild, als `/api/bilder/<kennung>`. */
+  logo?: string;
+  /** Breites Bild fuer den Kopf der Detailseite. */
+  banner?: string;
+  /** Twitch, YouTube, TikTok, Instagram, Discord, Website … */
+  links: { label: string; url: string }[];
+  active: boolean;
+  order: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/**
  * Ein Eintrag der Zeitleiste auf /ueber-uns.
  *
  * `year` ist bewusst ein freier Text und keine Zahl: nicht jeder Schritt laesst
