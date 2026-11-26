@@ -13,7 +13,7 @@
  * package.json, Design-Regeln), nicht aus der Erinnerung.
  */
 
-const DISCORD_URL = process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/6JzSsUTWuh";
+const DISCORD_URL = process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/2wCxEHJ6VZ";
 const APPLY_URL = "https://bewerbung.voltfm.xyz/";
 
 export interface SeedArticle {

@@ -35,7 +35,7 @@ import {
 config({ path: ".env.local" });
 config({ path: ".env" });
 
-const DISCORD_URL = process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/6JzSsUTWuh";
+const DISCORD_URL = process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/2wCxEHJ6VZ";
 
 interface Migration {
   name: string;
@@ -479,6 +479,33 @@ async function applySentenceFixes(db: Db, now: Date, fixes: SentenceFix[]): Prom
   return changed.length ? `angepasst: ${changed.join(", ")}` : "nichts mehr im Ausgangszustand — nichts angefasst";
 }
 
+/**
+ * Ersetzt eine Adresse ueberall, wo Inhalte Links tragen koennen, und gibt
+ * die Zahl der geaenderten Dokumente zurueck.
+ */
+async function replaceLinkEverywhere(db: Db, now: Date, from: string, to: string): Promise<number> {
+  let n = 0;
+  for (const name of ["hosts", "shows", "articles", "events", "settings"]) {
+    for (const doc of await db.collection(name).find({}).toArray()) {
+      const raw = JSON.stringify(doc);
+      if (!raw.includes(from)) continue;
+      /* Nur die betroffenen Felder ersetzen. Das ganze Dokument durch
+         JSON zu schicken wuerde Date-Werte in Strings verwandeln. */
+      const patch: Record<string, unknown> = {};
+      for (const [k, v] of Object.entries(doc)) {
+        if (k === "_id") continue;
+        const asText = JSON.stringify(v);
+        if (asText?.includes(from)) patch[k] = JSON.parse(asText.split(from).join(to));
+      }
+      if (Object.keys(patch).length) {
+        await db.collection(name).updateOne({ _id: doc._id }, { $set: { ...patch, updatedAt: now } });
+        n++;
+      }
+    }
+  }
+  return n;
+}
+
 /* --- Die Migrationen ------------------------------------------------------ */
 
 const MIGRATIONS: Migration[] = [
@@ -590,26 +617,7 @@ const MIGRATIONS: Migration[] = [
   {
     name: "006-discord-einladungslink",
     run: async (db, now) => {
-      const wrong = "https://discord.gg/voltfm";
-      let n = 0;
-      for (const name of ["hosts", "shows", "articles", "events", "settings"]) {
-        for (const doc of await db.collection(name).find({}).toArray()) {
-          const raw = JSON.stringify(doc);
-          if (!raw.includes(wrong)) continue;
-          /* Nur die betroffenen Felder ersetzen. Das ganze Dokument durch
-             JSON zu schicken wuerde Date-Werte in Strings verwandeln. */
-          const patch: Record<string, unknown> = {};
-          for (const [k, v] of Object.entries(doc)) {
-            if (k === "_id") continue;
-            const asText = JSON.stringify(v);
-            if (asText?.includes(wrong)) patch[k] = JSON.parse(asText.split(wrong).join(DISCORD_URL));
-          }
-          if (Object.keys(patch).length) {
-            await db.collection(name).updateOne({ _id: doc._id }, { $set: { ...patch, updatedAt: now } });
-            n++;
-          }
-        }
-      }
+      const n = await replaceLinkEverywhere(db, now, "https://discord.gg/voltfm", DISCORD_URL);
       return `${n} Dokumente korrigiert`;
     },
   },
@@ -974,6 +982,20 @@ const MIGRATIONS: Migration[] = [
         { upsert: true },
       );
       return result.upsertedCount ? `angelegt: /news/${rest.slug}` : "war schon da";
+    },
+  },
+
+  {
+    name: "024-discord-neue-einladung",
+    run: async (db, now) => {
+      /* Die Einladung 6JzSsUTWuh ist abgelaufen. Die Migrationen und Seeds
+         davor haben sie in Profile, Beitraege und Einstellungen geschrieben.
+         Bewusst fest auf die neue Einladung statt auf DISCORD_URL: Steht in
+         der Umgebung noch die alte, wuerde sonst alt durch alt ersetzt und
+         die Migration trotzdem als erledigt vermerkt. Ohne "https://", damit
+         auch Links ohne Schema mitkommen. */
+      const n = await replaceLinkEverywhere(db, now, "discord.gg/6JzSsUTWuh", "discord.gg/2wCxEHJ6VZ");
+      return `${n} Dokumente korrigiert`;
     },
   },
 ];

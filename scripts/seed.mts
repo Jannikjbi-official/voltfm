@@ -18,7 +18,7 @@ const uri = process.env.MONGODB_URI ?? "mongodb://127.0.0.1:27017/voltfm";
 const dbName = process.env.MONGODB_DB ?? "voltfm";
 
 /** Einladungslink zum Discord. Wird in der Produktion per Env gesetzt. */
-const DISCORD_URL = process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/6JzSsUTWuh";
+const DISCORD_URL = process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/2wCxEHJ6VZ";
 
 const client = new MongoClient(uri);
 await client.connect();
