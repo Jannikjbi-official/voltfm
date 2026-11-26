@@ -35,7 +35,7 @@ import {
 config({ path: ".env.local" });
 config({ path: ".env" });
 
-const DISCORD_URL = process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/6JzSsUTWuh";
+const DISCORD_URL = process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/2wCxEHJ6VZ";
 
 interface Migration {
   name: string;

@@ -35,7 +35,7 @@ export const site = {
    * actual online offering, so it uses this instead.
    */
   canonicalUrl: "https://voltfm.xyz",
-  discordUrl: process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.com/invite/2wCxEHJ6VZ",
+  discordUrl: process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/2wCxEHJ6VZ",
   /** Hier kuendigt der Bot neue Beitraege an (src/services/discord/news.ts). */
   discordNewsChannelId: process.env.DISCORD_NEWS_CHANNEL_ID ?? "1570831941182161056",
   /** Vorschläge und Playlist-Ideen (src/services/discord/ideas.ts). */
