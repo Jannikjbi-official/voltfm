@@ -1,36 +1,27 @@
 import "server-only";
 
 import { ideaApprovals } from "@/db/collections";
-import { site } from "@/lib/site";
 import {
   IDEA_FEED_KIND_LIST,
   IDEA_TEXT_MAX,
   type Idea,
   type IdeaKind,
-  type SubmittableIdeaKind,
 } from "@/lib/ideas";
-import { deployEnv, isProductionDeploy } from "@/lib/deploy";
+import { deployEnv } from "@/lib/deploy";
 
 /**
- * Vorschläge und Playlist-Ideen: lesen aus und schreiben in zwei
- * Discord-Kanäle (`site.discordIdeaChannels`), über den Bot
- * (DISCORD_BOT_TOKEN).
- *
- * Was der Bot dafür im Discord braucht:
- *   - in beiden Kanälen: Kanal ansehen, Nachrichtenverlauf lesen,
- *     Nachrichten senden, Links einbetten
- *   - im Developer Portal den "Message Content Intent" — ohne ihn liefert
- *     Discord den Text fremder Nachrichten leer aus.
+ * Highlights aus dem Discord (DISCORD_HIGHLIGHTS_CHANNEL_ID), über den Bot
+ * (DISCORD_BOT_TOKEN). Der Kanal wird nur gelesen, nie beschrieben;
+ * freigegebene Einträge stehen auf /highlights. Ohne Kanal-ID ist die Funktion
+ * aus. Der Bot braucht dort „Kanal ansehen“, „Nachrichtenverlauf lesen“ und im
+ * Developer Portal den „Message Content Intent“.
  *
  * Die Texte werden nicht gespeichert, sondern bei Bedarf gelesen (öffentlich
  * höchstens alle 60 Sekunden). Gespeichert wird nur die Freigabe
  * (Collection `ideaApprovals`). Gelöscht im Discord heißt damit auch: weg von
  * der Seite.
  *
- * Dazu kommt ein dritter Kanal, die Highlights (DISCORD_HIGHLIGHTS_CHANNEL_ID).
- * Er wird nur gelesen, nie beschrieben; freigegebene Einträge stehen auf
- * /highlights. Ohne Kanal-ID (Standard) ist die Funktion aus. Der Bot braucht
- * dort nur „Kanal ansehen“ und „Nachrichtenverlauf lesen“.
+ * Ideen und Vorschläge laufen über das VoltFM-Portal, nicht über diese Seite.
  */
 
 /* Nur lokal (nie auf dem Server) darf ein Test-Server statt Discord antworten. */
@@ -40,10 +31,6 @@ const API =
     : "https://discord.com/api/v10";
 
 const FETCH_LIMIT = 50;
-/** Fußzeile der Karten, die das Formular auf voltfm.xyz in den Kanal schreibt. */
-const WEBSITE_MARKER = "Eingereicht über voltfm.xyz";
-/** Logo-Gelb (#FFD60A) als Seitenstreifen der Karte. */
-const EMBED_COLOR = 0xffd60a;
 
 interface DiscordMessage {
   id: string;
@@ -52,7 +39,7 @@ interface DiscordMessage {
   timestamp: string;
   author: { id: string; username: string; global_name?: string | null; bot?: boolean };
   attachments?: unknown[];
-  embeds?: { description?: string; author?: { name?: string }; footer?: { text?: string } }[];
+  embeds?: unknown[];
   sticker_items?: unknown[];
 }
 
@@ -72,8 +59,7 @@ function botToken(): string | null {
 
 /** Die eingetragene Kanal-ID, so wie sie konfiguriert ist (auch leer). */
 export function ideaChannelId(kind: IdeaKind): string {
-  if (kind === "highlight") return (process.env.DISCORD_HIGHLIGHTS_CHANNEL_ID ?? "").trim();
-  return site.discordIdeaChannels[kind];
+  return kind === "highlight" ? (process.env.DISCORD_HIGHLIGHTS_CHANNEL_ID ?? "").trim() : "";
 }
 
 function channelOf(kind: IdeaKind): string | null {
@@ -107,13 +93,8 @@ function toIdea(kind: IdeaKind, message: DiscordMessage): Omit<Idea, "approved">
   if (message.type !== 0 && message.type !== 19) return null;
   const base = { id: message.id, kind, createdAt: new Date(message.timestamp).toISOString() };
 
-  if (message.author.bot) {
-    // Nur die Karten aus unserem eigenen Formular, keine anderen Bots.
-    const embed = message.embeds?.[0];
-    if (embed?.footer?.text !== WEBSITE_MARKER || !embed.description) return null;
-    const text = cleanDiscordText(embed.description);
-    return text ? { ...base, author: embed.author?.name?.trim() || "Ohne Namen", text, viaWebsite: true } : null;
-  }
+  // Bots (Ankündigungen, Logs) sind keine Highlights.
+  if (message.author.bot) return null;
 
   const text = cleanDiscordText(message.content ?? "");
   if (!text) {
@@ -125,7 +106,6 @@ function toIdea(kind: IdeaKind, message: DiscordMessage): Omit<Idea, "approved">
     ...base,
     author: (message.author.global_name || message.author.username).slice(0, 80),
     text,
-    viaWebsite: false,
   };
 }
 
@@ -181,20 +161,9 @@ async function readFeed(kind: IdeaKind, fresh: boolean): Promise<IdeaFeed> {
   };
 }
 
-/** Alle drei Kanäle, neueste zuerst — für das Admin. */
+/** Die Highlights, neueste zuerst — für das Admin. */
 export async function getIdeaFeeds({ fresh = false } = {}): Promise<IdeaFeed[]> {
   return Promise.all(IDEA_FEED_KIND_LIST.map((kind) => readFeed(kind, fresh)));
-}
-
-/** Nur freigegebene Einträge, je Art höchstens `limit` — für /mitmachen. */
-export async function getPublicIdeas(limit = 6): Promise<Record<SubmittableIdeaKind, Idea[]>> {
-  const feeds = await Promise.all((["vorschlag", "playlist"] as const).map((kind) => readFeed(kind, false)));
-  const result: Record<SubmittableIdeaKind, Idea[]> = { vorschlag: [], playlist: [] };
-  for (const feed of feeds) {
-    if (feed.kind === "highlight") continue;
-    result[feed.kind] = feed.ideas.filter((idea) => idea.approved).slice(0, limit);
-  }
-  return result;
 }
 
 /**
@@ -205,48 +174,4 @@ export async function getPublicHighlights(limit = 30): Promise<{ configured: boo
   if (!highlightsConfigured()) return { configured: false, highlights: [] };
   const feed = await readFeed("highlight", false);
   return { configured: true, highlights: feed.ideas.filter((idea) => idea.approved).slice(0, limit) };
-}
-
-/** Ob das Formular wirklich nach Discord schreibt: nur auf voltfm.xyz (und lokal gegen einen Test-Server). */
-export function ideaPostingEnabled(): boolean {
-  return isProductionDeploy() || (deployEnv() === "local" && Boolean(process.env.DISCORD_API_BASE));
-}
-
-export type PostIdeaResult = "ok" | "testseite" | "nicht-eingerichtet" | "fehler";
-
-/**
- * Schreibt einen Eintrag aus dem Formular als Karte in den Kanal. Niemand wird
- * erwähnt oder angepingt; der Text steht in der Karte, nicht als Nachricht.
- */
-export async function postIdea(kind: SubmittableIdeaKind, name: string, text: string): Promise<PostIdeaResult> {
-  if (!ideaPostingEnabled()) return "testseite";
-  const token = botToken();
-  const channel = channelOf(kind);
-  if (!token || !channel) return "nicht-eingerichtet";
-
-  try {
-    const res = await fetch(`${API}/channels/${channel}/messages`, {
-      method: "POST",
-      headers: { Authorization: `Bot ${token}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        allowed_mentions: { parse: [] },
-        embeds: [
-          {
-            author: { name: name.slice(0, 256) },
-            description: text.slice(0, IDEA_TEXT_MAX),
-            color: EMBED_COLOR,
-            footer: { text: WEBSITE_MARKER },
-            timestamp: new Date().toISOString(),
-          },
-        ],
-      }),
-      cache: "no-store",
-      signal: AbortSignal.timeout(8000),
-    });
-    if (!res.ok) throw new Error(`Discord antwortet ${res.status}: ${await res.text()}`);
-    return "ok";
-  } catch (error) {
-    console.error(`[ideen] ${kind} nicht gesendet`, error);
-    return "fehler";
-  }
 }

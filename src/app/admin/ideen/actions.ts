@@ -8,7 +8,7 @@ import { isIdeaKind } from "@/lib/ideas";
 import type { EntityFormState } from "@/components/admin/entity-types";
 
 /**
- * Gibt einen Vorschlag, eine Playlist-Idee oder ein Highlight für die Seite frei — oder
+ * Gibt ein Highlight für die Seite frei — oder
  * nimmt die Freigabe zurück. Gespeichert wird nur die Nachrichten-ID, nicht
  * der Text. Wer Beiträge veröffentlichen darf, darf auch das.
  */

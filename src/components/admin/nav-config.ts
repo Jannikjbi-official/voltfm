@@ -52,7 +52,7 @@ export function adminNav(scheduleOn: boolean): AdminNavGroup[] {
         { href: "/admin/spotlight", label: "Im Fokus", icon: SpotlightIcon, needs: { resource: "spotlight", actions: ["update"] } },
         { href: "/admin/timeline", label: "Zeitleiste", icon: ClockIcon, needs: { resource: "timeline", actions: ["update"] } },
         { href: "/admin/media", label: "Medien", icon: ImageIcon, needs: { resource: "media", actions: ["upload"] } },
-        { href: "/admin/ideen", label: "Ideen", icon: IdeaIcon, needs: { resource: "article", actions: ["publish"] } },
+        { href: "/admin/ideen", label: "Highlights", icon: IdeaIcon, needs: { resource: "article", actions: ["publish"] } },
         { href: "/admin/markdown", label: "Textformat", icon: EditIcon, needs: { resource: "article", actions: ["update"] } },
       ],
     },

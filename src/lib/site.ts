@@ -38,11 +38,8 @@ export const site = {
   discordUrl: process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.com/invite/2wCxEHJ6VZ",
   /** Hier kuendigt der Bot neue Beitraege an (src/services/discord/news.ts). */
   discordNewsChannelId: process.env.DISCORD_NEWS_CHANNEL_ID ?? "1570831941182161056",
-  /** Vorschläge und Playlist-Ideen (src/services/discord/ideas.ts). */
-  discordIdeaChannels: {
-    vorschlag: process.env.DISCORD_SUGGESTIONS_CHANNEL_ID ?? "1574526503998455870",
-    playlist: process.env.DISCORD_PLAYLIST_IDEAS_CHANNEL_ID ?? "1574526506087219291",
-  },
+  /** Ideen, Feedback und Bugs sammelt das Portal, nicht diese Seite. */
+  ideasUrl: "https://portal.voltfm.xyz/ideen",
   /** Nur verlinkt, nichts eingebettet — es laedt also nichts von Meta. */
   instagramUrl: "https://www.instagram.com/voltfm_radio/",
   streamUrl:

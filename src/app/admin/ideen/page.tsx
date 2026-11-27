@@ -5,14 +5,13 @@ import { IDEA_KINDS } from "@/lib/ideas";
 import {
   getIdeaFeeds,
   ideaChannelId,
-  ideaPostingEnabled,
   type IdeaFeed,
   type IdeaFeedProblem,
 } from "@/services/discord/ideas";
 import { AdminNotice, AdminPageHeader, AdminPanel, StatusBadge } from "@/components/admin/admin-ui";
 import { ApprovalButton } from "./approval-button";
 
-export const metadata: Metadata = { title: "Ideen · Admin", robots: { index: false } };
+export const metadata: Metadata = { title: "Highlights · Admin", robots: { index: false } };
 export const dynamic = "force-dynamic";
 
 const PROBLEMS: Record<IdeaFeedProblem, string> = {
@@ -25,9 +24,9 @@ const PROBLEMS: Record<IdeaFeedProblem, string> = {
 };
 
 /**
- * Vorschläge, Playlist-Ideen und Highlights aus dem Discord. Alles hier ist
- * erst einmal nur im Admin zu sehen; auf /mitmachen bzw. /highlights steht
- * ein Eintrag erst nach Freigabe.
+ * Highlights aus dem Discord. Alles hier ist erst einmal nur im Admin zu
+ * sehen; auf /highlights steht ein Eintrag erst nach Freigabe. Ideen und
+ * Vorschläge laufen über das VoltFM-Portal (portal.voltfm.xyz/team/ideen).
  */
 export default async function AdminIdeasPage() {
   // Ein ausgeblendeter Menüpunkt ist kein Schutz — die Seite prüft selbst.
@@ -39,8 +38,8 @@ export default async function AdminIdeasPage() {
   return (
     <>
       <AdminPageHeader
-        title="Ideen"
-        description="Vorschläge, Playlist-Ideen und Highlights aus dem Discord. Auf /mitmachen und /highlights steht nur, was du freigibst."
+        title="Highlights"
+        description="Highlights aus dem Discord. Auf /highlights steht nur, was du freigibst. Ideen und Vorschläge sammelt das VoltFM-Portal unter Team → Ideen."
       />
 
       {unreadable > 0 && (
@@ -48,13 +47,6 @@ export default async function AdminIdeasPage() {
           {unreadable === 1 ? "Eine Nachricht" : `${unreadable} Nachrichten`} lieferte Discord leer aus.
           Dann fehlt dem Bot meist der „Message Content Intent“: im Discord Developer Portal
           unter Bot → Privileged Gateway Intents einschalten.
-        </AdminNotice>
-      )}
-
-      {!ideaPostingEnabled() && (
-        <AdminNotice title="Testseite">
-          Das Formular auf /mitmachen schickt nur auf voltfm.xyz etwas in den Discord. Hier
-          wird gelesen, aber nichts gesendet.
         </AdminNotice>
       )}
 
@@ -96,7 +88,6 @@ function FeedPanel({ feed }: { feed: IdeaFeed }) {
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-wide text-sm font-bold text-foreground">{idea.author}</span>
                   <span className="font-mono text-[0.7rem] text-muted">{formatDateTime(idea.createdAt)}</span>
-                  {idea.viaWebsite && <StatusBadge>über die Website</StatusBadge>}
                   {idea.approved && <StatusBadge color="success">auf der Seite</StatusBadge>}
                 </div>
                 <p className="mt-1.5 text-sm leading-relaxed break-words whitespace-pre-line text-foreground/90">
