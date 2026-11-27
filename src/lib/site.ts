@@ -208,17 +208,20 @@ export const sitePages: NavItem[] = [
   ...secondaryNav,
 ];
 
+/**
+ * Der Footer in vier gleich langen Spalten nach Thema. Die Seiten sind dieselben
+ * wie in `secondaryNav` und `sitePages`, nur fuer den Footer sortiert.
+ */
 export const footerNav: { title: string; items: NavItem[] }[] = [
   {
-    title: "Hören",
+    title: "Radio",
     items: [
       { href: "/radio", label: "Livestream" },
       ...(features.schedule ? [{ href: "/programm", label: "Sendeplan" }] : []),
-      { href: "/moderatoren", label: "Team" },
-      { href: "/partner", label: "Partner" },
       { href: "/charts", label: "Charts" },
       { href: "/gespielt", label: "Was lief wann" },
       { href: "/wunsch", label: "Song wünschen" },
+      { href: "/so-gehts", label: "So geht's" },
     ],
   },
   {
@@ -229,13 +232,29 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
       { href: "/spotlight", label: "Im Fokus" },
       ...(process.env.DISCORD_HIGHLIGHTS_CHANNEL_ID ? [{ href: "/highlights", label: "Highlights" }] : []),
       { href: "/radioaid", label: "RadioAid" },
-      { href: "/overlay", label: "Overlay" },
-      { href: "/suche", label: "Suche" },
+    ],
+  },
+  {
+    title: "Mitmachen",
+    items: [
+      { href: "/community", label: "Community" },
+      { href: "/mitmachen", label: "Mitmachen" },
+      { href: "/moderatoren", label: "Team" },
+      { href: "/partner", label: "Partner" },
+      { href: "/partner-werden", label: "Partner werden" },
+      { href: "/overlay", label: "Stream-Overlay" },
     ],
   },
   {
     title: "VoltFM",
-    items: secondaryNav.map(({ href, label }) => ({ href, label })),
+    items: [
+      { href: "/ueber-uns", label: "Über uns" },
+      { href: "/faq", label: "FAQ" },
+      { href: "/presse", label: "Presse" },
+      { href: "/kontakt", label: "Kontakt" },
+      { href: "/neu", label: "Was ist neu" },
+      { href: "/suche", label: "Suche" },
+    ],
   },
 ];
 

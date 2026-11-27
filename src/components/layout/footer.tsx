@@ -16,9 +16,9 @@ const SOCIAL = [
 ] as const;
 
 /**
- * Der Footer ist die Rueckseite des Geraets: Module im Raster — Logo mit den
- * Anschluessen (Discord, Instagram), die zweite Reihe der Navigation und ein
- * Display mit "24/7". Darunter das Typenschild mit Copyright und Rechtlichem.
+ * Der Footer ist die Rueckseite des Geraets: links Logo, Status und die
+ * Anschluesse (Discord, Instagram), rechts die Seiten in vier Spalten.
+ * Darunter das Typenschild mit Copyright, Rechtlichem und Credits.
  *
  * Unten haelt er Abstand fuer die Player-Leiste, damit sie nie etwas
  * verdeckt — auch ueber dem iPhone-Balken.
@@ -27,16 +27,19 @@ export function Footer() {
   return (
     <footer className="mt-20 border-t border-border bg-surface-secondary pb-[calc(var(--player-height)+1.5rem+env(safe-area-inset-bottom,0px))]">
       <div className="shell grid gap-2 pt-2 lg:grid-cols-12">
-        <div className="surface-card flex flex-col justify-between gap-8 rounded-[var(--radius)] p-6 lg:col-span-4">
+        <div className="surface-card flex flex-col justify-between gap-6 rounded-[var(--radius)] p-6 lg:col-span-4">
           <div>
             <Link href="/" aria-label="VoltFM — zur Startseite" className="inline-block">
               <LogoWordmark className="h-9 w-auto" />
             </Link>
-            <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted">{site.description}</p>
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted">{site.description}</p>
+            <p className="mt-4 flex items-center gap-2 font-meta text-muted">
+              <span className="led" aria-hidden="true" />
+              sendet 24/7 · voltfm.xyz
+            </p>
           </div>
           <div>
-            <p className="font-meta text-muted">anschlüsse</p>
-            <ul className="mt-2 flex flex-wrap gap-2">
+            <ul className="flex flex-wrap gap-2">
               {SOCIAL.map((item) => (
                 <li key={item.label}>
                   <a
@@ -57,7 +60,7 @@ export function Footer() {
 
         <nav
           aria-label="Footer-Navigation"
-          className="surface-card grid grid-cols-2 gap-x-6 gap-y-8 rounded-[var(--radius)] p-6 sm:grid-cols-3 lg:col-span-5"
+          className="surface-card grid grid-cols-2 gap-x-6 gap-y-8 rounded-[var(--radius)] p-6 sm:grid-cols-4 lg:col-span-8"
         >
           {footerNav.map((column) => (
             <div key={column.title}>
@@ -67,7 +70,7 @@ export function Footer() {
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      className="text-[0.95rem] font-medium text-foreground underline-offset-4 hover:underline"
+                      className="text-[0.95rem] font-medium whitespace-nowrap text-foreground underline-offset-4 hover:underline"
                     >
                       {item.label}
                     </Link>
@@ -77,24 +80,21 @@ export function Footer() {
             </div>
           ))}
         </nav>
-
-        <div className="display-panel display-dots flex flex-col justify-between gap-6 rounded-[var(--radius)] p-6 lg:col-span-3">
-          <p className="flex items-center gap-2 font-meta text-display-muted">
-            <span className="led" aria-hidden="true" />
-            sendet
-          </p>
-          <p className="font-dot text-[3.5rem] leading-none text-volt" aria-label="Rund um die Uhr">
-            24/7
-          </p>
-          <p className="font-dot text-lg leading-none text-display-foreground">voltfm.xyz</p>
-        </div>
       </div>
 
       <div className="shell mt-2">
         <div className="flex flex-col gap-4 rounded-[var(--radius)] border border-border px-5 py-4 text-sm text-muted md:flex-row md:items-center md:justify-between">
-          <span className="font-mono text-xs">
-            © {new Date().getFullYear()} {site.name}
-          </span>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
+            <span className="font-mono text-xs">
+              © {new Date().getFullYear()} {site.name}
+            </span>
+            <Link href="/impressum" className="py-1 hover:text-foreground">
+              Impressum
+            </Link>
+            <Link href="/datenschutz" className="py-1 hover:text-foreground">
+              Datenschutz
+            </Link>
+          </div>
 
           {/* Die Bilder liegen als Kopie unter public/credits: So laedt der
               Browser nichts von fremden Servern. */}
@@ -114,15 +114,6 @@ export function Footer() {
               </li>
             ))}
           </ul>
-
-          <div className="flex gap-5">
-            <Link href="/impressum" className="py-1 hover:text-foreground">
-              Impressum
-            </Link>
-            <Link href="/datenschutz" className="py-1 hover:text-foreground">
-              Datenschutz
-            </Link>
-          </div>
         </div>
       </div>
     </footer>
