@@ -109,6 +109,13 @@ export default function KontaktPage() {
               </a>
               . Das Formular oben landet im selben Postfach.
             </p>
+            {/* Seit dem Umzug auf den eigenen Mailserver (11/2026): neue Absender
+                landen bei Gmail & Co. anfangs gern im Spam. */}
+            <p className={cardText}>
+              <strong className="text-foreground">Keine Antwort bekommen?</strong> Schau bitte
+              auch in deinen Spam-Ordner. Liegt unsere Mail dort, markier sie als
+              &bdquo;Kein Spam&ldquo; — dann kommen die nächsten direkt bei dir an.
+            </p>
           </div>
 
           <div className={card}>
