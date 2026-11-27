@@ -9,13 +9,13 @@ import { site } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Partner werden",
   description:
-    "Wie eine Partnerschaft mit VoltFM aussieht und wie du anfragst: per Ticket im Discord.",
+    "Wie eine Partnerschaft mit VoltFM aussieht und wie du dich bewirbst: über das VoltFM-Portal.",
   alternates: { canonical: "/partner-werden" },
 };
 
 /**
  * Nur was es tatsaechlich gibt: eine Seite unter /partner, die das Team im
- * Admin pflegt. Angefragt wird per Discord-Ticket — es gibt kein Formular.
+ * Admin pflegt. Beworben wird ueber das VoltFM-Portal (site.portalUrl).
  */
 export default function PartnerWerdenPage() {
   return (
@@ -64,16 +64,16 @@ export default function PartnerWerdenPage() {
           <div className="display-panel display-dots flex flex-col items-start gap-6 rounded-[var(--radius)] p-6 sm:p-10 lg:col-span-5">
             <p className="flex items-center gap-2 font-meta text-display-muted">
               <span className="led" aria-hidden="true" />
-              anfrage / discord
+              bewerbung / portal
             </p>
             <h2 className="font-display text-[2rem] text-balance text-display-foreground sm:text-4xl">
-              So fragst du an
+              So bewirbst du dich
             </h2>
             <ol className="flex w-full flex-col gap-2">
               {[
-                "Tritt dem VoltFM-Discord bei.",
-                `Geh in den ${site.supportChannelHint} und öffne ein Ticket.`,
-                "Erzähl kurz, wer du bist, und schick die Links zu deinen Kanälen mit.",
+                "Öffne das VoltFM-Portal und melde dich mit deinem Discord-Konto an.",
+                "Wähl die Bewerbung als Partner und erzähl kurz, wer du bist. Schick die Links zu deinen Kanälen mit.",
+                "Wir melden uns bei dir. Wie es steht, siehst du jederzeit im Portal.",
               ].map((step, index) => (
                 <li key={step} className="flex gap-4 rounded-[3px] border border-white/10 p-4">
                   <span className="font-dot text-xl leading-none text-volt">
@@ -83,12 +83,23 @@ export default function PartnerWerdenPage() {
                 </li>
               ))}
             </ol>
-            <ButtonLink href={site.discordUrl} external variant="primary">
-              <Icon icon={DiscordIcon} />
-              Ticket im Discord öffnen
+            <ButtonLink href={site.portalUrl} external variant="primary">
+              Zum Portal
               <Icon icon={ExternalLinkIcon} />
             </ButtonLink>
-            <p className="text-sm text-display-muted">Ein Formular dafür gibt es nicht.</p>
+            <p className="text-sm text-display-muted">
+              Vorher eine Frage?{" "}
+              <a
+                href={site.discordUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="inline-flex items-center gap-1 font-semibold text-display-foreground underline underline-offset-4"
+              >
+                <Icon icon={DiscordIcon} />
+                Schreib uns im Discord
+              </a>
+              .
+            </p>
           </div>
         </div>
       </section>
