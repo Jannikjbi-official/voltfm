@@ -16,7 +16,7 @@ const SECTIONS = [
   { id: "cookies-und-lokale-speicherung", label: "Cookies und lokale Speicherung" },
   { id: "konto-und-anmeldung", label: "Konto und Anmeldung" },
   { id: "kontaktformular", label: "Kontaktformular" },
-  { id: "vorschlaege-und-playlist-ideen", label: "Vorschläge und Playlist-Ideen" },
+  { id: "vorschlaege-und-playlist-ideen", label: "Vorschläge, Playlist-Ideen und Highlights" },
   { id: "bilder-und-uploads-uploadthing", label: "Bilder und Uploads (UploadThing)" },
   { id: "eingesetzte-dienste-auf-einen-blick", label: "Eingesetzte Dienste auf einen Blick" },
   { id: "keine-automatisierte-entscheidungsfindung", label: "Keine automatisierte Entscheidungsfindung" },
@@ -321,7 +321,7 @@ export default function DatenschutzPage() {
                 keine gesetzlichen Aufbewahrungspflichten entgegenstehen.
               </p>
 
-              <h2 id="vorschlaege-und-playlist-ideen">Vorschläge und Playlist-Ideen</h2>
+              <h2 id="vorschlaege-und-playlist-ideen">Vorschläge, Playlist-Ideen und Highlights</h2>
               <p>
                 <strong>Formular auf /mitmachen:</strong> Was du dort eingibst (Name und
                 Text), schickt unser Server als Nachricht in einen von zwei Kanälen
@@ -347,6 +347,18 @@ export default function DatenschutzPage() {
                 Zeit auch hier. Rechtsgrundlage ist unser berechtigtes Interesse, Ideen
                 aus der Community zu zeigen (Art. 6 Abs. 1 lit. f DSGVO). Du kannst
                 jederzeit widersprechen, am einfachsten über das Kontaktformular.
+              </p>
+              <p>
+                <strong>Highlights:</strong> Ist ein Highlights-Kanal in unserem Discord
+                angebunden, liest unser Server auch dort Anzeigename, Text und Zeitpunkt
+                der Nachrichten. In diesen Kanal schreibt voltfm.xyz nichts, ein Formular
+                gibt es dafür nicht. Auf /highlights zeigen wir einzelne Nachrichten mit
+                Anzeigename, Text und Datum, ebenfalls erst nach Freigabe durch das Team
+                und ohne Profilbilder; wer nur erwähnt wird, erscheint nicht. Bilder und
+                Anhänge aus dem Kanal laden wir nicht. Gespeichert wird auch hier nur,
+                welche Nachricht freigegeben ist. Löschst du deine Nachricht im Discord,
+                verschwindet sie nach kurzer Zeit auch hier. Rechtsgrundlage und
+                Widerspruch wie oben (Art. 6 Abs. 1 lit. f DSGVO).
               </p>
 
               <h2 id="bilder-und-uploads-uploadthing">Bilder und Uploads (UploadThing)</h2>

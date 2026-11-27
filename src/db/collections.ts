@@ -9,8 +9,10 @@ import type {
   MediaAsset,
   Milestone,
   Partner,
+  Play,
   SettingsDoc,
   Show,
+  Spotlight,
   StationDay,
   TimelineEntry,
   VoltEvent,
@@ -37,6 +39,9 @@ export const milestones = (): Collection<Milestone> => getDb().collection<Milest
 export const partners = (): Collection<Partner> => getDb().collection<Partner>("partners");
 export const ideaApprovals = (): Collection<IdeaApproval> =>
   getDb().collection<IdeaApproval>("ideaApprovals");
+export const spotlights = (): Collection<Spotlight> => getDb().collection<Spotlight>("spotlights");
+/** Was gelaufen ist — fuer Charts und Archiv (src/services/plays). */
+export const plays = (): Collection<Play> => getDb().collection<Play>("plays");
 
 /**
  * Index creation is idempotent, so this is safe to run from the seed script or
@@ -69,5 +74,9 @@ export async function ensureIndexes(): Promise<void> {
     ideaApprovals().createIndex({ messageId: 1 }, { unique: true }),
     partners().createIndex({ slug: 1 }, { unique: true }),
     partners().createIndex({ active: 1, order: 1, name: 1 }),
+    spotlights().createIndex({ slug: 1 }, { unique: true }),
+    spotlights().createIndex({ active: 1, monat: -1, createdAt: -1 }),
+    plays().createIndex({ startedAt: 1, title: 1, artist: 1 }, { unique: true }),
+    plays().createIndex({ startedAt: -1 }),
   ]);
 }

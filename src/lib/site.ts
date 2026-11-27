@@ -73,10 +73,12 @@ export const site = {
   /** Wo im Discord das Ticket aufgemacht wird. */
   supportChannelHint: "Kanal #ticket-erstellen",
   /**
-   * Bewerbungsportal: dort werden offene Stellen ausgeschrieben. Seit
-   * November 2026 das eigene unter bewerbung.voltfm.xyz, vorher dash.pwr.lol.
+   * Das VoltFM-Portal: Bewerbungen und Songwuensche laufen dort, nicht ueber
+   * diese Seite. Seit 27.11.2026 portal.voltfm.xyz (davor
+   * bewerbung.voltfm.xyz, ganz am Anfang dash.pwr.lol).
    */
-  applyUrl: "https://bewerbung.voltfm.xyz/",
+  portalUrl: "https://portal.voltfm.xyz/",
+  applyUrl: "https://portal.voltfm.xyz/",
   /** laut.fm station slug — drives every metadata endpoint. */
   station: stationSlug(process.env.NEXT_PUBLIC_RADIO_STATION),
 } as const;
@@ -184,6 +186,9 @@ export const secondaryNav: NavItem[] = [
   { href: "/faq", label: "Häufige Fragen", hint: "Antworten auf das, was am meisten gefragt wird" },
   { href: "/presse", label: "Presse", hint: "Kurzprofil, Zahlen und Logo" },
   { href: "/kontakt", label: "Kontakt", hint: "Ticket im Discord oder E-Mail" },
+  { href: "/so-gehts", label: "So geht's", hint: "Hören, Wünsche, Discord — kurz erklärt" },
+  { href: "/partner-werden", label: "Partner werden", hint: "Wie eine Partnerschaft mit VoltFM läuft" },
+  { href: "/neu", label: "Neu auf der Seite", hint: "Was sich an voltfm.xyz geändert hat" },
 ];
 
 /**
@@ -195,6 +200,11 @@ export const sitePages: NavItem[] = [
   { href: "/programm", label: "Programm", hint: "Sendeplan für heute und die ganze Woche", feature: "schedule" },
   /* Nur rund um die Sendung — siehe buildPageIndex(). */
   { href: "/radioaid", label: "RadioAid", hint: "24 Stunden Charity-Radio", seasonal: true },
+  { href: "/charts", label: "Charts", hint: "Die meistgespielten Songs und Künstler" },
+  { href: "/gespielt", label: "Was lief wann", hint: "Archiv: welcher Song wann lief" },
+  { href: "/wunsch", label: "Song wünschen", hint: "Wünsche laufen über das VoltFM-Portal" },
+  { href: "/spotlight", label: "Im Fokus", hint: "Leute aus Team und Community" },
+  { href: "/overlay", label: "Overlay für Streamer", hint: "VoltFM-Karte für OBS zum Herunterladen" },
   ...secondaryNav,
 ];
 
@@ -206,6 +216,9 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
       ...(features.schedule ? [{ href: "/programm", label: "Sendeplan" }] : []),
       { href: "/moderatoren", label: "Team" },
       { href: "/partner", label: "Partner" },
+      { href: "/charts", label: "Charts" },
+      { href: "/gespielt", label: "Was lief wann" },
+      { href: "/wunsch", label: "Song wünschen" },
     ],
   },
   {
@@ -213,7 +226,10 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
     items: [
       { href: "/news", label: "News" },
       { href: "/events", label: "Events" },
+      { href: "/spotlight", label: "Im Fokus" },
+      ...(process.env.DISCORD_HIGHLIGHTS_CHANNEL_ID ? [{ href: "/highlights", label: "Highlights" }] : []),
       { href: "/radioaid", label: "RadioAid" },
+      { href: "/overlay", label: "Overlay" },
       { href: "/suche", label: "Suche" },
     ],
   },

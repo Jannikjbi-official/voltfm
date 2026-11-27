@@ -15,6 +15,7 @@ import { Icon, PlusIcon, CheckIcon, EditIcon, DeleteIcon, SearchIcon } from "@/l
 import { ImageUpload } from "./image-upload";
 import { RichTextEditor } from "./rich-text-editor";
 import { SocialLinksField } from "./social-links-field";
+import { GalleryField } from "./gallery-field";
 import { AccentColorField } from "./accent-color-field";
 import { ConfirmDialog } from "./confirm-dialog";
 import { AdminTable, DOT, StatusBadge, Td, Th, trClass } from "./admin-ui";
@@ -380,6 +381,18 @@ function FormField({ field, row }: { field: FieldDef; row: EntityRow | null }) {
 
   if (field.type === "socials") {
     return <SocialLinksField name={field.name} defaultValue={value} />;
+  }
+
+  if (field.type === "gallery") {
+    return (
+      <GalleryField
+        name={field.name}
+        label={field.label}
+        hint={field.hint}
+        defaultValue={value}
+        max={field.max}
+      />
+    );
   }
 
   if (field.type === "hue") {

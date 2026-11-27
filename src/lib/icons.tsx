@@ -56,6 +56,7 @@ import {
   faHouse,
   faEllipsis,
   faLightbulb,
+  faStar,
   faChevronLeft,
   faHandshake,
 } from "@fortawesome/free-solid-svg-icons";
@@ -146,4 +147,5 @@ export const PartnerIcon = faHandshake;
 export const HomeIcon = faHouse;
 export const MoreIcon = faEllipsis;
 export const IdeaIcon = faLightbulb;
+export const SpotlightIcon = faStar;
 export const ChevronLeftIcon = faChevronLeft;

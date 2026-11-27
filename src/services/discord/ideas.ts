@@ -2,7 +2,13 @@ import "server-only";
 
 import { ideaApprovals } from "@/db/collections";
 import { site } from "@/lib/site";
-import { IDEA_KIND_LIST, IDEA_TEXT_MAX, type Idea, type IdeaKind } from "@/lib/ideas";
+import {
+  IDEA_FEED_KIND_LIST,
+  IDEA_TEXT_MAX,
+  type Idea,
+  type IdeaKind,
+  type SubmittableIdeaKind,
+} from "@/lib/ideas";
 import { deployEnv, isProductionDeploy } from "@/lib/deploy";
 
 /**
@@ -20,6 +26,11 @@ import { deployEnv, isProductionDeploy } from "@/lib/deploy";
  * höchstens alle 60 Sekunden). Gespeichert wird nur die Freigabe
  * (Collection `ideaApprovals`). Gelöscht im Discord heißt damit auch: weg von
  * der Seite.
+ *
+ * Dazu kommt ein dritter Kanal, die Highlights (DISCORD_HIGHLIGHTS_CHANNEL_ID).
+ * Er wird nur gelesen, nie beschrieben; freigegebene Einträge stehen auf
+ * /highlights. Ohne Kanal-ID (Standard) ist die Funktion aus. Der Bot braucht
+ * dort nur „Kanal ansehen“ und „Nachrichtenverlauf lesen“.
  */
 
 /* Nur lokal (nie auf dem Server) darf ein Test-Server statt Discord antworten. */
@@ -45,7 +56,7 @@ interface DiscordMessage {
   sticker_items?: unknown[];
 }
 
-export type IdeaFeedProblem = "kein-token" | "kein-zugriff" | "fehler";
+export type IdeaFeedProblem = "kein-token" | "kein-kanal" | "kein-zugriff" | "fehler";
 
 export interface IdeaFeed {
   kind: IdeaKind;
@@ -59,9 +70,20 @@ function botToken(): string | null {
   return process.env.DISCORD_BOT_TOKEN || null;
 }
 
+/** Die eingetragene Kanal-ID, so wie sie konfiguriert ist (auch leer). */
+export function ideaChannelId(kind: IdeaKind): string {
+  if (kind === "highlight") return (process.env.DISCORD_HIGHLIGHTS_CHANNEL_ID ?? "").trim();
+  return site.discordIdeaChannels[kind];
+}
+
 function channelOf(kind: IdeaKind): string | null {
-  const id = site.discordIdeaChannels[kind];
+  const id = ideaChannelId(kind);
   return /^\d{5,25}$/.test(id) ? id : null;
+}
+
+/** Ob der Highlights-Kanal eingetragen ist. Ohne ihn gibt es /highlights nur als leere Seite. */
+export function highlightsConfigured(): boolean {
+  return channelOf("highlight") !== null;
 }
 
 /**
@@ -121,10 +143,11 @@ async function approvedIds(ids: string[]): Promise<Set<string>> {
 }
 
 async function readFeed(kind: IdeaKind, fresh: boolean): Promise<IdeaFeed> {
+  const channel = channelOf(kind);
+  // Die Highlights sind ohne Kanal-ID bewusst aus — das ist kein Fehler.
+  if (!channel) return { kind, ideas: [], unreadable: 0, problem: kind === "highlight" ? "kein-kanal" : "fehler" };
   const token = botToken();
   if (!token) return { kind, ideas: [], unreadable: 0, problem: "kein-token" };
-  const channel = channelOf(kind);
-  if (!channel) return { kind, ideas: [], unreadable: 0, problem: "fehler" };
 
   let messages: DiscordMessage[];
   try {
@@ -158,17 +181,30 @@ async function readFeed(kind: IdeaKind, fresh: boolean): Promise<IdeaFeed> {
   };
 }
 
-/** Beide Kanäle, neueste zuerst — für das Admin. */
+/** Alle drei Kanäle, neueste zuerst — für das Admin. */
 export async function getIdeaFeeds({ fresh = false } = {}): Promise<IdeaFeed[]> {
-  return Promise.all(IDEA_KIND_LIST.map((kind) => readFeed(kind, fresh)));
+  return Promise.all(IDEA_FEED_KIND_LIST.map((kind) => readFeed(kind, fresh)));
 }
 
-/** Nur freigegebene Einträge, je Art höchstens `limit` — für die Seite. */
-export async function getPublicIdeas(limit = 6): Promise<Record<IdeaKind, Idea[]>> {
-  const feeds = await getIdeaFeeds();
-  const result = { vorschlag: [], playlist: [] } as Record<IdeaKind, Idea[]>;
-  for (const feed of feeds) result[feed.kind] = feed.ideas.filter((idea) => idea.approved).slice(0, limit);
+/** Nur freigegebene Einträge, je Art höchstens `limit` — für /mitmachen. */
+export async function getPublicIdeas(limit = 6): Promise<Record<SubmittableIdeaKind, Idea[]>> {
+  const feeds = await Promise.all((["vorschlag", "playlist"] as const).map((kind) => readFeed(kind, false)));
+  const result: Record<SubmittableIdeaKind, Idea[]> = { vorschlag: [], playlist: [] };
+  for (const feed of feeds) {
+    if (feed.kind === "highlight") continue;
+    result[feed.kind] = feed.ideas.filter((idea) => idea.approved).slice(0, limit);
+  }
   return result;
+}
+
+/**
+ * Freigegebene Highlights für /highlights, neueste zuerst. `configured` ist
+ * false, solange kein Kanal eingetragen ist — die Seite sagt das dann ehrlich.
+ */
+export async function getPublicHighlights(limit = 30): Promise<{ configured: boolean; highlights: Idea[] }> {
+  if (!highlightsConfigured()) return { configured: false, highlights: [] };
+  const feed = await readFeed("highlight", false);
+  return { configured: true, highlights: feed.ideas.filter((idea) => idea.approved).slice(0, limit) };
 }
 
 /** Ob das Formular wirklich nach Discord schreibt: nur auf voltfm.xyz (und lokal gegen einen Test-Server). */
@@ -182,7 +218,7 @@ export type PostIdeaResult = "ok" | "testseite" | "nicht-eingerichtet" | "fehler
  * Schreibt einen Eintrag aus dem Formular als Karte in den Kanal. Niemand wird
  * erwähnt oder angepingt; der Text steht in der Karte, nicht als Nachricht.
  */
-export async function postIdea(kind: IdeaKind, name: string, text: string): Promise<PostIdeaResult> {
+export async function postIdea(kind: SubmittableIdeaKind, name: string, text: string): Promise<PostIdeaResult> {
   if (!ideaPostingEnabled()) return "testseite";
   const token = botToken();
   const channel = channelOf(kind);

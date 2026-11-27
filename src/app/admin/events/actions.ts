@@ -8,7 +8,7 @@ import { imageUrl } from "@/lib/validation";
 import { renderRichText, findImageWithoutAlt } from "@/lib/sanitize";
 
 import { events } from "@/db/collections";
-import { assertCan, AuthorizationError } from "@/lib/session";
+import { assertAdmin, assertCan, AuthorizationError } from "@/lib/session";
 import { slugify, parseStationTime } from "@/lib/format";
 import type { EntityFormState } from "@/components/admin/entity-types";
 
@@ -24,13 +24,38 @@ const schema = z.object({
   status: z.enum(["upcoming", "live", "past", "cancelled"]),
   image: imageUrl.optional(),
   url: z.string().trim().url().or(z.literal("")).optional(),
+  rueckblick: z.string().trim().max(12000).optional(),
 });
+
+/** Höchstens so viele Bilder im Rückblick. */
+const RECAP_IMAGES_MAX = 6;
+
+/**
+ * Die Bilder zum Rückblick aus dem FormData: `rueckblickBilderUrl` und
+ * `rueckblickBilderAlt` kommen paarweise in derselben Reihenfolge. Leere
+ * Zeilen fallen weg; ein Bild ohne Beschreibung wird zurückgewiesen.
+ */
+function parseRecapImages(formData: FormData): { url: string; alt: string }[] | string {
+  const urls = formData.getAll("rueckblickBilderUrl").map((value) => String(value).trim());
+  const alts = formData.getAll("rueckblickBilderAlt").map((value) => String(value).trim());
+  const images: { url: string; alt: string }[] = [];
+  for (const [index, url] of urls.entries()) {
+    if (!url) continue;
+    if (!imageUrl.safeParse(url).success) return "Ein Bild im Rückblick hat keine gültige Adresse.";
+    const alt = (alts[index] ?? "").slice(0, 200);
+    if (!alt) return `Bild ${images.length + 1} im Rückblick hat noch keine Beschreibung.`;
+    images.push({ url, alt });
+  }
+  if (images.length > RECAP_IMAGES_MAX) return `Höchstens ${RECAP_IMAGES_MAX} Bilder im Rückblick.`;
+  return images;
+}
 
 export async function saveEvent(
   _prev: EntityFormState,
   formData: FormData,
 ): Promise<EntityFormState> {
   try {
+    await assertAdmin();
     await assertCan("event", ["update"]);
   } catch (error) {
     if (error instanceof AuthorizationError) return { status: "error", message: error.message };
@@ -49,6 +74,7 @@ export async function saveEvent(
     status: formData.get("status") ?? "upcoming",
     image: formData.get("image") ?? "",
     url: formData.get("url") ?? "",
+    rueckblick: formData.get("rueckblick") ?? "",
   });
 
   if (!parsed.success) {
@@ -83,6 +109,18 @@ export async function saveEvent(
     };
   }
 
+  const rueckblick = data.rueckblick ? renderRichText(data.rueckblick) : undefined;
+  if (rueckblick && findImageWithoutAlt(rueckblick)) {
+    return {
+      status: "error",
+      message:
+        "Ein Bild im Rückblick hat noch keine Beschreibung. Trag sie in den eckigen Klammern ein: ![Was zu sehen ist](…).",
+    };
+  }
+
+  const rueckblickBilder = parseRecapImages(formData);
+  if (typeof rueckblickBilder === "string") return { status: "error", message: rueckblickBilder };
+
   const now = new Date();
   const doc = {
     title: data.title,
@@ -101,6 +139,9 @@ export async function saveEvent(
     status: data.status,
     image: data.image || undefined,
     url: data.url || undefined,
+    rueckblick,
+    rueckblickSource: data.rueckblick || undefined,
+    rueckblickBilder,
     updatedAt: now,
   };
 
@@ -131,6 +172,7 @@ export async function deleteEvent(
   formData: FormData,
 ): Promise<EntityFormState> {
   try {
+    await assertAdmin();
     await assertCan("event", ["delete"]);
   } catch (error) {
     if (error instanceof AuthorizationError) return { status: "error", message: error.message };

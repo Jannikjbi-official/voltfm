@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { after } from "next/server";
 import { cn } from "@heroui/react";
 
 import { SectionHeader } from "@/components/common/section-header";
@@ -6,10 +7,11 @@ import { ButtonLink } from "@/components/common/button-link";
 import { CoverStage } from "@/components/radio/cover-stage";
 import { RecentTracks } from "@/components/radio/recent-tracks";
 import { LautstationPlaylist } from "@/components/radio/lautstation-playlist";
-import { Icon, DiscordIcon, ExternalLinkIcon } from "@/lib/icons";
+import { Icon, DiscordIcon, ExternalLinkIcon, MusicIcon } from "@/lib/icons";
 import { lautstation } from "@/lib/lautstation";
 import { site } from "@/lib/site";
 import { getDirectoryLinks } from "@/services/settings/listings";
+import { recordRecentPlaysThrottled } from "@/services/plays";
 
 export const metadata: Metadata = {
   title: "Radio",
@@ -21,6 +23,9 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function RadioPage() {
+  // Nebenbei mitschreiben, was lief (fuer /charts und /gespielt), hoechstens
+  // alle fuenf Minuten; blockiert die Seite nicht.
+  after(recordRecentPlaysThrottled);
   // Gepflegt unter Admin → Einstellungen → Verzeichnisse.
   const directoryLinks = await getDirectoryLinks();
 
@@ -103,7 +108,14 @@ export default async function RadioPage() {
                 </InfoTile>
               </dl>
 
-              <div className="grid grid-cols-2 gap-2 pt-1">
+              {/* Wuensche nimmt das Portal an, nicht diese Seite. */}
+              <ButtonLink href={site.portalUrl} external variant="primary" fullWidth className="mt-1">
+                <Icon icon={MusicIcon} />
+                Song wünschen
+                <Icon icon={ExternalLinkIcon} />
+              </ButtonLink>
+
+              <div className="grid grid-cols-2 gap-2">
                 <ButtonLink href={site.discordUrl} external size="sm" fullWidth>
                   <Icon icon={DiscordIcon} />
                   Discord

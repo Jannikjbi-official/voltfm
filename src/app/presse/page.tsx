@@ -178,6 +178,109 @@ export default async function PressePage() {
           </div>
         </div>
       </section>
+
+      <MediaKit />
     </>
+  );
+}
+
+/** Die Logo-Dateien aus public/logo — dieselben, die auch im ZIP stecken. */
+const LOGO_FILES = [
+  { base: "voltfm-play-logo-auf-weiss", label: "Logo auf Weiß" },
+  { base: "voltfm-play-logo-dunkel", label: "Logo auf Dunkel" },
+  { base: "voltfm-play-logo-transparent-hell", label: "Logo transparent, für dunkle Flächen" },
+  { base: "voltfm-play-icon-dunkel", label: "Icon auf Dunkel" },
+  { base: "voltfm-play-icon-transparent", label: "Icon transparent" },
+];
+
+/**
+ * Feste Senderfarbe ist nur das Gelb. Graphit ist der dunkle Ton der Website
+ * (src/styles/theme.css), keine zweite Markenfarbe.
+ */
+const COLORS = [
+  { name: "Gelb", hex: "#FFD60A", note: "Senderfarbe", swatch: "bg-volt" },
+  { name: "Graphit", hex: "#141518", note: "Schrift und dunkle Flächen auf der Website", swatch: "bg-graphite" },
+];
+
+const FONTS = [
+  { name: "Bricolage Grotesque", use: "Überschriften", className: "font-display" },
+  { name: "Instrument Sans", use: "Fließtext", className: "" },
+  { name: "JetBrains Mono", use: "Beschriftungen", className: "font-mono" },
+  { name: "Doto", use: "Displays: Uhrzeit, Zahlen, Daten", className: "font-dot" },
+];
+
+function MediaKit() {
+  return (
+    <section aria-labelledby="medienkit" className="shell pt-12 sm:pt-16">
+      <div className="mb-6 border-b border-border pb-5">
+        <h2 id="medienkit" className="font-display text-[2.1rem] text-balance text-foreground sm:text-5xl">
+          Medienkit
+        </h2>
+        <p className="mt-3 text-base text-muted">
+          Logo-Dateien einzeln, die Farben und die Schriften, die auf der Seite laufen.
+        </p>
+      </div>
+
+      <div className="grid gap-2 lg:grid-cols-12">
+        <div className="surface-card flex flex-col gap-4 rounded-[var(--radius)] p-6 sm:p-8 lg:col-span-6">
+          <h3 className="font-meta text-muted">logo-dateien</h3>
+          <ul className="flex flex-col gap-2">
+            {LOGO_FILES.map((file) => (
+              <li key={file.base} className="well flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius)] px-4 py-3">
+                <span className="min-w-0 font-semibold text-foreground">{file.label}</span>
+                <span className="flex gap-1.5">
+                  {(["png", "svg"] as const).map((ext) => (
+                    <a
+                      key={ext}
+                      href={`/logo/${file.base}.${ext}`}
+                      download
+                      className="key inline-flex items-center gap-1.5 rounded-[var(--radius)] bg-surface px-3 py-1 font-mono text-xs font-semibold lowercase text-foreground ring-1 ring-border transition-colors hover:bg-volt hover:text-graphite"
+                    >
+                      <Icon icon={DownloadIcon} className="text-[0.85em]" />
+                      {ext}
+                      <span className="sr-only"> von {file.label}</span>
+                    </a>
+                  ))}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <ButtonLink href="/logo/voltfm-logo.zip" external variant="primary" className="self-start">
+            <Icon icon={DownloadIcon} />
+            Alle als ZIP
+          </ButtonLink>
+        </div>
+
+        <div className="flex flex-col gap-2 lg:col-span-6">
+          <div className="surface-card flex flex-col gap-4 rounded-[var(--radius)] p-6 sm:p-8">
+            <h3 className="font-meta text-muted">farben</h3>
+            <ul className="grid gap-2 sm:grid-cols-2">
+              {COLORS.map((color) => (
+                <li key={color.hex} className="well flex flex-col gap-3 rounded-[var(--radius)] p-3">
+                  <span aria-hidden="true" className={`block h-16 rounded-[3px] ring-1 ring-border ${color.swatch}`} />
+                  <span className="flex flex-col gap-0.5 px-1">
+                    <span className="font-semibold text-foreground">{color.name}</span>
+                    <code className="font-mono text-sm text-foreground">{color.hex}</code>
+                    <span className="text-sm text-muted">{color.note}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="surface-card flex flex-1 flex-col gap-4 rounded-[var(--radius)] p-6 sm:p-8">
+            <h3 className="font-meta text-muted">schriften</h3>
+            <ul className="flex flex-col gap-2">
+              {FONTS.map((font) => (
+                <li key={font.name} className="well flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 rounded-[var(--radius)] px-4 py-3">
+                  <span className={`text-lg text-foreground ${font.className}`}>{font.name}</span>
+                  <span className="text-sm text-muted">{font.use}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }

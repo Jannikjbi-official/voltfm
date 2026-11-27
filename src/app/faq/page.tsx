@@ -76,9 +76,13 @@ const FAQ: { question: string; answer: React.ReactNode }[] = [
     question: "Kann ich mir etwas wünschen?",
     answer: (
       <>
-        Schick deinen Wunsch in den Discord. Solange wir über {radio.providerName}{" "}
-        senden, landet er nicht automatisch im Programm, aber wir nehmen ihn in
-        die Rotation auf, wenn er passt.
+        Ja, über das{" "}
+        <a href={site.portalUrl} target="_blank" rel="noreferrer noopener">
+          VoltFM-Portal
+        </a>
+        . Solange wir über {radio.providerName} senden, landet ein Wunsch nicht
+        automatisch im Programm, aber wir nehmen ihn in die Rotation auf, wenn er
+        passt.
       </>
     ),
   },

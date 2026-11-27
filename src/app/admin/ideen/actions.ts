@@ -8,7 +8,7 @@ import { isIdeaKind } from "@/lib/ideas";
 import type { EntityFormState } from "@/components/admin/entity-types";
 
 /**
- * Gibt einen Vorschlag oder eine Playlist-Idee für die Seite frei — oder
+ * Gibt einen Vorschlag, eine Playlist-Idee oder ein Highlight für die Seite frei — oder
  * nimmt die Freigabe zurück. Gespeichert wird nur die Nachrichten-ID, nicht
  * der Text. Wer Beiträge veröffentlichen darf, darf auch das.
  */
@@ -48,7 +48,8 @@ export async function setIdeaApproval(
     return { status: "error", message: "Speichern hat nicht geklappt. Versuch es gleich noch einmal." };
   }
 
-  revalidatePath("/mitmachen");
+  const page = kind === "highlight" ? "/highlights" : "/mitmachen";
+  revalidatePath(page);
   revalidatePath("/admin/ideen");
-  return { status: "success", message: approve ? "Steht jetzt auf /mitmachen." : "Nicht mehr auf der Seite." };
+  return { status: "success", message: approve ? `Steht jetzt auf ${page}.` : "Nicht mehr auf der Seite." };
 }

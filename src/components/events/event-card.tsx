@@ -14,13 +14,15 @@ export function EventCard({ event }: { event: EventDTO }) {
   // Aus dem gespeicherten Status statt aus der Uhr: Die Uhrzeit beim Rendern
   // zu lesen waere unrein und machte die Ausgabe vom Zeitpunkt abhaengig.
   const isPast = event.status === "past";
+  const hasRecap = isPast && (Boolean(event.rueckblick) || (event.rueckblickBilder?.length ?? 0) > 0);
   const { day, month } = eventDateParts(event.startsAt);
 
   return (
     <article
       className={cn(
         "group surface-card hover-lift relative grid grid-cols-[4.5rem_minmax(0,1fr)] items-start gap-5 rounded-[var(--radius)] p-3 sm:grid-cols-[5rem_minmax(0,1fr)] sm:gap-6",
-        isPast && "opacity-70",
+        // Mit Rückblick lohnt sich der Klick noch — dann nicht abgedunkelt.
+        isPast && !hasRecap && "opacity-70",
       )}
     >
       <div
@@ -36,6 +38,11 @@ export function EventCard({ event }: { event: EventDTO }) {
           <span className="rounded-[3px] bg-default px-2 py-0.5 font-mono text-[0.7rem] font-semibold lowercase text-foreground">
             {event.category}
           </span>
+          {hasRecap && (
+            <span className="rounded-[3px] bg-volt px-2 py-0.5 font-mono text-[0.7rem] font-semibold lowercase text-graphite">
+              mit rückblick
+            </span>
+          )}
           <span className="inline-flex items-center gap-1.5 font-mono text-xs">
             <Icon icon={ClockIcon} />
             {formatTime(event.startsAt)} Uhr

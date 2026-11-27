@@ -99,6 +99,17 @@ export async function getLastSongs(
   }));
 }
 
+/**
+ * Die letzten Songs mit allen Angaben (Album, Ende), ohne Cover-Suche — fuer
+ * die eigene Aufzeichnung in src/services/plays. `null`, wenn laut.fm nicht
+ * antwortet; eine leere Liste ist eine echte Antwort.
+ */
+export async function getPlayedSongs(): Promise<NowPlaying[] | null> {
+  const raw = await fetchJson<RawSong[]>("/last_songs", 30);
+  if (!Array.isArray(raw)) return null;
+  return raw.map((song) => mapSong(song));
+}
+
 export async function getListenerCount(): Promise<number | null> {
   try {
     const res = await fetch(`${API}/${site.station}/listeners`, {

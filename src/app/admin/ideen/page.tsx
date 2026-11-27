@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
 import { requireCan } from "@/lib/session";
-import { site } from "@/lib/site";
 import { formatDateTime } from "@/lib/format";
 import { IDEA_KINDS } from "@/lib/ideas";
-import { getIdeaFeeds, ideaPostingEnabled, type IdeaFeed, type IdeaFeedProblem } from "@/services/discord/ideas";
+import {
+  getIdeaFeeds,
+  ideaChannelId,
+  ideaPostingEnabled,
+  type IdeaFeed,
+  type IdeaFeedProblem,
+} from "@/services/discord/ideas";
 import { AdminNotice, AdminPageHeader, AdminPanel, StatusBadge } from "@/components/admin/admin-ui";
 import { ApprovalButton } from "./approval-button";
 
@@ -12,14 +17,17 @@ export const dynamic = "force-dynamic";
 
 const PROBLEMS: Record<IdeaFeedProblem, string> = {
   "kein-token": "Der Bot-Token fehlt (DISCORD_BOT_TOKEN). Ohne ihn kann die Seite den Kanal nicht lesen.",
+  "kein-kanal":
+    "Noch kein Kanal eingetragen. Setz DISCORD_HIGHLIGHTS_CHANNEL_ID auf die ID des Highlights-Kanals und starte die Seite neu. Bis dahin zeigt /highlights nur einen Hinweis.",
   "kein-zugriff":
     "Der Bot darf diesen Kanal nicht lesen. Gib ihm dort „Kanal ansehen“ und „Nachrichtenverlauf lesen“.",
   fehler: "Discord ist gerade nicht erreichbar. Versuch es gleich noch einmal.",
 };
 
 /**
- * Vorschläge und Playlist-Ideen aus dem Discord. Alles hier ist erst einmal
- * nur im Admin zu sehen; auf /mitmachen steht ein Eintrag erst nach Freigabe.
+ * Vorschläge, Playlist-Ideen und Highlights aus dem Discord. Alles hier ist
+ * erst einmal nur im Admin zu sehen; auf /mitmachen bzw. /highlights steht
+ * ein Eintrag erst nach Freigabe.
  */
 export default async function AdminIdeasPage() {
   // Ein ausgeblendeter Menüpunkt ist kein Schutz — die Seite prüft selbst.
@@ -32,7 +40,7 @@ export default async function AdminIdeasPage() {
     <>
       <AdminPageHeader
         title="Ideen"
-        description="Vorschläge und Playlist-Ideen aus dem Discord. Auf /mitmachen steht nur, was du freigibst."
+        description="Vorschläge, Playlist-Ideen und Highlights aus dem Discord. Auf /mitmachen und /highlights steht nur, was du freigibst."
       />
 
       {unreadable > 0 && (
@@ -61,12 +69,16 @@ export default async function AdminIdeasPage() {
 
 function FeedPanel({ feed }: { feed: IdeaFeed }) {
   const shown = feed.ideas.filter((idea) => idea.approved).length;
+  const channel = ideaChannelId(feed.kind);
+  const page = feed.kind === "highlight" ? "/highlights" : "/mitmachen";
 
   return (
     <AdminPanel
       title={IDEA_KINDS[feed.kind].plural}
       titleId={`ideen-${feed.kind}`}
-      description={`Kanal ${site.discordIdeaChannels[feed.kind]}, ${shown} auf der Seite`}
+      description={
+        channel ? `Kanal ${channel}, ${shown} auf ${page}` : `Kein Kanal eingetragen, ${page} bleibt leer`
+      }
       bodyClassName="p-0"
     >
       {feed.problem ? (
