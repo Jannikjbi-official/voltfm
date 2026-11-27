@@ -26,9 +26,11 @@ const FAQ: { question: string; answer: React.ReactNode }[] = [
     answer: (
       <>
         Über den Play-Knopf oben oder auf der{" "}
-        <Link href="/radio">Radio-Seite</Link>. Der Klick öffnet {radio.providerName}{" "}
-        in einem neuen Fenster — dort läuft unser Programm. Ein Konto brauchst du
-        dafür nicht.
+        <Link href="/radio">Radio-Seite</Link>.{" "}
+        {radio.embedAllowed
+          ? "Der Stream läuft direkt hier auf der Seite, auch beim Weiterklicken. Beim ersten Mal fragen wir kurz, ob er geladen werden darf."
+          : `Der Klick öffnet ${radio.providerName} in einem neuen Fenster — dort läuft unser Programm.`}{" "}
+        Ein Konto brauchst du dafür nicht.
       </>
     ),
   },

@@ -33,7 +33,7 @@ export function Countdown({
   label: string;
 }) {
   const [now, setNow] = useState<number | null>(null);
-  const { openStream } = useRadioPlayer();
+  const { openStream, play, embedAllowed } = useRadioPlayer();
 
   useEffect(() => {
     const tick = () => setNow(Date.now());
@@ -60,12 +60,12 @@ export function Countdown({
           <p className="leading-relaxed text-display-muted">
             24 Stunden Charity-Radio — jetzt einschalten und mitspenden.
           </p>
-          {/* Fuehrt ueber denselben Hinweis wie der Player: Die Wiedergabe
-              findet im Webplayer von lautstation.de statt, nicht hier. */}
-          <Button variant="primary" size="lg" onPress={openStream}>
+          {/* Mit eingebettetem Player startet der Knopf die Wiedergabe hier,
+              sonst fuehrt er ueber denselben Hinweis zum Webplayer. */}
+          <Button variant="primary" size="lg" onPress={embedAllowed ? play : openStream}>
             <Icon icon={PlayIcon} />
             Jetzt hören
-            <Icon icon={ExternalLinkIcon} />
+            {!embedAllowed && <Icon icon={ExternalLinkIcon} />}
           </Button>
         </div>
       </div>

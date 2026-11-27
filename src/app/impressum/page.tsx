@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/common/page-header";
-import { operator, site } from "@/lib/site";
+import { operator, radio, site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Impressum",
@@ -126,9 +126,10 @@ export default function ImpressumPage() {
               <p>
                 Das Programm von VoltFM wird über laut.fm ausgestrahlt. laut.fm hält
                 die erforderlichen Lizenzen mit GEMA und GVL und trägt die
-                Streamingkosten. Eingebettet wird der Stream auf dieser Website nicht:
-                Der Play-Knopf öffnet den Webplayer von lautstation.de in einem neuen
-                Fenster.
+                Streamingkosten.{" "}
+                {radio.embedAllowed
+                  ? "Der Play-Knopf spielt den Stream von laut.fm direkt auf dieser Website ab."
+                  : "Eingebettet wird der Stream auf dieser Website nicht: Der Play-Knopf öffnet den Webplayer von lautstation.de in einem neuen Fenster."}
               </p>
 
               <h2 id="urheberrecht">Urheberrecht</h2>

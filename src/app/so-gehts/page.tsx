@@ -21,9 +21,10 @@ const GUIDE: { question: string; answer: React.ReactNode }[] = [
     answer: (
       <>
         Drück auf Play, oben in der Kopfzeile oder auf der{" "}
-        <Link href="/radio">Radio-Seite</Link>. Beim ersten Mal kommt ein kurzer Hinweis,
-        danach öffnet sich der Webplayer von {radio.externalName} in einem neuen
-        Fenster. Dort läuft unser Programm.
+        <Link href="/radio">Radio-Seite</Link>. Beim ersten Mal kommt ein kurzer Hinweis,{" "}
+        {radio.embedAllowed
+          ? "danach läuft der Stream direkt hier auf der Seite und spielt weiter, während du dich umschaust."
+          : `danach öffnet sich der Webplayer von ${radio.externalName} in einem neuen Fenster. Dort läuft unser Programm.`}
       </>
     ),
   },
@@ -96,7 +97,7 @@ const GUIDE: { question: string; answer: React.ReactNode }[] = [
       </>
     ),
   },
-];
+].filter((entry) => !(radio.embedAllowed && entry.question === "Warum ein neues Fenster?"));
 
 export default function SoGehtsPage() {
   return (
