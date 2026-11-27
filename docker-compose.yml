@@ -37,7 +37,7 @@ services:
       - default
       - edge
 
-  # Täglicher Meilenstein-Abruf (früher Vercel-Cron, gleiche Uhrzeit: 04:15 UTC)
+  # Täglicher Meilenstein-Abruf (04:15 UTC) und alle 15 Minuten die gespielten Songs für /charts und /gespielt
   cron:
     image: alpine:3.22
     env_file: .env
@@ -48,7 +48,7 @@ services:
       - -c
       - |
         apk add --no-cache curl >/dev/null
-        printf '15 4 * * * curl -fsS -H "Authorization: Bearer $$CRON_SECRET" http://voltfm:3000/api/cron/meilensteine\n' > /etc/crontabs/root
+        printf '15 4 * * * curl -fsS -H "Authorization: Bearer $$CRON_SECRET" http://voltfm:3000/api/cron/meilensteine\n*/15 * * * * curl -fsS -H "Authorization: Bearer $$CRON_SECRET" http://voltfm:3000/api/cron/gespielt\n' > /etc/crontabs/root
         exec crond -f -l 6
     depends_on: [voltfm]
     restart: unless-stopped
