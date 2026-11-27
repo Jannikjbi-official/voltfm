@@ -27,7 +27,9 @@ export type FieldType =
   /** Wiederholbare Zeilen aus Plattform und Adresse. */
   | "socials"
   /** Farbwahl aus einer Palette oder per Hex-Code. */
-  | "hue";
+  | "hue"
+  /** Mehrere Bilder mit Beschreibung; Wert als JSON `[{ url, alt }]`, `max` = Anzahl. */
+  | "gallery";
 
 export interface FieldDef {
   name: string;

@@ -14,6 +14,7 @@ import {
   EditIcon,
   IdeaIcon,
   PartnerIcon,
+  SpotlightIcon,
   type IconDefinition,
 } from "@/lib/icons";
 
@@ -48,6 +49,7 @@ export function adminNav(scheduleOn: boolean): AdminNavGroup[] {
         { href: "/admin/news", label: "News", icon: NewsIcon, needs: { resource: "article", actions: ["update"] } },
         { href: "/admin/categories", label: "Kategorien", icon: TagIcon, needs: { resource: "category", actions: ["update"] } },
         { href: "/admin/events", label: "Events", icon: EventsIcon, needs: { resource: "event", actions: ["update"] } },
+        { href: "/admin/spotlight", label: "Im Fokus", icon: SpotlightIcon, needs: { resource: "spotlight", actions: ["update"] } },
         { href: "/admin/timeline", label: "Zeitleiste", icon: ClockIcon, needs: { resource: "timeline", actions: ["update"] } },
         { href: "/admin/media", label: "Medien", icon: ImageIcon, needs: { resource: "media", actions: ["upload"] } },
         { href: "/admin/ideen", label: "Ideen", icon: IdeaIcon, needs: { resource: "article", actions: ["publish"] } },
@@ -88,5 +90,6 @@ export const QUICK_CREATE: (AdminNavEntry & { needs: Needs })[] = [
   { href: "/admin/categories?neu=1", label: "Kategorie anlegen", icon: TagIcon, needs: { resource: "category", actions: ["update"] } },
   { href: "/admin/moderatoren?neu=1", label: "Moderator anlegen", icon: MicIcon, needs: { resource: "host", actions: ["update"] } },
   { href: "/admin/partner?neu=1", label: "Partner anlegen", icon: PartnerIcon, needs: { resource: "partner", actions: ["update"] } },
+  { href: "/admin/spotlight?neu=1", label: "Porträt anlegen", icon: SpotlightIcon, needs: { resource: "spotlight", actions: ["update"] } },
   { href: "/admin/timeline?neu=1", label: "Eintrag anlegen", icon: ClockIcon, needs: { resource: "timeline", actions: ["update"] } },
 ];

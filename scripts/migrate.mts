@@ -1025,6 +1025,53 @@ const MIGRATIONS: Migration[] = [
       return result.upsertedCount ? "Partner Toki angelegt" : "Partner Toki gab es schon — unverändert";
     },
   },
+  {
+    /* bewerbung.voltfm.xyz gibt es nicht mehr (404), Bewerbungen und
+       Songwuensche laufen ueber portal.voltfm.xyz. Links und Erwaehnungen in
+       Beitraegen nachziehen; der Alt-Text des Titelbilds bleibt, weil er
+       beschreibt, was auf dem Bild steht. */
+    name: "026-portal-statt-bewerbung",
+    run: async (db) => {
+      const alt = "bewerbung.voltfm.xyz";
+      const neu = "portal.voltfm.xyz";
+      const docs = await db
+        .collection("articles")
+        .find({ $or: [{ content: { $regex: alt } }, { contentSource: { $regex: alt } }, { excerpt: { $regex: alt } }] })
+        .toArray();
+      for (const doc of docs) {
+        const set: Record<string, string> = {};
+        for (const field of ["content", "contentSource", "excerpt"] as const) {
+          if (typeof doc[field] === "string" && doc[field].includes(alt)) set[field] = doc[field].split(alt).join(neu);
+        }
+        await db.collection("articles").updateOne({ _id: doc._id }, { $set: set });
+      }
+      return `${docs.length} Beitrag/Beiträge auf portal.voltfm.xyz umgestellt`;
+    },
+  },
+  {
+    /* laut.fm liefert nur die letzten zehn Songs. VoltFM zeichnet deshalb
+       selbst auf, was laeuft (src/services/plays), fuer /charts und
+       /gespielt. Der eindeutige Index macht das Eintragen wiederholbar. */
+    name: "027-index-plays",
+    run: async (db) => {
+      const plays = db.collection("plays");
+      await plays.createIndex({ startedAt: 1, title: 1, artist: 1 }, { unique: true });
+      await plays.createIndex({ startedAt: -1 });
+      return "Indexe für plays angelegt";
+    },
+  },
+  {
+    /* „Im Fokus“ (/spotlight): Slug eindeutig, damit ein doppelter Eintrag
+       eine klare Meldung bekommt; der zweite Index trägt die öffentliche
+       Liste (aktiv, neuester Monat zuerst). */
+    name: "028-index-spotlights",
+    run: async (db) => {
+      const spotlights = db.collection("spotlights");
+      await spotlights.createIndex({ slug: 1 }, { unique: true });
+      await spotlights.createIndex({ active: 1, monat: -1, createdAt: -1 });
+      return "Indexe für spotlights angelegt";
+    },
+  },
 ];
 
 /* --- Der Lauf ------------------------------------------------------------- */

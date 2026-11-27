@@ -147,6 +147,12 @@ export interface VoltEvent {
   category: string;
   status: EventStatus;
   url?: string;
+  /** Rückblick nach dem Termin: bereinigtes HTML aus dem Markdown-Editor. */
+  rueckblick?: string;
+  /** Der getippte Markdown-Text zum Rückblick. Siehe `Article.contentSource`. */
+  rueckblickSource?: string;
+  /** Bis zu sechs Bilder zum Rückblick, als `/api/bilder/<kennung>`, jedes mit Beschreibung. */
+  rueckblickBilder?: { url: string; alt: string }[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -173,6 +179,30 @@ export interface Partner {
   links: { label: string; url: string }[];
   active: boolean;
   order: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/**
+ * „Im Fokus“: ein kurzes Porträt eines Teammitglieds oder einer Hörerin bzw.
+ * eines Hörers. Öffentlich unter /spotlight und /spotlight/<slug>.
+ */
+export interface Spotlight {
+  _id?: ObjectId;
+  name: string;
+  slug: string;
+  art: "team" | "hoerer";
+  /** Ein, zwei Sätze für die Liste, höchstens 200 Zeichen. */
+  kurz: string;
+  /** Bereinigtes HTML aus dem Markdown-Editor. Siehe `Article.content`. */
+  content?: string;
+  /** Siehe `Article.contentSource`. */
+  contentSource?: string;
+  /** Porträt oder passendes Bild, als `/api/bilder/<kennung>`. */
+  bild?: string;
+  /** Monat, in dem das Porträt im Fokus steht, als "JJJJ-MM". */
+  monat: string;
+  active: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -229,7 +259,7 @@ export interface IdeaApproval {
   _id?: ObjectId;
   /** ID der Discord-Nachricht. */
   messageId: string;
-  kind: "vorschlag" | "playlist";
+  kind: "vorschlag" | "playlist" | "highlight";
   approvedAt: Date;
   /** Wer freigegeben hat (Name im Admin). */
   approvedBy: string;
@@ -283,4 +313,22 @@ export interface SettingsDoc {
   /** Links zu VoltFM in Radio-Verzeichnissen (src/lib/listings.ts). "" = bewusst kein Link. */
   listings?: Partial<Record<DirectoryId, string>>;
   updatedAt: Date;
+}
+
+/**
+ * Ein gespielter Titel, so wie laut.fm ihn gemeldet hat. laut.fm liefert nur
+ * die letzten zehn Songs; was laenger zurueckliegt, gibt es nur hier
+ * (src/services/plays). Schluessel: startedAt + title + artist.
+ */
+export interface Play {
+  _id?: ObjectId;
+  title: string;
+  artist: string;
+  album?: string | null;
+  startedAt: Date;
+  endsAt?: Date | null;
+  /** Nur, wenn die Metadaten schon ein Cover mitbringen. Wird nicht nachgesucht. */
+  coverUrl?: string | null;
+  /** Wann VoltFM den Eintrag angelegt hat. */
+  recordedAt: Date;
 }

@@ -19,6 +19,7 @@ export const statement = {
   media: ["upload", "delete"],
   timeline: ["create", "update", "delete"],
   partner: ["create", "update", "delete"],
+  spotlight: ["create", "update", "delete"],
   settings: ["read", "update"],
 } as const;
 
@@ -41,6 +42,7 @@ export const editor = ac.newRole({
   media: ["upload", "delete"],
   timeline: ["create", "update", "delete"],
   partner: ["create", "update", "delete"],
+  spotlight: ["create", "update", "delete"],
 });
 
 /** Admin: everything editorial, plus user management. */
@@ -54,6 +56,7 @@ export const admin = ac.newRole({
   media: ["upload", "delete"],
   timeline: ["create", "update", "delete"],
   partner: ["create", "update", "delete"],
+  spotlight: ["create", "update", "delete"],
   settings: ["read", "update"],
 });
 
@@ -69,6 +72,7 @@ export const owner = ac.newRole({
   media: ["upload", "delete"],
   timeline: ["create", "update", "delete"],
   partner: ["create", "update", "delete"],
+  spotlight: ["create", "update", "delete"],
   settings: ["read", "update"],
 });
 

@@ -50,6 +50,10 @@ export default async function EventPage({ params }: { params: Promise<Params> })
 
   const isPast = event.status === "past";
   const isCancelled = event.status === "cancelled";
+  /* Der Rückblick gehört zur Zeit danach: vorher bleibt er unsichtbar,
+     auch wenn er schon eingetragen ist. */
+  const recapImages = isPast ? (event.rueckblickBilder ?? []) : [];
+  const hasRecap = isPast && (Boolean(event.rueckblick) || recapImages.length > 0);
   const { day, monthLong, weekday, year } = eventDateParts(event.startsAt);
 
   /* Event structured data so the date can surface in search results. */
@@ -189,6 +193,44 @@ export default async function EventPage({ params }: { params: Promise<Params> })
                   />
                 </div>
               </div>
+            )}
+
+            {hasRecap && (
+              <section
+                aria-labelledby="rueckblick-title"
+                className="surface-card flex flex-col gap-2 rounded-[var(--radius)] p-2"
+              >
+                <div className="display-panel display-dots flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius)] px-5 py-4">
+                  <h2 id="rueckblick-title" className="font-display text-3xl text-display-foreground sm:text-4xl">
+                    Rückblick
+                  </h2>
+                  <span className="font-dot text-sm text-volt">{formatDate(event.startsAt, "short")}</span>
+                </div>
+                {event.rueckblick && (
+                  <div className="px-3 py-6 sm:px-8 sm:py-8">
+                    <div
+                      className="vfm-prose max-w-[68ch]"
+                      dangerouslySetInnerHTML={{ __html: event.rueckblick }}
+                    />
+                  </div>
+                )}
+                {recapImages.length > 0 && (
+                  <ul className="well grid grid-cols-1 gap-2 rounded-[var(--radius)] p-2 sm:grid-cols-2" aria-label="Bilder zum Rückblick">
+                    {recapImages.map((image) => (
+                      <li key={image.url} className="overflow-hidden rounded-[3px] bg-surface p-1.5">
+                        <Image
+                          src={image.url}
+                          alt={image.alt}
+                          width={800}
+                          height={600}
+                          sizes="(max-width: 640px) 100vw, 450px"
+                          className="aspect-[4/3] h-auto w-full rounded-[2px] object-cover"
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
             )}
 
             <div className="surface-card rounded-[var(--radius)] px-5 py-8 sm:px-10 sm:py-12">
