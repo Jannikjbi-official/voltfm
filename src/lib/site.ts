@@ -133,6 +133,20 @@ export const radio = {
  * address, and § 18 Abs. 2 MStV a person responsible for editorial content —
  * so this is legally required data, not decoration.
  */
+/**
+ * Öffentlicher Discord-Bot „VoltFM Radio“ (Repo Jannikjbi-official/voltfm-bot).
+ * Die Client-ID steht im Discord Developer Portal unter General Information.
+ * Rechte: Kanal ansehen, Nachrichten senden, Links einbetten, Verbinden, Sprechen,
+ * Sprachkanal-Status setzen.
+ */
+const RADIO_BOT_CLIENT_ID = "1542561351132778516";
+export const radioBot = {
+  clientId: RADIO_BOT_CLIENT_ID,
+  inviteUrl: `https://discord.com/oauth2/authorize?client_id=${RADIO_BOT_CLIENT_ID}&scope=bot%20applications.commands&permissions=281474979859456`,
+  termsPath: "/bot/nutzungsbedingungen",
+  privacyPath: "/bot/datenschutz",
+} as const;
+
 export const operator = {
   name: "Jannik Bolting",
   street: "Burenkamp 16",
@@ -202,6 +216,7 @@ export const sitePages: NavItem[] = [
   { href: "/wunsch", label: "Song wünschen", hint: "Wünsche laufen über das VoltFM-Portal" },
   { href: "/spotlight", label: "Im Fokus", hint: "Leute aus Team und Community" },
   { href: "/overlay", label: "Overlay für Streamer", hint: "VoltFM-Karte für OBS zum Herunterladen" },
+  { href: "/bot", label: "Discord-Bot", hint: "VoltFM Radio für deinen Discord-Server" },
   ...secondaryNav,
 ];
 
@@ -240,6 +255,7 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
       { href: "/partner", label: "Partner" },
       { href: "/partner-werden", label: "Partner werden" },
       { href: "/overlay", label: "Stream-Overlay" },
+      { href: "/bot", label: "Discord-Bot" },
     ],
   },
   {
