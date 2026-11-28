@@ -70,6 +70,22 @@ services:
       STREAM_URL: https://stream.laut.fm/jannikjbi
       NOW_PLAYING_CHANNEL_ID: "1574526501531942973"
 
+  # Öffentlicher Bot „VoltFM Radio“ (Code in ./radio-bot): jeder kann ihn einladen, /radio play spielt
+  # den Livestream im Sprachkanal. Ohne RADIO_BOT_TOKEN (Admin-Panel → VoltFM) wartet er nur.
+  radio:
+    build: ./radio-bot
+    image: voltfm-radio
+    restart: unless-stopped
+    environment:
+      RADIO_BOT_TOKEN: ${RADIO_BOT_TOKEN:-}
+      LAUTFM_STATION: jannikjbi
+      STREAM_URL: https://stream.laut.fm/jannikjbi
+      SITE_API_URL: http://voltfm:3000
+      SITE_URL: https://voltfm.xyz
+    volumes:
+      # Welche Server gerade in welchem Kanal hören (für den Wiederbeitritt nach einem Neustart)
+      - radiodata:/data
+
 networks:
   edge:
     name: toki-edge
@@ -77,3 +93,4 @@ networks:
 
 volumes:
   mongodata:
+  radiodata:
