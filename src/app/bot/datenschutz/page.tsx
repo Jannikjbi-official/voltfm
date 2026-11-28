@@ -51,7 +51,7 @@ export default function BotDatenschutzPage() {
       <ul>
         <li>Der Bot spielt den VoltFM-Livestream in einem Sprachkanal ab und zeigt, welcher Song läuft.</li>
         <li>Er liest <strong>keine Nachrichten</strong> mit, hört <strong>nicht</strong> zu und nimmt nichts auf.</li>
-        <li>Gespeichert werden nur die Einstellungen eines Servers (IDs von Server, Kanälen und Rollen), keine Daten über einzelne Personen.</li>
+        <li>Gespeichert werden nur die Einstellungen eines Servers (IDs von Server, Kanälen und Rollen). Daten über einzelne Personen speichern wir nur, wenn jemand wegen Missbrauchs gesperrt wird.</li>
         <li>Entfernst du den Bot vom Server, löscht er dessen Einstellungen.</li>
       </ul>
 
@@ -79,6 +79,11 @@ export default function BotDatenschutzPage() {
         </li>
       </ul>
       <p>
+        <strong>Sperrliste:</strong> Wird der Bot missbraucht, können wir einen Server oder eine Person sperren. Dann speichern wir
+        die ID des Servers bzw. die Discord-Nutzer-ID mit dem damaligen Namen, Zeitpunkt, einem kurzen Grund und wer gesperrt hat.
+        Gesperrte Personen können den Bot nicht mehr steuern, ein gesperrter Server kann ihn nicht mehr nutzen.
+      </p>
+      <p>
         <strong>Protokolle:</strong> Der Bot schreibt technische Protokolle (zum Beispiel „Server X: Kanal Y beigetreten“, Fehlermeldungen).
         Darin können Namen von Servern und Kanälen stehen, aber keine Nachrichten und keine Daten einzelner Personen.
       </p>
@@ -96,13 +101,14 @@ export default function BotDatenschutzPage() {
         Die Daten werden ausschließlich verarbeitet, um den Bot bereitzustellen: das Radio abzuspielen, Befehle auszuführen, die
         Einstellungen eines Servers zu behalten und den laufenden Song anzuzeigen. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO
         (Bereitstellung des genutzten Dienstes) und Art. 6 Abs. 1 lit. f DSGVO (unser berechtigtes Interesse an einem sicheren und
-        funktionierenden Betrieb).
+        funktionierenden Betrieb, dazu gehört auch die Sperrliste zum Schutz vor Missbrauch).
       </p>
 
       <h2 id="speicherdauer">Speicherdauer und Löschung</h2>
       <ul>
         <li>Die Einstellungen eines Servers bleiben gespeichert, bis der Bot vom Server entfernt wird; dann werden sie gelöscht. Mit „Zurücksetzen“ in <code>/einstellungen</code> lassen sie sich jederzeit auf den Standard zurücksetzen.</li>
         <li>Wird das Radio mit <code>/radio stop</code> gestoppt, wird der gespeicherte Sprachkanal gelöscht.</li>
+        <li>Einträge auf der Sperrliste bleiben bestehen, bis die Sperre aufgehoben wird; auf Anfrage prüfen wir eine Sperre jederzeit.</li>
         <li>Technische Protokolle werden automatisch überschrieben, sobald sie eine feste Größe erreichen, in der Regel nach wenigen Tagen.</li>
         <li>Löschung auf Wunsch: Schreib an <a href={`mailto:${operator.email}`}>{operator.email}</a> mit der ID deines Servers.</li>
       </ul>
